@@ -1,0 +1,14 @@
+
+```
+npm install @prisma/client
+npm install next-auth
+npm install otp-generator --save
+npm install --save @types/otp-generator
+npm i nodemailer
+npm install --save @types/nodemailer
+npm install react-spinners --save
+npm install --save react-toastify
+npm install bcrypt
+npm install --save @types/bcrypt
+npm install --save react-card-flip
+```
