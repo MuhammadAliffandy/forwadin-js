@@ -24,6 +24,7 @@ const OTPForm = ({ setCurrentStep }: { setCurrentStep: Dispatch<SetStateAction<s
     }
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault()
+        setCurrentStep('success')
         //  TODO
     }
     return (

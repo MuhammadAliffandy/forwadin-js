@@ -14,13 +14,17 @@ const config: Config = {
         'white-50': '#FAFBFF',
         'neutral-75': '#F3F5F8',
         'danger': '#D14343',
-        'green-40': '#4FBEAB'
+        'green-40': '#4FBEAB',
+        'customGray': '#B0B4C5'
       },
       fontFamily: {
-        'lexend': ['Lexend Deca', 'sans-serif']
+        'lexend': ['Lexend Deca', 'sans-serif'],
+        'nunito': ['Nunito Sans', 'sans-serif']
       }
     },
   },
   plugins: [require("flowbite/plugin")],
+
+
 }
 export default config

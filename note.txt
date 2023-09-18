@@ -11,4 +11,7 @@ npm install --save react-toastify
 npm install bcrypt
 npm install --save @types/bcrypt
 npm install --save react-card-flip
+npm install recharts - not work
+npm install --save chart.js react-chartjs-2
+npm install chartjs-plugin-zoom
 ```

@@ -3,12 +3,11 @@ import forwardInPic from '@/public/assets/icons/forwardin_black.png'
 import logoPic from '@/public/assets/icons/logo.png'
 import CustomCarousel from '@/components/packages/CustomCarousel'
 import Link from "next/link"
-export default function RootLayout({
+export default function Layout({
     children,
 }: {
     children: React.ReactNode
 }) {
-
 
     return (
         <>
@@ -36,9 +35,7 @@ export default function RootLayout({
                         <CustomCarousel />
                     </div>
                     <div className='lg:basis-1/2 w-full'>
-                        {/* <div className='bg-white md:shadow-xl px-8 py-10 rounded-xl mx-auto max-w-lg lg:max-h-[80vh] overflow-y-scroll'> */}
                         {children}
-                        {/* </div> */}
                     </div>
                 </div>
             </main>
