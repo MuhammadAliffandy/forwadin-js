@@ -1,11 +1,13 @@
-import React, { useState } from 'react'
+import React, { Dispatch, SetStateAction, useState } from 'react'
 import { PulseLoader } from 'react-spinners'
 import { toast } from 'react-toastify'
 import MultipleInputLabel from '../MultipleInputLabel'
 import ModalTemplate from './ModalTemplate'
 
-const AddDeviceModal = ({ openModal, setopenModal }) => {
-
+const AddDeviceModal = (
+    { openModal, setopenModal }:
+        { openModal: boolean, setopenModal: Dispatch<SetStateAction<boolean>> }
+) => {
     const [isLoading, setisLoading] = useState(false)
     const [deviceName, setdeviceName] = useState('')
     const [inputError, setinputError] = useState({ error: false, message: '' })

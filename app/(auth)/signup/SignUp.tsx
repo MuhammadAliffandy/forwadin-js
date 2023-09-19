@@ -1,21 +1,21 @@
 'use client';
-import AuthPage from '@/components/template/AuthPage'
-import Link from 'next/link'
+
 import RegisterForm from '@/components/auth/RegisterForm'
 import OTPForm from '@/components/auth/OTPForm'
 import { signIn } from 'next-auth/react'
 import { useEffect, useState } from 'react';
 import { useSpring, animated, useTransition } from '@react-spring/web';
-import ReactCardFlip from 'react-card-flip';
-import { UserRegisterData } from '@/utils/interfaces';
+import { UserRegisterData } from '@/utils/types';
 import SuccessForm from '@/components/auth/SuccessForm';
 const SignUp = () => {
     const [currentStep, setCurrentStep] = useState('register')
-    const [userData, setUserData] = useState({
-        username: null,
-        email: null,
-        phone: null,
-        otp: null
+    const [userData, setUserData] = useState<UserRegisterData>({
+        email: '',
+        username: '',
+        phone: '',
+        password: '',
+        confirmPassword: '',
+        otp: ''
     })
     const componentTransition = useTransition(currentStep, {
         from: {
@@ -49,7 +49,6 @@ const SignUp = () => {
                     <SuccessForm />
                 </animated.div>
             ))}
-
         </>
     )
 }

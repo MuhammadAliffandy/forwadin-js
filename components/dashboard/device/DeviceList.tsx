@@ -1,11 +1,23 @@
-
-const DeviceList = ({ deviceData, handleCheckBoxClick, deviceCheckboxRef, handleOpenQRModal, handleOpenDetailModal }) => {
+import { DeviceCheckboxRef, DeviceData } from "@/utils/types"
+import React from "react"
+interface DeviceListProps {
+    deviceData: DeviceData[],
+    handleCheckBoxClick: (event: React.FormEvent<HTMLInputElement>, id: number) => void,
+    deviceCheckboxRef: React.MutableRefObject<DeviceCheckboxRef>,
+    handleOpenQRModal: (item: DeviceData) => void,
+    handleOpenDetailModal: (params: string) => void
+}
+const DeviceList = ({ deviceData, handleCheckBoxClick, deviceCheckboxRef, handleOpenQRModal, handleOpenDetailModal }: DeviceListProps) => {
+    const handleRefChange = (element: HTMLInputElement | null, item: DeviceData) => {
+        if (deviceCheckboxRef.current && element)
+            deviceCheckboxRef.current[`checkbox_${item.id}`] = element
+    }
     return (
         <>
             {deviceData.map((item, index) => (
                 <tr key={index}>
                     <td className='p-4'>
-                        <input type="checkbox" name={'checkbox_' + item.id} id={'checkbox_' + item.id} className='rounded-sm focus:ring-transparent' onClick={(e) => handleCheckBoxClick(e, item.id)} ref={(element) => { deviceCheckboxRef.current[`checkbox_${item.id}`] = element }} />
+                        <input type="checkbox" name={'checkbox_' + item.id} id={'checkbox_' + item.id} className='rounded-sm focus:ring-transparent' onClick={(e) => handleCheckBoxClick(e, item.id)} ref={element => handleRefChange(element, item)} />
                     </td >
                     <td className='p-4'>{item.name}</td>
                     <td className='p-4 break-words'>{item.apiKey}</td>

@@ -1,61 +1,68 @@
 'use client'
-import { match } from "assert"
 import Link from "next/link"
 import React, { useState, useEffect } from "react"
 import { useForm, useController } from "react-hook-form"
 import { Dispatch, SetStateAction } from "react";
 import { PulseLoader } from "react-spinners"
 import { toast } from "react-toastify"
-import { UserRegisterData } from "@/utils/interfaces"
+import { UserRegisterData } from "@/utils/types"
+import { signIn } from "next-auth/react"
 
 const Register = ({ setCurrentStep, setUserData, userData }: {
     setCurrentStep: Dispatch<SetStateAction<string>>,
-    setUserData: Dispatch<SetStateAction<any>>,
-    userData: any
+    setUserData: Dispatch<SetStateAction<UserRegisterData>>,
+    userData: UserRegisterData
 }) => {
     const { handleSubmit, register, control, watch, formState: { errors } } = useForm<UserRegisterData>()
     const [isLoading, setIsLoading] = useState(false)
     const onSubmit = async (formData: UserRegisterData) => {
         setIsLoading(true)
-        setTimeout(() => {
-            setUserData(formData)
-            setIsLoading(false)
-            setCurrentStep('otp')
-        }, 3000)
+        // setTimeout(() => {
+        //     setUserData(formData)
+        //     setIsLoading(false)
+        //     setCurrentStep('otp')
+        // }, 3000)
         // setIsLoading(true)
         // alert(JSON.stringify(userData))
-        // try {
-        //     const response = await fetch('/api/user', {
-        //         method: 'POST',
-        //         body: JSON.stringify(userData)
-        //     })
-        //     const result = await response.json()
-        //     if (response.ok) {
-        //         setCurrentStep('OTP')
-        //     }
-        //     else {
-        //         toast.error(result.msg)
-        //     }
-        //     setIsLoading(false)
-        // } catch (error) {
-        //     console.log(error)
-        // }
+        try {
+            const result = await signIn('credentials', {
+                username: formData.username,
+                email: formData.email,
+                phone: formData.phone,
+                password: formData.password,
+                confirmPassword: formData.confirmPassword,
+                redirect: false
+            })
+            setIsLoading(false)
+            if (!result?.error) {
+                setUserData(formData)
+                toast.success('success')
+                // setCurrentStep('otp')
+            } else {
+                toast.error(result.error)
+                // console.log(result?.status)
+            }
+
+        } catch (error) {
+            setIsLoading(false)
+            console.log(error)
+        }
 
     }
     const [passwordValidator, setPasswordValidator] = useState({
         eightLength: false,
         lowerCase: false,
         upperCase: false,
-        numeric: false,
-        specialChar: false
+        // numeric: false,
+        // specialChar: false
     })
 
     const strongRegex = {
         eightLength: new RegExp("^(?=.{8,})"),
         lowerCase: new RegExp("^(?=.*[a-z])"),
         upperCase: new RegExp("^(?=.*[A-Z])"),
-        numeric: new RegExp("^(?=.*[0-9])"),
-        specialChar: new RegExp("^(?=.*[!@#$%^&*])")
+        // numeric: new RegExp("^(?=.*[0-9])"),
+        // specialChar: new RegExp("^(?=.*[!@#$%^&*])")
     }
     useEffect(() => {
         window.scrollTo(0, 0)
@@ -75,14 +82,14 @@ const Register = ({ setCurrentStep, setUserData, userData }: {
                 setPasswordValidator(prev => ({ ...prev, upperCase: true }))
             else
                 setPasswordValidator(prev => ({ ...prev, upperCase: false }))
-            if (strongRegex.specialChar.test(password))
-                setPasswordValidator(prev => ({ ...prev, specialChar: true }))
-            else
-                setPasswordValidator(prev => ({ ...prev, specialChar: false }))
-            if (strongRegex.numeric.test(password))
-                setPasswordValidator(prev => ({ ...prev, numeric: true }))
-            else
-                setPasswordValidator(prev => ({ ...prev, numeric: false }))
+            // if (strongRegex.specialChar.test(password))
+            //     setPasswordValidator(prev => ({ ...prev, specialChar: true }))
+            // else
+            //     setPasswordValidator(prev => ({ ...prev, specialChar: false }))
+            // if (strongRegex.numeric.test(password))
+            //     setPasswordValidator(prev => ({ ...prev, numeric: true }))
+            // else
+            //     setPasswordValidator(prev => ({ ...prev, numeric: false }))
         })
         return () => watchPassword.unsubscribe()
     }, [watch, passwordValidator])
@@ -135,10 +142,10 @@ const Register = ({ setCurrentStep, setUserData, userData }: {
                                     ) : (<p className='text-danger'>Huruf kecil (a-z) </p>)}
                                     {passwordValidator.upperCase ? (<p className='text-green-40'>&#10003; Huruf besar (A-Z)</p>
                                     ) : (<p className='text-danger'>Huruf besar (A-Z)</p>)}
-                                    {passwordValidator.numeric ? (<p className='text-green-40'>&#10003; Angka</p>
+                                    {/* {passwordValidator.numeric ? (<p className='text-green-40'>&#10003; Angka</p>
                                     ) : (<p className='text-danger'>Angka</p>)}
                                     {passwordValidator.specialChar ? (<p className='text-green-40'>&#10003; Karakter Spesial (!@#$%^&*)</p>
-                                    ) : (<p className='text-danger'>Karakter Spesial (!@#$%^&*)</p>)}
+                                    ) : (<p className='text-danger'>Karakter Spesial (!@#$%^&*)</p>)} */}
                                 </div>
                             </div>
                         </div>

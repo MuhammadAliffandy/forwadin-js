@@ -1,6 +1,6 @@
 'use client'
 import MultipleInputLabel from "@/components/dashboard/MultipleInputLabel"
-import Image from "next/image"
+
 import React, { useEffect, useState } from "react"
 const DetailDevice = ({ device }: { device: string }) => {
 

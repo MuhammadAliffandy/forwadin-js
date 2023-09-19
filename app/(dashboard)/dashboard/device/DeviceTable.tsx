@@ -4,14 +4,14 @@ import QRModal from '@/components/dashboard/device/QRModal';
 import React, { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import AddDeviceModal from '@/components/dashboard/device/AddDeviceModal';
-
+import { DeviceCheckboxRef, DeviceData } from '@/utils/types'
 const DeviceTable = () => {
     const { push } = useRouter()
-    const mainCheckboxRef = useRef(null)
-    const deviceCheckboxRef = useRef([])
+    const mainCheckboxRef = useRef<HTMLInputElement>(null)
+    const deviceCheckboxRef = useRef<DeviceCheckboxRef>({})
     const [isChecked, setisChecked] = useState(false)
     const [searchTimeout, setsearchTimeout] = useState(null)
-    const [deviceData, setdeviceData] = useState([
+    const [deviceData, setdeviceData] = useState<DeviceData[]>([
         {
             id: 1,
             name: 'RMX398',
@@ -46,9 +46,9 @@ const DeviceTable = () => {
         },
     ])
     const [searchText, setsearchText] = useState('')
-    const [searchedDevice, setsearchedDevice] = useState([])
+    const [searchedDevice, setsearchedDevice] = useState<DeviceData[]>([])
     const [openQrModal, setopenQrModal] = useState(false)
-    const [qrModalData, setqrModalData] = useState()
+    const [qrModalData, setqrModalData] = useState<DeviceData>()
     const [deviceModal, setdeviceModal] = useState(false)
     const handleCheckBoxClick = (e: React.FormEvent<HTMLInputElement>, id: number) => {
         const newDeviceData = deviceData.map(obj => {
@@ -59,13 +59,13 @@ const DeviceTable = () => {
 
     const handleIndexCheckbox = (e: React.MouseEvent) => {
         const currentDeviceData = (searchText ? searchedDevice : deviceData)
-        if (!mainCheckboxRef.current.checked) {
+        if (mainCheckboxRef.current && !mainCheckboxRef.current.checked) {
             const newArray = currentDeviceData.map((obj, idx) => {
                 deviceCheckboxRef.current[`checkbox_${obj.id}`].checked = false
                 return { ...obj, checked: false }
             })
             if (searchText)
-                setsearchedDevice(() => newArray)
+                setsearchedDevice(newArray)
             else
                 setdeviceData(() => newArray)
         } else {
@@ -79,7 +79,7 @@ const DeviceTable = () => {
                 setdeviceData(() => newArray)
         }
     }
-    const handleOpenQRModal = (params) => {
+    const handleOpenQRModal = (params: DeviceData) => {
         const device = deviceData.find(obj => obj.name === params.name)
         setqrModalData(device)
         setopenQrModal(true)
@@ -87,10 +87,6 @@ const DeviceTable = () => {
     }
     const handleOpenDetailModal = (params: string) => {
         push('/dashboard/device/' + params)
-
-    }
-    const handleOpenAddDeviceModal = () => {
-
     }
     const filterDevice = (text: string) => {
         const regex = new RegExp(text, 'i')
@@ -102,34 +98,37 @@ const DeviceTable = () => {
                 return item
         })
     }
-    const handleSearch = (e: React.FormEvent<HTMLInputElement>) => {
+    const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
         setsearchText(e.target.value)
     }
     const handleAddDevice = () => {
 
     }
     useEffect(() => {
-        const checkObject = deviceData.find(obj => obj.checked === true)
-        if (checkObject) {
-            mainCheckboxRef.current.checked = true
-            setisChecked(true)
-        }
-        else {
-            mainCheckboxRef.current.checked = false
-            setisChecked(false)
+        if (mainCheckboxRef.current) {
+            const checkObject = deviceData.find(obj => obj.checked === true)
+            if (checkObject) {
+                mainCheckboxRef.current.checked = true
+                setisChecked(true)
+            }
+            else {
+                mainCheckboxRef.current.checked = false
+                setisChecked(false)
+            }
         }
     }, [deviceData])
     useEffect(() => {
-        const checkObject = searchedDevice.find(obj => obj.checked === true)
-        if (checkObject) {
-            mainCheckboxRef.current.checked = true
-            setisChecked(true)
+        if (mainCheckboxRef.current) {
+            const checkObject = searchedDevice.find(obj => obj.checked === true)
+            if (checkObject) {
+                mainCheckboxRef.current.checked = true
+                setisChecked(true)
+            }
+            else {
+                mainCheckboxRef.current.checked = false
+                setisChecked(false)
+            }
         }
-        else {
-            mainCheckboxRef.current.checked = false
-            setisChecked(false)
-        }
-        // }
     }, [searchedDevice])
 
     useEffect(() => {

@@ -1,7 +1,10 @@
-import Image from "next/image"
-import { useEffect, useState } from "react"
+import { Label } from "@/utils/types"
+import { Dispatch, SetStateAction, useEffect, useState } from "react"
 
-const MultipleInputLabel = ({ labelList, setlabelList }) => {
+const MultipleInputLabel = (
+    { labelList, setlabelList }:
+        { labelList: Label[], setlabelList: Dispatch<SetStateAction<Label[]>>, }
+) => {
     const [isLabelOpen, setisLabelOpen] = useState(false)
     const [inputText, setinputText] = useState('')
     const handleEnter = (e: React.KeyboardEvent) => {
@@ -10,14 +13,14 @@ const MultipleInputLabel = ({ labelList, setlabelList }) => {
                 setlabelList(old => [...old, { name: inputText, active: true }])
                 setinputText('')
             } else {
-                const currentLabel = labelList.map(label => label.name === inputText ? { name: label.name, active: true } : label)
+                const currentLabel: Label[] = labelList.map(label => label.name === inputText ? { name: label.name, active: true } : label)
                 setlabelList(currentLabel)
                 setinputText('')
             }
         }
     }
-    const handleLabelClick = (label, status) => {
-        const newLabelList = labelList.map((list => list.name === label ? { name: list.name, active: status } : list))
+    const handleLabelClick = (labelName: string, status: boolean) => {
+        const newLabelList: Label[] = labelList.map((list => list.name === labelName ? { name: list.name, active: status } : list))
         setlabelList(newLabelList)
     }
     useEffect(() => {
@@ -38,7 +41,8 @@ const MultipleInputLabel = ({ labelList, setlabelList }) => {
                     </div>
                     <div className="basis-1/6 flex justify-end hover:cursor-pointer" onClick={() => setisLabelOpen(!isLabelOpen)}>
                         <div className="items-cneter flex">
-                            <Image src={'/assets/icons/caret-down-black.svg'} height={9} width={12} alt="" />
+                            <img src={'/assets/icons/caret-down-black.svg'} height={9} width={12} alt="" />
+                            {/* <Image src={'/assets/icons/caret-down-black.svg'} height={9} width={12} alt="" /> */}
                         </div>
                     </div>
                 </div>

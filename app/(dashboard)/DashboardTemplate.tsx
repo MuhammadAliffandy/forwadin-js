@@ -1,9 +1,8 @@
 'use client'
-import logoPic from '@/public/assets/icons/logo.png'
-import dropdownPic from '@/public/assets/icons/dropdown.png'
-import forwardInPic from '@/public/assets/icons/forwardin.png'
-import Image from 'next/image'
-import Link from 'next/link'
+// import logoPic from '@/public/assets/icons/logo.png'
+// import dropdownPic from '@/public/assets/icons/dropdown.png'
+// import forwardInPic from '@/public/assets/icons/forwardin.png'
+
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import NavButton from '../../components/dashboard/NavButton'
 import MessageList from '../../components/dashboard/MessageList'
@@ -28,10 +27,12 @@ const DashboardTemplate = ({ currentPage, children }: { currentPage: string, chi
                 <nav className="mt-8 px-4">
                     <div className='flex justify-center items-center gap-2'>
                         <div className=''>
-                            <Image src={logoPic} alt="logo" />
+                            <img src={'/assets/icons/logo.png'} alt="logo" />
+                            {/* <Image src={logoPic} alt="logo" /> */}
                         </div>
                         <div className=''>
-                            <Image src={forwardInPic} alt="logo" />
+                            <img src={'/assets/icons/forwardin.png'} alt="logo" />
+                            {/* <Image src={forwardInPic} alt="logo" /> */}
                         </div>
                     </div>
                     <div className='flex flex-col mt-12 gap-2'>
@@ -53,7 +54,8 @@ const DashboardTemplate = ({ currentPage, children }: { currentPage: string, chi
                 {/* Mobile Dashboard Nav */}
                 <div className='flex w-full justify-between lg:hidden pb-4 pt-2'>
                     <div onClick={handleClick} id="dropdown_icon">
-                        <Image src={DropdownPic} alt="" />
+                        <img src={'/assets/icons/dropdown.png'} alt="" />
+                        {/* <Image src={DropdownPic} alt="" /> */}
                     </div>
                     <div className='flex justify-end gap-2'>
                         <div className='flex-none bg-white rounded-full p-2 hover:cursor-pointer'>

@@ -1,6 +1,5 @@
-import Image from "next/image"
-import forwardInPic from '@/public/assets/icons/forwardin_black.png'
-import logoPic from '@/public/assets/icons/logo.png'
+// import forwardInPic from '@/public/assets/icons/forwardin_black.png'
+// import logoPic from '@/public/assets/icons/logo.png'
 import CustomCarousel from '@/components/packages/CustomCarousel'
 import Link from "next/link"
 export default function Layout({
@@ -15,14 +14,22 @@ export default function Layout({
                 <div className="flex justify-between items-center px-8 relative xl:px-0 xl:w-[85%] mx-auto">
                     <Link href={'/'} className="flex gap-4 items-center">
                         <div>
-                            <Image
-                                src={logoPic}
+                            <img
+                                src={'/assets/icons/logo.png'}
                                 alt="logo"
                             />
+                            {/* <Image
+                                src={logoPic}
+                                alt="logo"
+                            /> */}
                         </div>
                         <div className="">
-                            <Image
+                            {/* <Image
                                 src={forwardInPic}
+                                alt="forwardin"
+                            /> */}
+                            <img
+                                src={'/assets/icons/forwardin_black.png'}
                                 alt="forwardin"
                             />
                         </div>

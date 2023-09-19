@@ -1,11 +1,17 @@
 'use client'
-import { useRef } from "react"
-const ModalTemplate = ({ children, openModal, setopenModal, outsideClose = true }) => {
-    const modalContentRef = useRef()
-    const modalBackgroudRef = useRef()
+import { Dispatch, SetStateAction, useRef } from "react"
+interface ModalTemplateProps {
+    children: React.ReactNode,
+    openModal: boolean,
+    setopenModal: Dispatch<SetStateAction<boolean>>,
+    outsideClose: boolean
+}
+const ModalTemplate = ({ children, openModal, setopenModal, outsideClose = true }: ModalTemplateProps) => {
+    const modalContentRef = useRef<HTMLDivElement>(null)
+    const modalBackgroudRef = useRef<HTMLDivElement>(null)
     const handleCloseModal = (e: React.MouseEvent) => {
-        if (outsideClose)
-            if (!modalContentRef.current.contains(e.target)) {
+        if (outsideClose && modalContentRef.current)
+            if (!modalContentRef.current.contains(e.target as Node)) {
                 setopenModal(false)
             }
     }

@@ -1,7 +1,5 @@
 'use client'
-import Image from 'next/image'
 import Button from '../components/landing/Button'
-import { useState, useEffect } from 'react'
 import OneStep from '@/components/landing/OneStep'
 import Subscription from '@/components/landing/Subscription'
 import FAQ from '@/components/landing/FAQ'
@@ -14,13 +12,20 @@ export default function Home() {
       <div className='bg-neutral-75'>
         <div className='container lg:w-[85%] mx-auto flex flex-col lg:flex-row-reverse justify-center lg:justify-between items-center gap-28 pt-20 pb-20 px-6'>
           <div className='flex-none lg:basis-2/5 flex justify-end'>
-            <Image
+            <img
               src='/assets/images/dummy.png'
               width={441}
               height={272}
               alt='dummy'
               className='flex-none'
             />
+            {/* <Image
+              src='/assets/images/dummy.png'
+              width={441}
+              height={272}
+              alt='dummy'
+              className='flex-none'
+            /> */}
           </div>
           <div className='flex flex-col gap-8'>
             <p className=' font-bold text-2xl'>Elevate Your Messaging Efficiency with Our Innovative Admin Tools</p>
@@ -34,12 +39,18 @@ export default function Home() {
       </div>
       <div className='flex flex-col lg:flex-row justify-center lg:justify-between items-center gap-28 mt-44 px-6'>
         <div className='flex-none lg:basis-1/2 flex justify-center'>
-          <Image
+          <img
             src='/assets/images/landing_image1.png'
             width={226}
             height={187}
             alt='dummy'
           />
+          {/* <Image
+            src='/assets/images/landing_image1.png'
+            width={226}
+            height={187}
+            alt='dummy'
+          /> */}
         </div>
         <div className='lg:basis-1/2 '>
           <div className='flex flex-col gap-8 lg:w-[75%]'>
@@ -51,12 +62,18 @@ export default function Home() {
       <div className='bg-neutral-75 mt-20 py-20'>
         <div className='px-6 container mx-auto flex flex-col lg:flex-row-reverse justify-center items-center gap-28 lg:gap-0'>
           <div className='flex-none flex justify-center basis-1/2 '>
-            <Image
+            <img
               src='/assets/images/landing_image2.png'
               width={157}
               height={207}
               alt='dummy'
             />
+            {/* <Image
+              src='/assets/images/landing_image2.png'
+              width={157}
+              height={207}
+              alt='dummy'
+            /> */}
           </div>
           <div className='flex lg:justify-end basis-1/2 '>
             <div className='flex flex-col gap-8 lg:w-[70%]'>

@@ -2,12 +2,13 @@
 import Message from '@/components/dashboard/Message'
 import Button from '@/components/landing/Button'
 import Link from 'next/link'
-import { Dropdown } from 'flowbite-react';
-import Image from 'next/image';
-import { useState } from 'react';
-import Analytic from '@/components/dashboard/Analytic';
-const Dashboard = () => {
 
+import { useState } from 'react';
+import dynamic from 'next/dynamic';
+
+import Analytic from '@/components/dashboard/Analytic';
+const DynamicAnalytic = dynamic(() => import('@/components/dashboard/Analytic'), { ssr: false })
+const Dashboard = () => {
     return (
         <>
             <div className='flex flex-col-reverse lg:flex-row lg:justify-between items-center'>
@@ -87,57 +88,9 @@ const Dashboard = () => {
                     </div>
                 </div>
             </div>
-            <Analytic />
+            <DynamicAnalytic />
         </>
     )
 }
 
 export default Dashboard
-{/*
-<div className='bg-white rounded-md px-4 lg:px-8 pt-8 pb-4 grow flex flex-col justify-between gap-4'>
-<div className='flex flex-col lg:flex-row lg:justify-between lg:items-center'>
-                        <div className='flex justify-between gap-12'>
-                            <p className='text-xs w-[50px]'>Paket <br /> saat ini</p>
-                            <div className='flex items-center gap-2'>
-                                <p className='text-2xl font-bold font-lexend'>Trial</p>
-                                <div className='bg-black rounded-full px-2 text-white text-[10px]'>free</div>
-                            </div>
-                        </div>
-                        <div className='text-right'>
-                            <p className='font-normal text-[10px] text-[#777C88]'>Aktif sampai dengan</p>
-                            <p className='font-nunito font-bold text-[12px]'>Selasa, 29 Agustus 2023</p>
-                        </div>
-                    </div>
-                    <div className='flex justify-between items-center'>
-                        <div className='flex grow'>
-                            <p className='text-xs w-[50px] '>Devices</p>
-                            <div className=' gap-2 w-full max-w-[350px] ml-12'>
-                                <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
-                                    <div className="bg-red-600 h-2.5 rounded-full" style={{ width: '90%' }}></div>
-                                </div>
-                                <p className='text-[#777C88] text-[10px]'>8 dari 10 device yang tersedia</p>
-                            </div>
-                        </div>
-                        <div className='text-right hidden lg:block'>
-                            <p className='font-nunito font-bold text-[12px]'>Upgrade paket untuk meningkatkan<br /> batasan fitur yang ada</p>
-                        </div>
-                    </div>
-                    <div className='flex flex-col lg:flex-row lg:justify-between lg:items-center'>
-                        <div className='flex grow'>
-                            <p className='text-xs w-[50px] '>Contacts</p>
-                            <div className='ml-12 gap-2 w-full max-w-[350px]'>
-                                <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
-                                    <div className="bg-green-500 h-2.5 rounded-full" style={{ width: '15%' }}></div>
-                                </div>
-                                <p className='text-[#777C88] text-[10px]'>8 dari 10 device yang tersedia</p>
-                            </div>
-                        </div>
-                        <div className='flex justify-center lg:justify-normal mt-4 lg:mt-0 lg:items-end'>
-                            <div className='flex-none'>
-                                <Button text={'Upgrade Paket'} href={'/'} isPrimary={false} />
-                            </div>
-                        </div>
-                    </div>
-                    <div className=' flex items-end justify-center mt-2'>
-                        <Link href={'/dashboard'} className='text-[#B0B4C5] text-sm '>Tampilkan kapasitas fitur lainnya</Link>
-                    </div> */}

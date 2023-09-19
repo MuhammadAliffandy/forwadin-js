@@ -19,7 +19,8 @@ const config: Config = {
       },
       fontFamily: {
         'lexend': ['Lexend Deca', 'sans-serif'],
-        'nunito': ['Nunito Sans', 'sans-serif']
+        'nunito': ['Nunito Sans', 'sans-serif'],
+        'inter': ['Inter', 'sans-serif']
       }
     },
   },

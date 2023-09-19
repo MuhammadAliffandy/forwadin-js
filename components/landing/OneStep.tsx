@@ -1,4 +1,3 @@
-import Image from "next/image"
 import { useState } from "react"
 import { animated, useSpring, useTransition } from '@react-spring/web'
 interface ObjectContent {
@@ -80,13 +79,20 @@ const OneStep = () => {
             </div>
             <div className='flex flex-col lg:flex-row mt-20 gap-20 lg:gap-0'>
                 <div className='flex-none lg:basis-2/5 flex justify-center'>
-                    <Image
+                    <img
                         src='/assets/images/dummy.png'
                         width={221}
                         height={136}
                         alt='dummy'
                         className='object-contain   '
                     />
+                    {/* <Image
+                        src='/assets/images/dummy.png'
+                        width={221}
+                        height={136}
+                        alt='dummy'
+                        className='object-contain   '
+                    /> */}
                 </div>
                 <div className='lg:basis-3/5'>
                     <div className='hidden lg:flex gap-4'>
@@ -99,12 +105,18 @@ const OneStep = () => {
                             onClick={() => setIsDropdown(!isDropdown)}>
                             <p>{buttonContent.button1} </p>
                             <div className='flex items-center' >
-                                <Image
+                                <img
                                     src={'/assets/icons/caret-down.svg'}
                                     width={14}
                                     height={9}
                                     alt='caret down'
                                 />
+                                {/* <Image
+                                    src={'/assets/icons/caret-down.svg'}
+                                    width={14}
+                                    height={9}
+                                    alt='caret down'
+                                /> */}
                             </div>
                         </div>
                         <div className='relative'>

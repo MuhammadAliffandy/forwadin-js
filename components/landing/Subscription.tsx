@@ -1,10 +1,8 @@
 import { useState, useEffect } from "react"
-import Image from "next/image"
 
 const Subscription = () => {
     const [buttonActive, setButtonActive] = useState('monthly')
     const [selected, setSelected] = useState(1)
-    // const [alignment, setAlignment] = useState('web');
     const activeStyleButton = 'text-white-50 bg-primary'
     const inactiveStyleButton = 'text-primary bg-white'
     const subscriptionContent = [
@@ -61,28 +59,6 @@ const Subscription = () => {
             cardStyle: ''
         },
     ]
-    // const handleChange = (
-    //     event: React.MouseEvent<HTMLElement>,
-    //     newAlignment: string,
-    // ) => {
-    //     setAlignment(newAlignment);
-    // };
-    // const buttonStyle: any = {
-    //     padding: '8px 24px',
-    //     borderRadius: '9999px',
-    //     border: 'none',
-    //     // "&.Mui-selected, &.Mui-selected:hover": {
-    //     //     color: "white",
-    //     //     backgroundColor: '#3366FF !important'
-    //     // },
-    //     // '&:active': {
-    //     //     backgroundColor: '#3366FF !important'
-    //     // },
-    //     basis: '50%',
-    //     textTransform: 'none'
-    // }
-
-
     return (
         <div className='bg-neutral-75 my-20 py-20'>
             <div className='px-6 container mx-auto'>
@@ -120,10 +96,14 @@ const Subscription = () => {
                         <div className="mt-10 flex flex-col gap-4 px-8">
                             {data.features.map((feature, j) => (
                                 <div className="flex gap-2" key={i + '' + j}>
-                                    <Image src={'assets/icons/checklist.svg'}
+                                    <img src={'assets/icons/checklist.svg'}
                                         width={20}
                                         height={20}
                                         alt="checklist" />
+                                    {/* <Image src={'assets/icons/checklist.svg'}
+                                        width={20}
+                                        height={20}
+                                        alt="checklist" /> */}
                                     <p>{feature}</p>
                                 </div>
                             ))}

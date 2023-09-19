@@ -1,9 +1,8 @@
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js'
 import { Doughnut } from 'react-chartjs-2'
 import type { ChartData, ChartOptions } from 'chart.js';
-ChartJS.register(ArcElement, Tooltip, Legend)
+import { useState, useEffect } from 'react';
 const MessageReceivedChart = () => {
-    const messageData: ChartData = {
+    const messageData: ChartData<'doughnut'> = {
         labels: ['Total Pesan Keluar', 'Total Pesan Masuk', 'Total Pesan Gagal'],
         datasets: [{
             data: [24, 8, 12],
@@ -14,7 +13,7 @@ const MessageReceivedChart = () => {
             ],
         }]
     }
-    const chartOptions: ChartOptions = {
+    const dataOption: ChartOptions = {
         maintainAspectRatio: true,
         plugins: {
             legend: {
@@ -23,8 +22,11 @@ const MessageReceivedChart = () => {
             tooltip: {
                 callbacks: {
                     label: (context) => {
-                        let sum = 0
-                        context.dataset.data.map(data => sum += data)
+                        let sum: any = 0
+                        context.dataset.data.map(data => {
+                            if (data)
+                                sum += data
+                        })
                         let label = (context.parsed / sum * 100).toFixed(0) + '%'
                         return label;
                     }
@@ -32,9 +34,12 @@ const MessageReceivedChart = () => {
             },
         },
     }
+    useEffect(() => {
+
+    }, [])
     return (
         <>
-            <Doughnut width={'100%'} data={messageData} options={chartOptions} />
+            <Doughnut width={'100%'} data={messageData} options={dataOption} />
         </>
     )
 }

@@ -1,8 +1,33 @@
-
+'use client'
 import { useEffect, useState } from "react"
-import Image from "next/image"
 import MessageReceivedChart from "./chart/MessageReceivedChart"
 import MessageHourChart from "./chart/MessageHourChart"
+import zoomPlugin from 'chartjs-plugin-zoom';
+import {
+    Chart,
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    LineElement,
+    Title,
+    Tooltip,
+    Filler,
+    Legend,
+    ArcElement
+} from 'chart.js';
+
+Chart.register(
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    LineElement,
+    Title,
+    Tooltip,
+    Filler,
+    Legend,
+    zoomPlugin,
+    ArcElement
+);
 
 const Analytic = () => {
     const [deviceDropdown, setdeviceDropdown] = useState(false)
@@ -20,12 +45,18 @@ const Analytic = () => {
                                     <p className='font-semibold text-sm mt-[-2px]'>SMX18</p>
                                 </div>
                                 <div className='flex items-center'>
-                                    <Image
+                                    <img
                                         src={'/assets/icons/chevron-down.svg'}
                                         width={18}
                                         height={15}
                                         alt='caret down'
                                     />
+                                    {/* <Image
+                                        src={'/assets/icons/chevron-down.svg'}
+                                        width={18}
+                                        height={15}
+                                        alt='caret down'
+                                    /> */}
                                 </div>
                             </div>
                             {deviceDropdown && (
@@ -80,6 +111,7 @@ const Analytic = () => {
                     </div>
                     <div className='basis-1/2  flex justify-end'>
                         <div className="w-[150px]">
+
                             <MessageReceivedChart />
                         </div>
                     </div>

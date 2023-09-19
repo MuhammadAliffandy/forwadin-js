@@ -1,5 +1,5 @@
 import Accordion from "./utils/Accordion"
-import Image from "next/image"
+
 const FAQ = () => {
     const faqContent = [1, 2, 3, 4, 5]
     return (
@@ -9,12 +9,18 @@ const FAQ = () => {
                 <div className="flex gap-2">
                     <input type="text" placeholder="lorem" className="outline outline-[1px] outline-primary p-2 rounded-md flex-grow" />
                     <div className="bg-primary p-2 rounded-md flex-none flex items-center">
-                        <Image
+                        <img
                             src={'/assets/icons/search.png'}
                             width={18}
                             height={18}
                             alt="magnify"
                         />
+                        {/* <Image
+                            src={'/assets/icons/search.png'}
+                            width={18}
+                            height={18}
+                            alt="magnify"
+                        /> */}
                     </div>
                 </div>
                 <div className="bg-neutral-75 h-60 mt-8 rounded-sm p-4 overflow-x-auto flex flex-col gap-4">
