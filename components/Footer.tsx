@@ -1,5 +1,3 @@
-import Image from "next/image"
-import logoPic from '@/public/assets/icons/white_logo.svg'
 import forwardinPic from '@/public/assets/icons/white_forwardin.png'
 const Footer = () => {
     return (
@@ -8,16 +6,24 @@ const Footer = () => {
                 <div className="lg:basis-1/3">
                     <div className="flex gap-4 items-center">
                         <div>
-                            <Image
-                                src={logoPic}
+                            <img
+                                src={'/assets/icons/white_logo.svg'}
                                 alt="logo"
                             />
+                            {/* <Image
+                                src={logoPic}
+                                alt="logo"
+                            /> */}
                         </div>
                         <div>
-                            <Image
-                                src={forwardinPic}
+                            <img
+                                src={'/assets/icons/white_forwardin.png'}
                                 alt="forwardin"
                             />
+                            {/* <Image
+                                src={forwardinPic}
+                                alt="forwardin"
+                            /> */}
                         </div>
                     </div>
                     <p className="mt-12">FowardIt is your ultimate communication management solution. We empower businesses of all sizes with efficient message forwarding, streamlined contact management, and powerful campaign scheduling. Our mission is to simplify your communication processes, helping you engage with your audience effectively and effortlessly. Join us in transforming your communication game today!

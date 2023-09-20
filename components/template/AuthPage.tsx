@@ -1,6 +1,4 @@
-import Image from 'next/image'
-import forwardInPic from '@/public/assets/icons/forwardin_black.png'
-import logoPic from '@/public/assets/icons/logo.png'
+
 import CustomCarousel from '../packages/CustomCarousel'
 const AuthPage = ({ children }: { children: React.ReactNode }) => {
     return (
@@ -9,16 +7,24 @@ const AuthPage = ({ children }: { children: React.ReactNode }) => {
                 <div className="flex justify-between items-center px-8 relative xl:px-0 xl:w-[85%] mx-auto">
                     <div className="flex gap-4 items-center">
                         <div>
-                            <Image
-                                src={logoPic}
+                            <img
+                                src={'/assets/icons/logo.png'}
                                 alt="logo"
                             />
+                            {/* <Image
+                                src={logoPic}
+                                alt="logo"
+                            /> */}
                         </div>
                         <div className="">
-                            <Image
-                                src={forwardInPic}
+                            <img
+                                src={'/assets/icons/forwardin_black.png'}
                                 alt="forwardin"
                             />
+                            {/* <Image
+                                src={forwardInPic}
+                                alt="forwardin"
+                            /> */}
                         </div>
                     </div>
                 </div>

@@ -1,11 +1,6 @@
 'use client';
-import Image from "next/image"
-import logoPic from '@/public/assets/icons/logo.png'
-import dropdownPic from '@/public/assets/icons/dropdown.png'
-import forwardInPic from '@/public/assets/icons/forwardin_black.png'
 import Link from "next/link"
 import React, { useState, useEffect } from 'react'
-import { useTransition, animated } from "@react-spring/web";
 import Button from "./landing/Button";
 const Navbar = () => {
     const [isDropdown, setIsDropdown] = useState(false)
@@ -20,16 +15,24 @@ const Navbar = () => {
             <div className="flex justify-between items-center px-8 relative xl:px-0 xl:w-[85%] mx-auto">
                 <div className="flex gap-4 items-center">
                     <div>
-                        <Image
-                            src={logoPic}
+                        <img
+                            src={'/assets/icons/logo.png'}
                             alt="logo"
                         />
+                        {/* <Image
+                            src={logoPic}
+                            alt="logo"
+                        /> */}
                     </div>
                     <div className="hidden md:block">
-                        <Image
-                            src={forwardInPic}
+                        <img
+                            src={'/assets/icons/forwardin_black.png'}
                             alt="forwardin"
                         />
+                        {/* <Image
+                            src={forwardInPic}
+                            alt="forwardin"
+                        /> */}
                     </div>
                 </div>
                 <div className="hidden lg:flex xl:gap-10 gap-6 font-bold">
@@ -56,10 +59,14 @@ const Navbar = () => {
                 </div>
                 <div>
                     <div className="block lg:hidden" onClick={() => setIsDropdown(!isDropdown)}>
-                        <Image
-                            src={dropdownPic}
+                        <img
+                            src={'/assets/icons/dropdown.png'}
                             alt="dropdown"
                         />
+                        {/* <Image
+                            src={dropdownPic}
+                            alt="dropdown"
+                        /> */}
                     </div>
                     <div className="hidden lg:flex justify-end gap-4">
                         <Button text='Sign Up' href='/signup' isPrimary={false} />
@@ -94,12 +101,18 @@ const Navbar = () => {
                                 onClick={() => setSignInDropdown(!signInDropdown)}>
                                 <p>Sign in </p>
                                 <div className='flex items-center' >
-                                    <Image
+                                    <img
                                         src={'/assets/icons/caret-down.svg'}
                                         width={14}
                                         height={9}
                                         alt='caret down'
                                     />
+                                    {/* <Image
+                                        src={'/assets/icons/caret-down.svg'}
+                                        width={14}
+                                        height={9}
+                                        alt='caret down'
+                                    /> */}
                                 </div>
                             </div>
                         </div>

@@ -1,7 +1,5 @@
 'use client'
-
 import DeviceTable from "./DeviceTable"
-
 const Device = () => {
     return (
         <>
