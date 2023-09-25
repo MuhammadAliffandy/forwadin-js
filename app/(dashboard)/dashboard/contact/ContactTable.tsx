@@ -1,95 +1,96 @@
 'use client';
-import DeviceList from '@/components/dashboard/device/DeviceList';
-import QRModal from '@/components/dashboard/device/QRModal';
-import React, { useEffect, useRef, useState } from 'react';
+
+import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import AddDeviceModal from '@/components/dashboard/device/AddDeviceModal';
-import { DeviceCheckboxRef, DeviceData } from '@/utils/types'
-const DeviceTable = () => {
+import { ContactData } from '@/utils/types';
+
+const ContactTable = () => {
     const { push } = useRouter()
     const mainCheckboxRef = useRef<HTMLInputElement>(null)
-    const deviceCheckboxRef = useRef<DeviceCheckboxRef>({})
+    const contactRef = useRef<MultipleCheckboxRef>({})
     const [isChecked, setisChecked] = useState(false)
-    const [deviceData, setdeviceData] = useState<DeviceData[]>([
+    const [contactData, setcontactData] = useState<ContactData[]>([
         {
             id: 1,
-            name: 'RMX398',
-            apiKey: "6ncnNW1vR7CVgypJrYPNKmrKhml79lL6nuGR5zvDEF4dWb4R54Mhu3MMLMW8hgqc",
+            phone: "6281357995175",
+            firstName: 'Ihsanul',
+            lastName: 'Afkar',
+            gender: "Laki-laki",
+            email: 'ihsanulafkar@gmail.com',
+            honorific: 'Mr',
+            country: 'Indonesia',
+            birthDate: '10/10/2010',
             label: ['Personal', 'Realme', 'Aktif'],
-            status: 0,
-            checked: false
+            checked: false,
+            created_at: '11.9.2023, 2:43 PM'
         },
         {
             id: 2,
-            name: 'ASD123',
-            apiKey: "6ncnNW1vR7CVgypJrYPNKmrKhml79lL6nuGR5zvDEF4dWb4R54Mhu3MMLMW8hgqc",
-            label: ['Personal', 'Realme', 'Inaktif'],
-            status: 1,
-            checked: false
+            phone: "6281357995175",
+            firstName: 'Ihsanul',
+            lastName: 'Afkar',
+            gender: "Laki-laki",
+            email: 'ihsanulafkar@gmail.com',
+            honorific: 'Mr',
+            country: 'Indonesia',
+            birthDate: '10/10/2010',
+            label: ['Personal', 'Realme', 'Aktif'],
+            checked: false,
+            created_at: '11.9.2023, 2:43 PM'
         },
         {
             id: 3,
-            name: 'IOP098',
-            apiKey: "6ncnNW1vR7CVgypJrYPNKmrKhml79lL6nuGR5zvDEF4dWb4R54Mhu3MMLMW8hgqc",
-            label: ['Group', 'Xiaomi', 'Aktif'],
-            status: 1,
-            checked: false
-        },
-        {
-            id: 4,
-            name: 'LKJ949',
-            apiKey: "6ncnNW1vR7CVgypJrYPNKmrKhml79lL6nuGR5zvDEF4dWb4R54Mhu3MMLMW8hgqc",
+            phone: "6281357995175",
+            firstName: 'Ihsanul',
+            lastName: 'Afkar',
+            gender: "Laki-laki",
+            email: 'ihsanulafkar@gmail.com',
+            honorific: 'Mr',
+            country: 'Indonesia',
+            birthDate: '10/10/2010',
             label: ['Personal', 'Realme', 'Aktif'],
-            status: 1,
-            checked: false
+            checked: false,
+            created_at: '11.9.2023, 2:43 PM'
         },
     ])
     const [searchText, setsearchText] = useState('')
-    const [searchedDevice, setsearchedDevice] = useState<DeviceData[]>([])
-    const [openQrModal, setopenQrModal] = useState(false)
-    const [qrModalData, setqrModalData] = useState<DeviceData>()
+    const [searchedContact, setsearchedContact] = useState<ContactData[]>([])
     const [deviceModal, setdeviceModal] = useState(false)
     const handleCheckBoxClick = (e: React.FormEvent<HTMLInputElement>, id: number) => {
-        const newDeviceData = deviceData.map(obj => {
+        const newcontactData = contactData.map(obj => {
             return (obj.id === id ? { ...obj, checked: e.currentTarget.checked } : obj)
         })
-        setdeviceData(() => newDeviceData)
+        setcontactData(() => newcontactData)
     }
 
     const handleIndexCheckbox = (e: React.MouseEvent) => {
-        const currentDeviceData = (searchText ? searchedDevice : deviceData)
+        const currentcontactData = (searchText ? searchedContact : contactData)
         if (mainCheckboxRef.current && !mainCheckboxRef.current.checked) {
-            const newArray = currentDeviceData.map((obj, idx) => {
-                deviceCheckboxRef.current[`checkbox_${obj.id}`].checked = false
+            const newArray = currentcontactData.map((obj, idx) => {
+                contactRef.current[`checkbox_${obj.id}`].checked = false
                 return { ...obj, checked: false }
             })
             if (searchText)
-                setsearchedDevice(newArray)
+                setsearchedContact(newArray)
             else
-                setdeviceData(() => newArray)
+                setcontactData(() => newArray)
         } else {
-            const newArray = currentDeviceData.map((obj, idx) => {
-                deviceCheckboxRef.current[`checkbox_${obj.id}`].checked = true
+            const newArray = currentcontactData.map((obj, idx) => {
+                contactRef.current[`checkbox_${obj.id}`].checked = true
                 return { ...obj, checked: true }
             })
             if (searchText)
-                setsearchedDevice(() => newArray)
+                setsearchedContact(() => newArray)
             else
-                setdeviceData(() => newArray)
+                setcontactData(() => newArray)
         }
-    }
-    const handleOpenQRModal = (params: DeviceData) => {
-        const device = deviceData.find(obj => obj.name === params.name)
-        setqrModalData(device)
-        setopenQrModal(true)
-
     }
     const handleOpenDetailModal = (params: string) => {
         push('/dashboard/device/' + params)
     }
     const filterDevice = (text: string) => {
         const regex = new RegExp(text, 'i')
-        return deviceData.filter(item => {
+        return contactData.filter(item => {
             if (regex.test(item.name))
                 return item
             const findLabel = item.label.find(label => regex.test(label))
@@ -105,7 +106,7 @@ const DeviceTable = () => {
     }
     useEffect(() => {
         if (mainCheckboxRef.current) {
-            const checkObject = deviceData.find(obj => obj.checked === true)
+            const checkObject = contactData.find(obj => obj.checked === true)
             if (checkObject) {
                 mainCheckboxRef.current.checked = true
                 setisChecked(true)
@@ -115,10 +116,10 @@ const DeviceTable = () => {
                 setisChecked(false)
             }
         }
-    }, [deviceData])
+    }, [contactData])
     useEffect(() => {
         if (mainCheckboxRef.current) {
-            const checkObject = searchedDevice.find(obj => obj.checked === true)
+            const checkObject = searchedContact.find(obj => obj.checked === true)
             if (checkObject) {
                 mainCheckboxRef.current.checked = true
                 setisChecked(true)
@@ -128,17 +129,16 @@ const DeviceTable = () => {
                 setisChecked(false)
             }
         }
-    }, [searchedDevice])
+    }, [searchedContact])
 
     useEffect(() => {
         const searchResult = filterDevice(searchText)
-        setsearchedDevice(searchResult)
+        setsearchedContact(searchResult)
     }, [searchText])
 
     return (
         <>
-            <QRModal openModal={openQrModal} setopenModal={setopenQrModal} data={qrModalData} />
-            <AddDeviceModal openModal={deviceModal} setopenModal={setdeviceModal} />
+
             <div className="mt-8 p-4 bg-white rounded-md">
                 <div className="flex sm:flex-row flex-col gap-2 justify-between">
                     <div className="basis-1/2">
@@ -175,21 +175,8 @@ const DeviceTable = () => {
                     </thead>
                     <tbody className='bg-white'>
                         {searchText ? (
-                            <DeviceList
-                                deviceData={searchedDevice}
-                                deviceCheckboxRef={deviceCheckboxRef}
-                                handleCheckBoxClick={handleCheckBoxClick}
-                                handleOpenQRModal={handleOpenQRModal}
-                                handleOpenDetailModal={handleOpenDetailModal}
-                            />
-                        ) : (
-                            <DeviceList
-                                deviceData={deviceData}
-                                deviceCheckboxRef={deviceCheckboxRef}
-                                handleCheckBoxClick={handleCheckBoxClick}
-                                handleOpenQRModal={handleOpenQRModal}
-                                handleOpenDetailModal={handleOpenDetailModal}
-                            />
+                            <></>
+                        ) : (<></>
                         )}
                     </tbody>
                 </table>
@@ -198,4 +185,4 @@ const DeviceTable = () => {
     )
 }
 
-export default DeviceTable
+export default ContactTable

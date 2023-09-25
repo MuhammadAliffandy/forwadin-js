@@ -6,8 +6,11 @@ interface UserRegisterData {
     confirmPassword: string,
     otp?: string
 }
-interface DeviceCheckboxRef {
+interface MultipleCheckboxRef {
     [key: string]: { checked: boolean }
+}
+interface CheckboxRef {
+    checked: boolean
 }
 interface DeviceData {
     id: number,
@@ -21,4 +24,24 @@ interface Label {
     name: string,
     active: boolean
 }
-export type { UserRegisterData, DeviceCheckboxRef, DeviceData, Label }
+interface CountryCode {
+    name: string,
+    dial_code: string,
+    code: string,
+    flag: string
+}
+interface ContactData {
+    id: number,
+    phone: string,
+    firstName: string,
+    lastName: string,
+    gender: string,
+    honorific?: string,
+    country?: string,
+    birthDate?: string,
+    label: string[],
+    email: string,
+    created_at: string,
+    checked: boolean
+}
+export type { UserRegisterData, DeviceCheckboxRef, CheckboxRef, DeviceData, Label, CountryCode, ContactData }

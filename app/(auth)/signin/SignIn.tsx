@@ -3,16 +3,22 @@ import { useState, useEffect } from 'react'
 import { animated, useSpring } from '@react-spring/web'
 import Link from 'next/link'
 import { useForm, useController } from "react-hook-form"
+import { signIn } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+import { PulseLoader } from 'react-spinners';
+import { toast } from 'react-toastify';
 interface UserLoginData {
     userEmail: string,
     password: string
 }
 const SignIn = () => {
+    const { push } = useRouter()
     const [loginData, setloginData] = useState({
         userEmail: "",
         password: ""
     })
-    const { handleSubmit, register, formState: { errors } } = useForm<UserLoginData>()
+    const [isLoading, setisLoading] = useState(false)
+    const { handleSubmit, setError, setValue, register, formState: { errors } } = useForm<UserLoginData>()
 
     const componentSpring = useSpring({
         from: {
@@ -25,7 +31,26 @@ const SignIn = () => {
         },
     })
     const onSubmit = async (formData: UserLoginData) => {
-        alert(JSON.stringify(formData))
+        setisLoading(true)
+        const login = await signIn('credentials', {
+            identifier: formData.userEmail,
+            password: formData.password,
+            redirect: false
+        })
+        if (!login?.error) {
+            push('/dashboard')
+        } else {
+            setError('userEmail', {
+                type: 'custom',
+                message: 'invalid credentials'
+            })
+            setError('password', {
+                type: 'custom',
+                message: ''
+            })
+            setValue('password', '')
+        }
+        setisLoading(false)
     }
     return (
         <animated.div style={componentSpring} className='bg-white md:shadow-xl px-8 py-10 rounded-xl mx-auto max-w-lg lg:max-h-[80vh] overflow-y-scroll'>
@@ -57,7 +82,12 @@ const SignIn = () => {
                 </div>
                 <div className='flex flex-col gap-4'>
                     <div>
-                        <button type="submit" className='p-4  rounded-md w-full bg-primary text-white'>Sign In</button>
+                        <button type="submit" className='p-4  rounded-md w-full bg-primary text-white border border-primary' disabled={isLoading ? true : false} >
+                            {isLoading ? (<PulseLoader size={10} color="#F3F5F8" />)
+                                : (<p>
+                                    Sign Up
+                                </p>)}
+                        </button>
                     </div>
                     <div className='flex justify-center items-center gap-6 md:px-6'>
                         <hr className='border border-[#B0B4C5] h-px basis-1/3' />

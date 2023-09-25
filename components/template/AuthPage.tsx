@@ -34,7 +34,7 @@ const AuthPage = ({ children }: { children: React.ReactNode }) => {
                         <CustomCarousel />
                     </div>
                     <div className='lg:basis-1/2 w-full'>
-                        <div className='bg-white md:shadow-xl px-8 py-10 rounded-xl mx-auto max-w-lg'>
+                        <div className='md:shadow-xl px-8 py-10 rounded-xl mx-auto max-w-lg'>
                             {children}
                         </div>
                     </div>

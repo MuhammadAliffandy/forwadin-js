@@ -37,7 +37,7 @@ const CustomCarousel = () => {
                     </div>
                     <div className=''>
                         <p className='font-lexend text-3xl font-bold '>{i.title}</p>
-                        <p className='mt-4'>{i.body}</p>
+                        <p className='mt-4 text-sm'>{i.body}</p>
                     </div>
                 </div>
             ))}
