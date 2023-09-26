@@ -16,7 +16,7 @@ const AddContactModal = ({ openModal, setopenModal }: AddContactModalProps) => {
         { name: 'asd3', active: true },
         { name: 'asd4', active: false }
     ])
-    const onSubmit = async (formData) => {
+    const onSubmit = async (formData: ContactData) => {
         alert('y')
     }
     return (

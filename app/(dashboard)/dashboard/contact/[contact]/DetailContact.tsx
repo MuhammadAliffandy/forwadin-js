@@ -1,6 +1,6 @@
 import React from 'react'
 
-const DetailContact = ({ contact }) => {
+const DetailContact = ({ contact }: { contact: string }) => {
     return (
         <div>{contact}</div>
     )
