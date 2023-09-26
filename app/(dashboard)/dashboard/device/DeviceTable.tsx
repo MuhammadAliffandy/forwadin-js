@@ -4,13 +4,12 @@ import QRModal from '@/components/dashboard/device/QRModal';
 import React, { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import AddDeviceModal from '@/components/dashboard/device/AddDeviceModal';
-import { DeviceCheckboxRef, DeviceData } from '@/utils/types'
+import { MultipleCheckboxRef, DeviceData } from '@/utils/types'
 const DeviceTable = () => {
     const { push } = useRouter()
     const mainCheckboxRef = useRef<HTMLInputElement>(null)
-    const deviceCheckboxRef = useRef<DeviceCheckboxRef>({})
+    const deviceCheckboxRef = useRef<MultipleCheckboxRef>({})
     const [isChecked, setisChecked] = useState(false)
-    const [searchTimeout, setsearchTimeout] = useState(null)
     const [deviceData, setdeviceData] = useState<DeviceData[]>([
         {
             id: 1,

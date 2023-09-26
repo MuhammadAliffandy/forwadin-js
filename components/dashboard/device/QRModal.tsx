@@ -1,8 +1,8 @@
 'use client';
 import { DeviceData } from '@/utils/types';
-import React, { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
 import { toast } from 'react-toastify';
-import ModalTemplate from './ModalTemplate';
+import ModalTemplate from '../../template/ModalTemplate';
 interface QRModalProps {
     openModal: boolean,
     setopenModal: Dispatch<SetStateAction<boolean>>,

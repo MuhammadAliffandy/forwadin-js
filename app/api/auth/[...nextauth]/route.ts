@@ -1,20 +1,46 @@
-import NextAuth from "next-auth/next";
+import NextAuth, { DefaultSession } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import type { NextAuthOptions } from 'next-auth'
+declare module "next-auth" {
+    interface User {
+        id: string,
+        token: string
+    }
 
-const handler = NextAuth({
+    interface Session extends DefaultSession {
+        user?: User;
+    }
+}
+export const authConfig: NextAuthOptions = {
+    session: {
+        strategy: "jwt",
+        maxAge: 30 * 24 * 60
+    },
     providers: [
         CredentialsProvider({
             name: "Credentials",
-            credentials: {},
-            async authorize(credentials) {
-                // console.log(credentials)
+            credentials: {
+                identifier: {},
+            },
+            authorize: async (credentials: any) => {
                 // TODO: Perform API call to backend
-
-                const user = null
-                if (user) {
+                const result = await fetch(process.env.BACKEND_URL + '/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ identifier: credentials.identifier, password: credentials.password })
+                })
+                const resultData = await result.json()
+                const user = {
+                    id: resultData.id,
+                    token: resultData.accessToken,
+                    refreshToken: resultData.refreshToken
+                }
+                if (user && result.ok) {
                     return user
                 } else {
-                    throw new Error('Error Message')
+                    return null
                 }
             }
         })
@@ -22,6 +48,19 @@ const handler = NextAuth({
     pages: {
         signIn: '/signin',
     },
+    callbacks: {
+        async session({ session, token }: any) {
+            session.user = token.user;
+            return session;
+        },
+        async jwt({ token, user }) {
+            if (user) {
+                token.user = user;
+            }
+            return token;
+        },
+    },
     secret: process.env.NEXTAUTH_SECRET
-})
+}
+const handler = NextAuth(authConfig)
 export { handler as GET, handler as POST }

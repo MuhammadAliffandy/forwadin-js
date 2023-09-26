@@ -2,6 +2,7 @@ import './globals.css'
 import type { Metadata } from 'next'
 import { ToastContainer, toast } from "react-toastify"
 import 'react-toastify/dist/ReactToastify.css';
+import Provider from '@/components/Provider';
 
 export const metadata: Metadata = {
   title: 'ForwardIn | Home',
@@ -21,17 +22,19 @@ export default function RootLayout({
         <link rel="icon" type="image/png" href="/favicon.ico" />
       </head>
       <body className={`font-inter text-neutral-900 font-medium overflow-x-hidden`}>
-        <ToastContainer position="top-right"
-          autoClose={5000}
-          hideProgressBar
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-          theme="light" />
-        {children}
+        <Provider>
+          <ToastContainer position="top-right"
+            autoClose={3000}
+            hideProgressBar
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            theme="light" />
+          {children}
+        </Provider>
       </body>
     </html>
   )

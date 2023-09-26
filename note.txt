@@ -16,4 +16,7 @@ npm install --save chart.js react-chartjs-2
 npm install chartjs-plugin-zoom
 npm install axios
 npm i sharp
+npm install country-list-with-dial-code-and-flag
+npm i google-libphonenumber
+npm i --save-dev @types/google-libphonenumber
 ```

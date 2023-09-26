@@ -74,7 +74,7 @@ const Subscription = () => {
             <div className="flex overflow-x-hidden gap-12 flex-wrap px-2 justify-normal md:justify-center pb-12">
                 {/* card */}
                 {subscriptionContent.map((data, i) => (
-                    <div className={"relative  max-w-sm flex-none "} key={i}>
+                    <div className={"relative  max-w-xs flex-none "} key={i}>
                         <div className={(selected === i && 'bg-white shadow-xl') + ' px-8 py-16 rounded-xl '} onMouseEnter={() => setSelected(i)}>
                             {data.isFavorite && (
                                 <div className="absolute top-6 w-full flex">
@@ -100,10 +100,7 @@ const Subscription = () => {
                                         width={20}
                                         height={20}
                                         alt="checklist" />
-                                    {/* <Image src={'assets/icons/checklist.svg'}
-                                        width={20}
-                                        height={20}
-                                        alt="checklist" /> */}
+
                                     <p>{feature}</p>
                                 </div>
                             ))}

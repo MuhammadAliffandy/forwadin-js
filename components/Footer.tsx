@@ -1,4 +1,3 @@
-import forwardinPic from '@/public/assets/icons/white_forwardin.png'
 const Footer = () => {
     return (
         <footer className="bg-primary w-full py-16">

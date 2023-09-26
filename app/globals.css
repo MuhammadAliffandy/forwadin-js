@@ -21,6 +21,16 @@ div:not(.allowed-scroll)::-webkit-scrollbar {
     /* Safari and Chrome */
 }
 
+.allowed-scroll::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+.allowed-scroll::-webkit-scrollbar-thumb {
+    background-color: #3366FF;
+    border-radius: 9999px;
+}
+
 /* React Toastify color */
 :root {
     --toastify-color-light: #FAFBFF !important;

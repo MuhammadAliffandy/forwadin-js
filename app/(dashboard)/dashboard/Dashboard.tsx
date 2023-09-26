@@ -5,8 +5,6 @@ import Link from 'next/link'
 
 import { useState } from 'react';
 import dynamic from 'next/dynamic';
-
-import Analytic from '@/components/dashboard/Analytic';
 const DynamicAnalytic = dynamic(() => import('@/components/dashboard/Analytic'), { ssr: false })
 const Dashboard = () => {
     return (
