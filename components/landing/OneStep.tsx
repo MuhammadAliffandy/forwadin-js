@@ -12,10 +12,6 @@ const OneStep = () => {
         button2: "Komersial dan Penjualan",
         button3: "Organisasi Sosial",
     })
-    // const springStyle = useSpring({
-    //     from: { opacity: "0" },
-    //     to: { opacity: "1" }
-    // })
     const springStyle = useTransition(buttonActive, {
         from: { opacity: "0" },
         enter: { opacity: "1" }

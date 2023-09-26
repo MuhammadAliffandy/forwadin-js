@@ -100,10 +100,7 @@ const Subscription = () => {
                                         width={20}
                                         height={20}
                                         alt="checklist" />
-                                    {/* <Image src={'assets/icons/checklist.svg'}
-                                        width={20}
-                                        height={20}
-                                        alt="checklist" /> */}
+
                                     <p>{feature}</p>
                                 </div>
                             ))}

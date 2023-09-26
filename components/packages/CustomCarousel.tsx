@@ -1,7 +1,6 @@
 'use client'
 import { Carousel } from 'flowbite-react'
 const CustomCarousel = () => {
-    const iter = [1, 2, 3, 4, 5]
     const carouselData = [
         {
             id: 1,
@@ -32,8 +31,6 @@ const CustomCarousel = () => {
                     <div className='flex justify-center'>
                         <img
                             src={'/assets/images/' + i.img}
-                            // width={441}
-                            // height={272}
                             alt='dummy'
                             className='flex-none'
                         />

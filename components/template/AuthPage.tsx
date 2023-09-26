@@ -1,4 +1,3 @@
-
 import CustomCarousel from '../packages/CustomCarousel'
 const AuthPage = ({ children }: { children: React.ReactNode }) => {
     return (
