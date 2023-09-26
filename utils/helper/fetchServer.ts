@@ -4,12 +4,12 @@ import { NextRequest, NextResponse } from "next/server"
 import type { NextApiRequest, NextApiResponse } from 'next'
 interface FetchParams {
     url: string,
-    body: any,
+    body?: any,
     method: string
 }
 // type FetchServer = (request:NextRequest, response:NextResponse, ) => void
 const fetchServer = async (request: NextRequest, response: NextResponse, { url, body, method }: FetchParams) => {
-    const session = await getServerSession(
+    const session: any = await getServerSession(
         request as unknown as NextApiRequest,
         {
             ...response,
@@ -21,13 +21,15 @@ const fetchServer = async (request: NextRequest, response: NextResponse, { url, 
     if (!session?.user) {
         return null
     }
-    const result = await fetch(process.env.BACKEND_URL + url, {
+    const fetchConfig = {
         method: method,
         headers: {
-            'Authorization': 'Bearer ' + session?.user.token
+            'Authorization': 'Bearer ' + session?.user.token,
+            'Content-Type': 'application/json'
         },
         body: JSON.stringify(body)
-    })
+    }
+    const result = await fetch(process.env.BACKEND_URL + url, fetchConfig)
     return result
 
 }

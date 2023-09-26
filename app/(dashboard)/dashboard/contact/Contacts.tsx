@@ -13,7 +13,7 @@ const Contacts = () => {
                     </div>
                 </div>
             </div>
-            {/* <ContactTable /> */}
+            <ContactTable />
         </>
     )
 }

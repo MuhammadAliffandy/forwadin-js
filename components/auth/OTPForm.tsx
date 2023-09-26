@@ -5,28 +5,22 @@ import { useForm } from "react-hook-form";
 import { Dispatch, SetStateAction } from "react";
 import { useSession } from "next-auth/react";
 import { toast } from "react-toastify";
+import { PulseLoader } from "react-spinners";
+import ButtonSubmit from "../form/ButtonSubmit";
 interface MultipleInputRef {
     [key: string]: HTMLInputElement
 }
 const OTPForm = ({ setCurrentStep }: { setCurrentStep: Dispatch<SetStateAction<string>> }) => {
     const { data: session } = useSession()
+    const [isLoading, setisLoading] = useState(false)
     const multipleInputRef = useRef<MultipleInputRef>({})
-    const [formData, setFormData] = useState({
-        otp1: null,
-        otp2: null,
-        otp3: null,
-        otp4: null,
-    })
     const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         const [fieldName, index] = name.split('_')
         let current = parseInt(index, 10)
-        if (current <= 3)
+
+        if (current <= 5)
             if (value) {
-                // const nextInput: HTMLElement | null = document.querySelector(
-                //     `input[name=${fieldName}_${current + 1}]`
-                // );
-                // nextInput?.focus()
                 multipleInputRef.current[`otp_${current + 1}`].focus()
             }
     }
@@ -35,23 +29,46 @@ const OTPForm = ({ setCurrentStep }: { setCurrentStep: Dispatch<SetStateAction<s
             multipleInputRef.current[`otp_${id}`] = element
         }
     }
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
+        setisLoading(true)
         e.preventDefault()
-        // setCurrentStep('success')
-        //  TODO
+        const otp = multipleInputRef.current['otp_1'].value.toString() +
+            multipleInputRef.current['otp_2'].value.toString() +
+            multipleInputRef.current['otp_3'].value.toString() +
+            multipleInputRef.current['otp_4'].value.toString() +
+            multipleInputRef.current['otp_5'].value.toString() +
+            multipleInputRef.current['otp_6'].value.toString()
+        try {
+            const result = await fetch('/api/auth/otp', {
+                method: 'POST',
+                body: JSON.stringify({ token: otp })
+            })
+            const body = await result.json()
+            if (result.ok) {
+                setCurrentStep('success')
+            }
+            else
+                toast.error(body.message)
+        } catch (error) {
+            toast.error('Server Error')
+        }
+        setisLoading(false)
     }
     const sendOTP = async () => {
         try {
             const result = await fetch('/api/auth/otp', {
-                method: 'POST',
+                method: 'GET',
             })
             const body = await result.json()
             if (result.ok)
-                alert(body.message)
+                toast.success('otp sent! please check your email')
             else
-                alert(body.message)
+                toast.error(body.message)
         } catch (error) {
             toast.error('Server Error')
+        }
+        for (let i = 1; i <= 6; i++) {
+            multipleInputRef.current[`otp_${i}`].value = ''
         }
     }
     useEffect(() => {
@@ -65,26 +82,32 @@ const OTPForm = ({ setCurrentStep }: { setCurrentStep: Dispatch<SetStateAction<s
                 <p className='w-[80%] mx-auto'>Masukkan kode verifikasi yang telah dikirimkan ke email</p>
             </div>
             <div className="flex flex-row items-center justify-between mx-auto w-full max-w-xs">
-                <div className="w-16 h-16 ">
-                    <input ref={element => handleRefChange(element, 1)} className="w-full h-full flex flex-col items-center justify-center text-center px-5 outline-none rounded-xl border border-gray-200 text-lg bg-white focus:bg-gray-50 focus:ring-1 ring-blue-700" type="text" name="otp_1" id="otp_1" maxLength={1} onChange={handleInputChange} />
+                <div className="w-12 h-12 ">
+                    <input ref={element => handleRefChange(element, 1)} className="w-full h-full flex flex-col items-center justify-center text-center  outline-none rounded-xl border border-gray-200 text-lg bg-white focus:bg-gray-50 focus:ring-1 ring-blue-700" type="text" name="otp_1" id="otp_1" maxLength={1} onChange={handleInputChange} />
                 </div>
-                <div className="w-16 h-16 ">
-                    <input ref={element => handleRefChange(element, 2)} className="w-full h-full flex flex-col items-center justify-center text-center px-5 outline-none rounded-xl border border-gray-200 text-lg bg-white focus:bg-gray-50 focus:ring-1 ring-blue-700" type="text" name="otp_2" id="otp_2" maxLength={1} onChange={handleInputChange} />
+                <div className="w-12 h-12 ">
+                    <input ref={element => handleRefChange(element, 2)} className="w-full h-full flex flex-col items-center justify-center text-center  outline-none rounded-xl border border-gray-200 text-lg bg-white focus:bg-gray-50 focus:ring-1 ring-blue-700" type="text" name="otp_2" id="otp_2" maxLength={1} onChange={handleInputChange} />
                 </div>
-                <div className="w-16 h-16 ">
-                    <input ref={element => handleRefChange(element, 3)} className="w-full h-full flex flex-col items-center justify-center text-center px-5 outline-none rounded-xl border border-gray-200 text-lg bg-white focus:bg-gray-50 focus:ring-1 ring-blue-700" type="text" name="otp_3" id="otp_3" maxLength={1} onChange={handleInputChange} />
+                <div className="w-12 h-12 ">
+                    <input ref={element => handleRefChange(element, 3)} className="w-full h-full flex flex-col items-center justify-center text-center  outline-none rounded-xl border border-gray-200 text-lg bg-white focus:bg-gray-50 focus:ring-1 ring-blue-700" type="text" name="otp_3" id="otp_3" maxLength={1} onChange={handleInputChange} />
                 </div>
-                <div className="w-16 h-16 ">
-                    <input ref={element => handleRefChange(element, 4)} className="w-full h-full flex flex-col items-center justify-center text-center px-5 outline-none rounded-xl border border-gray-200 text-lg bg-white focus:bg-gray-50 focus:ring-1 ring-blue-700" type="text" name="otp_4" id="otp_4" maxLength={1} onChange={handleInputChange} />
+                <div className="w-12 h-12 ">
+                    <input ref={element => handleRefChange(element, 4)} className="w-full h-full flex flex-col items-center justify-center text-center  outline-none rounded-xl border border-gray-200 text-lg bg-white focus:bg-gray-50 focus:ring-1 ring-blue-700" type="text" name="otp_4" id="otp_4" maxLength={1} onChange={handleInputChange} />
+                </div>
+                <div className="w-12 h-12 ">
+                    <input ref={element => handleRefChange(element, 5)} className="w-full h-full flex flex-col items-center justify-center text-center  outline-none rounded-xl border border-gray-200 text-lg bg-white focus:bg-gray-50 focus:ring-1 ring-blue-700" type="text" name="otp_5" id="otp_4" maxLength={1} onChange={handleInputChange} />
+                </div>
+                <div className="w-12 h-12 ">
+                    <input ref={element => handleRefChange(element, 6)} className="w-full h-full flex flex-col items-center justify-center text-center outline-none rounded-xl border border-gray-200 text-lg bg-white focus:bg-gray-50 focus:ring-1 ring-blue-700" type="text" name="otp_6" id="otp_4" maxLength={1} onChange={handleInputChange} />
                 </div>
             </div>
             <div className='flex flex-col gap-4'>
                 <div>
-                    <button type="submit" className='p-4  rounded-md w-full bg-primary text-white border border-primary'>Submit</button>
+                    <ButtonSubmit isLoading={isLoading} text='Submit' />
                 </div>
             </div>
             <div className="text-center ">
-                <div>Kode tidak terkirim? <div onClick={sendOTP} className="text-primary">Coba Lagi</div></div>
+                <div>Kode tidak terkirim? <div onClick={sendOTP} className="text-primary hover:cursor-pointer">Coba Lagi</div></div>
             </div>
         </form>
     )

@@ -1,9 +1,8 @@
-import { DeviceCheckboxRef, DeviceData } from "@/utils/types"
-import React from "react"
+import { MultipleCheckboxRef, DeviceData } from "@/utils/types"
 interface DeviceListProps {
     deviceData: DeviceData[],
     handleCheckBoxClick: (event: React.FormEvent<HTMLInputElement>, id: number) => void,
-    deviceCheckboxRef: React.MutableRefObject<DeviceCheckboxRef>,
+    deviceCheckboxRef: React.MutableRefObject<MultipleCheckboxRef>,
     handleOpenQRModal: (item: DeviceData) => void,
     handleOpenDetailModal: (params: string) => void
 }

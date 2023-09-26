@@ -2,7 +2,7 @@ import React, { Dispatch, SetStateAction, useState } from 'react'
 import { PulseLoader } from 'react-spinners'
 import { toast } from 'react-toastify'
 import MultipleInputLabel from '../MultipleInputLabel'
-import ModalTemplate from './ModalTemplate'
+import ModalTemplate from '../../template/ModalTemplate'
 
 const AddDeviceModal = (
     { openModal, setopenModal }:

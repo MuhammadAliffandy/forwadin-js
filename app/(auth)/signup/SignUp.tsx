@@ -36,24 +36,23 @@ const SignUp = () => {
     return (
         <>
             {componentTransition((style, item) => item === "register" && (
-                <animated.div style={style} className='bg-white md:shadow-xl px-8 py-10 rounded-xl mx-auto max-w-lg lg:max-h-[80vh] overflow-y-scroll'>
+                <animated.div style={style} className='bg-white md:shadow-xl px-8 py-10 rounded-xl mx-auto max-w-md lg:max-h-[80vh] overflow-y-scroll'>
                     <DynamicRegisterForm setCurrentStep={setCurrentStep} setUserData={setUserData} userData={userData} />
                 </animated.div>
             ))}
             {componentTransition((style, item) => item === "policy" && (
-                <animated.div style={style} className='bg-white md:shadow-xl px-8 py-10 rounded-xl mx-auto max-w-lg lg:max-h-[80vh] overflow-y-scroll'>
-                    {/* <DynamicRegisterForm setCurrentStep={setCurrentStep} setUserData={setUserData} userData={userData} /> */}
+                <animated.div style={style} className='bg-white md:shadow-xl px-8 py-10 rounded-xl mx-auto max-w-md lg:max-h-[80vh] overflow-y-scroll'>
                     <PolicyForm setCurrentStep={setCurrentStep} setUserData={setUserData} userData={userData} />
                 </animated.div>
             ))}
 
             {componentTransition((style, item) => item === "otp" && (
-                <animated.div style={style} className='bg-white md:shadow-xl px-8 py-10 rounded-xl mx-auto max-w-lg lg:max-h-[80vh] overflow-y-scroll'>
+                <animated.div style={style} className='bg-white md:shadow-xl px-8 py-10 rounded-xl mx-auto max-w-md lg:max-h-[80vh] overflow-y-scroll'>
                     <OTPForm setCurrentStep={setCurrentStep} />
                 </animated.div>
             ))}
             {componentTransition((style, item) => item === "success" && (
-                <animated.div style={style} className='bg-white md:shadow-xl px-8 py-10 rounded-xl mx-auto max-w-lg lg:max-h-[80vh] overflow-y-scroll'>
+                <animated.div style={style} className='bg-white md:shadow-xl px-8 py-10 rounded-xl mx-auto max-w-md lg:max-h-[80vh] overflow-y-scroll'>
                     <SuccessForm />
                 </animated.div>
             ))}

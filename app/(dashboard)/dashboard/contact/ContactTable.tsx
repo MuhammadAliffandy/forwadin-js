@@ -2,12 +2,14 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ContactData } from '@/utils/types';
+import { ContactData, MultipleCheckboxRef } from '@/utils/types';
+import ContactList from './ContactList';
+import AddContactModal from '@/components/dashboard/contact/AddContactModal';
 
 const ContactTable = () => {
     const { push } = useRouter()
     const mainCheckboxRef = useRef<HTMLInputElement>(null)
-    const contactRef = useRef<MultipleCheckboxRef>({})
+    const contactCheckboxRef = useRef<MultipleCheckboxRef>({})
     const [isChecked, setisChecked] = useState(false)
     const [contactData, setcontactData] = useState<ContactData[]>([
         {
@@ -55,7 +57,7 @@ const ContactTable = () => {
     ])
     const [searchText, setsearchText] = useState('')
     const [searchedContact, setsearchedContact] = useState<ContactData[]>([])
-    const [deviceModal, setdeviceModal] = useState(false)
+    const [addContactModal, setaddContactModal] = useState(true)
     const handleCheckBoxClick = (e: React.FormEvent<HTMLInputElement>, id: number) => {
         const newcontactData = contactData.map(obj => {
             return (obj.id === id ? { ...obj, checked: e.currentTarget.checked } : obj)
@@ -67,7 +69,7 @@ const ContactTable = () => {
         const currentcontactData = (searchText ? searchedContact : contactData)
         if (mainCheckboxRef.current && !mainCheckboxRef.current.checked) {
             const newArray = currentcontactData.map((obj, idx) => {
-                contactRef.current[`checkbox_${obj.id}`].checked = false
+                contactCheckboxRef.current[`checkbox_${obj.id}`].checked = false
                 return { ...obj, checked: false }
             })
             if (searchText)
@@ -76,7 +78,7 @@ const ContactTable = () => {
                 setcontactData(() => newArray)
         } else {
             const newArray = currentcontactData.map((obj, idx) => {
-                contactRef.current[`checkbox_${obj.id}`].checked = true
+                contactCheckboxRef.current[`checkbox_${obj.id}`].checked = true
                 return { ...obj, checked: true }
             })
             if (searchText)
@@ -86,12 +88,12 @@ const ContactTable = () => {
         }
     }
     const handleOpenDetailModal = (params: string) => {
-        push('/dashboard/device/' + params)
+        push('/dashboard/contact/' + params)
     }
     const filterDevice = (text: string) => {
         const regex = new RegExp(text, 'i')
         return contactData.filter(item => {
-            if (regex.test(item.name))
+            if (regex.test(item.firstName) || regex.test(item.lastName) || regex.test(item.phone))
                 return item
             const findLabel = item.label.find(label => regex.test(label))
             if (findLabel)
@@ -138,7 +140,7 @@ const ContactTable = () => {
 
     return (
         <>
-
+            <AddContactModal openModal={addContactModal} setopenModal={setaddContactModal} />
             <div className="mt-8 p-4 bg-white rounded-md">
                 <div className="flex sm:flex-row flex-col gap-2 justify-between">
                     <div className="basis-1/2">
@@ -147,15 +149,20 @@ const ContactTable = () => {
                             onChange={handleSearch}
                         />
                     </div>
-                    {isChecked ? (
-                        <div className="bg-danger rounded-md px-6 text-white text-center items-center flex hover:cursor-pointer justify-center p-2">
-                            Hapus
+                    <div className='flex justify-end gap-2'>
+                        <div className='bg-white rounded-md px-6 text-center items-center border border-[#B0B4C5] flex hover:cursor-pointer justify-center p-2'>
+                            Import Kontak
                         </div>
-                    ) : (
-                        <div onClick={() => setdeviceModal(true)} className="bg-primary rounded-md px-6 text-white text-center items-center flex hover:cursor-pointer justify-center p-2">
-                            Tambah Device
-                        </div>
-                    )}
+                        {isChecked ? (
+                            <div className="bg-danger rounded-md px-6 text-white text-center items-center flex hover:cursor-pointer justify-center p-2">
+                                Hapus
+                            </div>
+                        ) : (
+                            <div onClick={() => setaddContactModal(true)} className="bg-primary rounded-md px-6 text-white text-center items-center flex hover:cursor-pointer justify-center p-2">
+                                Tambah Kontak
+                            </div>
+                        )}
+                    </div>
                 </div>
             </div>
             <div className='overflow-x-scroll allowed-scroll'>
@@ -166,17 +173,29 @@ const ContactTable = () => {
                                 <input ref={mainCheckboxRef} type="checkbox" name="main_checkbox" id="main_checkbox" className='rounded-sm focus:ring-transparent' onClick={handleIndexCheckbox} />
                             </th>
                             <th className='py-4'>Nama</th>
-                            <th className='p-4 whitespace-pre'>API Key</th>
+                            <th className='p-4 whitespace-pre'>Nomor HP</th>
                             <th className='p-4'>Label Kategori</th>
-                            <th className='p-4'>Status</th>
-                            <th className='p-4'>Scan QR</th>
-                            <th className='p-4'>Detail</th>
+                            <th className='p-4'>Email</th>
+                            <th className='p-4'>Dibuat pada</th>
+                            <th className='p-4'>Detail</    th>
                         </tr>
                     </thead>
                     <tbody className='bg-white'>
                         {searchText ? (
-                            <></>
-                        ) : (<></>
+                            <ContactList
+                                contactData={searchedContact}
+                                multipleCheckboxRef={contactCheckboxRef}
+                                handleCheckBoxClick={handleCheckBoxClick}
+                                handleOpenDetailModal={handleOpenDetailModal}
+                            />
+                        ) : (
+                            <ContactList
+                                contactData={contactData}
+                                multipleCheckboxRef={contactCheckboxRef}
+                                handleCheckBoxClick={handleCheckBoxClick}
+                                handleOpenDetailModal={handleOpenDetailModal}
+                            />
+
                         )}
                     </tbody>
                 </table>

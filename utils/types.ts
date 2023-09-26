@@ -44,4 +44,4 @@ interface ContactData {
     created_at: string,
     checked: boolean
 }
-export type { UserRegisterData, DeviceCheckboxRef, CheckboxRef, DeviceData, Label, CountryCode, ContactData }
+export type { UserRegisterData, MultipleCheckboxRef, CheckboxRef, DeviceData, Label, CountryCode, ContactData }

@@ -6,10 +6,11 @@ import { Dispatch, SetStateAction } from "react";
 import { PulseLoader } from "react-spinners"
 import { toast } from "react-toastify"
 import { UserRegisterData, CountryCode } from "@/utils/types"
-import { signIn } from "next-auth/react"
 import { animated, useTransition } from "@react-spring/web";
 import { formatPhoneCode, getCountryList } from "@/utils/helper/countryCode";
 import CountryFlagSvg from 'country-list-with-dial-code-and-flag/dist/flag-svg'
+import InputForm from "../form/InputForm";
+import ButtonSubmit from "../form/ButtonSubmit";
 
 const Register = ({ setCurrentStep, setUserData, userData }: {
     setCurrentStep: Dispatch<SetStateAction<string>>,
@@ -69,17 +70,17 @@ const Register = ({ setCurrentStep, setUserData, userData }: {
                 if (!userStatus.email || !userStatus.phone || !userStatus.username) {
                     if (!userStatus.email)
                         setError('email', {
-                            type: 'custom',
+                            type: 'required',
                             message: 'email already taken'
                         })
                     if (!userStatus.phone)
                         setError('phone', {
-                            type: 'custom',
+                            type: 'required',
                             message: 'phone already taken'
                         })
                     if (!userStatus.username)
                         setError('username', {
-                            type: 'custom',
+                            type: 'required',
                             message: 'username already taken'
                         })
                     setValue('password', '')
@@ -157,25 +158,31 @@ const Register = ({ setCurrentStep, setUserData, userData }: {
                     <p className='font-lexend font-bold text-3xl'>Welcome to Forwardin</p>
                     <p className='w-[80%] mx-auto'>Revolutionize your communication journey with FowardIt today</p>
                 </div>
-                <div className='flex flex-col gap-4 text-xs'>
-                    <div className="relative">
-                        {errors.email && (<p className="px-1 text-danger absolute right-4 top-1/2 -translate-y-1/2">{`${errors.email.message}`}</p>)}
-                        <input type="text" placeholder='Email' className={'p-4 text-xs focus:outline-none  rounded-md focus:ring-0 w-full ' + (errors.email ? 'border-danger focus:border-danger' : 'border-[#B0B4C5] focus:border-primary ')} {...register('email', {
+                <div className='flex flex-col gap-4 text-sm'>
+                    <InputForm register={register} config={{
+                        name: 'email',
+                        type: 'text',
+                        placeholder: 'Email',
+                        error: errors.email,
+                        registerConfig: {
                             required: 'email required',
                             pattern: {
                                 value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
                                 message: "Invalid email address"
                             },
                             value: userData.email
-                        })} />
-                    </div>
-                    <div className="relative">
-                        {errors.username && (<p className="px-1 text-danger absolute right-4 top-1/2 -translate-y-1/2">{`${errors.username.message}`}</p>)}
-                        <input type="text" placeholder='Username' className={'p-4 focus:outline-none text-xs rounded-md focus:ring-0 w-full ' + (errors.username ? 'border-danger focus:border-danger' : 'border-[#B0B4C5] focus:border-primary ')} {...register('username', {
+                        }
+                    }} />
+                    <InputForm register={register} config={{
+                        name: 'username',
+                        type: 'text',
+                        placeholder: 'Username',
+                        error: errors.username,
+                        registerConfig: {
                             required: 'Username Required',
                             value: userData.username
-                        })} />
-                    </div>
+                        }
+                    }} />
                     <div className="flex gap-2 relative">
                         <div className="flex" >
                             <div className="rounded-md  border-[#B0B4C5] border flex items-center justify-between gap-1 w-full p-3 hover:cursor-pointer" onClick={() => setcountryCodeDropdown(!countryCodeDropdown)}>
@@ -192,18 +199,18 @@ const Register = ({ setCurrentStep, setUserData, userData }: {
                         <div className="relative flex-1 flex">
                             {errors.phone && (<p className="px-1 text-danger absolute right-4 top-1/2 -translate-y-1/2">{`${errors.phone.message}`}</p>)}
                             <div className="absolute top-1/2 -translate-y-1/2 text-customGray left-4">{currentCountryCode.dial_code}</div>
-                            <input type="text" placeholder='Whatsapp Number' className={'text-xs pr-4 pl-12 py-4 focus:outline-none  rounded-md focus:ring-0 w-full ' + (errors.phone ? 'border-danger focus:border-danger' : 'border-[#B0B4C5] focus:border-primary ')} {...register('phone', {
+                            <input type="text" placeholder='Whatsapp Number' className={'text-sm pr-4 pl-12 py-3 focus:outline-none  rounded-md focus:ring-0 w-full ' + (errors.phone ? 'border-danger focus:border-danger' : 'border-[#B0B4C5] focus:border-primary ')} {...register('phone', {
                                 required: 'Whatsapp Required',
                                 value: userData.phone
                             })} />
                         </div>
                         {componentTransition((style, item) => item && (
-                            <animated.div style={style} className="absolute bg-white rounded-md border border-customGray w-full mt-16 z-10 shadow-lg text-xs">
+                            <animated.div style={style} className="absolute bg-white rounded-md border border-customGray w-full mt-16 z-10 shadow-lg text-sm">
                                 <div className="flex items-center gap-2 border-b border-customGray px-6 py-2">
                                     <div className="hover:cursor-pointer" onClick={() => countryCodeInputRef.current?.focus()} >
                                         <img src="/assets/icons/search_grey.png" alt="" />
                                     </div>
-                                    <input ref={countryCodeInputRef} type="text" placeholder="Cari kode negara" className=" flex-1 w-full text-xs outline-none border-none focus:ring-0 focus:outline-none focus:border-transparent" value={countryCodeSearchText} onChange={(e) => setcountryCodeSearchText(e.target.value)} />
+                                    <input ref={countryCodeInputRef} type="text" placeholder="Cari kode negara" className=" flex-1 w-full text-sm outline-none border-none focus:ring-0 focus:outline-none focus:border-transparent" value={countryCodeSearchText} onChange={(e) => setcountryCodeSearchText(e.target.value)} />
                                 </div>
                                 <div className="overflow-x-scroll max-h-40 flex flex-col gap-2 font-bold">
                                     {countryCodeSearchText ? countryCodeSearchData.map(i => (
@@ -224,7 +231,7 @@ const Register = ({ setCurrentStep, setUserData, userData }: {
                     </div>
                     <div className="relative">
                         {errors.password && (<p className="px-1 text-danger absolute right-4 top-1/2 -translate-y-1/2">{`${errors.password.message}`}</p>)}
-                        <input type="password" placeholder='Password' className={'text-xs p-4 focus:outline-none  rounded-md focus:ring-0 w-full ' + (errors.password ? 'border-danger focus:border-danger' : 'border-[#B0B4C5] focus:border-primary ')} {...register('password', {
+                        <input type="password" placeholder='Password' className={'text-sm px-4 py-3 focus:outline-none  rounded-md focus:ring-0 w-full ' + (errors.password ? 'border-danger focus:border-danger' : 'border-[#B0B4C5] focus:border-primary ')} {...register('password', {
                             required: true,
                         })} onFocus={() => setshowPasswordCriteria(true)} />
                         {showPasswordCriteria && (
@@ -247,16 +254,19 @@ const Register = ({ setCurrentStep, setUserData, userData }: {
                             </div>
                         )}
                     </div>
-                    <div className="relative">
-                        {errors.confirmPassword && (<p className="px-1 text-danger absolute right-4 top-1/2 -translate-y-1/2">{`${errors.confirmPassword.message}`}</p>)}
-                        <input type="password" placeholder='Confirm Password' className={'text-xs p-4 focus:outline-none  rounded-md focus:ring-0 w-full ' + (errors.confirmPassword ? 'border-danger focus:border-danger' : 'border-[#B0B4C5] focus:border-primary ')} {...register('confirmPassword', {
+                    <InputForm register={register} config={{
+                        name: 'confirmPassword',
+                        type: 'password',
+                        placeholder: 'Confirm Password',
+                        error: errors.confirmPassword,
+                        registerConfig: {
                             required: true,
                             validate: (value: String) => {
                                 if (value != watch('password'))
                                     return 'Password do not match'
                             }
-                        })} />
-                    </div>
+                        }
+                    }} />
                 </div>
                 <div>
                     <Link href={'/'} className='text-primary'>
@@ -264,20 +274,15 @@ const Register = ({ setCurrentStep, setUserData, userData }: {
                 </div>
                 <div className='flex flex-col gap-4'>
                     <div>
-                        <button type="submit" className='p-4  rounded-md w-full bg-primary text-white border border-primary' disabled={isLoading ? true : false} >
-                            {isLoading ? (<PulseLoader size={10} color="#F3F5F8" />)
-                                : (<p>
-                                    Sign Up
-                                </p>)}
-                        </button>
+                        <ButtonSubmit isLoading={isLoading} text='submit' />
                     </div>
                     <div className='flex justify-center items-center gap-6 md:px-6'>
                         <hr className='border border-[#B0B4C5] h-px basis-1/3' />
-                        <p className='whitespace-nowrap text-xs'>Atau sign in dengan Google</p>
+                        <p className='whitespace-nowrap text-sm'>Atau sign in dengan Google</p>
                         <hr className='border border-[#B0B4C5] h-px basis-1/3' />
                     </div>
                     <div>
-                        <a href="/" className='block p-4  rounded-md w-full text-primary bg-white border border-primary text-center'>Sign In</a>
+                        <a href="/" className='block px-4 py-3  rounded-md w-full text-primary bg-white border border-primary text-center'>Sign In</a>
                     </div>
                 </div>
             </form>

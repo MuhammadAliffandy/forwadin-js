@@ -30,9 +30,7 @@ export const authConfig: NextAuthOptions = {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({ identifier: credentials.identifier, password: credentials.password })
-
                 })
-                // const user = { id: '1', identifier: 'asd', password: 'asd' }
                 const resultData = await result.json()
                 const user = {
                     id: resultData.id,
