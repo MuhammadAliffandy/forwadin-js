@@ -66,7 +66,6 @@ const MultipleInputLabel = (
                     <div className="basis-1/6 flex justify-end hover:cursor-pointer" onClick={() => setisLabelOpen(!isLabelOpen)}>
                         <div className="items-cneter flex">
                             <img src={'/assets/icons/caret-down-black.svg'} height={9} width={12} alt="" />
-                            {/* <Image src={'/assets/icons/caret-down-black.svg'} height={9} width={12} alt="" /> */}
                         </div>
                     </div>
                 </div>

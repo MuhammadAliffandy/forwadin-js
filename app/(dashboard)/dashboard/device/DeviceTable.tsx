@@ -159,13 +159,13 @@ const DeviceTable = () => {
                 </div>
             </div>
             <div className='overflow-x-scroll allowed-scroll'>
-                <table className="w-full text-center font-nunito text-xs font-bold ">
+                <table className="w-full text-center font-nunito text-xs font-bold">
                     <thead className='bg-neutral-75'>
                         <tr className=''>
-                            <th className='py-4'>
+                            <th className='py-4 checkbox'>
                                 <input ref={mainCheckboxRef} type="checkbox" name="main_checkbox" id="main_checkbox" className='rounded-sm focus:ring-transparent' onClick={handleIndexCheckbox} />
                             </th>
-                            <th className='py-4'>Nama</th>
+                            <th className='p-4'>Nama</th>
                             <th className='p-4 whitespace-pre'>API Key</th>
                             <th className='p-4'>Label Kategori</th>
                             <th className='p-4'>Status</th>

@@ -13,10 +13,12 @@ const ContactTable = () => {
     const [isChecked, setisChecked] = useState(false)
     const [contactData, setcontactData] = useState<ContactData[]>([
         {
-            id: 1,
+            id: '1',
             phone: "6281357995175",
             firstName: 'Ihsanul',
             lastName: 'Afkar',
+            initial: 'IA',
+            profileColor: '4FBEAB',
             gender: "Laki-laki",
             email: 'ihsanulafkar@gmail.com',
             honorific: 'Mr',
@@ -27,10 +29,12 @@ const ContactTable = () => {
             created_at: '11.9.2023, 2:43 PM'
         },
         {
-            id: 2,
+            id: '2',
             phone: "6281357995175",
             firstName: 'Ihsanul',
             lastName: 'Afkar',
+            initial: 'IA',
+            profileColor: '4FBEAB',
             gender: "Laki-laki",
             email: 'ihsanulafkar@gmail.com',
             honorific: 'Mr',
@@ -41,10 +45,12 @@ const ContactTable = () => {
             created_at: '11.9.2023, 2:43 PM'
         },
         {
-            id: 3,
+            id: '3',
             phone: "6281357995175",
             firstName: 'Ihsanul',
             lastName: 'Afkar',
+            initial: 'IA',
+            profileColor: '4FBEAB',
             gender: "Laki-laki",
             email: 'ihsanulafkar@gmail.com',
             honorific: 'Mr',
@@ -57,8 +63,8 @@ const ContactTable = () => {
     ])
     const [searchText, setsearchText] = useState('')
     const [searchedContact, setsearchedContact] = useState<ContactData[]>([])
-    const [addContactModal, setaddContactModal] = useState(true)
-    const handleCheckBoxClick = (e: React.FormEvent<HTMLInputElement>, id: number) => {
+    const [addContactModal, setaddContactModal] = useState(false)
+    const handleCheckBoxClick = (e: React.FormEvent<HTMLInputElement>, id: string) => {
         const newcontactData = contactData.map(obj => {
             return (obj.id === id ? { ...obj, checked: e.currentTarget.checked } : obj)
         })
@@ -103,8 +109,10 @@ const ContactTable = () => {
     const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
         setsearchText(e.target.value)
     }
-    const handleAddDevice = () => {
-
+    const handleDeleteContact = () => {
+        // TODO
+        const checkedContacts = contactData.filter(item => item.checked === false).map(item => item)
+        setcontactData(checkedContacts)
     }
     useEffect(() => {
         if (mainCheckboxRef.current) {
@@ -149,16 +157,16 @@ const ContactTable = () => {
                             onChange={handleSearch}
                         />
                     </div>
-                    <div className='flex justify-end gap-2'>
-                        <div className='bg-white rounded-md px-6 text-center items-center border border-[#B0B4C5] flex hover:cursor-pointer justify-center p-2'>
+                    <div className='flex lg:flex-row flex-col lg:justify-end justify-between gap-2 w-full max-w-sm'>
+                        <div className='bg-white rounded-md px-6 text-center items-center border border-[#B0B4C5] flex hover:cursor-pointer w-full justify-center p-2'>
                             Import Kontak
                         </div>
                         {isChecked ? (
-                            <div className="bg-danger rounded-md px-6 text-white text-center items-center flex hover:cursor-pointer justify-center p-2">
+                            <div onClick={handleDeleteContact} className="bg-danger rounded-md px-6 text-white text-center w-full items-center flex hover:cursor-pointer justify-center p-2">
                                 Hapus
                             </div>
                         ) : (
-                            <div onClick={() => setaddContactModal(true)} className="bg-primary rounded-md px-6 text-white text-center items-center flex hover:cursor-pointer justify-center p-2">
+                            <div onClick={() => setaddContactModal(true)} className="bg-primary rounded-md px-6 text-white text-center items-center w-full flex hover:cursor-pointer justify-center p-2">
                                 Tambah Kontak
                             </div>
                         )}
@@ -169,10 +177,10 @@ const ContactTable = () => {
                 <table className="w-full text-center font-nunito text-xs font-bold ">
                     <thead className='bg-neutral-75'>
                         <tr className=''>
-                            <th className='py-4'>
+                            <th className='py-4 checkbox'>
                                 <input ref={mainCheckboxRef} type="checkbox" name="main_checkbox" id="main_checkbox" className='rounded-sm focus:ring-transparent' onClick={handleIndexCheckbox} />
                             </th>
-                            <th className='py-4'>Nama</th>
+                            <th className='p-4'>Nama</th>
                             <th className='p-4 whitespace-pre'>Nomor HP</th>
                             <th className='p-4'>Label Kategori</th>
                             <th className='p-4'>Email</th>
@@ -199,6 +207,20 @@ const ContactTable = () => {
                         )}
                     </tbody>
                 </table>
+                {contactData.length === 0 && (
+                    <div className='w-full bg-white p-12'>
+                        <div className='w-full max-w-md mx-auto flex flex-col gap-4'>
+                            <p className='text-[16px] font-bold'>Kontak masih kosong</p>
+                            <p className='text-xs text-[#777C88]'>Tambahkan nomor ke dalam kontak anda.</p>
+                            <p className='text-xs'>Dengan kontak ini, Anda dapat dengan mudah berkomunikasi dengan kontak yang anda simpan</p>
+                            <div className='flex'>
+                                <div onClick={() => setaddContactModal(true)} className="bg-primary rounded-md px-6 text-white text-center items-center flex hover:cursor-pointer justify-center p-2">
+                                    Tambah Kontak
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </div >
         </>
     )

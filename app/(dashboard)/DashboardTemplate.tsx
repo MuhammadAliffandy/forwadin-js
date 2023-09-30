@@ -1,12 +1,7 @@
 'use client'
-// import logoPic from '@/public/assets/icons/logo.png'
-// import dropdownPic from '@/public/assets/icons/dropdown.png'
-// import forwardInPic from '@/public/assets/icons/forwardin.png'
-
-import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import NavButton from '../../components/dashboard/NavButton'
 import MessageList from '../../components/dashboard/MessageList'
-import DropdownPic from '@/public/assets/icons/dropdown.png'
 import ContactList from '@/components/dashboard/ContactList'
 const DashboardTemplate = ({ currentPage, children }: { currentPage: string, children: React.ReactNode }) => {
     const [sideNavDropdown, setsideNavDropdown] = useState(false)
@@ -28,11 +23,11 @@ const DashboardTemplate = ({ currentPage, children }: { currentPage: string, chi
                     <div className='flex justify-center items-center gap-2'>
                         <div className=''>
                             <img src={'/assets/icons/logo.png'} alt="logo" />
-                            {/* <Image src={logoPic} alt="logo" /> */}
+
                         </div>
                         <div className=''>
                             <img src={'/assets/icons/forwardin.png'} alt="logo" />
-                            {/* <Image src={forwardInPic} alt="logo" /> */}
+
                         </div>
                     </div>
                     <div className='flex flex-col mt-12 gap-2'>
@@ -52,10 +47,10 @@ const DashboardTemplate = ({ currentPage, children }: { currentPage: string, chi
             </div>
             <div onClick={handleWindowClick} className="lg:pl-[250px] p-2 lg:p-6" id='main_content'>
                 {/* Mobile Dashboard Nav */}
-                <div className='flex w-full justify-between lg:hidden pb-4 pt-2'>
+                <div className='flex w-full justify-between lg:hidden pb-4 pt-2 px-2'>
                     <div onClick={handleClick} id="dropdown_icon">
                         <img src={'/assets/icons/dropdown.png'} alt="" />
-                        {/* <Image src={DropdownPic} alt="" /> */}
+
                     </div>
                     <div className='flex justify-end gap-2'>
                         <div className='flex-none bg-white rounded-full p-2 hover:cursor-pointer'>

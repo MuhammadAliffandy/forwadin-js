@@ -22,7 +22,7 @@ const AddContactModal = ({ openModal, setopenModal }: AddContactModalProps) => {
     return (
         <ModalTemplate openModal={openModal} setopenModal={setopenModal} outsideClose={false}>
             <p className="font-bold text-2xl">Tambah Kontak</p>
-            <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4 text-sm w-full mt-8 max-h-[80vh] overflow-y-auto allowed-scroll pr-2">
+            <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4 text-sm w-full mt-8 max-h-[80vh] overflow-y-auto">
                 <div>
                     <p className="font-bold mb-2">First Name</p>
                     <InputForm register={register} config={{
