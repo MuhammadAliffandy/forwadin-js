@@ -92,7 +92,7 @@ const SignIn = () => {
                     </div>
                     <div className='flex justify-center items-center gap-6 md:px-6'>
                         <hr className='border border-[#B0B4C5] h-px basis-1/3' />
-                        <p className='whitespace-nowrap text-sm'>Atau sign in dengan Google</p>
+                        <p className='whitespace-nowrap text-xs'>Atau sign in dengan Google</p>
                         <hr className='border border-[#B0B4C5] h-px basis-1/3' />
                     </div>
                     <div>

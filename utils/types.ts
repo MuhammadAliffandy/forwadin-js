@@ -31,10 +31,12 @@ interface CountryCode {
     flag: string
 }
 interface ContactData {
-    id: number,
+    id: string,
     phone: string,
     firstName: string,
     lastName: string,
+    initial: string,
+    profileColor: string,
     gender: string,
     honorific?: string,
     country?: string,
@@ -42,6 +44,34 @@ interface ContactData {
     label: string[],
     email: string,
     created_at: string,
-    checked: boolean
+    checked?: boolean,
+    active?: boolean
 }
-export type { UserRegisterData, MultipleCheckboxRef, CheckboxRef, DeviceData, Label, CountryCode, ContactData }
+interface MessageData {
+    id: string,
+    from: string,
+    message: string,
+    received_at: string,
+    created_at: string
+    updated_at: string
+}
+interface MediaMessageData {
+    id: string,
+    fileTitle: string,
+    path: string,
+    from: string,
+    size: string,
+    created_at: string,
+    checked?: boolean
+}
+interface GroupData {
+    id: string,
+    name: string,
+    type: string,
+    totalUser: number,
+    users: ContactData[],
+    created_at: string,
+    updated_at: string,
+    checked?: boolean
+}
+export type { UserRegisterData, MultipleCheckboxRef, CheckboxRef, DeviceData, Label, CountryCode, ContactData, MessageData, MediaMessageData, GroupData }

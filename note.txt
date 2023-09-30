@@ -19,4 +19,5 @@ npm i sharp
 npm install country-list-with-dial-code-and-flag
 npm i google-libphonenumber
 npm i --save-dev @types/google-libphonenumber
+npm install react-scroll-motion
 ```

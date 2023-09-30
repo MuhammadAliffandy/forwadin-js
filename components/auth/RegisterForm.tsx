@@ -106,7 +106,7 @@ const Register = ({ setCurrentStep, setUserData, userData }: {
         eightLength: false,
         lowerCase: false,
         upperCase: false,
-        // numeric: false,
+        numeric: false,
         // specialChar: false
     })
 
@@ -114,7 +114,7 @@ const Register = ({ setCurrentStep, setUserData, userData }: {
         eightLength: new RegExp("^(?=.{8,})"),
         lowerCase: new RegExp("^(?=.*[a-z])"),
         upperCase: new RegExp("^(?=.*[A-Z])"),
-        // numeric: new RegExp("^(?=.*[0-9])"),
+        numeric: new RegExp("^(?=.*[0-9])"),
         // specialChar: new RegExp("^(?=.*[!@#$%^&*])")
     }
     const handleCountryCodeClick = (countryCode: CountryCode) => {
@@ -125,8 +125,6 @@ const Register = ({ setCurrentStep, setUserData, userData }: {
         setcountryCodeData(getCountryList() as CountryCode[])
         setcurrentCountryCode(getCountryList('+62') as CountryCode)
         window.scrollTo(0, 0)
-        // console.log(CountryFlagSvg[getCountryList()[0].code])
-        // console.log(JSON.stringify(getCountryList()[0]))
     }, [])
     useEffect(() => {
         const newCountryCodeData = countryCodeData.filter(item => item.name.toLowerCase().includes(countryCodeSearchText.toLowerCase()) || item.dial_code.includes(countryCodeSearchText) || item.code.includes(countryCodeSearchText))
@@ -147,6 +145,10 @@ const Register = ({ setCurrentStep, setUserData, userData }: {
                 setPasswordValidator(prev => ({ ...prev, upperCase: true }))
             else
                 setPasswordValidator(prev => ({ ...prev, upperCase: false }))
+            if (strongRegex.numeric.test(password))
+                setPasswordValidator(prev => ({ ...prev, numeric: true }))
+            else
+                setPasswordValidator(prev => ({ ...prev, numeric: false }))
         })
         return () => watchPassword.unsubscribe()
     }, [watch, passwordValidator])
@@ -245,9 +247,9 @@ const Register = ({ setCurrentStep, setUserData, userData }: {
                                         ) : (<p className='text-danger'>Huruf kecil (a-z) </p>)}
                                         {passwordValidator.upperCase ? (<p className='text-green-40'>&#10003; Huruf besar (A-Z)</p>
                                         ) : (<p className='text-danger'>Huruf besar (A-Z)</p>)}
-                                        {/* {passwordValidator.numeric ? (<p className='text-green-40'>&#10003; Angka</p>
-                                    ) : (<p className='text-danger'>Angka</p>)}
-                                    {passwordValidator.specialChar ? (<p className='text-green-40'>&#10003; Karakter Spesial (!@#$%^&*)</p>
+                                        {passwordValidator.numeric ? (<p className='text-green-40'>&#10003; Angka</p>
+                                        ) : (<p className='text-danger'>Angka</p>)}
+                                        {/* {passwordValidator.specialChar ? (<p className='text-green-40'>&#10003; Karakter Spesial (!@#$%^&*)</p>
                                 ) : (<p className='text-danger'>Karakter Spesial (!@#$%^&*)</p>)} */}
                                     </div>
                                 </div>
@@ -268,23 +270,20 @@ const Register = ({ setCurrentStep, setUserData, userData }: {
                         }
                     }} />
                 </div>
-                <div>
-                    <Link href={'/'} className='text-primary'>
-                        Lupa Password?</Link>
-                </div>
                 <div className='flex flex-col gap-4'>
                     <div>
-                        <ButtonSubmit isLoading={isLoading} text='submit' />
+                        <ButtonSubmit isLoading={isLoading} text='Sign Up' />
                     </div>
                     <div className='flex justify-center items-center gap-6 md:px-6'>
                         <hr className='border border-[#B0B4C5] h-px basis-1/3' />
-                        <p className='whitespace-nowrap text-sm'>Atau sign in dengan Google</p>
+                        <p className='whitespace-nowrap text-[10px]'>Atau sign up dengan Google</p>
                         <hr className='border border-[#B0B4C5] h-px basis-1/3' />
                     </div>
                     <div>
-                        <a href="/" className='block px-4 py-3  rounded-md w-full text-primary bg-white border border-primary text-center'>Sign In</a>
+                        <a href="/" className='block px-4 py-3  rounded-md w-full text-primary bg-white border border-primary text-center'>Sign Up</a>
                     </div>
                 </div>
+                <p className="text-center text-sm">Sudah punya akun? <Link href={'/signin'} className='text-primary'>Masuk di sini</Link></p>
             </form>
         </>
     )

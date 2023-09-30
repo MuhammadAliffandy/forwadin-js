@@ -69,26 +69,19 @@ const OneStep = () => {
         setIsDropdown(false)
     }
     return (
-        <div className='py-20 px-6 container mx-auto'>
+        <>
             <div className='w-full lg:w-[80%] mx-auto'>
                 <p className='text-center text-primary text-4xl font-bold'>"One Step Closer to More Effective and Connected Communication!"</p>
             </div>
             <div className='flex flex-col lg:flex-row mt-20 gap-20 lg:gap-0'>
                 <div className='flex-none lg:basis-2/5 flex justify-center'>
                     <img
-                        src='/assets/images/dummy.png'
+                        src='/assets/images/landing_image6.png'
                         width={221}
                         height={136}
                         alt='dummy'
                         className='object-contain   '
                     />
-                    {/* <Image
-                        src='/assets/images/dummy.png'
-                        width={221}
-                        height={136}
-                        alt='dummy'
-                        className='object-contain   '
-                    /> */}
                 </div>
                 <div className='lg:basis-3/5'>
                     <div className='hidden lg:flex gap-4'>
@@ -137,7 +130,7 @@ const OneStep = () => {
                     </div>
                 </div>
             </div>
-        </div>
+        </>
     )
 }
 

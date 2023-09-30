@@ -1,4 +1,3 @@
-import { Metadata, ResolvingMetadata } from 'next'
 import Link from 'next/link'
 import DetailDevice from './DetailDevice'
 type Params = {
