@@ -145,7 +145,7 @@ export default function Home() {
         <div onClick={() => handleNavigationClick('FAQ')} className={(currentSection === 'FAQ' ? 'text-black' : '') + ' hover:cursor-pointer'}>FAQ</div>
         <div onClick={() => handleNavigationClick('contact')} className={(currentSection === 'contact' ? 'text-black' : '') + ' hover:cursor-pointer'}>Contact Us</div>
       </div>
-      <ScrollContainer className='relative'>
+      <ScrollContainer className='relative' snap='mandatory'>
         <ScrollPage style={{
           backgroundImage: 'url(/assets/images/bg_image1.png)'
         }} className='bg-no-repeat bg-cover getStarted'>
@@ -170,11 +170,11 @@ export default function Home() {
             </div>
           </Animator>
         </ScrollPage>
-        <ScrollPage >
+        {/* <ScrollPage >
           <Animator animation={FadeUp} className={animatorClass}>
 
           </Animator>
-        </ScrollPage>
+        </ScrollPage> */}
         <ScrollPage style={{
 
         }} className='bg-no-repeat bg-cover broadcast'>
@@ -196,11 +196,11 @@ export default function Home() {
             </div>
           </Animator>
         </ScrollPage>
-        <ScrollPage>
+        {/* <ScrollPage>
           <Animator animation={FadeUp} className={animatorClass}>
 
           </Animator>
-        </ScrollPage>
+        </ScrollPage> */}
         <ScrollPage style={{
         }} className='bg-no-repeat bg-cover campaign'>
           <Animator animation={FadeUp} className={animatorClass}>
@@ -221,11 +221,11 @@ export default function Home() {
             </div>
           </Animator>
         </ScrollPage>
-        <ScrollPage>
+        {/* <ScrollPage>
           <Animator animation={FadeUp} className={animatorClass}>
 
           </Animator>
-        </ScrollPage>
+        </ScrollPage> */}
         <ScrollPage style={{
 
         }} className='bg-no-repeat bg-cover autoReply'>
@@ -247,22 +247,22 @@ export default function Home() {
             </div>
           </Animator>
         </ScrollPage>
-        <ScrollPage>
+        {/* <ScrollPage>
           <Animator animation={FadeUp} className={animatorClass}>
 
           </Animator>
-        </ScrollPage>
+        </ScrollPage> */}
         <ScrollPage style={{
         }} className='bg-no-repeat bg-cover opportunity'>
           <Animator animation={FadeUp} className={animatorClass}>
             <OneStep />
           </Animator>
         </ScrollPage>
-        <ScrollPage>
+        {/* <ScrollPage>
           <Animator animation={FadeUp} className={animatorClass}>
 
           </Animator>
-        </ScrollPage>
+        </ScrollPage> */}
 
         <ScrollPage style={{
         }} className='bg-no-repeat bg-cover'>
@@ -279,11 +279,11 @@ export default function Home() {
             </div>
           </Animator>
         </ScrollPage>
-        <ScrollPage>
+        {/* <ScrollPage>
           <Animator animation={FadeUp} className={animatorClass}>
 
           </Animator>
-        </ScrollPage>
+        </ScrollPage> */}
         <ScrollPage style={{
         }} className='bg-no-repeat bg-cover pricing'>
           <Animator animation={FadeUp} className='w-full lg:pl-32'>
@@ -334,21 +334,21 @@ export default function Home() {
             </div>
           </Animator>
         </ScrollPage>
-        <ScrollPage>
+        {/* <ScrollPage>
           <Animator animation={FadeUp} className={animatorClass}>
 
           </Animator>
-        </ScrollPage>
+        </ScrollPage> */}
         <ScrollPage className='FAQ'>
           <Animator animation={FadeUp} className={animatorClass}>
             <FAQ />
           </Animator>
         </ScrollPage>
-        <ScrollPage >
+        {/* <ScrollPage >
           <Animator animation={FadeUp} className={animatorClass}>
 
           </Animator>
-        </ScrollPage>
+        </ScrollPage> */}
         <ScrollPage style={{
         }} className='bg-no-repeat bg-cover bg-primary contact'>
           <Animator animation={FadeUp} className={animatorClass}>
