@@ -1,6 +1,6 @@
 import InputForm from "@/components/form/InputForm"
 import ModalTemplate from "@/components/template/ModalTemplate"
-import { ContactData } from "@/utils/types"
+import { ContactData, Label } from "@/utils/types"
 import { useState, Dispatch, SetStateAction, } from "react"
 import { useForm } from "react-hook-form"
 import MultipleInputLabel from "../MultipleInputLabel"
@@ -10,12 +10,7 @@ interface AddContactModalProps {
 }
 const AddContactModal = ({ openModal, setopenModal }: AddContactModalProps) => {
     const { handleSubmit, register, setValue, watch, setError, formState: { errors } } = useForm<ContactData>()
-    const [labelList, setlabelList] = useState([
-        { name: 'asd', active: true },
-        { name: 'asd2', active: true },
-        { name: 'asd3', active: true },
-        { name: 'asd4', active: false }
-    ])
+    const [labelList, setlabelList] = useState<Label[]>([])
     const onSubmit = async (formData: ContactData) => {
         alert('y')
     }
