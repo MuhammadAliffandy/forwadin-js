@@ -2,8 +2,6 @@
 import Message from '@/components/dashboard/Message'
 import Button from '@/components/landing/Button'
 import Link from 'next/link'
-
-import { useState } from 'react';
 import dynamic from 'next/dynamic';
 const DynamicAnalytic = dynamic(() => import('@/components/dashboard/Analytic'), { ssr: false })
 const Dashboard = () => {

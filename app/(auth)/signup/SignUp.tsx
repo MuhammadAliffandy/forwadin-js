@@ -1,11 +1,10 @@
 'use client';
 import dynamic from 'next/dynamic';
-const DynamicRegisterForm = dynamic(() => import('@/components/auth/RegisterForm'), { ssr: false })
+const DynamicRegisterForm = dynamic(() => import('@/components/auth/RegisterForm'), { ssr: false, })
 // import RegisterForm from '@/components/auth/RegisterForm'
 import OTPForm from '@/components/auth/OTPForm'
-import { signIn } from 'next-auth/react'
 import React, { useEffect, useState } from 'react';
-import { useSpring, animated, useTransition } from '@react-spring/web';
+import { animated, useTransition } from '@react-spring/web';
 import { UserRegisterData } from '@/utils/types';
 import SuccessForm from '@/components/auth/SuccessForm';
 import PolicyForm from '@/components/auth/PolicyForm';
@@ -33,6 +32,11 @@ const SignUp = () => {
     useEffect(() => {
         document.querySelector('body')?.scroll(0, 0)
     }, [currentStep])
+    // useEffect(()=>{
+    //     setTimeout(() => {
+    //         setCurrentStep('register')
+    //     }, 1000);
+    // },[])
     return (
         <>
             {componentTransition((style, item) => item === "register" && (

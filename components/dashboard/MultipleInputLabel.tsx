@@ -29,22 +29,22 @@ const MultipleInputLabel = (
 
         if (e.key === 'Enter') {
             e.preventDefault()
-            if (!labelList.find(label => label.name === inputText) && inputText) {
-                setlabelList(old => [...old, { name: inputText, active: true }])
+            if (!labelList.find(item => item.label.name === inputText) && inputText) {
+                setlabelList(old => [...old, { label: { name: inputText, active: true } }])
                 setinputText('')
             } else {
-                const currentLabel: Label[] = labelList.map(label => label.name === inputText ? { name: label.name, active: true } : label)
+                const currentLabel: Label[] = labelList.map(item => item.label.name === inputText ? { label: { name: item.label.name, active: true } } : item)
                 setlabelList(currentLabel)
                 setinputText('')
             }
         }
     }
     const handleLabelClick = (labelName: string, status: boolean) => {
-        const newLabelList: Label[] = labelList.map((list => list.name === labelName ? { name: list.name, active: status } : list))
+        const newLabelList: Label[] = labelList.map((item => item.label.name === labelName ? { label: { name: item.label.name, active: status } } : item))
         setlabelList(newLabelList)
     }
     useEffect(() => {
-        const newSearchLabel = labelList.filter(item => item.name.toLowerCase().includes(inputText.toLowerCase()))
+        const newSearchLabel = labelList.filter(item => item.label.name.toLowerCase().includes(inputText.toLowerCase()))
         setsearchLabelList(newSearchLabel)
     }, [inputText])
     useEffect(() => {
@@ -54,17 +54,17 @@ const MultipleInputLabel = (
     return (
         <>
             <div className='rounded-md text-sm w-full border border-customGray relative'>
-                <div className='py-3 px-4 flex '>
-                    <div className="basis-5/6 flex flex-wrap gap-2">
-                        {labelList.map((label, idx) => label.active && (
-                            <div key={idx} className='flex gap-2 rounded-full px-2 py-[2px] border border-black/50 hover:cursor-pointer' onClick={() => handleLabelClick(label.name, false)}>
-                                <span className=''> {label.name}</span>
+                <div className=' flex '>
+                    <div className="basis-5/6 flex flex-wrap gap-2 py-3 pl-4">
+                        {labelList.map((item, idx) => item.label.active && (
+                            <div key={idx} className='flex gap-2 rounded-full px-2 py-[2px] border border-customGray hover:cursor-pointer' onClick={() => handleLabelClick(item.label.name, false)}>
+                                <span className=''> {item.label.name}</span>
                                 <span>&times;</span>
                             </div>
                         ))}
                     </div>
-                    <div className="basis-1/6 flex justify-end hover:cursor-pointer" onClick={() => setisLabelOpen(!isLabelOpen)}>
-                        <div className="items-cneter flex">
+                    <div className="basis-1/6 flex justify-end hover:cursor-pointer px-4 py-3" onClick={() => setisLabelOpen(!isLabelOpen)}>
+                        <div className="items-center flex">
                             <img src={'/assets/icons/caret-down-black.svg'} height={9} width={12} alt="" />
                         </div>
                     </div>
@@ -83,14 +83,14 @@ const MultipleInputLabel = (
                             <div className="flex flex-wrap items-start gap-2 overflow-x-auto max-h-48 my-5">
                                 {inputText ? (
                                     <>
-                                        {searchLabelList.map((label, idx) => !label.active && (
-                                            <div key={idx} onClick={() => handleLabelClick(label.name, true)} className={"hover:bg-neutral-75 rounded-full px-4 py-[2px] flex-none border border-customGray hover:cursor-pointer"}>{label.name}</div>
+                                        {searchLabelList.map((item, idx) => !item.label.active && (
+                                            <div key={idx} onClick={() => handleLabelClick(item.label.name, true)} className={"hover:bg-neutral-75 rounded-full px-4 py-[2px] flex-none border border-customGray hover:cursor-pointer"}>{item.label.name}</div>
                                         ))}
                                     </>) :
                                     (
                                         <>
-                                            {labelList.map((label, idx) => !label.active && (
-                                                <div key={idx} onClick={() => handleLabelClick(label.name, true)} className={"hover:bg-neutral-75 rounded-full px-4 py-[2px] flex-none border border-customGray hover:cursor-pointer"}>{label.name}</div>
+                                            {labelList.map((item, idx) => !item.label.active && (
+                                                <div key={idx} onClick={() => handleLabelClick(item.label.name, true)} className={"hover:bg-neutral-75 rounded-full px-4 py-[2px] flex-none border border-customGray hover:cursor-pointer"}>{item.label.name}</div>
                                             ))}
                                         </>)
                                 }

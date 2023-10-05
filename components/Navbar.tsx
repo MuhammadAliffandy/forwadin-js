@@ -58,7 +58,7 @@ const Navbar = () => {
                     />
                 </div>
             </nav>
-            <nav className="absolute hidden bg-white md:flex justify-between gap-12 top-5 left-1/2 -translate-x-1/2 z-10 p-3 rounded-lg shadow-xl text-sm">
+            <nav className="fixed hidden bg-white bg-opacity-80 backdrop-blur md:flex justify-between gap-12 top-5 left-1/2 -translate-x-1/2 z-10 p-3 rounded-lg shadow-xl text-sm">
                 <div className="flex gap-4 items-center hover:cursor-pointer" onClick={() => router.push('/')}>
                     <div className='flex-none'>
                         <img

@@ -1,9 +1,11 @@
 'use client'
 import { ContactData, MediaMessageData, MessageData, MultipleCheckboxRef } from '@/utils/types'
 import Link from 'next/link'
+
 import { useEffect, useRef, useState } from 'react'
 
 const DetailContact = ({ contact }: { contact: string }) => {
+
     const [contactData, setcontactData] = useState<ContactData>({
         id: '1',
         phone: "6281357995175",
@@ -144,7 +146,7 @@ const DetailContact = ({ contact }: { contact: string }) => {
                             <p className='mt-4'>+{contactData.phone}</p>
                         </div>
                         <div>
-                            <div className='border border-customGray rounded-md w-full lg:w-auto px-8 py-2 hover:cursor-pointer text-center hidden lg:block'>Edit</div>
+                            <div className='border border-customGray rounded-md w-full lg:w-auto px-8 py-2 hover:cursor-pointer text-center hidden lg:block' >Edit</div>
                         </div>
                         {mobileDropdown && (
                             <div>
@@ -152,7 +154,7 @@ const DetailContact = ({ contact }: { contact: string }) => {
                             </div>
                         )}
                     </div>
-                    <table className='w-full border-spacing-y-2 border-separate mt-4 hidden lg:block'>
+                    <table className='w-full border-spacing-y-2 border-spacing-x-2 -mx-2 border-separate mt-4 hidden lg:block'>
                         <tbody >
                             <tr>
                                 <th className='font-medium'>First Name</th>
