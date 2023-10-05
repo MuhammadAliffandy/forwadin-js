@@ -1,13 +1,17 @@
 import Link from 'next/link'
 import DetailDevice from './DetailDevice'
+import { Metadata } from 'next'
 type Params = {
     params: { device: string }
 }
-export async function generateMetadata({ params }: Params) {
-    const device = params.device
-    return {
-        title: device + " Details"
-    }
+// export async function generateMetadata({ params }: Params) {
+//     const device = params.device
+//     return {
+//         title: "detail device"
+//     }
+// }
+export const metadata: Metadata = {
+    title: 'Detail Device',
 }
 const page = ({ params }: Params) => {
 

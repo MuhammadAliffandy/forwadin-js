@@ -4,31 +4,42 @@ import { toast } from 'react-toastify'
 import MultipleInputLabel from '../MultipleInputLabel'
 import ModalTemplate from '../../template/ModalTemplate'
 
+import { useSession } from 'next-auth/react'
+import { fetchClient } from '../../../utils/helper/fetchClient'
+import { Label } from '@/utils/types'
+
 const AddDeviceModal = (
-    { openModal, setopenModal }:
-        { openModal: boolean, setopenModal: Dispatch<SetStateAction<boolean>> }
+    { openModal, setopenModal, fetchData }:
+        { openModal: boolean, setopenModal: Dispatch<SetStateAction<boolean>>, fetchData: () => void }
 ) => {
     const [isLoading, setisLoading] = useState(false)
     const [deviceName, setdeviceName] = useState('')
     const [inputError, setinputError] = useState({ error: false, message: '' })
-    const [labelList, setlabelList] = useState([
-        { name: 'asd', active: true },
-        { name: 'asd2', active: true },
-        { name: 'asd3', active: true },
-        { name: 'asd4', active: false }
-    ])
+    const [labelList, setlabelList] = useState<Label[]>([])
     const handleSubmit = async () => {
         if (!deviceName) {
             setinputError({ error: true, message: 'tidak boleh kosong' })
         } else {
-
             setisLoading(true)
-            setTimeout(() => {
-                setisLoading(false)
-                toast.success('Device Added Successfully')
+
+            const result = await fetchClient({
+                method: 'POST',
+                body: JSON.stringify({
+                    name: deviceName,
+                    labels: (labelList ? labelList.map(item => item.label.name) : null)
+                }),
+                url: '/devices/create'
+            })
+            setisLoading(false)
+            const body = await result.json()
+            if (result.ok) {
+                toast.success('Device berhasil ditambahkan')
                 setopenModal(false)
-                // Refresh device data
-            }, 3000)
+                fetchData()
+            } else {
+                toast.error('Device gagal ditambahkan')
+                setinputError({ error: true, message: 'Gagal menambahkan device' })
+            }
         }
     }
     return (

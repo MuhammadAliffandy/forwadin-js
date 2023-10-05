@@ -157,6 +157,7 @@ const Register = ({ setCurrentStep, setUserData, userData }: {
         <>
             <form className='flex flex-col gap-8' onSubmit={handleSubmit(onSubmit)}>
                 <div className='text-center'>
+
                     <p className='font-lexend font-bold text-3xl'>Welcome to Forwardin</p>
                     <p className='w-[80%] mx-auto'>Revolutionize your communication journey with FowardIt today</p>
                 </div>
@@ -279,8 +280,13 @@ const Register = ({ setCurrentStep, setUserData, userData }: {
                         <p className='whitespace-nowrap text-[10px]'>Atau sign up dengan Google</p>
                         <hr className='border border-[#B0B4C5] h-px basis-1/3' />
                     </div>
-                    <div>
-                        <a href="/" className='block px-4 py-3  rounded-md w-full text-primary bg-white border border-primary text-center'>Sign Up</a>
+                    <div className="">
+                        <a href="/signup" className="px-4 py-3 flex items-center justify-center gap-2 rounded-md w-full text-primary bg-white border border-primary text-center">
+                            <div className="flex-none">
+                                <img src="/assets/icons/google-icon.svg" alt="" />
+                            </div>
+                            <p>Masuk dengan Google</p>
+                        </a>
                     </div>
                 </div>
                 <p className="text-center text-sm">Sudah punya akun? <Link href={'/signin'} className='text-primary'>Masuk di sini</Link></p>

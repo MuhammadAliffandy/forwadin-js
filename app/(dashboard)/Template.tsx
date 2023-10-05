@@ -9,7 +9,7 @@ const Template = ({ children }: { children: React.ReactNode }) => {
         if (pathName.includes('/dashboard/device'))
             setCurrentPage('Devices')
         else if (pathName.includes('/dashboard/contact'))
-            setCurrentPage('Contact')
+            setCurrentPage('Contacts')
         else if (pathName.includes('/dashboard/group'))
             setCurrentPage('Groups')
         else if (pathName.includes('/dashboard/incoming'))
@@ -24,6 +24,8 @@ const Template = ({ children }: { children: React.ReactNode }) => {
             setCurrentPage('Auto Reply')
         else if (pathName.includes('/dashboard/settings'))
             setCurrentPage('Settings')
+        else if (pathName.includes('/dashboard/messenger'))
+            setCurrentPage('Messenger')
         else if (pathName.includes('/dashboard'))
             setCurrentPage('Dashboard')
 

@@ -13,16 +13,25 @@ interface CheckboxRef {
     checked: boolean
 }
 interface DeviceData {
-    id: number,
+    pkId: number
+    id: string,
     name: string,
+    phone?: string,
     apiKey: string,
-    label: string[],
-    status: number,
-    checked: boolean
-}[]
+    serverId: number,
+    status: string,
+    created_at: string,
+    updated_at: string,
+    businessHourId?: number,
+    userId: number,
+    DeviceLabel: Label[],
+    checked?: boolean
+}
 interface Label {
-    name: string,
-    active: boolean
+    label: {
+        name: string,
+        active?: boolean
+    }
 }
 interface CountryCode {
     name: string,

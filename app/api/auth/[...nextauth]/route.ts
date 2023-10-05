@@ -1,16 +1,22 @@
 import NextAuth, { DefaultSession } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import type { NextAuthOptions } from 'next-auth'
+interface SessionDevice {
+    id: string,
+    sessionId: string
+}
 declare module "next-auth" {
     interface User {
-        id: string,
-        token: string
+        id: string | undefined,
+        token: string | undefined,
+        device?: SessionDevice[]
     }
 
     interface Session extends DefaultSession {
         user?: User;
     }
 }
+
 export const authConfig: NextAuthOptions = {
     session: {
         strategy: "jwt",
@@ -35,7 +41,8 @@ export const authConfig: NextAuthOptions = {
                 const user = {
                     id: resultData.id,
                     token: resultData.accessToken,
-                    refreshToken: resultData.refreshToken
+                    refreshToken: resultData.refreshToken,
+                    device: []
                 }
                 if (user && result.ok) {
                     return user
@@ -53,7 +60,10 @@ export const authConfig: NextAuthOptions = {
             session.user = token.user;
             return session;
         },
-        async jwt({ token, user }) {
+        async jwt({ token, user, trigger, session }) {
+            if (trigger === 'update') {
+                token.user = session.user
+            }
             if (user) {
                 token.user = user;
             }

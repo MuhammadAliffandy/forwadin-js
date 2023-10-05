@@ -8,17 +8,11 @@ const PolicyForm = ({ setCurrentStep, setUserData, userData }: {
     setUserData: Dispatch<SetStateAction<UserRegisterData>>,
     userData: UserRegisterData
 }) => {
-    const [isDisabled, setisDisabled] = useState(true)
     const [isLoading, setisLoading] = useState(false)
     const [isChecked, setisChecked] = useState(false)
     const checkboxRef = useRef<HTMLInputElement>(null)
     const buttonRef = useRef<HTMLButtonElement>(null)
-    const handleScroll = (e: React.UIEvent<HTMLElement>) => {
-        // const target = e.target
-        if (e.currentTarget.scrollHeight - e.currentTarget.scrollTop === e.currentTarget.clientHeight) {
-            setisDisabled(false)
-        }
-    }
+
     const handleClick = async () => {
         if (!isLoading) {
             setisLoading(true)
@@ -30,6 +24,7 @@ const PolicyForm = ({ setCurrentStep, setUserData, userData }: {
                 },
                 body: JSON.stringify(userData)
             })
+            const message = await result.json()
             if (result.ok) {
                 const login = await signIn('credentials', {
                     identifier: userData.email,
@@ -40,8 +35,9 @@ const PolicyForm = ({ setCurrentStep, setUserData, userData }: {
                     setCurrentStep('otp')
                 }
                 else
-                    alert(login.error)
+                    toast.error(message.message)
             } else {
+                toast.error(message.message)
                 console.log(result.status)
             }
             setisLoading(false)
@@ -62,7 +58,7 @@ const PolicyForm = ({ setCurrentStep, setUserData, userData }: {
                 <div className='text-center'>
                     <p className='font-lexend font-bold text-3xl'>Syarat dan Ketentuan</p>
                 </div>
-                <div className="h-80 overflow-y-scroll allowed-scroll pr-4 py-4 flex flex-col gap-2" onScroll={handleScroll}>
+                <div className="h-80 overflow-y-scroll allowed-scroll pr-4 py-4 flex flex-col gap-2" >
                     <p className="font-bold text-lg">Privacy Policy for Forwardin</p>
                     <p>At Forwardin, accessible from -, one of our main priorities is the privacy of our visitors. This Privacy Policy document contains types of information that is collected and recorded by Forwardin and how we use it.
                     </p>
@@ -85,7 +81,7 @@ const PolicyForm = ({ setCurrentStep, setUserData, userData }: {
                     <p>By using our website, you hereby consent to our Privacy Policy and agree to its Terms and Conditions.</p>
                 </div>
                 <div className="flex gap-2 items-center">
-                    <input type="checkbox" ref={checkboxRef} name="privacy_policy" id="privacy_policy" className={"rounded-sm " + (isDisabled ? 'hover:cursor-not-allowed bg-customGray border-none ' : 'hover:cursor-pointer border-customGray')} disabled={isDisabled} onChange={handleCheckbox} />
+                    <input type="checkbox" ref={checkboxRef} name="privacy_policy" id="privacy_policy" className="rounded-sm hover:cursor-pointer border-customGray" onChange={handleCheckbox} />
                     <div className="">I acknowledge that i agree to the <span className="underline">Terms of Use</span> and have read the <span className="underline">Privacy Policy</span></div>
                 </div>
                 <div>

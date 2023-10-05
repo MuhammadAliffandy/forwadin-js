@@ -3,6 +3,7 @@ import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import NavButton from '../../components/dashboard/NavButton'
 import MessageList from '../../components/dashboard/MessageList'
 import ContactList from '@/components/dashboard/ContactList'
+import { signOut } from "next-auth/react";
 const DashboardTemplate = ({ currentPage, children }: { currentPage: string, children: React.ReactNode }) => {
     const [sideNavDropdown, setsideNavDropdown] = useState(false)
     const handleClick = (event: React.MouseEvent) => {
@@ -19,8 +20,8 @@ const DashboardTemplate = ({ currentPage, children }: { currentPage: string, chi
     return (
         <>
             <div className={(sideNavDropdown ? 'block' : 'hidden') + " h-full w-[200px] lg:w-[250px] z-10 top-0 left-0 overflow-y-hidden bg-white fixed lg:block"} id="side_nav">
-                <nav className="mt-8 px-4">
-                    <div className='flex justify-center items-center gap-2'>
+                <nav className="mt-8 px-4 hover:cursor-pointer" >
+                    <div className='flex justify-center items-center gap-2' onClick={() => signOut()}>
                         <div className=''>
                             <img src={'/assets/icons/logo.png'} alt="logo" />
 

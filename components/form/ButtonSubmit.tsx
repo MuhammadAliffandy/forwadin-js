@@ -1,4 +1,3 @@
-import React, { Dispatch, SetStateAction } from 'react'
 import { PulseLoader } from 'react-spinners'
 
 const ButtonSubmit = ({ isLoading, text }: { isLoading: boolean, text: string }) => {
