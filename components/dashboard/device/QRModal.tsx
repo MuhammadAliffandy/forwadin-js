@@ -12,9 +12,10 @@ interface QRModalProps {
     data: DeviceData | undefined,
     session: Session | null,
     update: (data?: any) => Promise<Session | null>,
+    refresh: () => void
 }
 
-const QRModal = ({ openModal, setopenModal, data, session, update }: QRModalProps) => {
+const QRModal = ({ openModal, setopenModal, data, session, update, refresh }: QRModalProps) => {
     const [isLoaded, setisLoaded] = useState(false)
     const [qrData, setqrData] = useState('')
     useEffect(() => {
@@ -60,6 +61,31 @@ const QRModal = ({ openModal, setopenModal, data, session, update }: QRModalProp
             }
         }
         generateQR()
+        const checkScan = setInterval(async () => {
+            if (session?.user?.device && data) {
+                const device = session?.user?.device.find(obj => obj.id === data.id)
+                console.log(device?.sessionId)
+                console.log(session.user.token)
+
+                const checkResult = await fetchClient({
+                    method: 'GET',
+                    url: '/sessions/' + device?.sessionId + '/status'
+                })
+                const body = await checkResult.json()
+                console.log(body)
+                if (body.status === 'AUTHENTICATED') {
+                    toast.success('Device berhasil terkoneksi')
+
+                    clearInterval(checkScan)
+                    setopenModal(false)
+                }
+            }
+        }, 7000)
+        return () => {
+            clearInterval(checkScan)
+            refresh()
+        }
+
     }, [])
     return (
         <>

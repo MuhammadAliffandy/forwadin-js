@@ -10,6 +10,7 @@ import { fetchClient } from '@/utils/helper/fetchClient';
 import { toast } from 'react-toastify';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css'
+import DeleteModal from '@/components/dashboard/device/DeleteModal';
 
 const DeviceTable = () => {
     const { data: session, update } = useSession()
@@ -24,6 +25,7 @@ const DeviceTable = () => {
     const [searchText, setsearchText] = useState('')
     const [searchedDevice, setsearchedDevice] = useState<DeviceData[]>([])
     const [openQrModal, setopenQrModal] = useState(false)
+    const [deleteModal, setdeleteModal] = useState(false)
     const [qrModalData, setqrModalData] = useState<DeviceData>()
     const [deviceModal, setdeviceModal] = useState(false)
     const handleCheckBoxClick = (e: React.FormEvent<HTMLInputElement>, pkId: number) => {
@@ -94,6 +96,9 @@ const DeviceTable = () => {
             toast.error('gagal mendapatkan data')
         }
     }
+    const refreshData = () => {
+        fetchData()
+    }
     useEffect(() => {
         fetchData()
     }, [])
@@ -134,7 +139,10 @@ const DeviceTable = () => {
     return (
         <>
             {openQrModal && (
-                <QRModal openModal={openQrModal} setopenModal={setopenQrModal} data={qrModalData} session={session} update={update} />
+                <QRModal openModal={openQrModal} setopenModal={setopenQrModal} data={qrModalData} session={session} update={update} refresh={refreshData} />
+            )}
+            {deleteModal && (
+                <DeleteModal setopenModal={setdeleteModal} openModal={deleteModal} device={deviceData} refresh={refreshData} />
             )}
             <AddDeviceModal openModal={deviceModal} setopenModal={setdeviceModal} fetchData={fetchData} />
             <div className="mt-8 p-4 bg-white rounded-md">
@@ -146,7 +154,7 @@ const DeviceTable = () => {
                         />
                     </div>
                     {isChecked ? (
-                        <div className="bg-danger rounded-md px-6 text-white text-center items-center flex hover:cursor-pointer justify-center p-2" onClick={tesSession}>
+                        <div className="bg-danger rounded-md px-6 text-white text-center items-center flex hover:cursor-pointer justify-center p-2" onClick={() => setdeleteModal(true)}>
                             Hapus
                         </div>
                     ) : (

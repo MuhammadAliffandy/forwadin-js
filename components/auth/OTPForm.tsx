@@ -71,9 +71,18 @@ const OTPForm = ({ setCurrentStep }: { setCurrentStep: Dispatch<SetStateAction<s
             multipleInputRef.current[`otp_${i}`].value = ''
         }
     }
+    const handlePaste = (e: React.ClipboardEvent) => {
+        const pasteText = e.clipboardData.getData('text')
+        multipleInputRef.current['otp_1'].value = pasteText[0]
+        multipleInputRef.current['otp_2'].value = pasteText[1]
+        multipleInputRef.current['otp_3'].value = pasteText[2]
+        multipleInputRef.current['otp_4'].value = pasteText[3]
+        multipleInputRef.current['otp_5'].value = pasteText[4]
+        multipleInputRef.current['otp_6'].value = pasteText[5]
+    }
     useEffect(() => {
 
-        sendOTP()
+        // sendOTP()
     }, [])
     return (
         <form className='flex flex-col gap-8 ' onSubmit={handleSubmit}>
@@ -83,7 +92,7 @@ const OTPForm = ({ setCurrentStep }: { setCurrentStep: Dispatch<SetStateAction<s
             </div>
             <div className="flex flex-row items-center justify-between mx-auto w-full max-w-xs">
                 <div className="w-12 h-12 ">
-                    <input ref={element => handleRefChange(element, 1)} className="w-full h-full flex flex-col items-center justify-center text-center  outline-none rounded-xl border border-gray-200 text-lg bg-white focus:bg-gray-50 focus:ring-1 ring-blue-700" type="text" name="otp_1" id="otp_1" maxLength={1} onChange={handleInputChange} />
+                    <input onPaste={handlePaste} ref={element => handleRefChange(element, 1)} className="w-full h-full flex flex-col items-center justify-center text-center  outline-none rounded-xl border border-gray-200 text-lg bg-white focus:bg-gray-50 focus:ring-1 ring-blue-700" type="text" name="otp_1" id="otp_1" maxLength={1} onChange={handleInputChange} />
                 </div>
                 <div className="w-12 h-12 ">
                     <input ref={element => handleRefChange(element, 2)} className="w-full h-full flex flex-col items-center justify-center text-center  outline-none rounded-xl border border-gray-200 text-lg bg-white focus:bg-gray-50 focus:ring-1 ring-blue-700" type="text" name="otp_2" id="otp_2" maxLength={1} onChange={handleInputChange} />
