@@ -10,7 +10,8 @@ interface AddContactModalProps {
 }
 const AddContactModal = ({ openModal, setopenModal }: AddContactModalProps) => {
     const { handleSubmit, register, setValue, watch, setError, formState: { errors } } = useForm<ContactData>()
-    const [labelList, setlabelList] = useState<Label[]>([])
+    const [labelList, setlabelList] = useState<Label[]>([
+    ])
     const onSubmit = async (formData: ContactData) => {
         alert('y')
     }
