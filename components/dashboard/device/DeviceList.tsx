@@ -30,8 +30,12 @@ const DeviceList = ({ deviceData, handleCheckBoxClick, deviceCheckboxRef, handle
                     <td className="p-4">{item.status === 'CONNECTED' ? 'Terkoneksi' : 'Tidak Terkoneksi'}</td>
                     <td className=' px-4'>
                         <div className="flex items-center">
+                            {item.status === 'CONNECTED' ? (
+                                <div>-</div>
+                            ) : (
+                                <div className='text-primary py-1 px-4  border border-black/20 rounded-md hover:cursor-pointer whitespace-nowrap  flex items-center' onClick={() => handleOpenQRModal(item)}>Scan QR</div>
+                            )}
 
-                            <div className='text-primary py-1 px-4 border border-black/20 rounded-md hover:cursor-pointer whitespace-nowrap  flex items-center' onClick={() => handleOpenQRModal(item)}>Scan QR</div>
                         </div>
                     </td>
                     <td className=' px-4'>
