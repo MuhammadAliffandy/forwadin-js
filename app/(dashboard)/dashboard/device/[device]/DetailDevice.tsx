@@ -11,7 +11,7 @@ import { PulseLoader } from "react-spinners"
 import { toast } from "react-toastify"
 const DetailDevice = ({ device }: { device: string }) => {
     const { push } = useRouter()
-    const [isLoading, setisLoading] = useState(true)
+    const [isLoading, setisLoading] = useState(false)
     const [isLoaded, setisLoaded] = useState(false)
     const [deviceName, setdeviceName] = useState('')
     const [deviceData, setdeviceData] = useState<DeviceData>()
