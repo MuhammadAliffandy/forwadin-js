@@ -63,6 +63,10 @@ td:not(.checkbox) {
     height: 12px;
 }
 
+textarea::-webkit-scrollbar {
+    display: none;
+}
+
 ::-webkit-scrollbar {
     width: 6px;
     height: 6px;

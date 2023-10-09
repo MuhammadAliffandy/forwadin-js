@@ -1,9 +1,8 @@
 'use client'
 import Link from "next/link"
 import { useRef, useState, useEffect } from "react"
-import { useForm, useController } from "react-hook-form"
+import { useForm } from "react-hook-form"
 import { Dispatch, SetStateAction } from "react";
-import { PulseLoader } from "react-spinners"
 import { toast } from "react-toastify"
 import { UserRegisterData, CountryCode } from "@/utils/types"
 import { animated, useTransition } from "@react-spring/web";

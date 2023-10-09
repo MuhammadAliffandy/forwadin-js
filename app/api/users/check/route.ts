@@ -15,7 +15,6 @@ export const POST = async (request: NextRequest) => {
         })
             .then(response => response.status === 200 ? true : false)
             .catch(error => {
-                // console.log(error)
                 isError = true
                 return error
             })

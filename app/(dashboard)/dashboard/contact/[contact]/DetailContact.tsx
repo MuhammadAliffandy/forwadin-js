@@ -69,6 +69,7 @@ const DetailContact = ({ contact }: { contact: string }) => {
             from: 'Ihsanul Afkar',
             size: '10 MB',
             created_at: '11.9.2023, 2:43 PM',
+            type: 'image',
             checked: false
         },
         {
@@ -78,6 +79,7 @@ const DetailContact = ({ contact }: { contact: string }) => {
             size: '10 MB',
             path: '',
             created_at: '11.9.2023, 2:43 PM',
+            type: 'image',
             checked: false
         },
         {
@@ -87,6 +89,7 @@ const DetailContact = ({ contact }: { contact: string }) => {
             path: '',
             size: '10 MB',
             created_at: '11.9.2023, 2:43 PM',
+            type: 'image',
             checked: false
         }
     ])

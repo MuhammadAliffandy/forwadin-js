@@ -6,6 +6,7 @@ import ContactList from '@/components/dashboard/ContactList'
 import { signOut } from "next-auth/react";
 const DashboardTemplate = ({ currentPage, children }: { currentPage: string, children: React.ReactNode }) => {
     const [sideNavDropdown, setsideNavDropdown] = useState(false)
+
     const handleClick = (event: React.MouseEvent) => {
         setsideNavDropdown(true)
     }
@@ -46,7 +47,7 @@ const DashboardTemplate = ({ currentPage, children }: { currentPage: string, chi
                     </div>
                 </nav>
             </div>
-            <div onClick={handleWindowClick} className="lg:pl-[250px] p-2 lg:p-6" id='main_content'>
+            <div onClick={handleWindowClick} className="lg:pl-[250px] p-2 lg:p-6 h-[100vh] overflow-hidden" id='main_content'>
                 {/* Mobile Dashboard Nav */}
                 <div className='flex w-full justify-between lg:hidden pb-4 pt-2 px-2'>
                     <div onClick={handleClick} id="dropdown_icon">
@@ -73,7 +74,7 @@ const DashboardTemplate = ({ currentPage, children }: { currentPage: string, chi
                         </div>
                     </div>
                 </div>
-                <div className='bg-neutral-75 h-[95vh] overflow-y-scroll rounded-2xl text-sm p-2 lg:pt-6 lg:px-6 relative'>
+                <div className='bg-neutral-75 h-[95vh] overflow-y-scroll rounded-2xl text-sm p-2 lg:pt-6 lg:px-6 relative '>
                     {/* Desktop Dashboard nav */}
                     <div className='lg:flex w-full justify-end gap-2 hidden'>
                         <div className='flex-none bg-white rounded-full p-2 hover:cursor-pointer'>

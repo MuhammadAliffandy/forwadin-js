@@ -70,8 +70,26 @@ interface MediaMessageData {
     path: string,
     from: string,
     size: string,
+    type: string,
     created_at: string,
     checked?: boolean
+}
+interface IncomingMessage {
+    id: string,
+    from: string,
+    message: string,
+    received_at: string,
+    created_at: string,
+    updated_at: string,
+}
+interface OutgoingMessage {
+    id: string,
+    to: string,
+    message: string,
+    status: string,
+    created_at: string,
+    updated_at: string,
+    source: string
 }
 interface GroupData {
     id: string,
@@ -83,4 +101,4 @@ interface GroupData {
     updated_at: string,
     checked?: boolean
 }
-export type { UserRegisterData, MultipleCheckboxRef, CheckboxRef, DeviceData, Label, CountryCode, ContactData, MessageData, MediaMessageData, GroupData }
+export type { UserRegisterData, MultipleCheckboxRef, CheckboxRef, DeviceData, Label, CountryCode, ContactData, MessageData, MediaMessageData, GroupData, IncomingMessage, OutgoingMessage }
