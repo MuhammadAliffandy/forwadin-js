@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Incoming from './Incoming'
 
 export const metadata: Metadata = {
     title: 'Incoming Message',
@@ -7,7 +8,7 @@ export const metadata: Metadata = {
 export default function Home() {
     return (
         <>
-            <p>ini incoming</p>
+            <Incoming />
         </>
     )
 }

@@ -77,10 +77,12 @@ interface MediaMessageData {
 interface IncomingMessage {
     id: string,
     from: string,
+    contact: ContactData,
     message: string,
     received_at: string,
     created_at: string,
     updated_at: string,
+    checked?: boolean
 }
 interface OutgoingMessage {
     id: string,
@@ -89,7 +91,8 @@ interface OutgoingMessage {
     status: string,
     created_at: string,
     updated_at: string,
-    source: string
+    source: string,
+    checked?: boolean
 }
 interface GroupData {
     id: string,

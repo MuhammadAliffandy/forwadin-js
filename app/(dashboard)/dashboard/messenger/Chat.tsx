@@ -14,7 +14,8 @@ const Chat = ({ currentUser, currentDate }: ChatProps) => {
         {
             id: '1',
             from: '6281234567',
-            message: "Join us this month for a celebration of art and music! We'll be hosting the Harmony Heights Music Festival, Samantha Knight's solo art exhibition, and an album release party for River Reed's new album 'Echoes in the Wilderness'. Don't miss out on this exciting lineup of events! [website link]",
+            message: "Join us this month for a celebration",
+            // message: "Join us this month for a celebration of art and music! We'll be hosting the Harmony Heights Music Festival, Samantha Knight's solo art exhibition, and an album release party for River Reed's new album 'Echoes in the Wilderness'. Don't miss out on this exciting lineup of events! [website link]",
             received_at: '10/09/2023 13:35:00',
             // received_at: '11/9/2023, 2:43 PM',
             created_at: '11/9/2023, 2:43 PM',

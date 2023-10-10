@@ -148,16 +148,17 @@ const Messenger = () => {
     const [listMessage, setlistMessage] = useState([
         {
             id: '1',
-            message: "Join us this month for a celebration of art and music! We'll be hosting the Harmony Heights Music Festival, Samantha Knight's solo art exhibition, and an album release party for River Reed's new album 'Echoes in the Wilderness'. Don't miss out on this exciting lineup of events! [website link]",
+            message: "Join us this month for a celebration of",
+            // message: "Join us this month for a celebration of art and music! We'll be hosting the Harmony Heights Music Festival, Samantha Knight's solo art exhibition, and an album release party for River Reed's new album 'Echoes in the Wilderness'. Don't miss out on this exciting lineup of events! [website link]",
             status: 0,
             to: '',
             from: '',
         }
     ])
     return (
-        <div className="lg:-mt-6 overflow-y-hidden">
-            <div className='flex justify-between gap-4'>
-                <div className='max-w-[250px] w-full max-h-[78vh]  text-xs'>
+        <div className="lg:-mt-6 overflow-y-auto lg:overflow-y-hidden">
+            <div className='flex lg:flex-row flex-col items-center justify-between gap-4 mb-12 lg:mb-0'>
+                <div className='max-w-md lg:max-w-[250px] w-full lg:max-h-[78vh] bg-white lg:bg-neutral-75 p-4 lg:p-0 text-xs'>
                     <div className="bg-white border border-customGray p-3 flex justify-between gap-2 hover:cursor-pointer rounded-md w-full items-center">
                         <div className="flex-none">
                             <img src="/assets/icons/dashboard/Devices.svg" alt="" className="invert-[1] grayscale-0" />
@@ -170,7 +171,7 @@ const Messenger = () => {
                     </div>
                     <ListChats listUser={listUser} currentUser={currentUser} setcurrentUser={setcurrentUser} />
                 </div>
-                <div className="bg-white p-4 rounded-md w-full ">
+                <div className="bg-white p-4 rounded-md w-full max-w-md lg:max-w-full ">
                     <div className='text-xs w-full max-h-[78vh] flex flex-col'>
                         <div className="flex flex-col overflow-y-auto allowed-scroll pr-2 h-full">
                             <Chat currentUser={currentUser} currentDate={currentDate} />
@@ -185,8 +186,8 @@ const Messenger = () => {
                         </div>
                     </div>
                 </div>
-                <div className="bg-white p-4 rounded-md max-w-xs w-full">
-                    <div className='w-full max-h-[78vh]  overflow-y-scroll'>
+                <div className="bg-white p-4 rounded-md max-w-md lg:max-w-xs w-full">
+                    <div className='w-full lg:max-h-[78vh]  overflow-y-scroll'>
                         <ProfileDetail />
                     </div>
                 </div>

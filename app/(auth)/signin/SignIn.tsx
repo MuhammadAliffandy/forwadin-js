@@ -7,18 +7,16 @@ import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import InputForm from '@/components/form/InputForm';
 import ButtonSubmit from '@/components/form/ButtonSubmit';
+import { toast } from 'react-toastify';
+
 interface UserLoginData {
     userEmail: string,
     password: string
 }
 const SignIn = () => {
     const { push } = useRouter()
-    const [loginData, setloginData] = useState({
-        userEmail: "",
-        password: ""
-    })
     const [isLoading, setisLoading] = useState(false)
-    const { handleSubmit, setError, clearErrors, setValue, register, formState: { errors } } = useForm<UserLoginData>()
+    const { handleSubmit, setError, setValue, register, formState: { errors } } = useForm<UserLoginData>()
 
     const componentSpring = useSpring({
         from: {
@@ -38,13 +36,19 @@ const SignIn = () => {
                 password: formData.password,
                 redirect: false
             })
+            console.log(login)
             if (!login?.error) {
                 push('/dashboard')
             } else {
                 setError('userEmail', {
                     type: 'custom',
-                    message: 'invalid credentials'
+                    message: ''
                 })
+                setError('password', {
+                    type: 'custom',
+                    message: ''
+                })
+                toast.error('check your credentials or network connections')
                 setisLoading(false)
             }
         } catch (error) {

@@ -118,23 +118,28 @@ export default function Home() {
         setcurrentSection('broadcast')
       else if (window.scrollY >= section.campaign.offsetTop && window.scrollY < section.autoReply.offsetTop) {
         setcurrentSection('campaign')
-        document.getElementById('sideNav')?.classList.remove('bg-white')
+        // document.getElementById('sideNav')?.classList.remove('text-white/100')
       }
       else if (window.scrollY >= section.autoReply.offsetTop && window.scrollY < section.opportunity.offsetTop) {
         setcurrentSection('autoReply')
       }
       else if (window.scrollY >= section.opportunity.offsetTop && window.scrollY < section.pricing.offsetTop) {
-        sideNav.classList.remove('bg-white/100')
         setcurrentSection('opportunity')
       }
       else if (window.scrollY >= section.pricing.offsetTop && window.scrollY < section.FAQ.offsetTop) {
         setcurrentSection('pricing')
-        sideNav.classList.add('bg-white/100')
+
+        sideNav.classList.add('border-l-2')
+        sideNav.classList.remove('text-white')
       }
-      else if (window.scrollY >= section.FAQ.offsetTop && window.scrollY < section.contact.offsetTop)
+      else if (window.scrollY >= section.FAQ.offsetTop && window.scrollY < section.contact.offsetTop - 10) {
         setcurrentSection('FAQ')
-      else if (window.scrollY >= section.contact.offsetTop)
+        sideNav.classList.remove('border-l-2')
+        sideNav.classList.add('text-white')
+      }
+      else
         setcurrentSection('contact')
+      // else if (window.scrollY >= section.contact.offsetTop)
     })
 
   }, [])
