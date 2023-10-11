@@ -2,23 +2,21 @@
 import { useState, useEffect } from 'react'
 import { animated, useSpring } from '@react-spring/web'
 import Link from 'next/link'
-import { useForm, useController } from "react-hook-form"
+import { useForm } from "react-hook-form"
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import InputForm from '@/components/form/InputForm';
 import ButtonSubmit from '@/components/form/ButtonSubmit';
+import { toast } from 'react-toastify';
+
 interface UserLoginData {
     userEmail: string,
     password: string
 }
 const SignIn = () => {
     const { push } = useRouter()
-    const [loginData, setloginData] = useState({
-        userEmail: "",
-        password: ""
-    })
     const [isLoading, setisLoading] = useState(false)
-    const { handleSubmit, setError, clearErrors, setValue, register, formState: { errors } } = useForm<UserLoginData>()
+    const { handleSubmit, setError, setValue, register, formState: { errors } } = useForm<UserLoginData>()
 
     const componentSpring = useSpring({
         from: {
@@ -38,13 +36,19 @@ const SignIn = () => {
                 password: formData.password,
                 redirect: false
             })
+            console.log(login)
             if (!login?.error) {
                 push('/dashboard')
             } else {
                 setError('userEmail', {
                     type: 'custom',
-                    message: 'invalid credentials'
+                    message: ''
                 })
+                setError('password', {
+                    type: 'custom',
+                    message: ''
+                })
+                toast.error('check your credentials or network connections')
                 setisLoading(false)
             }
         } catch (error) {
@@ -56,11 +60,10 @@ const SignIn = () => {
     useEffect(() => { }, [])
     return (
         <animated.div style={componentSpring} className='bg-white md:shadow-xl px-8 py-10 rounded-xl mx-auto max-w-md lg:max-h-[80vh] overflow-y-scroll'>
-
             <form className='flex flex-col gap-8' onSubmit={handleSubmit(onSubmit)}>
                 <div className='text-center'>
-                    <p className='font-lexend font-bold text-3xl'>Welcome Back</p>
-                    <p className=''>We're so excited to see you again!</p>
+                    <p className='font-lexend font-bold text-2xl'>Welcome Back</p>
+                    <p className='text-sm'>We're so excited to see you again!</p>
                 </div>
                 <div className='flex flex-col gap-4'>
                     <InputForm register={register} config={{
@@ -83,7 +86,7 @@ const SignIn = () => {
                     }} />
                 </div>
                 <div>
-                    <Link href={'/'} className='text-primary'>
+                    <Link href={'/auth/forgot-password'} className='text-primary'>
                         Lupa Password?</Link>
                 </div>
                 <div className='flex flex-col gap-4'>

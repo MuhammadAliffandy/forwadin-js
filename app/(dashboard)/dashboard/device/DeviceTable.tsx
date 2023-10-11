@@ -1,7 +1,7 @@
 'use client';
 import DeviceList from '@/components/dashboard/device/DeviceList';
 import QRModal from '@/components/dashboard/device/QRModal';
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import AddDeviceModal from '@/components/dashboard/device/AddDeviceModal';
 import { MultipleCheckboxRef, DeviceData } from '@/utils/types'
@@ -82,18 +82,22 @@ const DeviceTable = () => {
 
     }
     const fetchData = async () => {
-
-        const fetchDeviceData = await fetchClient({
-            method: 'GET',
-            url: '/devices',
-        })
-        const data: DeviceData[] = await fetchDeviceData.json()
-        if (fetchDeviceData.status === 200) {
-            setdeviceData(data)
-            setisLoaded(true)
-        } else {
-            console.log(data)
-            toast.error('gagal mendapatkan data')
+        try {
+            const fetchDeviceData = await fetchClient({
+                method: 'GET',
+                url: '/devices',
+            })
+            const data: DeviceData[] = await fetchDeviceData.json()
+            if (fetchDeviceData.status === 200) {
+                setdeviceData(data)
+                setisLoaded(true)
+            } else {
+                console.log(data)
+                toast.error('gagal mendapatkan data')
+            }
+        } catch (error) {
+            toast.error('gagal mendapatkan data, cek koneksi internet')
+            console.log(error)
         }
     }
     const refreshData = () => {

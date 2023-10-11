@@ -1,14 +1,15 @@
 import type { Metadata } from 'next'
-import Incoming from './Incoming'
+import ResetForm from './ResetForm'
+import ForgotPassword from './ForgotPassword'
 
 export const metadata: Metadata = {
-    title: 'Incoming Message',
+    title: 'Reset Password',
 }
 
 export default function Home() {
     return (
         <>
-            <Incoming />
+            <ForgotPassword />
         </>
     )
 }

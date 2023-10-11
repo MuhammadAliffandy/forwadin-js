@@ -1,14 +1,13 @@
 import type { Metadata } from 'next'
-import Incoming from './Incoming'
 
 export const metadata: Metadata = {
-    title: 'Incoming Message',
+    title: 'Create Broadcast',
 }
 
 export default function Home() {
     return (
         <>
-            <Incoming />
+            <p>asd</p>
         </>
     )
 }

@@ -1,17 +1,12 @@
 'use client'
-import Button from '../components/landing/Button'
 import OneStep from '@/components/landing/OneStep'
-import Subscription from '@/components/landing/Subscription'
 import FAQ from '@/components/landing/FAQ'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
-import dynamic from "next/dynamic";
-import { Animator, ScrollContainer, ScrollPage, batch, Fade, FadeIn, FadeOut, Move, MoveIn, MoveOut, Sticky, StickyIn, StickyOut, Zoom, ZoomIn, ZoomOut } from "react-scroll-motion";
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { Animator, ScrollContainer, ScrollPage, batch, Fade, Move, StickyOut } from "react-scroll-motion";
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
-interface NavigationRef {
-  [key: string]: HTMLDivElement
-}
+
 export default function Home() {
   // const FadeUp = Sticky()
   const FadeUp = batch(Fade(), Move(), StickyOut());
@@ -116,16 +111,6 @@ export default function Home() {
       contact: document.getElementsByClassName('contact')[0] as HTMLDivElement,
     }
     const sideNav = document.getElementById('sideNav') as HTMLDivElement
-    // const sideNav = {
-    //   getStarted: document.getElementById('nav_getStarted') as HTMLDivElement,
-    //   broadcast: document.getElementById('nav_broadcast') as HTMLDivElement,
-    //   autoReply: document.getElementById('nav_autoReply') as HTMLDivElement,
-    //   campaign: document.getElementById('nav_campaign') as HTMLDivElement,
-    //   FAQ: document.getElementById('nav_FAQ') as HTMLDivElement,
-    //   opportunity: document.getElementById('nav_opportunity') as HTMLDivElement,
-    //   pricing: document.getElementById('nav_pricing') as HTMLDivElement,
-    //   contact: document.getElementById('nav_contact') as HTMLDivElement,
-    // }
     document.addEventListener('scroll', () => {
       if (window.scrollY >= section.getStarted.offsetTop && window.scrollY < section.broadcast.offsetTop)
         setcurrentSection('getStarted')
@@ -133,28 +118,32 @@ export default function Home() {
         setcurrentSection('broadcast')
       else if (window.scrollY >= section.campaign.offsetTop && window.scrollY < section.autoReply.offsetTop) {
         setcurrentSection('campaign')
-        document.getElementById('sideNav')?.classList.remove('bg-white')
+        // document.getElementById('sideNav')?.classList.remove('text-white/100')
       }
       else if (window.scrollY >= section.autoReply.offsetTop && window.scrollY < section.opportunity.offsetTop) {
         setcurrentSection('autoReply')
       }
       else if (window.scrollY >= section.opportunity.offsetTop && window.scrollY < section.pricing.offsetTop) {
-        sideNav.classList.remove('bg-white/100')
         setcurrentSection('opportunity')
       }
       else if (window.scrollY >= section.pricing.offsetTop && window.scrollY < section.FAQ.offsetTop) {
         setcurrentSection('pricing')
-        sideNav.classList.add('bg-white/100')
-      }
-      else if (window.scrollY >= section.FAQ.offsetTop && window.scrollY < section.contact.offsetTop)
-        setcurrentSection('FAQ')
-      else if (window.scrollY >= section.contact.offsetTop)
-        setcurrentSection('contact')
-    })
 
+        sideNav.classList.add('border-l-2')
+        sideNav.classList.remove('text-white')
+      }
+      else if (window.scrollY >= section.FAQ.offsetTop && window.scrollY < section.contact.offsetTop - 10) {
+        setcurrentSection('FAQ')
+        sideNav.classList.remove('border-l-2')
+        sideNav.classList.add('text-white')
+      }
+      else
+        setcurrentSection('contact')
+      // else if (window.scrollY >= section.contact.offsetTop)
+    })
   }, [])
   return (<>
-    <main >
+    <main>
       <Navbar />
       <div id='sideNav' className='hidden fixed left-8 top-1/2 -translate-y-1/2 z-10 text-sm border-l-2 border-black/40 lg:flex flex-col gap-4 pl-4 text-black/40 rounded-md pr-2 py-2'>
         <div id='nav_getStarted' onClick={() => handleNavigationClick('getStarted')} className={(currentSection === 'getStarted' ? 'text-black' : '') + ' hover:cursor-pointer'}>Get Started</div>

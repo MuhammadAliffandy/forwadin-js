@@ -32,11 +32,6 @@ const SignUp = () => {
     useEffect(() => {
         document.querySelector('body')?.scroll(0, 0)
     }, [currentStep])
-    // useEffect(()=>{
-    //     setTimeout(() => {
-    //         setCurrentStep('register')
-    //     }, 1000);
-    // },[])
     return (
         <>
             {componentTransition((style, item) => item === "register" && (

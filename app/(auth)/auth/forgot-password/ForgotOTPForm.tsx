@@ -2,13 +2,11 @@
 import React, { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react";
 import { Dispatch, SetStateAction } from "react";
 import { toast } from "react-toastify";
-import ButtonSubmit from "../form/ButtonSubmit";
-import { MultipleInputRef } from "@/utils/types";
-import { BarLoader } from "react-spinners";
+import ButtonSubmit from "@/components/form/ButtonSubmit";
+import { MultipleInputRef, ResetUserData } from "@/utils/types";
 
-const OTPForm = ({ setCurrentStep }: { setCurrentStep: Dispatch<SetStateAction<string>> }) => {
+const ForgotOTPForm = ({ setCurrentStep, userData, setuserData }: { setCurrentStep: Dispatch<SetStateAction<string>>, userData: ResetUserData, setuserData: Dispatch<SetStateAction<ResetUserData>> }) => {
     const [isLoading, setisLoading] = useState(false)
-    const [otpLoading, setotpLoading] = useState(false)
     const multipleInputRef = useRef<MultipleInputRef>({})
     const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -25,8 +23,7 @@ const OTPForm = ({ setCurrentStep }: { setCurrentStep: Dispatch<SetStateAction<s
             multipleInputRef.current[`otp_${id}`] = element
         }
     }
-    const handleSubmit = async (e: React.FormEvent) => {
-        setisLoading(true)
+    const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault()
         const otp = multipleInputRef.current['otp_1'].value.toString() +
             multipleInputRef.current['otp_2'].value.toString() +
@@ -34,40 +31,32 @@ const OTPForm = ({ setCurrentStep }: { setCurrentStep: Dispatch<SetStateAction<s
             multipleInputRef.current['otp_4'].value.toString() +
             multipleInputRef.current['otp_5'].value.toString() +
             multipleInputRef.current['otp_6'].value.toString()
-        try {
-            const result = await fetch('/api/auth/otp', {
-                method: 'POST',
-                body: JSON.stringify({ token: otp })
-            })
-            const body = await result.json()
-            if (result.ok) {
-                setCurrentStep('success')
-            }
-            else
-                toast.error(body.message)
-        } catch (error) {
-            toast.error('Server Error')
-        }
-        setisLoading(false)
+        setuserData(prev => ({ ...prev, otp: otp }))
+        setCurrentStep('reset')
     }
+
     const sendOTP = async () => {
-        setotpLoading(true)
+        setisLoading(true)
         try {
-            const result = await fetch('/api/auth/otp', {
-                method: 'GET',
+            const result = await fetch(process.env.NEXT_PUBLIC_BACKEND_URL + 'auth/forgot-password', {
+                method: 'POST',
+                body: JSON.stringify({ email: userData.email })
             })
-            const body = await result.json()
-            if (result.ok)
-                toast.success('otp sent! please check your email')
-            else
+            if (result.status === 200) {
+                setisLoading(false)
+                setCurrentStep('reset')
+            } else {
+                const body = await result.json()
                 toast.error(body.message)
+                setisLoading(false)
+            }
         } catch (error) {
-            toast.error('Server Error')
+            setisLoading(false)
+            toast.error('Gagal konfirmasi email')
         }
         for (let i = 1; i <= 6; i++) {
             multipleInputRef.current[`otp_${i}`].value = ''
         }
-        setotpLoading(false)
     }
     const handlePaste = (e: React.ClipboardEvent) => {
         const pasteText = e.clipboardData.getData('text')
@@ -78,15 +67,11 @@ const OTPForm = ({ setCurrentStep }: { setCurrentStep: Dispatch<SetStateAction<s
         multipleInputRef.current['otp_5'].value = pasteText[4]
         multipleInputRef.current['otp_6'].value = pasteText[5]
     }
-    useEffect(() => {
-
-        sendOTP()
-    }, [])
     return (
         <form className='flex flex-col gap-8 ' onSubmit={handleSubmit}>
             <div className='text-center'>
-                <p className='font-lexend font-bold text-2xl'>Verifikasi Akun </p>
-                <p className='w-[80%] mx-auto text-sm'>Masukkan kode verifikasi yang telah dikirimkan ke email</p>
+                <p className='font-lexend font-bold text-3xl'>Verifikasi Akun </p>
+                <p className='w-[80%] mx-auto'>Masukkan kode verifikasi yang telah dikirimkan ke email</p>
             </div>
             <div className="flex flex-row items-center justify-between mx-auto w-full max-w-xs">
                 <div className="w-12 h-12 ">
@@ -113,19 +98,11 @@ const OTPForm = ({ setCurrentStep }: { setCurrentStep: Dispatch<SetStateAction<s
                     <ButtonSubmit isLoading={isLoading} text='Submit' />
                 </div>
             </div>
-            <div className="text-center text-sm">
-
-                {otpLoading ? (
-                    <div className="flex justify-center">
-
-                        <BarLoader color="#3366ff" />
-                    </div>
-                ) : (
-                    <div>Kode tidak terkirim? <span onClick={sendOTP} className="text-primary hover:cursor-pointer">Coba Lagi</span></div>
-                )}
+            <div className="text-center ">
+                <div>Kode tidak terkirim? <div onClick={sendOTP} className="text-primary hover:cursor-pointer">Coba Lagi</div></div>
             </div>
         </form>
     )
 }
 
-export default OTPForm
+export default ForgotOTPForm
