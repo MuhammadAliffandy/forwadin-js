@@ -4,9 +4,11 @@ import { Dispatch, SetStateAction } from "react";
 import { toast } from "react-toastify";
 import ButtonSubmit from "../form/ButtonSubmit";
 import { MultipleInputRef } from "@/utils/types";
+import { BarLoader } from "react-spinners";
 
 const OTPForm = ({ setCurrentStep }: { setCurrentStep: Dispatch<SetStateAction<string>> }) => {
     const [isLoading, setisLoading] = useState(false)
+    const [otpLoading, setotpLoading] = useState(false)
     const multipleInputRef = useRef<MultipleInputRef>({})
     const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -49,6 +51,7 @@ const OTPForm = ({ setCurrentStep }: { setCurrentStep: Dispatch<SetStateAction<s
         setisLoading(false)
     }
     const sendOTP = async () => {
+        setotpLoading(true)
         try {
             const result = await fetch('/api/auth/otp', {
                 method: 'GET',
@@ -64,6 +67,7 @@ const OTPForm = ({ setCurrentStep }: { setCurrentStep: Dispatch<SetStateAction<s
         for (let i = 1; i <= 6; i++) {
             multipleInputRef.current[`otp_${i}`].value = ''
         }
+        setotpLoading(false)
     }
     const handlePaste = (e: React.ClipboardEvent) => {
         const pasteText = e.clipboardData.getData('text')
@@ -76,7 +80,7 @@ const OTPForm = ({ setCurrentStep }: { setCurrentStep: Dispatch<SetStateAction<s
     }
     useEffect(() => {
 
-        // sendOTP()
+        sendOTP()
     }, [])
     return (
         <form className='flex flex-col gap-8 ' onSubmit={handleSubmit}>
@@ -110,7 +114,15 @@ const OTPForm = ({ setCurrentStep }: { setCurrentStep: Dispatch<SetStateAction<s
                 </div>
             </div>
             <div className="text-center text-sm">
-                <div>Kode tidak terkirim? <div onClick={sendOTP} className="text-primary hover:cursor-pointer">Coba Lagi</div></div>
+
+                {otpLoading ? (
+                    <div className="flex justify-center">
+
+                        <BarLoader color="#3366ff" />
+                    </div>
+                ) : (
+                    <div>Kode tidak terkirim? <span onClick={sendOTP} className="text-primary hover:cursor-pointer">Coba Lagi</span></div>
+                )}
             </div>
         </form>
     )
