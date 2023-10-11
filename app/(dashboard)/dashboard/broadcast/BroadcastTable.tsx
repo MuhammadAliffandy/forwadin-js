@@ -2,94 +2,42 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { IncomingMessage, MultipleCheckboxRef } from '@/utils/types';
-import IncomingList from './IncomingList';
-import AddContactModal from '@/components/dashboard/contact/AddContactModal';
-
-const IncomingTable = () => {
+import { BroadcastData, MultipleCheckboxRef } from '@/utils/types';
+import BroadcastList from './BroadcastList';
+const BroadcastTable = () => {
     const { push } = useRouter()
     const mainCheckboxRef = useRef<HTMLInputElement>(null)
     const messageCheckboxRef = useRef<MultipleCheckboxRef>({})
     const [isChecked, setisChecked] = useState(false)
-    const [messageData, setmessageData] = useState<IncomingMessage[]>([
+    const [messageData, setmessageData] = useState<BroadcastData[]>([
         {
             id: '1',
-            from: '6281678923',
-            message: "Join us this month for a celebration of",
-            contact: {
-                id: '1',
-                phone: "6281357995175",
-                firstName: 'Ihsanul',
-                lastName: 'Afkar',
-                initial: 'IA',
-                profileColor: '4FBEAB',
-                gender: "Laki-laki",
-                email: 'ihsanulafkar@gmail.com',
-                honorific: 'Mr',
-                country: 'Indonesia',
-                birthDate: '10/10/2010',
-                label: ['Personal', 'Realme', 'Aktif'],
-                created_at: '11.9.2023, 2:43 PM'
+            name: 'broadcast-1',
+            status: 'Ongoing',
+            sent: 12,
+            received: 12,
+            read: 12,
+            reply: 12,
+            device: {
+                pkId: 1,
+                id: 'ftuygibnilkm;123',
+                name: 'DXB12',
+                phone: '0845678902',
+                apiKey: 'bad-0u210n13',
+                serverId: 1,
+                status: 'CONNECTED',
+                created_at: '11.9.2023, 2:43 PM',
+                updated_at: '11.9.2023, 2:43 PM',
+                userId: 23,
+                DeviceLabel: [],
             },
-            received_at: "10/09/2023 13:35:00",
-            type: 'broadcast',
-            created_at: "10/09/2023 13:35:00",
-            updated_at: "10/09/2023 13:35:00",
-            checked: false
-        },
-        {
-            id: '1',
-            from: '6281678923',
-            message: "Join us this month for a celebration of",
-            contact: {
-                id: '1',
-                phone: "6281357995175",
-                firstName: 'Ihsanul',
-                lastName: 'Afkar',
-                initial: 'IA',
-                profileColor: '4FBEAB',
-                gender: "Laki-laki",
-                email: 'ihsanulafkar@gmail.com',
-                honorific: 'Mr',
-                country: 'Indonesia',
-                birthDate: '10/10/2010',
-                label: ['Personal', 'Realme', 'Aktif'],
-                created_at: '11.9.2023, 2:43 PM'
-            },
-            received_at: "10/09/2023 13:35:00",
-            type: 'campaign',
-            created_at: "10/09/2023 13:35:00",
-            updated_at: "10/09/2023 13:35:00",
-            checked: false
-        },
-        {
-            id: '1',
-            from: '6281678923',
-            message: "Join us this month for a celebration of",
-            contact: {
-                id: '1',
-                phone: "6281357995175",
-                firstName: 'Ihsanul',
-                lastName: 'Afkar',
-                initial: 'IA',
-                profileColor: '4FBEAB',
-                gender: "Laki-laki",
-                email: 'ihsanulafkar@gmail.com',
-                honorific: 'Mr',
-                country: 'Indonesia',
-                birthDate: '10/10/2010',
-                label: ['Personal', 'Realme', 'Aktif'],
-                created_at: '11.9.2023, 2:43 PM'
-            },
-            received_at: "10/09/2023 13:35:00",
-            type: 'direct',
-            created_at: "10/09/2023 13:35:00",
-            updated_at: "10/09/2023 13:35:00",
+            created_at: '11.9.2023, 2:43 PM',
+            updated_at: '11.9.2023, 2:43 PM',
             checked: false
         },
     ])
     const [searchText, setsearchText] = useState('')
-    const [searchedMessage, setsearchedMessage] = useState<IncomingMessage[]>([])
+    const [searchedData, setsearchedData] = useState<BroadcastData[]>([])
     const handleCheckBoxClick = (e: React.FormEvent<HTMLInputElement>, id: string) => {
         const newmessageData = messageData.map(obj => {
             return (obj.id === id ? { ...obj, checked: e.currentTarget.checked } : obj)
@@ -98,14 +46,14 @@ const IncomingTable = () => {
     }
 
     const handleIndexCheckbox = (e: React.MouseEvent) => {
-        const currentmessageData = (searchText ? searchedMessage : messageData)
+        const currentmessageData = (searchText ? searchedData : messageData)
         if (mainCheckboxRef.current && !mainCheckboxRef.current.checked) {
             const newArray = currentmessageData.map((obj, idx) => {
                 messageCheckboxRef.current[`checkbox_${obj.id}`].checked = false
                 return { ...obj, checked: false }
             })
             if (searchText)
-                setsearchedMessage(newArray)
+                setsearchedData(newArray)
             else
                 setmessageData(() => newArray)
         } else {
@@ -114,7 +62,7 @@ const IncomingTable = () => {
                 return { ...obj, checked: true }
             })
             if (searchText)
-                setsearchedMessage(() => newArray)
+                setsearchedData(() => newArray)
             else
                 setmessageData(() => newArray)
         }
@@ -125,7 +73,7 @@ const IncomingTable = () => {
     const filterMessage = (text: string) => {
         const regex = new RegExp(text, 'i')
         return messageData.filter(item => {
-            if (regex.test(item.from))
+            if (regex.test(item.name))
                 return item
         })
     }
@@ -152,7 +100,7 @@ const IncomingTable = () => {
     }, [messageData])
     useEffect(() => {
         if (mainCheckboxRef.current) {
-            const checkObject = searchedMessage.find(obj => obj.checked === true)
+            const checkObject = searchedData.find(obj => obj.checked === true)
             if (checkObject) {
                 mainCheckboxRef.current.checked = true
                 setisChecked(true)
@@ -162,15 +110,16 @@ const IncomingTable = () => {
                 setisChecked(false)
             }
         }
-    }, [searchedMessage])
+    }, [searchedData])
 
     useEffect(() => {
         const searchResult = filterMessage(searchText)
-        setsearchedMessage(searchResult)
+        setsearchedData(searchResult)
     }, [searchText])
 
     return (
         <>
+            {/* <AddContactModal openModal={addContactModal} setopenModal={setaddContactModal} /> */}
             <div className="mt-8 p-4 bg-white rounded-md">
                 <div className="flex sm:flex-row flex-col gap-2 justify-between">
                     <div className="basis-1/2">
@@ -180,9 +129,13 @@ const IncomingTable = () => {
                         />
                     </div>
                     <div className='flex lg:justify-end justify-between gap-2 w-full max-w-xs'>
-                        {isChecked && (
+                        {isChecked ? (
                             <div onClick={handleDeleteMessage} className="bg-danger rounded-md w-full lg:w-auto px-8 text-white text-center items-center flex hover:cursor-pointer justify-center p-2">
                                 Hapus
+                            </div>
+                        ) : (
+                            <div onClick={() => push('/dashboard/broadcast/new')} className="bg-primary rounded-md w-full lg:w-auto px-8 text-white text-center items-center flex hover:cursor-pointer justify-center p-2">
+                                Buat Broadcast Baru
                             </div>
                         )}
                     </div>
@@ -195,24 +148,28 @@ const IncomingTable = () => {
                             <th className='py-4 checkbox'>
                                 <input ref={mainCheckboxRef} type="checkbox" name="main_checkbox" id="main_checkbox" className='rounded-sm focus:ring-transparent' onClick={handleIndexCheckbox} />
                             </th>
-                            <th className='p-4 whitespace-pre'>Nomor HP</th>
                             <th className='p-4'>Nama</th>
-                            <th className='p-4'>Tipe</th>
-                            <th className='p-4 whitespace-pre'>Diterima Pada</th>
-                            <th className='p-4'>Detail</    th>
+                            <th className='p-4'>Status</th>
+                            <th className='p-4'>Terkirim</th>
+                            <th className='p-4'>Diterima</th>
+                            <th className='p-4'>Terbaca</th>
+                            <th className='p-4'>Balasan</th>
+                            <th className='p-4 '>Device</th>
+                            <th className='p-4 '>Tanggal Kirim</th>
+                            <th className='p-4 whitespace-pre'>Terakhir diupdate</th>
                         </tr>
                     </thead>
                     <tbody className='bg-white'>
                         {searchText ? (
-                            <IncomingList
-                                incomingData={searchedMessage}
+                            <BroadcastList
+                                broadcastData={searchedData}
                                 multipleCheckboxRef={messageCheckboxRef}
                                 handleCheckBoxClick={handleCheckBoxClick}
                                 handleOpenDetailModal={handleOpenDetailModal}
                             />
                         ) : (
-                            <IncomingList
-                                incomingData={messageData}
+                            <BroadcastList
+                                broadcastData={messageData}
                                 multipleCheckboxRef={messageCheckboxRef}
                                 handleCheckBoxClick={handleCheckBoxClick}
                                 handleOpenDetailModal={handleOpenDetailModal}
@@ -229,7 +186,7 @@ const IncomingTable = () => {
                             <p className='text-xs'>Dengan kontak ini, Anda dapat dengan mudah berkomunikasi dengan kontak yang anda simpan</p>
                             <div className='flex'>
                                 <div onClick={() => { }} className="bg-primary rounded-md px-6 text-white text-center items-center flex hover:cursor-pointer justify-center p-2">
-                                    Tambah Chat
+                                    Tambah Kontak
                                 </div>
                             </div>
                         </div>
@@ -240,4 +197,4 @@ const IncomingTable = () => {
     )
 }
 
-export default IncomingTable
+export default BroadcastTable

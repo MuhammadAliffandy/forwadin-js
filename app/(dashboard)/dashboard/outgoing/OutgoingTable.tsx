@@ -2,19 +2,17 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { IncomingMessage, MultipleCheckboxRef } from '@/utils/types';
-import IncomingList from './IncomingList';
-import AddContactModal from '@/components/dashboard/contact/AddContactModal';
-
-const IncomingTable = () => {
+import { OutgoingMessage, MultipleCheckboxRef } from '@/utils/types';
+import OutgoingList from './OutgoingList';
+const OutgoingTable = () => {
     const { push } = useRouter()
     const mainCheckboxRef = useRef<HTMLInputElement>(null)
     const messageCheckboxRef = useRef<MultipleCheckboxRef>({})
     const [isChecked, setisChecked] = useState(false)
-    const [messageData, setmessageData] = useState<IncomingMessage[]>([
+    const [messageData, setmessageData] = useState<OutgoingMessage[]>([
         {
             id: '1',
-            from: '6281678923',
+            to: '6281678923',
             message: "Join us this month for a celebration of",
             contact: {
                 id: '1',
@@ -31,65 +29,17 @@ const IncomingTable = () => {
                 label: ['Personal', 'Realme', 'Aktif'],
                 created_at: '11.9.2023, 2:43 PM'
             },
-            received_at: "10/09/2023 13:35:00",
+            status: "received",
             type: 'broadcast',
-            created_at: "10/09/2023 13:35:00",
-            updated_at: "10/09/2023 13:35:00",
-            checked: false
-        },
-        {
-            id: '1',
-            from: '6281678923',
-            message: "Join us this month for a celebration of",
-            contact: {
-                id: '1',
-                phone: "6281357995175",
-                firstName: 'Ihsanul',
-                lastName: 'Afkar',
-                initial: 'IA',
-                profileColor: '4FBEAB',
-                gender: "Laki-laki",
-                email: 'ihsanulafkar@gmail.com',
-                honorific: 'Mr',
-                country: 'Indonesia',
-                birthDate: '10/10/2010',
-                label: ['Personal', 'Realme', 'Aktif'],
-                created_at: '11.9.2023, 2:43 PM'
-            },
-            received_at: "10/09/2023 13:35:00",
-            type: 'campaign',
-            created_at: "10/09/2023 13:35:00",
-            updated_at: "10/09/2023 13:35:00",
-            checked: false
-        },
-        {
-            id: '1',
-            from: '6281678923',
-            message: "Join us this month for a celebration of",
-            contact: {
-                id: '1',
-                phone: "6281357995175",
-                firstName: 'Ihsanul',
-                lastName: 'Afkar',
-                initial: 'IA',
-                profileColor: '4FBEAB',
-                gender: "Laki-laki",
-                email: 'ihsanulafkar@gmail.com',
-                honorific: 'Mr',
-                country: 'Indonesia',
-                birthDate: '10/10/2010',
-                label: ['Personal', 'Realme', 'Aktif'],
-                created_at: '11.9.2023, 2:43 PM'
-            },
-            received_at: "10/09/2023 13:35:00",
-            type: 'direct',
+            source: '6281678923',
             created_at: "10/09/2023 13:35:00",
             updated_at: "10/09/2023 13:35:00",
             checked: false
         },
     ])
     const [searchText, setsearchText] = useState('')
-    const [searchedMessage, setsearchedMessage] = useState<IncomingMessage[]>([])
+    const [searchedMessage, setsearchedMessage] = useState<OutgoingMessage[]>([])
+    const [addContactModal, setaddContactModal] = useState(false)
     const handleCheckBoxClick = (e: React.FormEvent<HTMLInputElement>, id: string) => {
         const newmessageData = messageData.map(obj => {
             return (obj.id === id ? { ...obj, checked: e.currentTarget.checked } : obj)
@@ -125,7 +75,7 @@ const IncomingTable = () => {
     const filterMessage = (text: string) => {
         const regex = new RegExp(text, 'i')
         return messageData.filter(item => {
-            if (regex.test(item.from))
+            if (regex.test(item.source))
                 return item
         })
     }
@@ -171,6 +121,7 @@ const IncomingTable = () => {
 
     return (
         <>
+            {/* <AddContactModal openModal={addContactModal} setopenModal={setaddContactModal} /> */}
             <div className="mt-8 p-4 bg-white rounded-md">
                 <div className="flex sm:flex-row flex-col gap-2 justify-between">
                     <div className="basis-1/2">
@@ -198,21 +149,21 @@ const IncomingTable = () => {
                             <th className='p-4 whitespace-pre'>Nomor HP</th>
                             <th className='p-4'>Nama</th>
                             <th className='p-4'>Tipe</th>
-                            <th className='p-4 whitespace-pre'>Diterima Pada</th>
-                            <th className='p-4'>Detail</    th>
+                            <th className='p-4 whitespace-pre'>Dikirim Pada</th>
+                            <th className='p-4'>Detail</th>
                         </tr>
                     </thead>
                     <tbody className='bg-white'>
                         {searchText ? (
-                            <IncomingList
-                                incomingData={searchedMessage}
+                            <OutgoingList
+                                outgoingData={searchedMessage}
                                 multipleCheckboxRef={messageCheckboxRef}
                                 handleCheckBoxClick={handleCheckBoxClick}
                                 handleOpenDetailModal={handleOpenDetailModal}
                             />
                         ) : (
-                            <IncomingList
-                                incomingData={messageData}
+                            <OutgoingList
+                                outgoingData={messageData}
                                 multipleCheckboxRef={messageCheckboxRef}
                                 handleCheckBoxClick={handleCheckBoxClick}
                                 handleOpenDetailModal={handleOpenDetailModal}
@@ -228,8 +179,8 @@ const IncomingTable = () => {
                             <p className='text-xs text-[#777C88]'>Tambahkan nomor ke dalam kontak anda.</p>
                             <p className='text-xs'>Dengan kontak ini, Anda dapat dengan mudah berkomunikasi dengan kontak yang anda simpan</p>
                             <div className='flex'>
-                                <div onClick={() => { }} className="bg-primary rounded-md px-6 text-white text-center items-center flex hover:cursor-pointer justify-center p-2">
-                                    Tambah Chat
+                                <div onClick={() => setaddContactModal(true)} className="bg-primary rounded-md px-6 text-white text-center items-center flex hover:cursor-pointer justify-center p-2">
+                                    Tambah Kontak
                                 </div>
                             </div>
                         </div>
@@ -240,4 +191,4 @@ const IncomingTable = () => {
     )
 }
 
-export default IncomingTable
+export default OutgoingTable

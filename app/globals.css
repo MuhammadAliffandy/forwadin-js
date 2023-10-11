@@ -70,7 +70,6 @@ textarea::-webkit-scrollbar {
 ::-webkit-scrollbar {
     width: 6px;
     height: 6px;
-
 }
 
 .allowed-scroll::-webkit-scrollbar-thumb {

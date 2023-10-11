@@ -6,8 +6,17 @@ interface UserRegisterData {
     confirmPassword: string,
     otp?: string
 }
+interface ResetUserData {
+    email: string,
+    otp: string,
+    password: string,
+    confirmPassword: string
+}
 interface MultipleCheckboxRef {
     [key: string]: { checked: boolean }
+}
+interface MultipleInputRef {
+    [key: string]: HTMLInputElement
 }
 interface CheckboxRef {
     checked: boolean
@@ -82,16 +91,19 @@ interface IncomingMessage {
     received_at: string,
     created_at: string,
     updated_at: string,
+    type: string,
     checked?: boolean
 }
 interface OutgoingMessage {
     id: string,
     to: string,
     message: string,
+    contact: ContactData,
     status: string,
     created_at: string,
     updated_at: string,
     source: string,
+    type: string,
     checked?: boolean
 }
 interface GroupData {
@@ -104,4 +116,18 @@ interface GroupData {
     updated_at: string,
     checked?: boolean
 }
-export type { UserRegisterData, MultipleCheckboxRef, CheckboxRef, DeviceData, Label, CountryCode, ContactData, MessageData, MediaMessageData, GroupData, IncomingMessage, OutgoingMessage }
+interface BroadcastData {
+    id: string,
+    name: string,
+    status: string,
+    sent: number,
+    received: number,
+    read: number,
+    reply: number,
+    device: DeviceData,
+    created_at: string,
+    updated_at: string,
+    checked?: boolean
+}
+
+export type { UserRegisterData, MultipleCheckboxRef, CheckboxRef, DeviceData, Label, CountryCode, ContactData, MessageData, MediaMessageData, GroupData, IncomingMessage, OutgoingMessage, MultipleInputRef, ResetUserData, BroadcastData }

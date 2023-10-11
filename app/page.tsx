@@ -141,7 +141,6 @@ export default function Home() {
         setcurrentSection('contact')
       // else if (window.scrollY >= section.contact.offsetTop)
     })
-
   }, [])
   return (<>
     <main>

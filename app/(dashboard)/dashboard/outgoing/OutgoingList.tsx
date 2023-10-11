@@ -1,26 +1,26 @@
-import { IncomingMessage, MultipleCheckboxRef } from "@/utils/types"
+import { OutgoingMessage, MultipleCheckboxRef } from "@/utils/types"
 import Link from "next/link"
 
-interface IncomingListProps {
-    incomingData: IncomingMessage[],
+interface OutgoingListProps {
+    outgoingData: OutgoingMessage[],
     handleCheckBoxClick: (event: React.FormEvent<HTMLInputElement>, id: string) => void,
     multipleCheckboxRef: React.MutableRefObject<MultipleCheckboxRef>,
     handleOpenDetailModal: (params: string) => void
 }
-const IncomingList = ({ incomingData, handleCheckBoxClick, multipleCheckboxRef, handleOpenDetailModal }: IncomingListProps) => {
-    const handleRefChange = (element: HTMLInputElement | null, item: IncomingMessage) => {
+const OutgoingList = ({ outgoingData, handleCheckBoxClick, multipleCheckboxRef, handleOpenDetailModal }: OutgoingListProps) => {
+    const handleRefChange = (element: HTMLInputElement | null, item: OutgoingMessage) => {
         if (multipleCheckboxRef.current && element)
             multipleCheckboxRef.current[`checkbox_${item.id}`] = element
     }
 
     return (
         <>
-            {incomingData.map((item, index) => (
+            {outgoingData.map((item, index) => (
                 <tr key={index}>
                     <td className="p-4 checkbox">
                         <input type="checkbox" name={'checkbox_' + item.id} id={'checkbox_' + item.id} className='rounded-sm focus:ring-transparent' onClick={(e) => handleCheckBoxClick(e, item.id)} ref={element => handleRefChange(element, item)} />
                     </td>
-                    <td className='p-4'>+{item.from}</td>
+                    <td className='p-4'>+{item.contact.phone}</td>
                     <td className='p-4'>
                         <div className="flex items-center gap-2">
                             <div className="">
@@ -35,7 +35,7 @@ const IncomingList = ({ incomingData, handleCheckBoxClick, multipleCheckboxRef, 
                         <PrintType type={item.type} chatId={item.id} />
                     </td>
 
-                    <td className="p-4">{item.received_at}</td>
+                    <td className="p-4">{item.created_at}</td>
                     <td className='p-4'>
                         <div className='py-1 text-center px-2 border border-black/20 rounded-sm hover:cursor-pointer' onClick={() => handleOpenDetailModal(item.id.toString())}>Detail</div>
                     </td>
@@ -80,4 +80,4 @@ const PrintType = ({ type, chatId }: { type: string, chatId: string }) => {
     )
 }
 
-export default IncomingList
+export default OutgoingList
