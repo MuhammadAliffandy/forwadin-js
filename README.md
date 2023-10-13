@@ -1,7 +1,7 @@
 # Super Apps Web Frontend
 
 ### Project
-- Sellepro
+- Sellerpro
 
 ### Build With
 React - Next.JS
