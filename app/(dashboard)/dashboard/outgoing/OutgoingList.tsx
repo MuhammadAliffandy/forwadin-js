@@ -25,7 +25,7 @@ const OutgoingList = ({ outgoingData, handleCheckBoxClick, multipleCheckboxRef, 
                         <div className="flex items-center gap-2">
                             <div className="">
                                 <div style={{
-                                    backgroundColor: '#' + item.contact.profileColor
+                                    backgroundColor: '#' + item.contact.colorCode
                                 }} className={`flex-none rounded-full text-white w-8 h-8 flex items-center justify-center`}>{item.contact.initial}</div>
                             </div>
                             <p>{item.contact.firstName + ' ' + item.contact.lastName}</p>

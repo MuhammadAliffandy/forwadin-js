@@ -9,7 +9,6 @@ import { getSession, useSession } from 'next-auth/react';
 import { fetchClient } from '@/utils/helper/fetchClient';
 import { toast } from 'react-toastify';
 import Skeleton from 'react-loading-skeleton';
-import 'react-loading-skeleton/dist/skeleton.css'
 import DeleteModal from '@/components/dashboard/device/DeleteModal';
 
 const DeviceTable = () => {
@@ -78,9 +77,7 @@ const DeviceTable = () => {
     const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
         setsearchText(e.target.value)
     }
-    const handleAddDevice = () => {
 
-    }
     const fetchData = async () => {
         try {
             const fetchDeviceData = await fetchClient({
@@ -105,6 +102,7 @@ const DeviceTable = () => {
     }
     useEffect(() => {
         fetchData()
+
     }, [])
     useEffect(() => {
         if (mainCheckboxRef.current) {

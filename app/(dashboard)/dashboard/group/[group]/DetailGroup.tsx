@@ -21,15 +21,16 @@ const DetailGroup = ({ params }: { params: any }) => {
             firstName: 'Ihsanul',
             lastName: 'Afkar',
             initial: 'IA',
-            profileColor: '4FBEAB',
+            colorCode: '4FBEAB',
             gender: "Laki-laki",
             email: 'ihsanulafkar@gmail.com',
             honorific: 'Mr',
             country: 'Indonesia',
-            birthDate: '10/10/2010',
-            label: ['Personal', 'Realme', 'Aktif'],
+            dob: '10/10/2010',
+            ContactLabel: [],
             checked: false,
-            created_at: '11.9.2023, 2:43 PM'
+            createdAt: '11.9.2023, 2:43 PM',
+            updatedAt: '11.9.2023, 2:43 PM',
         },
         {
             id: '2',
@@ -37,15 +38,16 @@ const DetailGroup = ({ params }: { params: any }) => {
             firstName: 'Ihsanul',
             lastName: 'Afkar',
             initial: 'IA',
-            profileColor: '4FBEAB',
+            colorCode: '4FBEAB',
             gender: "Laki-laki",
             email: 'ihsanulafkar@gmail.com',
             honorific: 'Mr',
             country: 'Indonesia',
-            birthDate: '10/10/2010',
-            label: ['Personal', 'Realme', 'Aktif'],
+            dob: '10/10/2010',
+            ContactLabel: [],
             checked: false,
-            created_at: '11.9.2023, 2:43 PM'
+            createdAt: '11.9.2023, 2:43 PM',
+            updatedAt: '11.9.2023, 2:43 PM',
         },
         {
             id: '3',
@@ -53,15 +55,16 @@ const DetailGroup = ({ params }: { params: any }) => {
             firstName: 'Ihsanul',
             lastName: 'Afkar',
             initial: 'IA',
-            profileColor: '4FBEAB',
+            colorCode: '4FBEAB',
             gender: "Laki-laki",
             email: 'ihsanulafkar@gmail.com',
             honorific: 'Mr',
             country: 'Indonesia',
-            birthDate: '10/10/2010',
-            label: ['Personal', 'Realme', 'Aktif'],
+            dob: '10/10/2010',
+            ContactLabel: [],
             checked: false,
-            created_at: '11.9.2023, 2:43 PM'
+            createdAt: '11.9.2023, 2:43 PM',
+            updatedAt: '11.9.2023, 2:43 PM',
         },
     ])
     const [searchText, setsearchText] = useState('')
@@ -106,7 +109,7 @@ const DetailGroup = ({ params }: { params: any }) => {
         return contactData.filter(item => {
             if (regex.test(item.firstName) || regex.test(item.lastName) || regex.test(item.phone))
                 return item
-            const findLabel = item.label.find(label => regex.test(label))
+            const findLabel = item.ContactLabel.find(item => regex.test(item.label.name))
             if (findLabel)
                 return item
         })

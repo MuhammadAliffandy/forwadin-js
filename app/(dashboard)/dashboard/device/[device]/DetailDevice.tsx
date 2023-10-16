@@ -63,7 +63,6 @@ const DetailDevice = ({ device }: { device: string }) => {
             <div className='mt-8 flex flex-col lg:flex-row justify-center lg:justify-between gap-4'>
                 <div className='bg-white rounded-md w-full max-w-md p-4 mx-auto'>
                     {isLoaded ? (
-
                         <>
                             <p className='font-lexend text-2xl font-bold '>Device Detail</p>
 

@@ -9,6 +9,7 @@ declare module "next-auth" {
     interface User {
         id: string | undefined,
         token: string | undefined,
+        refreshToken: string | undefined,
         device?: SessionDevice[]
     }
 
@@ -24,6 +25,36 @@ export const authConfig: NextAuthOptions = {
     },
     providers: [
         CredentialsProvider({
+            id: 'refresh',
+            name: 'Refresh',
+            credentials: {
+                refreshToken: {},
+                device: {}
+            },
+            authorize: async (credentials: any) => {
+                const result = await fetch(process.env.BACKEND_URL + '/auth/refresh-token', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ refreshToken: credentials?.refreshToken })
+                })
+                const resultData = await result.json()
+                const user = {
+                    id: resultData.id,
+                    token: resultData.accessToken,
+                    refreshToken: credentials?.refreshToken,
+                    device: credentials?.device
+                }
+                if (user && result.ok) {
+                    return user
+                } else {
+                    return null
+                }
+            },
+        }),
+        CredentialsProvider({
+            id: 'credentials',
             name: "Credentials",
             credentials: {
                 identifier: {},

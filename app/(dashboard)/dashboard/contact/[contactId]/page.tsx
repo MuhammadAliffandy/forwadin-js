@@ -1,12 +1,12 @@
 import Link from 'next/link'
 import DetailContact from './DetailContact'
 type Params = {
-    params: { contact: string }
+    params: { contactId: string }
 }
 export async function generateMetadata({ params }: Params) {
-    const contact = params.contact
+    // const contact = params.contactId
     return {
-        title: contact + " Details"
+        title: "Detail Kontak"
     }
 }
 const page = ({ params }: Params) => {
@@ -16,7 +16,7 @@ const page = ({ params }: Params) => {
             <div className='flex'>
                 <Link href={'/dashboard/contact'} className='rounded-md py-3 px-4 border border-black/50 text-black/50'>Kembali</Link>
             </div>
-            <DetailContact contact={params.contact} />
+            <DetailContact contactId={params.contactId} />
         </>
     )
 }
