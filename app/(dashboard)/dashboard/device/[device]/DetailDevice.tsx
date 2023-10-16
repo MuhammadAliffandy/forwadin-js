@@ -10,7 +10,6 @@ import 'react-loading-skeleton/dist/skeleton.css'
 import { PulseLoader } from "react-spinners"
 import { toast } from "react-toastify"
 const DetailDevice = ({ device }: { device: string }) => {
-    const { push } = useRouter()
     const [isLoading, setisLoading] = useState(false)
     const [isLoaded, setisLoaded] = useState(false)
     const [deviceName, setdeviceName] = useState('')
@@ -18,9 +17,10 @@ const DetailDevice = ({ device }: { device: string }) => {
     const [labelList, setlabelList] = useState<Label[]>([])
     const fetchDetailDevice = async () => {
 
-        const result = await fetchClient({ method: 'GET', url: '/devices/' + device, redirect: push })
+        const result = await fetchClient({ method: 'GET', url: '/devices/' + device })
         const data: DeviceData = await result.json()
         if (result.status === 200) {
+            document.title = data.name + "'s Detail"
             setdeviceData(data)
             const newLabelList = data.DeviceLabel.map(obj => {
                 return {

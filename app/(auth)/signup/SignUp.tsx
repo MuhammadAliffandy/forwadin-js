@@ -11,6 +11,8 @@ import PolicyForm from '@/components/auth/PolicyForm';
 const SignUp = () => {
     const [currentStep, setCurrentStep] = useState('register')
     const [userData, setUserData] = useState<UserRegisterData>({
+        firstName: '',
+        lastName: '',
         email: '',
         username: '',
         phone: '',

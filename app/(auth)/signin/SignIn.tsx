@@ -16,7 +16,7 @@ interface UserLoginData {
 const SignIn = () => {
     const { push } = useRouter()
     const [isLoading, setisLoading] = useState(false)
-    const { handleSubmit, setError, setValue, register, formState: { errors } } = useForm<UserLoginData>()
+    const { handleSubmit, setError, register, formState: { errors } } = useForm<UserLoginData>()
 
     const componentSpring = useSpring({
         from: {
@@ -36,7 +36,6 @@ const SignIn = () => {
                 password: formData.password,
                 redirect: false
             })
-            console.log(login)
             if (!login?.error) {
                 push('/dashboard')
             } else {

@@ -156,7 +156,7 @@ const Messenger = () => {
         }
     ])
     return (
-        <div className="lg:-mt-6 overflow-y-auto lg:overflow-y-hidden">
+        <div className=" overflow-y-auto lg:overflow-y-hidden">
             <div className='flex lg:flex-row flex-col items-center justify-between gap-4 mb-12 lg:mb-0'>
                 <div className='max-w-md lg:max-w-[250px] w-full lg:max-h-[78vh] bg-white lg:bg-neutral-75 p-4 lg:p-0 text-xs'>
                     <div className="bg-white border border-customGray p-3 flex justify-between gap-2 hover:cursor-pointer rounded-md w-full items-center">

@@ -1,4 +1,6 @@
 interface UserRegisterData {
+    firstName: string,
+    lastName: string,
     email: string,
     username: string,
     phone: string,
@@ -129,5 +131,13 @@ interface BroadcastData {
     updated_at: string,
     checked?: boolean
 }
-
+export interface UserProfile {
+    firstName: string,
+    lastName: string,
+    username: string,
+    phone: string,
+    email: string,
+    accountApiKey: string,
+    affiliationCode: string
+}
 export type { UserRegisterData, MultipleCheckboxRef, CheckboxRef, DeviceData, Label, CountryCode, ContactData, MessageData, MediaMessageData, GroupData, IncomingMessage, OutgoingMessage, MultipleInputRef, ResetUserData, BroadcastData }
