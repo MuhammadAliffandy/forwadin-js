@@ -10,15 +10,16 @@ const ProfileDetail = () => {
         firstName: 'Ihsanul',
         lastName: 'Afkar',
         initial: 'IA',
-        profileColor: '4FBEAB',
+        colorCode: '4FBEAB',
         gender: "Laki-laki",
         email: 'ihsanulafkar@gmail.com',
         honorific: 'Mr',
         country: 'Indonesia',
-        birthDate: '10/10/2010',
-        label: ['Personal', 'Realme', 'Aktif', 'asd', 'asd2', 'asd3'],
+        dob: '10/10/2010',
+        ContactLabel: [],
         checked: false,
-        created_at: '11.9.2023, 2:43 PM'
+        createdAt: '11.9.2023, 2:43 PM',
+        updatedAt: '11.9.2023, 2:43 PM'
     })
     return (
         <>
@@ -85,14 +86,14 @@ const ProfileDetail = () => {
                     </tr>
                     <tr>
                         <th className='font-medium whitespace-pre'>Birthdate</th>
-                        <td>{contactData.birthDate ? contactData.birthDate : '-'}</td>
+                        <td>{contactData.dob ? contactData.dob : '-'}</td>
                     </tr>
                     <tr>
                         <th className='font-medium whitespace-pre'>Labels</th>
                         <td className='flex flex-wrap justify-center lg:justify-start items-center gap-2'>
-                            {contactData.label.map((label, idx) => (
+                            {contactData.ContactLabel.map((item, idx) => (
                                 <div key={idx} className='text-white bg-primary px-4 py-1 rounded-full'>
-                                    {label}
+                                    {item.label.name}
                                 </div>
                             ))}
                         </td>

@@ -135,14 +135,15 @@ const Messenger = () => {
         firstName: 'Ihsanul',
         lastName: 'Afkar',
         initial: 'IA',
-        profileColor: '3366FF',
+        colorCode: '3366FF',
         gender: "Laki-laki",
         email: 'ihsanulafkar@gmail.com',
         honorific: 'Mr',
         country: 'Indonesia',
-        birthDate: '10/10/2010',
-        label: ['Personal', 'Realme', 'Aktif', 'asd', 'asd2', 'asd3'],
-        created_at: '11.9.2023, 2:43 PM'
+        dob: '10/10/2010',
+        ContactLabel: [],
+        createdAt: '11.9.2023, 2:43 PM',
+        updatedAt: '11.9.2023, 2:43 PM'
     })
 
     const [listMessage, setlistMessage] = useState([

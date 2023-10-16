@@ -26,7 +26,7 @@ const AddDeviceModal = (
                 method: 'POST',
                 body: JSON.stringify({
                     name: deviceName,
-                    labels: (labelList ? labelList.map(item => item.label.name) : null)
+                    labels: (labelList ? labelList.filter(item => item.label.active).map(item => item.label.name) : null)
                 }),
                 url: '/devices/create'
             })

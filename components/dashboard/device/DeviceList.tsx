@@ -21,17 +21,17 @@ const DeviceList = ({ deviceData, handleCheckBoxClick, deviceCheckboxRef, handle
                     <td className='p-4 '>{item.name}</td>
                     <td className='p-4 break-words'>{item.apiKey}</td>
                     <td className='p-4 flex flex-wrap justify-center lg:justify-start items-center  gap-2'>
-                        {item.DeviceLabel.map((item, idx) => (
+                        {item.DeviceLabel?.map((item, idx) => (
                             <div key={idx} className='border-2 border-primary px-2 py-1 rounded-full'>
                                 {item.label.name}
                             </div>
                         ))}
                     </td>
-                    <td className="p-4">{item.status === 'CONNECTED' ? 'Terkoneksi' : 'Tidak Terkoneksi'}</td>
+                    <td className="p-4">{item.status === 'open' ? 'Terkoneksi' : 'Tidak Terkoneksi'}</td>
                     <td className=' px-4'>
                         <div className="flex items-center">
-                            {item.status === 'CONNECTED' ? (
-                                <div>-</div>
+                            {item.status === 'open' ? (
+                                <div>Sudah terkoneksi</div>
                             ) : (
                                 <div className='text-primary py-1 px-4  border border-black/20 rounded-md hover:cursor-pointer whitespace-nowrap  flex items-center' onClick={() => handleOpenQRModal(item)}>Scan QR</div>
                             )}

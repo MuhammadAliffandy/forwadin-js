@@ -4,6 +4,7 @@ import NavButton from '../../components/dashboard/NavButton'
 import MessageList from '../../components/dashboard/MessageList'
 import ContactList from '@/components/dashboard/ContactList'
 import { signOut } from "next-auth/react";
+import 'react-loading-skeleton/dist/skeleton.css'
 const DashboardTemplate = ({ currentPage, children }: { currentPage: string, children: React.ReactNode }) => {
     const [sideNavDropdown, setsideNavDropdown] = useState(false)
 

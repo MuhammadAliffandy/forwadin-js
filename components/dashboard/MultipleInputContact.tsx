@@ -54,7 +54,7 @@ const MultipleInputContact = (
                     )}
                     <div className=" flex flex-wrap gap-2">
                         {contactList.map((contact, idx) => contact.active && (
-                            <div key={idx} style={{ backgroundColor: '#' + contact.profileColor }} className='flex gap-2 rounded-full px-4 py-1 hover:cursor-pointer text-white' onClick={() => handleContactDataClick(contact.id, false)}>
+                            <div key={idx} style={{ backgroundColor: '#' + contact.colorCode }} className='flex gap-2 rounded-full px-4 py-1 hover:cursor-pointer text-white' onClick={() => handleContactDataClick(contact.id, false)}>
                                 <span className=''>{contact.firstName}</span>
                                 <span>&times;</span>
                             </div>
@@ -80,7 +80,7 @@ const MultipleInputContact = (
                                 <div className="flex items-center gap-2">
                                     <div className="">
                                         <div style={{
-                                            backgroundColor: '#' + contact.profileColor
+                                            backgroundColor: '#' + contact.colorCode
                                         }} className={`flex-none rounded-full text-white w-8 h-8 flex items-center justify-center`}>{contact.initial}</div>
                                     </div>
                                     <p>{contact.firstName + ' ' + contact.lastName}</p>
@@ -95,7 +95,7 @@ const MultipleInputContact = (
                                     <div className="flex items-center gap-2">
                                         <div className="">
                                             <div style={{
-                                                backgroundColor: '#' + contact.profileColor
+                                                backgroundColor: '#' + contact.colorCode
                                             }} className={`flex-none rounded-full text-white w-8 h-8 flex items-center justify-center`}>{contact.initial}</div>
                                         </div>
                                         <p>{contact.firstName + ' ' + contact.lastName}</p>

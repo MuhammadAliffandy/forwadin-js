@@ -23,22 +23,22 @@ const ContactList = ({ contactData, handleCheckBoxClick, multipleCheckboxRef, ha
                         <div className="flex items-center gap-2">
                             <div className="">
                                 <div style={{
-                                    backgroundColor: '#' + item.profileColor
+                                    backgroundColor: '#' + item.colorCode
                                 }} className={`flex-none rounded-full text-white w-8 h-8 flex items-center justify-center`}>{item.initial}</div>
                             </div>
                             <p>{item.firstName + ' ' + item.lastName}</p>
                         </div>
                     </td>
                     <td className='p-4'>+{item.phone}</td>
-                    <td className='p-4 flex flex-wrap justify-start items-center  gap-2'>
-                        {item.label.map((label, idx) => (
+                    <td className='p-4 flex flex-wrap justify-start lg:justify-start items-center gap-2'>
+                        {item.ContactLabel?.map((item, idx) => (
                             <div key={idx} className='border-2 border-primary px-2 py-1 rounded-full'>
-                                {label}
+                                {item.label.name}
                             </div>
                         ))}
                     </td>
                     <td className="p-4">{item.email}</td>
-                    <td className="p-4">{item.created_at}</td>
+                    <td className="p-4">{item.createdAt}</td>
                     <td className='p-4'>
                         <div className='py-1 text-center px-2 border border-black/20 rounded-sm hover:cursor-pointer' onClick={() => handleOpenDetailModal(item.id.toString())}>Detail</div>
                     </td>
