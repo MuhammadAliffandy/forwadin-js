@@ -3,13 +3,38 @@ import Message from '@/components/dashboard/Message'
 import Button from '@/components/landing/Button'
 import Link from 'next/link'
 import dynamic from 'next/dynamic';
+import { useEffect, useState } from 'react';
+import { UserProfile } from '@/utils/types';
+import { fetchClient } from '@/utils/helper/fetchClient';
+import { toast } from 'react-toastify';
 const DynamicAnalytic = dynamic(() => import('@/components/dashboard/Analytic'), { ssr: false })
 const Dashboard = () => {
+    const [isLoaded, setisLoaded] = useState(false)
+    const [userProfile, setuserProfile] = useState<UserProfile>({
+        username: '',
+        accountApiKey: '',
+        affiliationCode: '',
+        email: '',
+        phone: ''
+    })
+    useEffect(() => {
+        const fetchProfile = async () => {
+            const result = await fetchClient({ url: '/users', method: 'GET' })
+            const data = await result.json()
+            if (result.status === 200) {
+                setuserProfile(data)
+                setisLoaded(true)
+            } else {
+                toast.error('Failed to fetch')
+            }
+        }
+        fetchProfile()
+    }, [])
     return (
         <>
             <div className='flex flex-col-reverse lg:flex-row lg:justify-between items-center'>
                 <div>
-                    <p className='font-lexend text-2xl font-bold'>Selamat Siang, User Name</p>
+                    <p className='font-lexend text-2xl font-bold'>Selamat Siang, {userProfile.username}</p>
                 </div>
                 <div>
                     <div className='flex items-center gap-2'>

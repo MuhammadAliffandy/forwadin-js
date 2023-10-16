@@ -1,13 +1,13 @@
 import { getSession, signOut } from "next-auth/react"
+import { redirect } from "next/navigation"
 import { toast } from "react-toastify"
 
 interface FetchClientParams {
     method: string,
     body?: string | null,
-    url: string,
-    redirect?: any
+    url: string
 }
-const fetchClient = async ({ method, body = null, url, redirect }: FetchClientParams) => {
+const fetchClient = async ({ method, body = null, url }: FetchClientParams) => {
     const session = await getSession()
     const result = await fetch(process.env.NEXT_PUBLIC_BACKEND_URL + url, {
         method: method,
@@ -19,8 +19,7 @@ const fetchClient = async ({ method, body = null, url, redirect }: FetchClientPa
     })
     if (result.status === 401 || result.status === 403) {
         signOut()
-        if (redirect)
-            redirect('/signin')
+        window.location.replace('/signin')
     }
     return result
 }

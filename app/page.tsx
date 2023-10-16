@@ -145,7 +145,7 @@ export default function Home() {
   return (<>
     <main>
       <Navbar />
-      <div id='sideNav' className='hidden fixed left-8 top-1/2 -translate-y-1/2 z-10 text-sm border-l-2 border-black/40 lg:flex flex-col gap-4 pl-4 text-black/40 rounded-md pr-2 py-2'>
+      <div id='sideNav' className='hidden fixed left-8 top-1/2 -translate-y-1/2 z-10 text-sm border-l-2 border-black/40 lg:flex flex-col gap-4 pl-4 text-black/40 pr-2 py-2'>
         <div id='nav_getStarted' onClick={() => handleNavigationClick('getStarted')} className={(currentSection === 'getStarted' ? 'text-black' : '') + ' hover:cursor-pointer'}>Get Started</div>
         <div id='nav_broadcast' onClick={() => handleNavigationClick('broadcast')} className={(currentSection === 'broadcast' ? 'text-black' : '') + ' hover:cursor-pointer'}>Broadcast</div>
         <div id='nav_campaign' onClick={() => handleNavigationClick('campaign')} className={(currentSection === 'campaign' ? 'text-black' : '') + ' hover:cursor-pointer'}>Campaign</div>

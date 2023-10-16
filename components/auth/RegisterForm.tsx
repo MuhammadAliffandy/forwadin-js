@@ -10,6 +10,7 @@ import { formatPhoneCode, getCountryList } from "@/utils/helper/countryCode";
 import CountryFlagSvg from 'country-list-with-dial-code-and-flag/dist/flag-svg'
 import InputForm from "../form/InputForm";
 import ButtonSubmit from "../form/ButtonSubmit";
+import { text } from "stream/consumers";
 
 const Register = ({ setCurrentStep, setUserData, userData }: {
     setCurrentStep: Dispatch<SetStateAction<string>>,
@@ -158,9 +159,32 @@ const Register = ({ setCurrentStep, setUserData, userData }: {
                 <div className='text-center'>
 
                     <p className='font-lexend font-bold text-3xl'>Welcome to Forwardin</p>
-                    <p className='w-[80%] mx-auto'>Revolutionize your communication journey with FowardIt today</p>
+                    <p className='w-[80%] mx-auto text-sm mt-2'>Revolutionize your communication journey with FowardIt today</p>
                 </div>
                 <div className='flex flex-col gap-4 text-sm'>
+                    <div className="flex gap-4">
+                        <InputForm register={register} config={{
+                            name: 'firstName',
+                            type: 'text',
+                            placeholder: 'First Name',
+                            error: errors.firstName,
+                            registerConfig: {
+                                required: 'required',
+                                value: userData.firstName
+                            }
+                        }} />
+                        <InputForm register={register} config={{
+                            name: 'lastName',
+                            type: 'text',
+                            placeholder: 'Last Name',
+                            error: errors.lastName,
+                            registerConfig: {
+                                required: 'required',
+                                value: userData.lastName
+                            }
+                        }} />
+
+                    </div>
                     <InputForm register={register} config={{
                         name: 'email',
                         type: 'text',

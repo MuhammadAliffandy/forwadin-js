@@ -11,7 +11,6 @@ const DashboardTemplate = ({ currentPage, children }: { currentPage: string, chi
         setsideNavDropdown(true)
     }
     const handleWindowClick = (e: React.MouseEvent) => {
-        const sideNav = document.getElementById('side_nav')
         const mainContent = document.getElementById('main_content')
         if (sideNavDropdown)
             if (mainContent?.contains(e.target as Node))
@@ -95,7 +94,7 @@ const DashboardTemplate = ({ currentPage, children }: { currentPage: string, chi
                             <img src="/assets/icons/dashboard/gear.svg" alt="" />
                         </div>
                     </div>
-                    <main className='lg:mt-12'>
+                    <main className='lg:mt-4'>
                         {children}
                     </main>
                 </div>
