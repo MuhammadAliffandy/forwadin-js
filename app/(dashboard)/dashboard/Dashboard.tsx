@@ -11,6 +11,8 @@ const DynamicAnalytic = dynamic(() => import('@/components/dashboard/Analytic'),
 const Dashboard = () => {
     const [isLoaded, setisLoaded] = useState(false)
     const [userProfile, setuserProfile] = useState<UserProfile>({
+        firstName: '',
+        lastName: '',
         username: '',
         accountApiKey: '',
         affiliationCode: '',
