@@ -1,5 +1,5 @@
 import type { Config } from 'tailwindcss'
-const { nextui } = require("@nextui-org/react");
+import { nextui } from "@nextui-org/react";
 const config: Config = {
   content: [
     "./node_modules/flowbite-react/**/*.js",
@@ -27,8 +27,7 @@ const config: Config = {
     }
   },
   darkMode: "class",
+  // plugins: [ nextui()],
   plugins: [require("flowbite/plugin"), nextui()],
-
-
 }
 export default config

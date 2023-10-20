@@ -123,8 +123,6 @@ export const authConfig: NextAuthOptions = {
                     })
                 })
                 const resultData = await result.json()
-                console.log(resultData)
-                console.log(result.status)
                 if (result.ok) {
                     user.id = resultData.id
                     user.token = resultData.accessToken

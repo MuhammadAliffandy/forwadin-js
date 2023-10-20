@@ -9,6 +9,7 @@ interface FetchClientParams {
 }
 const fetchClient = async ({ method, body = null, url, user }: FetchClientParams) => {
     if (user) {
+        console.log('masuk token')
         const result = await fetch(process.env.NEXT_PUBLIC_BACKEND_URL + url, {
             method: method,
             headers: {
@@ -55,6 +56,7 @@ const fetchClient = async ({ method, body = null, url, user }: FetchClientParams
         }
         return result
     }
+    console.log('masuk session')
     const session = await getSession()
     const result = await fetch(process.env.NEXT_PUBLIC_BACKEND_URL + url, {
         method: method,

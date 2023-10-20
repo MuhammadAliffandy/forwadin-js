@@ -3,6 +3,7 @@ import type { Metadata } from 'next'
 import { ToastContainer, toast } from "react-toastify"
 import 'react-toastify/dist/ReactToastify.css';
 import Provider from '@/components/Provider';
+import { NextUIProviders } from './NextUIProvider';
 
 export const metadata: Metadata = {
   title: 'ForwardIn | Home',
@@ -33,7 +34,9 @@ export default function RootLayout({
             draggable
             pauseOnHover
             theme="light" />
-          {children}
+          <NextUIProviders>
+            {children}
+          </NextUIProviders>
         </Provider>
       </body>
     </html>
