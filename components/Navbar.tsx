@@ -4,7 +4,9 @@ import Link from "next/link"
 import { useRouter } from "next/navigation";
 import React, { useState, useEffect } from 'react'
 import Button from "./landing/Button";
+import { useSession } from "next-auth/react";
 const Navbar = () => {
+    const { data: session } = useSession()
     const router = useRouter()
     const [isDropdown, setIsDropdown] = useState(false)
     const [signInDropdown, setSignInDropdown] = useState(false)
@@ -96,15 +98,19 @@ const Navbar = () => {
                     ))}
                 </div>
                 <div className="flex-items center relative">
-                    <div className="bg-primary px-8 py-2 text-white rounded-md hover:cursor-pointer whitespace-pre" onClick={() => setSignInDropdown(!signInDropdown)}>Sign In</div>
-                    {buttonTransition((style, item) => item && (
-                        <animated.div style={style} className="absolute bg-white px-8 py-4 -left-10 top-16 flex flex-col text-center gap-4 rounded-md shadow-xl">
-                            <Link href={'/signin'} className=" hover:text-primary">Admin</Link >
-                            <Link href={'/signin'} className=" hover:text-primary whitespace-pre">Customer Service</Link >
-                        </animated.div>
-                    ))}
-                </div>
-            </nav>
+                    {session?.user ? (<>
+                        <div className="bg-primary px-8 py-2 text-white rounded-md hover:cursor-pointer whitespace-pre" onClick={() => router.push('/dashboard')}>Dashboard</div>
+                    </>) : (<>
+                        <div className="bg-primary px-8 py-2 text-white rounded-md hover:cursor-pointer whitespace-pre" onClick={() => setSignInDropdown(!signInDropdown)}>Sign In</div>
+                        {buttonTransition((style, item) => item && (
+                            <animated.div style={style} className="absolute bg-white px-8 py-4 -left-10 top-16 flex flex-col text-center gap-4 rounded-md shadow-xl">
+                                <Link href={'/signin'} className=" hover:text-primary">Admin</Link >
+                                <Link href={'/signin'} className=" hover:text-primary whitespace-pre">Customer Service</Link >
+                            </animated.div>
+                        ))}
+                    </>)}
+                </div >
+            </nav >
             {isDropdown && (
                 <div id="mobile_nav_dropdown" className="absolute bg-white z-10 rounded-lg w-full py-4 flex flex-col gap-8 mx-auto font-semibold text-center px-4 top-12 md:hidden shadow">
                     <Link href={'/'}>
@@ -126,27 +132,27 @@ const Navbar = () => {
                         Demo
                     </Link>
                     <div className="flex flex-col gap-4">
-                        <Button text={'Sign Up'} href={'/signup'} isPrimary={false} />
-                        <div className='border border-primary rounded-full px-6 py-2 text-center whitespace-nowrap bg-primary text-white flex gap-2 justify-center'
-                            onClick={() => setSignInDropdown(!signInDropdown)}>
-                            <p>Sign in </p>
-                            <div className='flex items-center' >
-                                <img
-                                    src={'/assets/icons/caret-down.svg'}
-                                    width={14}
-                                    height={9}
-                                    alt='caret down'
-                                />
-                                {/* <Image
+
+                        {session?.user ? (<>
+                            <div className='border border-primary rounded-full px-6 py-2 text-center whitespace-nowrap bg-primary text-white flex gap-2 justify-center'
+                                onClick={() => router.push('/dashboard')}>Dashboard</div>
+                        </>) : (<>
+                            <Button text={'Sign Up'} href={'/signup'} isPrimary={false} />
+                            <div className='border border-primary rounded-full px-6 py-2 text-center whitespace-nowrap bg-primary text-white flex gap-2 justify-center'
+                                onClick={() => setSignInDropdown(!signInDropdown)}>
+                                <p>Sign in </p>
+                                <div className='flex items-center' >
+                                    <img
                                         src={'/assets/icons/caret-down.svg'}
                                         width={14}
                                         height={9}
                                         alt='caret down'
-                                    /> */}
+                                    />
+                                </div>
                             </div>
-                        </div>
+                        </>)}
                     </div>
-                    {signInDropdown && (
+                    {(signInDropdown && !session?.user) && (
                         <>
                             <Link href={'/signin'} className={'opacity-60'}>
                                 Sign In as Admin

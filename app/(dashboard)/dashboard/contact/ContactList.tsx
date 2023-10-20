@@ -40,7 +40,7 @@ const ContactList = ({ contactData, handleCheckBoxClick, multipleCheckboxRef, ha
                     <td className="p-4">{item.email}</td>
                     <td className="p-4">{item.createdAt}</td>
                     <td className='p-4'>
-                        <div className='py-1 text-center px-2 border border-black/20 rounded-sm hover:cursor-pointer' onClick={() => handleOpenDetailModal(item.id.toString())}>Detail</div>
+                        <div className='py-1 text-center px-2 border border-black/20 rounded-md hover:cursor-pointer' onClick={() => handleOpenDetailModal(item.id.toString())}>Detail</div>
                     </td>
                 </tr>
             ))}

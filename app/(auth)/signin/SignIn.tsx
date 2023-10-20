@@ -38,7 +38,8 @@ const SignIn = () => {
             })
             if (!login?.error) {
                 push('/dashboard')
-            } else {
+            } else if (login.error === 'fetch failed') {
+                toast.error('check your credentials or network connections')
                 setError('userEmail', {
                     type: 'custom',
                     message: ''
@@ -47,18 +48,29 @@ const SignIn = () => {
                     type: 'custom',
                     message: ''
                 })
-                toast.error('check your credentials or network connections')
-                setisLoading(false)
             }
+            else {
+                setError('userEmail', {
+                    type: 'custom',
+                    message: 'invalid credentials'
+                })
+                setError('password', {
+                    type: 'custom',
+                    message: ''
+                })
+            }
+            setisLoading(false)
         } catch (error) {
             setisLoading(false)
             console.log(error)
         }
 
     }
+
     useEffect(() => { }, [])
     return (
         <animated.div style={componentSpring} className='bg-white md:shadow-xl px-8 py-10 rounded-xl mx-auto max-w-md lg:max-h-[80vh] overflow-y-scroll'>
+
             <form className='flex flex-col gap-8' onSubmit={handleSubmit(onSubmit)}>
                 <div className='text-center'>
                     <p className='font-lexend font-bold text-2xl'>Welcome Back</p>
@@ -76,7 +88,7 @@ const SignIn = () => {
                     }} />
                     <InputForm register={register} config={{
                         name: 'password',
-                        placeholder: 'password',
+                        placeholder: 'Password',
                         type: 'password',
                         error: errors.password,
                         registerConfig: {
@@ -98,7 +110,14 @@ const SignIn = () => {
                         <hr className='border border-[#B0B4C5] h-px basis-1/3' />
                     </div>
                     <div>
-                        <Link href={'/'} className='px-4 py-3  rounded-md w-full text-primary bg-white border border-primary block text-center'>Sign In</Link>
+                        <div className="px-4 py-3 flex items-center justify-center gap-2 rounded-md w-full text-primary bg-white border border-primary text-center hover:cursor-pointer" onClick={() => signIn('google', {
+                            callbackUrl: "/dashboard"
+                        })}>
+                            <div className="flex-none">
+                                <img src="/assets/icons/google-icon.svg" alt="" />
+                            </div>
+                            <p>Masuk dengan Google</p>
+                        </div>
                     </div>
                 </div>
                 <div className='text-center text-sm'>

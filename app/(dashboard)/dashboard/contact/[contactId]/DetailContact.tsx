@@ -1,4 +1,7 @@
 'use client'
+// import EditContactModal from '@/components/dashboard/contact/detail/EditContactModal'
+import dynamic from 'next/dynamic'
+const EditContactModal = dynamic(() => import('@/components/dashboard/contact/detail/EditContactModal'), { ssr: false })
 import { formatBirthDate } from '@/utils/helper'
 import { fetchClient } from '@/utils/helper/fetchClient'
 import { ContactData, MediaMessageData, MessageData, MultipleCheckboxRef } from '@/utils/types'
@@ -9,6 +12,7 @@ import Skeleton from 'react-loading-skeleton'
 import { toast } from 'react-toastify'
 
 const DetailContact = ({ contactId }: { contactId: string }) => {
+    const [openModal, setopenModal] = useState(false)
     const [isLoaded, setisLoaded] = useState(false)
     const [contactData, setcontactData] = useState<ContactData>()
     const [contactGroup, setcontactGroup] = useState<string[]>(['ADS', 'Teman'])
@@ -141,84 +145,40 @@ const DetailContact = ({ contactId }: { contactId: string }) => {
             toast.error('Gagal mendapatkan kontak')
         }
     }
+
     useEffect(() => {
         fetchDetailContact()
     }, [])
     return (
-        <div className='flex justify-center items-center lg:items-start lg:flex-row flex-col gap-4 mt-8'>
-            <div className='max-w-sm w-full items-center flex flex-col gap-4'>
-                <div className='w-full bg-white rounded-md p-4 relative'>
-                    {isLoaded ? (
-                        <>
-                            <div className='absolute block lg:hidden right-8 top-8' onClick={() => setmobileDropdown(!mobileDropdown)}>
-                                <img src="/assets/icons/angle-down.svg" alt="" />
-                            </div>
-                            <div className='flex lg:flex-row flex-col justify-between gap-4'>
-                                <div>
-                                    <div style={{
-                                        backgroundColor: '#' + '4FBEAB'
-                                    }} className={`flex-none rounded-full text-white w-20 h-20 text-[32px] flex items-center justify-center`}>IA</div>
+        <>
+            <EditContactModal setopenModal={setopenModal} openModal={openModal} contactData={contactData} fetchData={fetchDetailContact} />
+            <div className='flex justify-center items-center lg:items-start lg:flex-row flex-col gap-4 mt-8'>
+                <div className='max-w-sm w-full items-center flex flex-col gap-4'>
+                    <div className='w-full bg-white rounded-md p-4 relative'>
+                        {isLoaded ? (
+                            <>
+                                <div className='absolute block lg:hidden right-8 top-8' onClick={() => setmobileDropdown(!mobileDropdown)}>
+                                    <img src="/assets/icons/angle-down.svg" alt="" />
+                                </div>
+                                <div className='flex lg:flex-row flex-col justify-between gap-4'>
+                                    <div>
+                                        <div style={{
+                                            backgroundColor: '#' + '4FBEAB'
+                                        }} className={`flex-none rounded-full text-white w-20 h-20 text-[32px] flex items-center justify-center`}>IA</div>
 
-                                    <p className='font-lexend text-2xl font-bold mt-8'>{contactData?.firstName} {contactData?.lastName}</p>
-                                    <p className='mt-4'>+{contactData?.phone}</p>
-                                </div>
-                                <div className=''>
-                                    <div className='border border-customGray rounded-md w-full lg:w-auto px-8 py-2 hover:cursor-pointer text-center hidden lg:block' >Edit</div>
-                                </div>
-                                {mobileDropdown && (
-                                    <div className='lg:hidden block'>
-                                        <div className='border border-customGray rounded-md w-full lg:w-auto px-8 py-2 hover:cursor-pointer text-center '>Edit</div>
+                                        <p className='font-lexend text-2xl font-bold mt-8'>{contactData?.firstName} {contactData?.lastName}</p>
+                                        <p className='mt-4'>+{contactData?.phone}</p>
                                     </div>
-                                )}
-                            </div>
-                            <table className='w-full border-spacing-y-2 border-spacing-x-2 -mx-2 border-separate mt-4 hidden lg:block'>
-                                <tbody >
-                                    <tr>
-                                        <th className='font-medium'>First Name</th>
-                                        <td>{contactData?.firstName}</td>
-                                    </tr>
-                                    <tr>
-                                        <th className='font-medium'>Last Name</th>
-                                        <td>{contactData?.lastName}</td>
-                                    </tr>
-                                    <tr>
-                                        <th className='font-medium'>Email</th>
-                                        <td>{contactData?.email}</td>
-                                    </tr>
-                                    <tr>
-                                        <th className='font-medium'>Phone Number</th>
-                                        <td>+{contactData?.phone}</td>
-                                    </tr>
-                                    <tr>
-                                        <th className='font-medium'>Gender</th>
-                                        <td>{contactData?.gender ? contactData?.gender : '-'}</td>
-                                    </tr>
-                                    <tr>
-                                        <th className='font-medium'>Honorific</th>
-                                        <td>{contactData?.honorific ? contactData?.honorific : '-'}</td>
-                                    </tr>
-                                    {/* <tr>
-                                        <th className='font-medium'>Country</th>
-                                        <td>{contactData?.country ? contactData?.country : '-'}</td>
-                                    </tr> */}
-                                    <tr>
-                                        <th className='font-medium'>Birthdate</th>
-                                        <td>{contactData?.dob ? contactData?.dob : '-'}</td>
-                                    </tr>
-                                    <tr>
-                                        <th className='font-medium'>Labels</th>
-                                        <td className='flex flex-wrap justify-center lg:justify-start items-center gap-2'>
-                                            {contactData?.ContactLabel?.map((item, idx) => (
-                                                <div key={idx} className='text-white bg-primary px-4 py-1 rounded-full'>
-                                                    {item.label.name}
-                                                </div>
-                                            ))}
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                            {mobileDropdown && (
-                                <table className='w-full border-spacing-y-2 border-separate mt-4 lg:hidden block'>
+                                    <div className=''>
+                                        <div className='border border-customGray rounded-md w-full lg:w-auto px-8 py-2 hover:cursor-pointer text-center hidden lg:block' onClick={() => setopenModal(true)} >Edit</div>
+                                    </div>
+                                    {mobileDropdown && (
+                                        <div className='lg:hidden block'>
+                                            <div className='border border-customGray rounded-md w-full lg:w-auto px-8 py-2 hover:cursor-pointer text-center ' onClick={() => setopenModal(true)}>Edit</div>
+                                        </div>
+                                    )}
+                                </div>
+                                <table className='w-full border-spacing-y-2 border-spacing-x-2 -mx-2 border-separate mt-4 hidden lg:block'>
                                     <tbody >
                                         <tr>
                                             <th className='font-medium'>First Name</th>
@@ -245,9 +205,9 @@ const DetailContact = ({ contactId }: { contactId: string }) => {
                                             <td>{contactData?.honorific ? contactData?.honorific : '-'}</td>
                                         </tr>
                                         {/* <tr>
-                                            <th className='font-medium'>Country</th>
-                                            <td>{contactData?.country ? contactData?.country : '-'}</td>
-                                        </tr> */}
+                                        <th className='font-medium'>Country</th>
+                                        <td>{contactData?.country ? contactData?.country : '-'}</td>
+                                    </tr> */}
                                         <tr>
                                             <th className='font-medium'>Birthdate</th>
                                             <td>{contactData?.dob ? contactData?.dob : '-'}</td>
@@ -264,118 +224,166 @@ const DetailContact = ({ contactId }: { contactId: string }) => {
                                         </tr>
                                     </tbody>
                                 </table>
-                            )}
-                            <div className='border border-customGray rounded-md text-primary text-center mt-4 py-2 hover:bg-primary hover:text-white hover:cursor-pointer'>
-                                Chat
-                            </div>
-                        </>
-                    ) : (
-                        <Skeleton count={3} />
-                    )}
-                </div>
-                <div className='w-full bg-white rounded-md p-4'>
-                    <div className='flex gap-2 items-center hover:cursor-pointer' onClick={() => { }}>
-                        <div className='font-lexend font-normal text-xl text-primary'>
-                            Groups
-                        </div>
-                        <div>
-                            <img src="/assets/icons/dashboard/bubble.svg" alt="" />
-                        </div>
-                    </div>
-                    {isLoaded ? (
-                        <div className='flex gap-2 mt-6'>
-                            {contactGroup.map((item, idx) => (
-                                <div className='px-3 py-1 text-xs text-white bg-black rounded-md' key={idx}>
-                                    {item}
-                                </div>
-                            ))}
-                        </div>
-                    ) : (
-                        <Skeleton count={1} />
-                    )}
-                </div>
-            </div>
-            <div className='w-full max-w-sm lg:max-w-full'>
-                <div className='bg-white w-full p-4'>
-                    {isLoaded ? (
-                        <>
-                            <div className='flex justify-between'>
-                                <div className='flex gap-2'>
-                                    <div className={'flex gap-2 px-4 py-2 items-center rounded-md group hover:bg-primary hover:cursor-pointer ' + (switchButton === 'history' ? 'bg-primary' : 'bg-white')} onClick={() => setswitchButton('history')}>
-                                        <div className={'group-hover:text-white ' + (switchButton === 'history' ? 'text-white' : 'text-black')}>History</div>
-                                        <div className={'rounded-md group-hover:text-black group-hover:bg-white flex items-center justify-center h-5 w-5 text-xs ' + (switchButton === 'history' ? 'bg-white text-black' : 'bg-black text-white')} >3</div>
-                                    </div>
-                                    <div className={'flex gap-2 px-4 py-2 items-center rounded-md group hover:bg-primary hover:cursor-pointer ' + (switchButton === 'media' ? 'bg-primary' : 'bg-white')} onClick={() => setswitchButton('media')}>
-                                        <div className={'group-hover:text-white ' + (switchButton === 'media' ? 'text-white' : 'text-black')}>Media</div>
-                                        <div className={'rounded-md group-hover:text-black group-hover:bg-white flex items-center justify-center h-5 w-5 text-xs ' + (switchButton === 'media' ? 'bg-white text-black' : 'bg-black text-white')}>3</div>
-                                    </div>
-                                </div>
-                                {isChecked && (
-                                    <div className="bg-danger rounded-md px-6 text-white text-center items-center flex hover:cursor-pointer justify-center p-2">
-                                        Hapus
-                                    </div>
+                                {mobileDropdown && (
+                                    <table className='w-full border-spacing-y-2 border-separate mt-4 lg:hidden block'>
+                                        <tbody >
+                                            <tr>
+                                                <th className='font-medium'>First Name</th>
+                                                <td>{contactData?.firstName}</td>
+                                            </tr>
+                                            <tr>
+                                                <th className='font-medium'>Last Name</th>
+                                                <td>{contactData?.lastName}</td>
+                                            </tr>
+                                            <tr>
+                                                <th className='font-medium'>Email</th>
+                                                <td>{contactData?.email}</td>
+                                            </tr>
+                                            <tr>
+                                                <th className='font-medium'>Phone Number</th>
+                                                <td>+{contactData?.phone}</td>
+                                            </tr>
+                                            <tr>
+                                                <th className='font-medium'>Gender</th>
+                                                <td>{contactData?.gender ? contactData?.gender : '-'}</td>
+                                            </tr>
+                                            <tr>
+                                                <th className='font-medium'>Honorific</th>
+                                                <td>{contactData?.honorific ? contactData?.honorific : '-'}</td>
+                                            </tr>
+                                            {/* <tr>
+                                            <th className='font-medium'>Country</th>
+                                            <td>{contactData?.country ? contactData?.country : '-'}</td>
+                                        </tr> */}
+                                            <tr>
+                                                <th className='font-medium'>Birthdate</th>
+                                                <td>{contactData?.dob ? contactData?.dob : '-'}</td>
+                                            </tr>
+                                            <tr>
+                                                <th className='font-medium'>Labels</th>
+                                                <td className='flex flex-wrap justify-center lg:justify-start items-center gap-2'>
+                                                    {contactData?.ContactLabel?.map((item, idx) => (
+                                                        <div key={idx} className='text-white bg-primary px-4 py-1 rounded-full'>
+                                                            {item.label.name}
+                                                        </div>
+                                                    ))}
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
                                 )}
+                                <div className='border border-customGray rounded-md text-primary text-center mt-4 py-2 hover:bg-primary hover:text-white hover:cursor-pointer'>
+                                    Chat
+                                </div>
+                            </>
+                        ) : (
+                            <Skeleton count={3} />
+                        )}
+                    </div>
+                    <div className='w-full bg-white rounded-md p-4'>
+                        <div className='flex gap-2 items-center hover:cursor-pointer' onClick={() => { }}>
+                            <div className='font-lexend font-normal text-xl text-primary'>
+                                Groups
+                            </div>
+                            <div>
+                                <img src="/assets/icons/dashboard/bubble.svg" alt="" />
+                            </div>
+                        </div>
+                        {isLoaded ? (
+                            <div className='flex gap-2 mt-6'>
+                                {contactGroup.map((item, idx) => (
+                                    <div className='px-3 py-1 text-xs text-white bg-black rounded-md' key={idx}>
+                                        {item}
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <Skeleton count={1} />
+                        )}
+                    </div>
+                </div>
+                <div className='w-full max-w-sm lg:max-w-full'>
+                    <div className='bg-white w-full p-4'>
+                        {isLoaded ? (
+                            <>
+                                <div className='flex justify-between'>
+                                    <div className='flex gap-2'>
+                                        <div className={'flex gap-2 px-4 py-2 items-center rounded-md group hover:bg-primary hover:cursor-pointer ' + (switchButton === 'history' ? 'bg-primary' : 'bg-white')} onClick={() => setswitchButton('history')}>
+                                            <div className={'group-hover:text-white ' + (switchButton === 'history' ? 'text-white' : 'text-black')}>History</div>
+                                            <div className={'rounded-md group-hover:text-black group-hover:bg-white flex items-center justify-center h-5 w-5 text-xs ' + (switchButton === 'history' ? 'bg-white text-black' : 'bg-black text-white')} >3</div>
+                                        </div>
+                                        <div className={'flex gap-2 px-4 py-2 items-center rounded-md group hover:bg-primary hover:cursor-pointer ' + (switchButton === 'media' ? 'bg-primary' : 'bg-white')} onClick={() => setswitchButton('media')}>
+                                            <div className={'group-hover:text-white ' + (switchButton === 'media' ? 'text-white' : 'text-black')}>Media</div>
+                                            <div className={'rounded-md group-hover:text-black group-hover:bg-white flex items-center justify-center h-5 w-5 text-xs ' + (switchButton === 'media' ? 'bg-white text-black' : 'bg-black text-white')}>3</div>
+                                        </div>
+                                    </div>
+                                    {isChecked && (
+                                        <div className="bg-danger rounded-md px-6 text-white text-center items-center flex hover:cursor-pointer justify-center p-2">
+                                            Hapus
+                                        </div>
+                                    )}
 
-                            </div>
-                            <div className='mt-4 max-h-[550px] overflow-y-auto flex flex-col gap-8 allowed-scroll pr-4'>
-                                {switchButton === 'history' ? (
-                                    <>
-                                        {message.map(item => (
-                                            <div key={item.id}>
-                                                <div className='flex gap-2 items-center'>
-                                                    <div style={{
-                                                        backgroundColor: '#' + '4FBEAB'
-                                                    }} className={`flex-none rounded-full text-white w-8 h-8 flex items-center justify-center`}>IA</div>
-                                                    <p>Ihsanul Afkar</p>
+                                </div>
+                                <div className='mt-4 max-h-[550px] overflow-y-auto flex flex-col gap-8 allowed-scroll pr-4'>
+                                    {switchButton === 'history' ? (
+                                        <>
+                                            {message.map(item => (
+                                                <div key={item.id}>
+                                                    <div className='flex gap-2 items-center'>
+                                                        <div style={{
+                                                            backgroundColor: '#' + '4FBEAB'
+                                                        }} className={`flex-none rounded-full text-white w-8 h-8 flex items-center justify-center`}>IA</div>
+                                                        <p>Ihsanul Afkar</p>
+                                                    </div>
+                                                    <div className='border border-customGray rounded-md mt-2 p-4 pb-6 relative'>
+                                                        <p>{item.message}</p>
+                                                        <div className='absolute bottom-1 right-4 text-customGray'>{item.received_at}</div>
+                                                    </div>
                                                 </div>
-                                                <div className='border border-customGray rounded-md mt-2 p-4 pb-6 relative'>
-                                                    <p>{item.message}</p>
-                                                    <div className='absolute bottom-1 right-4 text-customGray'>{item.received_at}</div>
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </>
-                                ) : (
-                                    <>
-                                        <table className="w-full text-center font-nunito text-xs font-bold">
-                                            <thead className='bg-neutral-75'>
-                                                <tr className=''>
-                                                    <th className='py-4 checkbox'>
-                                                        <input ref={mainCheckboxRef} type="checkbox" name="main_checkbox" id="main_checkbox" className='rounded-sm focus:ring-transparent' onClick={handleIndexCheckbox} />
-                                                    </th>
-                                                    <th className='p-4'>Nama</th>
-                                                    <th className='p-4'>Pengirim</th>
-                                                    <th className='p-4'>Ukuran</th>
-                                                    <th className='p-4 whitespace-pre'>Tanggal Dikirimkan</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody className='bg-white'>
-                                                {mediaMessage.map((item, index) => (
-                                                    <tr key={index}>
-                                                        <td className='p-4 checkbox'>
-                                                            <input type="checkbox" name={'checkbox_' + item.id} id={'checkbox_' + item.id} className='rounded-sm focus:ring-transparent' onClick={(e) => handleCheckBoxClick(e, item.id)} ref={element => handleRefChange(element, item)} />
-                                                        </td >
-                                                        <td className='p-4 '>
-                                                            <Link href={item.path} target={'_blank'}>
-                                                                {item.fileTitle}
-                                                            </Link>
-                                                        </td>
-                                                        <td className='p-4'>{item.from}</td>
-                                                        <td className='p-4'>{item.size}</td>
-                                                        <td className='p-4'>{item.created_at}</td>
+                                            ))}
+                                        </>
+                                    ) : (
+                                        <>
+                                            <table className="w-full text-center font-nunito text-xs font-bold">
+                                                <thead className='bg-neutral-75'>
+                                                    <tr className=''>
+                                                        <th className='py-4 checkbox'>
+                                                            <input ref={mainCheckboxRef} type="checkbox" name="main_checkbox" id="main_checkbox" className='rounded-sm focus:ring-transparent' onClick={handleIndexCheckbox} />
+                                                        </th>
+                                                        <th className='p-4'>Nama</th>
+                                                        <th className='p-4'>Pengirim</th>
+                                                        <th className='p-4'>Ukuran</th>
+                                                        <th className='p-4 whitespace-pre'>Tanggal Dikirimkan</th>
                                                     </tr>
-                                                ))}
-                                            </tbody>
-                                        </table>
-                                    </>)}
-                            </div>
-                        </>
-                    ) : (
-                        <Skeleton count={5} />
-                    )}
+                                                </thead>
+                                                <tbody className='bg-white'>
+                                                    {mediaMessage.map((item, index) => (
+                                                        <tr key={index}>
+                                                            <td className='p-4 checkbox'>
+                                                                <input type="checkbox" name={'checkbox_' + item.id} id={'checkbox_' + item.id} className='rounded-sm focus:ring-transparent' onClick={(e) => handleCheckBoxClick(e, item.id)} ref={element => handleRefChange(element, item)} />
+                                                            </td >
+                                                            <td className='p-4 '>
+                                                                <Link href={item.path} target={'_blank'}>
+                                                                    {item.fileTitle}
+                                                                </Link>
+                                                            </td>
+                                                            <td className='p-4'>{item.from}</td>
+                                                            <td className='p-4'>{item.size}</td>
+                                                            <td className='p-4'>{item.created_at}</td>
+                                                        </tr>
+                                                    ))}
+                                                </tbody>
+                                            </table>
+                                        </>)}
+                                </div>
+                            </>
+                        ) : (
+                            <Skeleton count={5} />
+                        )}
+                    </div>
                 </div>
             </div>
-        </div>
+        </>
     )
 }
 

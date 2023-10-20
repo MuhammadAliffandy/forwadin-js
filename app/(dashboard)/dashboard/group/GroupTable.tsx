@@ -5,41 +5,17 @@ import { useRouter } from 'next/navigation';
 import { GroupData, MultipleCheckboxRef } from '@/utils/types';
 import GroupList from './GroupList';
 import AddGroupModal from '@/components/dashboard/group/AddGroupModal';
+import Skeleton from 'react-loading-skeleton';
+import { fetchClient } from '@/utils/helper/fetchClient';
+import { toast } from 'react-toastify';
 
 const GroupTable = () => {
     const { push } = useRouter()
+    const [isLoaded, setisLoaded] = useState(false)
     const mainCheckboxRef = useRef<HTMLInputElement>(null)
     const groupCheckboxRef = useRef<MultipleCheckboxRef>({})
     const [isChecked, setisChecked] = useState(false)
     const [groupData, setgroupData] = useState<GroupData[]>([
-        {
-            id: '1',
-            name: 'test',
-            type: 'Manual',
-            totalUser: 3,
-            users: [
-                {
-                    id: '1',
-                    phone: "6281357995175",
-                    firstName: 'Ihsanul',
-                    lastName: 'Afkar',
-                    initial: 'IA',
-                    colorCode: '4FBEAB',
-                    gender: "Laki-laki",
-                    email: 'ihsanulafkar@gmail.com',
-                    honorific: 'Mr',
-                    country: 'Indonesia',
-                    dob: '10/10/2010',
-                    ContactLabel: [],
-                    checked: false,
-                    createdAt: '11.9.2023, 2:43 PM',
-                    updatedAt: '11.9.2023, 2:43 PM'
-                },
-            ],
-            created_at: '11.9.2023, 2:43 PM',
-            updated_at: '11.9.2023, 2:43 PM',
-            checked: false
-        },
     ])
     const [searchText, setsearchText] = useState('')
     const [searchedGroup, setsearchedGroup] = useState<GroupData[]>([])
@@ -78,7 +54,7 @@ const GroupTable = () => {
     }
     const filterDevice = (text: string) => {
         const regex = new RegExp(text, 'i')
-        return groupData.filter(item => regex.test(item.name) || regex.test(item.type))
+        return groupData.filter(item => regex.test(item.name))
     }
     const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
         setsearchText(e.target.value)
@@ -88,6 +64,25 @@ const GroupTable = () => {
         // const checkedGroups = groupData.filter(item => item.checked === false).map(item => item)
         // setgroupData(checkedGroups)
     }
+    const fetchData = async () => {
+        try {
+            const result = await fetchClient({
+                url: '/groups',
+                method: 'GET'
+            })
+            const resultData: GroupData[] = await result.json()
+            if (result.status === 200) {
+                setgroupData(resultData)
+                setisLoaded(true)
+            }
+        } catch (error) {
+            toast.error('failed to fetch data')
+            console.log(error)
+        }
+    }
+    useEffect(() => {
+        fetchData()
+    }, [])
     useEffect(() => {
         if (mainCheckboxRef.current) {
             const checkObject = groupData.find(obj => obj.checked === true)
@@ -122,7 +117,7 @@ const GroupTable = () => {
 
     return (
         <>
-            <AddGroupModal openModal={addGroupModal} setopenModal={setaddGroupModal} />
+            <AddGroupModal openModal={addGroupModal} setopenModal={setaddGroupModal} fetchData={fetchData} />
             <div className="mt-8 p-4 bg-white rounded-md">
                 <div className="flex sm:flex-row flex-col gap-2 lg:justify-between items-center">
                     <div className="w-full">
@@ -144,55 +139,60 @@ const GroupTable = () => {
                     </div>
                 </div>
             </div>
-            <div className='overflow-x-scroll allowed-scroll'>
-                <table className="w-full text-center font-nunito text-xs font-bold ">
-                    <thead className='bg-neutral-75'>
-                        <tr className=''>
-                            <th className='py-4 checkbox'>
-                                <input ref={mainCheckboxRef} type="checkbox" name="main_checkbox" id="main_checkbox" className='rounded-sm focus:ring-transparent' onClick={handleIndexCheckbox} />
-                            </th>
-                            <th className='p-4'>Nama</th>
-                            <th className='p-4'>Tipe</th>
-                            <th className='p-4'>Jumlah Anggota</th>
-                            <th className='p-4'>Dibuat pada</th>
-                            <th className='p-4'>Terakhir Update</th>
-                            <th className='p-4'>Detail</th>
-                        </tr>
-                    </thead>
-                    <tbody className='bg-white'>
-                        {searchText ? (
-                            <GroupList
-                                groupData={searchedGroup}
-                                multipleCheckboxRef={groupCheckboxRef}
-                                handleCheckBoxClick={handleCheckBoxClick}
-                                handleOpenDetailModal={handleOpenDetailModal}
-                            />
-                        ) : (
-                            <GroupList
-                                groupData={groupData}
-                                multipleCheckboxRef={groupCheckboxRef}
-                                handleCheckBoxClick={handleCheckBoxClick}
-                                handleOpenDetailModal={handleOpenDetailModal}
-                            />
+            {isLoaded ? (
 
-                        )}
-                    </tbody>
-                </table>
-                {groupData.length === 0 && (
-                    <div className='w-full bg-white p-12'>
-                        <div className='w-full max-w-md mx-auto flex flex-col gap-4'>
-                            <p className='text-[16px] font-bold'>Group masih kosong</p>
-                            <p className='text-xs text-[#777C88]'>Tambahkan kontak kedalam group ini</p>
-                            <p className='text-xs'>Dengan grup ini, Anda dapat dengan mudah berkomunikasi dengan banyak kontak sekaligus.</p>
-                            <div className='flex'>
-                                <div onClick={() => setaddGroupModal(true)} className="bg-primary rounded-md px-6 text-white text-center items-center flex hover:cursor-pointer justify-center p-2">
-                                    Buat Group Baru
+                <div className='overflow-x-scroll allowed-scroll'>
+                    <table className="w-full text-center font-nunito text-xs font-bold ">
+                        <thead className='bg-neutral-75'>
+                            <tr className=''>
+                                <th className='py-4 checkbox'>
+                                    <input ref={mainCheckboxRef} type="checkbox" name="main_checkbox" id="main_checkbox" className='rounded-sm focus:ring-transparent' onClick={handleIndexCheckbox} />
+                                </th>
+                                <th className='p-4'>Nama</th>
+                                <th className='p-4'>Campaign</th>
+                                <th className='p-4'>Jumlah Anggota</th>
+                                <th className='p-4'>Detail</th>
+                            </tr>
+                        </thead>
+                        <tbody className='bg-white'>
+                            {searchText ? (
+                                <GroupList
+                                    groupData={searchedGroup}
+                                    multipleCheckboxRef={groupCheckboxRef}
+                                    handleCheckBoxClick={handleCheckBoxClick}
+                                    handleOpenDetailModal={handleOpenDetailModal}
+                                />
+                            ) : (
+                                <GroupList
+                                    groupData={groupData}
+                                    multipleCheckboxRef={groupCheckboxRef}
+                                    handleCheckBoxClick={handleCheckBoxClick}
+                                    handleOpenDetailModal={handleOpenDetailModal}
+                                />
+
+                            )}
+                        </tbody>
+                    </table>
+                    {groupData.length === 0 && (
+                        <div className='w-full bg-white p-12'>
+                            <div className='w-full max-w-md mx-auto flex flex-col gap-4'>
+                                <p className='text-[16px] font-bold'>Group masih kosong</p>
+                                <p className='text-xs text-[#777C88]'>Tambahkan kontak kedalam group ini</p>
+                                <p className='text-xs'>Dengan grup ini, Anda dapat dengan mudah berkomunikasi dengan banyak kontak sekaligus.</p>
+                                <div className='flex'>
+                                    <div onClick={() => setaddGroupModal(true)} className="bg-primary rounded-md px-6 text-white text-center items-center flex hover:cursor-pointer justify-center p-2">
+                                        Buat Group Baru
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                )}
-            </div >
+                    )}
+                </div >
+            ) : (
+                <div className='bg-white w-full p-4'>
+                    <Skeleton count={3} className='' />
+                </div>
+            )}
         </>
     )
 }

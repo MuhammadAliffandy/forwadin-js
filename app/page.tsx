@@ -96,10 +96,15 @@ export default function Home() {
       behavior: "smooth",
       top: gotoElement?.offsetTop,
     });
-
-
   }
+
   useEffect(() => {
+    const script = document.createElement('script')
+    // <script type="text/javascript" src=""
+    //             data-client-key="SB-Mid-client-61XuGAwQ8Bj8LxSS"></script>
+    script.type = "text/javascript"
+    script.src = "https://app.sandbox.midtrans.com/snap/snap.js"
+    script.setAttribute('data-client-key', process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY!)
     const section = {
       getStarted: document.getElementsByClassName('getStarted')[0] as HTMLDivElement,
       broadcast: document.getElementsByClassName('broadcast')[0] as HTMLDivElement,
@@ -111,7 +116,7 @@ export default function Home() {
       contact: document.getElementsByClassName('contact')[0] as HTMLDivElement,
     }
     const sideNav = document.getElementById('sideNav') as HTMLDivElement
-    document.addEventListener('scroll', () => {
+    const scrollHandler = () => {
       if (window.scrollY >= section.getStarted.offsetTop && window.scrollY < section.broadcast.offsetTop)
         setcurrentSection('getStarted')
       else if (window.scrollY >= section.broadcast.offsetTop && window.scrollY < section.campaign.offsetTop)
@@ -140,7 +145,112 @@ export default function Home() {
       else
         setcurrentSection('contact')
       // else if (window.scrollY >= section.contact.offsetTop)
-    })
+    }
+    const clickHandler = () => {
+      const paymentData = {
+        transaction_details: {
+          order_id: "ORDER-1054",
+          gross_amount: 10000
+        },
+        item_details: [{
+          id: "ITEM1",
+          price: 10000,
+          quantity: 1,
+          name: "Midtrans Bear",
+          brand: "Midtrans",
+          category: "Toys",
+          merchant_name: "Midtrans"
+        }],
+        customer_details: {
+          first_name: "John",
+          last_name: "Watson",
+          email: "test@example.com",
+          phone: "+628123456",
+          billing_address: {
+            first_name: "John",
+            last_name: "Watson",
+            email: "test@example.com",
+            phone: "081 2233 44-55",
+            address: "Sudirman",
+            city: "Jakarta",
+            postal_code: "12190",
+            country_code: "IDN"
+          },
+          shipping_address: {
+            first_name: "John",
+            last_name: "Watson",
+            email: "test@example.com",
+            phone: "0 8128-75 7-9338",
+            address: "Sudirman",
+            city: "Jakarta",
+            postal_code: "12190",
+            country_code: "IDN"
+          }
+        },
+        enabled_payments: ["credit_card", "mandiri_clickpay", "cimb_clicks", "bca_klikbca", "bca_klikpay", "bri_epay", "echannel", "mandiri_ecash", "permata_va", "bca_va", "bni_va", "other_va", "gopay", "indomaret", "alfamart", "danamon_online", "akulaku"],
+        credit_card: {
+          secure: true,
+          bank: "bca",
+          installment: {
+            required: false,
+            terms: {
+              bni: [3, 6, 12],
+              mandiri: [3, 6, 12],
+              cimb: [3],
+              bca: [3, 6, 12],
+              offline: [6, 12]
+            }
+          },
+          whitelist_bins: [
+            "48111111",
+            "41111111"
+          ]
+        },
+        bca_va: {
+          va_number: "12345678911",
+          sub_company_code: "00000",
+          free_text: {
+            inquiry: [
+              {
+                en: "text in English",
+                id: "text in Bahasa Indonesia"
+              }
+            ],
+            payment: [
+              {
+                en: "text in English",
+                id: "text in Bahasa Indonesia"
+              }
+            ]
+          }
+        },
+        bni_va: {
+          "va_number": "12345678"
+        },
+        permata_va: {
+          "va_number": "1234567890",
+          "recipient_name": "SUDARSONO"
+        },
+        callbacks: {
+          finish: "https://demo.midtrans.com"
+        },
+        expiry: {
+          "start_time": "2024-12-13 18:11:08 +0700",
+          "unit": "minutes",
+          "duration": 1
+        },
+        "custom_field1": "custom field 1 content",
+        "custom_field2": "custom field 2 content",
+        "custom_field3": "custom field 3 content"
+      }
+    }
+    document.addEventListener('scroll', scrollHandler)
+    const paymentButton = document.getElementById('plan_0')!
+    paymentButton.addEventListener('click', clickHandler)
+
+    return () => {
+      document.removeEventListener('scroll', scrollHandler)
+    }
   }, [])
   return (<>
     <main>
@@ -285,9 +395,9 @@ export default function Home() {
                       <p className="mt-8 mb-4 font-bold font-lexend text-2xl">{data.price}</p>
                       <p className="ml-1">/bulan</p>
                     </div>
-                    <a href="/" className={(data.isFavorite ? 'bg-[#FFB020] border-[#FFB020]' : 'bg-primary border-primary') + ' border rounded-full px-6 py-2 text-center whitespace-nowrap text-white w-full block'}>
+                    <div id={'plan_' + i} className={(data.isFavorite ? 'bg-[#FFB020] border-[#FFB020]' : 'bg-primary border-primary') + ' border rounded-full px-6 py-2 text-center whitespace-nowrap text-white w-full block'}>
                       {data.buttonText}
-                    </a>
+                    </div>
                   </div>
                   <div className="mt-10 flex flex-col gap-4 px-8">
                     {data.features.map((feature, j) => (

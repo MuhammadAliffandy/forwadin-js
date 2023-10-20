@@ -111,14 +111,21 @@ interface OutgoingMessage {
     checked?: boolean
 }
 interface GroupData {
+    pkId: number,
     id: string,
     name: string,
-    type: string,
-    totalUser: number,
-    users: ContactData[],
-    created_at: string,
-    updated_at: string,
+    isCampaign: boolean,
+    membersCount: number,
+    contactGroups?: ContactGroup[],
+    userId: string,
     checked?: boolean
+}
+export interface ContactGroup {
+    pkId: number,
+    id: string,
+    contactId: number,
+    groupId: number,
+    contact: ContactData
 }
 interface BroadcastData {
     id: string,

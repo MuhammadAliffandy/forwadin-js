@@ -1,6 +1,8 @@
 import NextAuth, { DefaultSession } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import type { NextAuthOptions } from 'next-auth'
+import GoogleProvider from "next-auth/providers/google";
+import type { NextAuthOptions, User } from 'next-auth'
+import { fetchServer } from "@/utils/helper/fetchServer";
 interface SessionDevice {
     id: string,
     sessionId: string
@@ -24,6 +26,10 @@ export const authConfig: NextAuthOptions = {
         maxAge: 30 * 24 * 60
     },
     providers: [
+        GoogleProvider({
+            clientId: process.env.GOOGLE_CLIENT_ID as string,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET as string
+        }),
         CredentialsProvider({
             id: 'refresh',
             name: 'Refresh',
@@ -61,6 +67,7 @@ export const authConfig: NextAuthOptions = {
             },
             authorize: async (credentials: any) => {
                 // TODO: Perform API call to backend
+
                 const result = await fetch(process.env.BACKEND_URL + '/auth/login', {
                     method: 'POST',
                     headers: {
@@ -91,7 +98,10 @@ export const authConfig: NextAuthOptions = {
             session.user = token.user;
             return session;
         },
-        async jwt({ token, user, trigger, session }) {
+        async jwt({ token, user, trigger, session, account }) {
+            // Token OAUTH
+            // Klo login google
+
             if (trigger === 'update') {
                 token.user = session.user
             }
@@ -100,6 +110,32 @@ export const authConfig: NextAuthOptions = {
             }
             return token;
         },
+        async signIn({ user, account }: any) {
+            if (account?.provider === 'google') {
+                // call backend
+                const result = await fetch(process.env.BACKEND_URL + '/auth/google', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        accessToken: account.access_token
+                    })
+                })
+                const resultData = await result.json()
+                console.log(resultData)
+                console.log(result.status)
+                if (result.ok) {
+                    user.id = resultData.id
+                    user.token = resultData.accessToken
+                    user.refreshToken = resultData.refreshToken
+                    return user
+                } else {
+                    return null
+                }
+            }
+            return user
+        }
     },
     secret: process.env.NEXTAUTH_SECRET
 }

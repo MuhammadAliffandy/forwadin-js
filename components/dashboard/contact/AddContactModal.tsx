@@ -19,7 +19,7 @@ interface AddContactModalProps {
 const AddContactModal = ({ openModal, setopenModal, fetchData }: AddContactModalProps) => {
     const [isLoaded, setisLoaded] = useState(false)
     const [isLoading, setisLoading] = useState(false)
-    const { handleSubmit, register, setValue, watch, setError, formState: { errors } } = useForm<ContactData>()
+    const { handleSubmit, register, reset, formState: { errors } } = useForm<ContactData>()
     const [labelList, setlabelList] = useState<Label[]>([
     ])
     const [deviceList, setdeviceList] = useState<DeviceData[]>([])
@@ -78,6 +78,15 @@ const AddContactModal = ({ openModal, setopenModal, fetchData }: AddContactModal
             fetchData()
             setisLoading(false)
             setopenModal(false)
+            reset()
+            setlabelList(labelList.map(item => {
+                return {
+                    label: {
+                        ...item.label,
+                        active: false
+                    }
+                }
+            }))
         } else {
             const body = await result.json()
             console.log(body)

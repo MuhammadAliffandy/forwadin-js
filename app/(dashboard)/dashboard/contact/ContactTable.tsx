@@ -10,6 +10,7 @@ import { fetchClient } from '@/utils/helper/fetchClient';
 import { toast } from 'react-toastify';
 import Skeleton from 'react-loading-skeleton';
 import { formatDate, getInitials } from '@/utils/helper';
+import DeleteContactModal from '@/components/dashboard/contact/DeleteContactModal';
 
 const ContactTable = () => {
     const { push } = useRouter()
@@ -22,6 +23,7 @@ const ContactTable = () => {
     const [searchText, setsearchText] = useState('')
     const [searchedContact, setsearchedContact] = useState<ContactData[]>([])
     const [addContactModal, setaddContactModal] = useState(false)
+    const [deleteContactModal, setdeleteContactModal] = useState(false)
     const handleCheckBoxClick = (e: React.FormEvent<HTMLInputElement>, id: string) => {
         const newcontactData = contactData.map(obj => {
             return (obj.id === id ? { ...obj, checked: e.currentTarget.checked } : obj)
@@ -57,7 +59,7 @@ const ContactTable = () => {
     const filterDevice = (text: string) => {
         const regex = new RegExp(text, 'i')
         return contactData.filter(item => {
-            if (regex.test(item.firstName) || regex.test(item.lastName) || regex.test(item.phone))
+            if (regex.test(item.firstName) || regex.test(item.lastName) || regex.test(item.phone) || regex.test(item.email))
                 return item
             const findLabel = item.ContactLabel.find(item => regex.test(item.label.name))
             if (findLabel)
@@ -67,10 +69,28 @@ const ContactTable = () => {
     const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
         setsearchText(e.target.value)
     }
-    const handleDeleteContact = () => {
-        // TODO
-        const checkedContacts = contactData.filter(item => item.checked === false).map(item => item)
-        setcontactData(checkedContacts)
+    const handleDeleteContact = async () => {
+        const checkedContacts = contactData.filter(item => item.checked === true).map(item => item.id)
+        try {
+            const result = await fetchClient({
+                method: 'DELETE',
+                url: '/contacts',
+                body: JSON.stringify({ contactIds: checkedContacts }),
+            })
+            if (result.status === 200) {
+                toast.success('Berhasil menghapus kontak')
+                setisLoaded(false)
+                fetchData()
+            }
+            else {
+                const body = await result.json()
+                toast.error('Gagal menghapus kontak')
+                console.log(body)
+            }
+        } catch (error) {
+            toast.error('Gagal menghapus kontak')
+            console.log(error)
+        }
     }
     const fetchData = async () => {
         try {
@@ -135,11 +155,12 @@ const ContactTable = () => {
 
     return (
         <>
+            <DeleteContactModal openModal={deleteContactModal} setopenModal={setdeleteContactModal} count={contactData.filter(item => item.checked === true).length} deleteContact={handleDeleteContact} />
             <AddContactModal openModal={addContactModal} setopenModal={setaddContactModal} fetchData={fetchData} />
             <div className="mt-8 p-4 bg-white rounded-md">
                 <div className="flex sm:flex-row flex-col gap-2 justify-between">
                     <div className="basis-1/2">
-                        <input type="text" className="text-xs rounded-md w-full max-w-md border border-customGray" placeholder="Cari nama / nomor / label"
+                        <input type="text" className="text-xs rounded-md w-full max-w-md border border-customGray" placeholder="Cari nama / nomor / label / email"
                             value={searchText}
                             onChange={handleSearch}
                         />
@@ -149,7 +170,7 @@ const ContactTable = () => {
                             Import Kontak
                         </div>
                         {isChecked ? (
-                            <div onClick={handleDeleteContact} className="bg-danger rounded-md px-6 text-white text-center w-full items-center flex hover:cursor-pointer justify-center p-2">
+                            <div onClick={() => setdeleteContactModal(true)} className="bg-danger rounded-md px-6 text-white text-center w-full items-center flex hover:cursor-pointer justify-center p-2">
                                 Hapus
                             </div>
                         ) : (

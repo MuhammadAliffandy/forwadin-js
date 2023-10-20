@@ -31,12 +31,13 @@ const Dashboard = () => {
             }
         }
         fetchProfile()
+        toast.info('Klo mau logout, klik logo forwardin di sidenav')
     }, [])
     return (
         <>
             <div className='flex flex-col-reverse lg:flex-row lg:justify-between items-center'>
                 <div>
-                    <p className='font-lexend text-2xl font-bold'>Selamat Siang, {userProfile.username}</p>
+                    <p className='font-lexend text-2xl font-bold'>Selamat Siang, {userProfile.firstName} {userProfile.lastName}</p>
                 </div>
                 <div>
                     <div className='flex items-center gap-2'>

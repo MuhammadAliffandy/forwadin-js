@@ -5,10 +5,8 @@ type Params = {
     params: { group: string }
 }
 export async function generateMetadata({ params }: Params) {
-    // fetch group data from backend
-    const group = params.group
     return {
-        title: group + " Details"
+        title: "Detail Group"
     }
 }
 const page = ({ params }: Params) => {

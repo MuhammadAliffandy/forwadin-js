@@ -22,12 +22,10 @@ const GroupList = ({ groupData, handleCheckBoxClick, multipleCheckboxRef, handle
                     <td className='p-4'>
                         {item.name}
                     </td>
-                    <td className='p-4'>{item.type}</td>
-                    <td className='p-4'>{item.totalUser}</td>
-                    <td className="p-4">{item.created_at}</td>
-                    <td className="p-4">{item.updated_at}</td>
-                    <td className='p-4'>
-                        <div className='py-1 text-center px-2 border border-black/20 rounded-sm hover:cursor-pointer' onClick={() => handleOpenDetailModal(item.id.toString())}>Detail</div>
+                    <td className='p-4'>{(item.isCampaign ? 'Ya' : 'Tidak')}</td>
+                    <td className='p-4'>{item.membersCount}</td>
+                    <td className='p-4 flex'>
+                        <div className='py-1 text-center px-4 border border-black/20 rounded-md hover:cursor-pointer ' onClick={() => handleOpenDetailModal(item.id.toString())}>Detail</div>
                     </td>
                 </tr>
             ))}
