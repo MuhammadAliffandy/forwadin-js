@@ -8,8 +8,10 @@ import AddGroupModal from '@/components/dashboard/group/AddGroupModal';
 import Skeleton from 'react-loading-skeleton';
 import { fetchClient } from '@/utils/helper/fetchClient';
 import { toast } from 'react-toastify';
+import { useSession } from 'next-auth/react';
 
 const GroupTable = () => {
+    const { data: session } = useSession()
     const { push } = useRouter()
     const [isLoaded, setisLoaded] = useState(false)
     const mainCheckboxRef = useRef<HTMLInputElement>(null)
@@ -68,7 +70,8 @@ const GroupTable = () => {
         try {
             const result = await fetchClient({
                 url: '/groups',
-                method: 'GET'
+                method: 'GET',
+                user: session?.user
             })
             const resultData: GroupData[] = await result.json()
             if (result.status === 200) {
@@ -82,7 +85,7 @@ const GroupTable = () => {
     }
     useEffect(() => {
         fetchData()
-    }, [])
+    }, [session?.user])
     useEffect(() => {
         if (mainCheckboxRef.current) {
             const checkObject = groupData.find(obj => obj.checked === true)
