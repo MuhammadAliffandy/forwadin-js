@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import AddDeviceModal from '@/components/dashboard/device/AddDeviceModal';
 import { MultipleCheckboxRef, DeviceData } from '@/utils/types'
-import { getSession, useSession } from 'next-auth/react';
+import { useSession } from 'next-auth/react';
 import { fetchClient } from '@/utils/helper/fetchClient';
 import { toast } from 'react-toastify';
 import Skeleton from 'react-loading-skeleton';
@@ -83,6 +83,7 @@ const DeviceTable = () => {
             const fetchDeviceData = await fetchClient({
                 method: 'GET',
                 url: '/devices',
+                user: session?.user
             })
             const data: DeviceData[] = await fetchDeviceData.json()
             if (fetchDeviceData.status === 200) {
@@ -97,13 +98,28 @@ const DeviceTable = () => {
             console.log(error)
         }
     }
-    const refreshData = () => {
-        fetchData()
+    const deleteDevice = async () => {
+        const result = await fetchClient({
+            method: 'DELETE',
+            body: JSON.stringify({
+                deviceIds: deviceData.filter(obj => obj.checked === true).map(obj => obj.id)
+            }),
+            url: '/devices',
+            user: session?.user
+        })
+        if (result.status === 200) {
+            toast.success('Berhasil menghapus device')
+            setisLoaded(false)
+            fetchData()
+        } else {
+            const error = await result.json()
+            console.log(error)
+            toast.error('Gagal menghapus device')
+        }
     }
     useEffect(() => {
         fetchData()
-
-    }, [])
+    }, [session?.user])
     useEffect(() => {
         if (mainCheckboxRef.current) {
             const checkObject = deviceData.find(obj => obj.checked === true)
@@ -135,17 +151,12 @@ const DeviceTable = () => {
         const searchResult = filterDevice(searchText)
         setsearchedDevice(searchResult)
     }, [searchText])
-    const tesSession = () => {
-        console.log(session)
-    }
     return (
         <>
             {openQrModal && (
-                <QRModal openModal={openQrModal} setopenModal={setopenQrModal} data={qrModalData} session={session} update={update} refresh={refreshData} />
+                <QRModal openModal={openQrModal} setopenModal={setopenQrModal} data={qrModalData} session={session} update={update} refresh={fetchData} />
             )}
-            {deleteModal && (
-                <DeleteModal setopenModal={setdeleteModal} openModal={deleteModal} device={deviceData} refresh={refreshData} />
-            )}
+            <DeleteModal setopenModal={setdeleteModal} openModal={deleteModal} count={deviceData.map(item => item.checked === true).length} deleteDevice={deleteDevice} />
             <AddDeviceModal openModal={deviceModal} setopenModal={setdeviceModal} fetchData={fetchData} />
             <div className="mt-8 p-4 bg-white rounded-md">
                 <div className="flex sm:flex-row flex-col gap-2 justify-between">
@@ -176,6 +187,7 @@ const DeviceTable = () => {
                                 </th>
                                 <th className='p-4'>Nama</th>
                                 <th className='p-4 whitespace-pre'>API Key</th>
+                                <th className='p-4 whitespace-pre'>Nomor HP</th>
                                 <th className='p-4'>Label Kategori</th>
                                 <th className='p-4'>Status</th>
                                 <th className='p-4'>Scan QR</th>

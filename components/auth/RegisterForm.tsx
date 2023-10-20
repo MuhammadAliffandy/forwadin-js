@@ -11,6 +11,7 @@ import CountryFlagSvg from 'country-list-with-dial-code-and-flag/dist/flag-svg'
 import InputForm from "../form/InputForm";
 import ButtonSubmit from "../form/ButtonSubmit";
 import { text } from "stream/consumers";
+import { signIn } from "next-auth/react";
 
 const Register = ({ setCurrentStep, setUserData, userData }: {
     setCurrentStep: Dispatch<SetStateAction<string>>,
@@ -211,7 +212,7 @@ const Register = ({ setCurrentStep, setUserData, userData }: {
                     }} />
                     <div className="flex gap-2 relative">
                         <div className="flex" >
-                            <div className="rounded-md  border-[#B0B4C5] border flex items-center justify-between gap-1 w-full p-3 hover:cursor-pointer" onClick={() => setcountryCodeDropdown(!countryCodeDropdown)}>
+                            <div className="rounded-md border-[#B0B4C5] border flex items-center justify-between gap-1 w-full py-3 px-2  hover:cursor-pointer" onClick={() => setcountryCodeDropdown(!countryCodeDropdown)}>
                                 <div className="flex gap-2 font-bold ">
                                     <div className="w-4" dangerouslySetInnerHTML={{ __html: CountryFlagSvg[currentCountryCode.code] }} />
                                     <div>{currentCountryCode?.code}</div>
@@ -224,11 +225,13 @@ const Register = ({ setCurrentStep, setUserData, userData }: {
                         </div>
                         <div className="relative flex-1 flex">
                             {errors.phone && (<p className="px-1 text-danger absolute right-4 top-1/2 -translate-y-1/2">{`${errors.phone.message}`}</p>)}
-                            <div className="absolute top-1/2 -translate-y-1/2 text-customGray left-4">{currentCountryCode.dial_code}</div>
-                            <input type="text" placeholder='Whatsapp Number' className={'text-sm pr-4 pl-12 py-3 focus:outline-none  rounded-md focus:ring-0 w-full ' + (errors.phone ? 'border-danger focus:border-danger' : 'border-[#B0B4C5] focus:border-primary ')} {...register('phone', {
-                                required: 'Whatsapp Required',
-                                value: userData.phone
-                            })} />
+                            <div className={'flex items-center px-2 text-sm rounded-md focus:outline-none focus:ring-0 w-full border ' + (errors.phone ? 'border-danger focus:border-danger' : 'border-[#B0B4C5] focus:border-primary')} style={{ MozAppearance: 'textfield', WebkitAppearance: 'textfield' }}>
+                                <div className=" text-customGray ">{currentCountryCode.dial_code}</div>
+                                <input type="text" placeholder='Whatsapp Number' className='focus:ring-0 focus:outline-none border-none' {...register('phone', {
+                                    required: 'Whatsapp Required',
+                                    value: userData.phone
+                                })} />
+                            </div>
                         </div>
                         {componentTransition((style, item) => item && (
                             <animated.div style={style} className="absolute bg-white rounded-md border border-customGray w-full mt-16 z-10 shadow-lg text-sm">
@@ -304,12 +307,14 @@ const Register = ({ setCurrentStep, setUserData, userData }: {
                         <hr className='border border-[#B0B4C5] h-px basis-1/3' />
                     </div>
                     <div className="">
-                        <a href="/signup" className="px-4 py-3 flex items-center justify-center gap-2 rounded-md w-full text-primary bg-white border border-primary text-center">
+                        <div onClick={() => signIn('google', {
+                            callbackUrl: "/dashboard"
+                        })} className="px-4 py-3 flex items-center justify-center gap-2 rounded-md w-full text-primary bg-white border border-primary text-center hover:cursor-pointer">
                             <div className="flex-none">
                                 <img src="/assets/icons/google-icon.svg" alt="" />
                             </div>
                             <p>Masuk dengan Google</p>
-                        </a>
+                        </div>
                     </div>
                 </div>
                 <p className="text-center text-sm">Sudah punya akun? <Link href={'/signin'} className='text-primary'>Masuk di sini</Link></p>

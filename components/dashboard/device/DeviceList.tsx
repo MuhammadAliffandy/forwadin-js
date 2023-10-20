@@ -20,6 +20,7 @@ const DeviceList = ({ deviceData, handleCheckBoxClick, deviceCheckboxRef, handle
                     </td >
                     <td className='p-4 '>{item.name}</td>
                     <td className='p-4 break-words'>{item.apiKey}</td>
+                    <td className='p-4 break-words'>{item.phone ? item.phone : '-'}</td>
                     <td className='p-4 flex flex-wrap justify-center lg:justify-start items-center  gap-2'>
                         {item.DeviceLabel?.map((item, idx) => (
                             <div key={idx} className='border-2 border-primary px-2 py-1 rounded-full'>
