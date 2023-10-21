@@ -1,12 +1,14 @@
 'use client'
 import Message from '@/components/dashboard/Message'
-import Button from '@/components/landing/Button'
+import CustomButton from '@/components/landing/Button'
 import Link from 'next/link'
 import dynamic from 'next/dynamic';
 import { useEffect, useState } from 'react';
 import { UserProfile } from '@/utils/types';
 import { fetchClient } from '@/utils/helper/fetchClient';
 import { toast } from 'react-toastify';
+import { getTodayDateBahasa } from '@/utils/helper';
+import { Button, Link as UILink } from '@nextui-org/react';
 const DynamicAnalytic = dynamic(() => import('@/components/dashboard/Analytic'), { ssr: false })
 const Dashboard = () => {
     const [isLoaded, setisLoaded] = useState(false)
@@ -43,7 +45,7 @@ const Dashboard = () => {
                     <div className='flex items-center gap-2'>
                         <div className='text-xs text-right flex flex-row lg:flex-col gap-2 lg:gap-0'>
                             <p className='text-[#B0B4C5]'>Tanggal hari ini</p>
-                            <p className='text-[#777C88]'>Selasa, 29 Agustus 2019</p>
+                            <p className='text-[#777C88]'>{getTodayDateBahasa()}</p>
                         </div>
                         <div className='flex-none hidden lg:block'>
                             <img src="/assets/icons/dashboard/calendar.svg" alt="" />
@@ -96,7 +98,9 @@ const Dashboard = () => {
                             <div className='text-right hidden lg:block'>
                                 <p className='font-nunito font-bold text-[12px]'>Upgrade paket untuk meningkatkan<br /> batasan fitur yang ada</p>
                             </div>
-                            <Button text={'Upgrade Paket'} href={'/'} isPrimary={false} styles={'w-full max-w-sm'} />
+                            <Button href='/subscription' color='primary' variant='bordered' radius='full' as={UILink} fullWidth>
+                                Upgrade Paket
+                            </Button>
                         </div>
                     </div>
                 </div>

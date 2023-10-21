@@ -2,7 +2,7 @@
 import { animated, useTransition } from "@react-spring/web";
 import Link from "next/link"
 import { useRouter } from "next/navigation";
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import Button from "./landing/Button";
 import { useSession } from "next-auth/react";
 const Navbar = () => {
@@ -40,6 +40,7 @@ const Navbar = () => {
     })
     return (
         <>
+
             <nav className="absolute flex md:hidden bg-white w-full justify-between px-8 py-4 top-0 z-10 shadow">
                 <div className="flex gap-4 items-center hover:cursor-pointer" onClick={() => router.push('/')}>
                     <img src="/assets/icons/logo_black.svg"

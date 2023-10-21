@@ -1,10 +1,8 @@
 export const getInitials = (name: string) => {
     // Split the name into words
     const words = name.split(' ');
-
     // Extract the first character from each word
     const initials = words.map((word) => word[0]);
-
     // Join the initials and limit to the first 2 characters
     const result = initials.join('').slice(0, 2);
 
@@ -35,4 +33,53 @@ export const formatBackendBirthDate = (inputDate: any) => {
     const month = String(date.getMonth() + 1).padStart(2, '0')
     const day = String(date.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
+}
+export const getTodayDateBahasa = () => {
+    const days = [
+        "Minggu",
+        "Senin",
+        "Selasa",
+        "Rabu",
+        "Kamis",
+        "Jumat",
+        "Sabtu"
+    ];
+
+    const months = [
+        "Januari",
+        "Februari",
+        "Maret",
+        "April",
+        "Mei",
+        "Juni",
+        "Juli",
+        "Agustus",
+        "September",
+        "Oktober",
+        "November",
+        "Desember"
+    ];
+
+    const today = new Date();
+
+    const hari = days[today.getDay()];
+    const tanggal = today.getDate();
+    const bulan = months[today.getMonth()];
+    const tahun = today.getFullYear();
+
+    const result = hari + ", " + tanggal + " " + bulan + " " + tahun;
+
+    return result
+}
+export const formatCurrencyIDR = (number: number) => {
+    if (number) {
+        const formattedIDR = new Intl.NumberFormat('id-ID', {
+            style: 'currency',
+            currency: 'IDR',
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 2
+        }).format(number);
+        return formattedIDR
+    }
+    return '-'
 }
