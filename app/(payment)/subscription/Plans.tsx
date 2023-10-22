@@ -1,3 +1,4 @@
+import { formatCurrencyIDR } from "@/utils/helper"
 import { useEffect } from "react"
 interface FeatureProps {
     feature: string,
@@ -25,12 +26,12 @@ const BasicPlan = ({ planData, durationPlan, features }: { planData: PlansProps,
             <div className="flex items-baseline">
                 {durationPlan === 'Monthly' ? (
                     <>
-                        <p className="my-2 font-bold font-lexend text-2xl">Rp. {planData?.monthlyPrice}</p>
+                        <p className="my-2 font-bold font-lexend text-2xl">{formatCurrencyIDR(planData?.monthlyPrice!)}</p>
                         <p className="ml-1">/bulan</p>
                     </>
                 ) : (
                     <>
-                        <p className="my-2 font-bold font-lexend text-2xl">Rp. {planData?.yearlyPrice}</p>
+                        <p className="my-2 font-bold font-lexend text-2xl">{formatCurrencyIDR(planData?.yearlyPrice!)}</p>
                         <p className="ml-1">/tahun</p>
                     </>
                 )}

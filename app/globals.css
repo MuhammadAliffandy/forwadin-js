@@ -26,9 +26,9 @@ html {
     scroll-behavior: smooth;
 }
 
-input::placeholder {
+/* input::placeholder {
     color: #B0B4C5;
-}
+} */
 
 ::placeholder {
     /* Chrome, Firefox, Opera, Safari 10.1+ */

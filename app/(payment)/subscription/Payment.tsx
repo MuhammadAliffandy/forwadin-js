@@ -1,12 +1,13 @@
 'use client'
 import { fetchClient } from "@/utils/helper/fetchClient"
-import { Button, Card, CardBody, Checkbox, select } from "@nextui-org/react"
+import { Button, Card, CardBody, Checkbox, Skeleton, select } from "@nextui-org/react"
 import { Tabs, Tab } from "@nextui-org/tabs"
 import { useSession } from "next-auth/react"
 import Link from "next/link"
 import { useEffect, useState } from "react"
 import { toast } from "react-toastify"
 import BasicPlan from "./Plans"
+import { formatCurrencyIDR } from "@/utils/helper"
 interface PlansProps {
 	id: string,
 	name: string,
@@ -18,87 +19,13 @@ interface PlansProps {
 
 const Payment = () => {
 	const { data: session } = useSession()
+	const [isLoaded, setisLoaded] = useState(false)
 	const [isLoading, setisLoading] = useState(false)
-	const [durationPlan, setdurationPlan] = useState('')
+	const [durationPlan, setdurationPlan] = useState('Monthly')
 	const [plans, setplans] = useState<PlansProps[]>([])
-	const [findPlan, setfindPlan] = useState<PlansProps>()
 	const [selectedPlan, setselectedPlan] = useState<string>('')
 	const [currentPlan, setcurrentPlan] = useState<PlansProps>()
 	const [isChecked, setisChecked] = useState(false)
-	const subscriptionContent = [
-		{
-			title: 'Starter',
-			body: 'Start your 14-day trial and experience efficient message forwarding, simplified contact management, and a glimpse of campaign scheduling. Unleash the potential of streamlined communication and explore how FowardIt can elevate your messaging game.',
-			price: 'Rp. 300.000',
-			buttonText: 'Start for Free',
-			features: [
-				{ name: '10 Auto reply', available: true },
-				{ name: '50 Broadcast', available: true },
-				{ name: '5 Campaign', available: true },
-				{ name: '50 Contact', available: true },
-				{ name: '5 Device', available: true },
-				{ name: 'Excel / CSV Contact Import', available: true },
-				{ name: 'Google Contact Sync', available: false },
-				{ name: 'Whatsapp Contact Sync', available: false },
-
-			],
-			cardStyle: ''
-		},
-		{
-			title: 'Basic',
-			body: 'Start your 14-day trial and experience efficient message forwarding, simplified contact management, and a glimpse of campaign scheduling. Unleash the potential of streamlined communication and explore how FowardIt can elevate your messaging game.',
-			price: 'Rp. 300.000',
-			buttonText: 'Get Started',
-			features: [
-				{ name: '10 Auto reply', available: true },
-				{ name: '50 Broadcast', available: true },
-				{ name: '5 Campaign', available: true },
-				{ name: '50 Contact', available: true },
-				{ name: '5 Device', available: true },
-				{ name: 'Excel / CSV Contact Import', available: true },
-				{ name: 'Google Contact Sync', available: false },
-				{ name: 'Whatsapp Contact Sync', available: false },
-
-			],
-			isFavorite: true
-		},
-		{
-			title: 'Starter',
-			body: 'Start your 14-day trial and experience efficient message forwarding, simplified contact management, and a glimpse of campaign scheduling. Unleash the potential of streamlined communication and explore how FowardIt can elevate your messaging game.',
-			price: 'Rp. 300.000',
-			buttonText: 'Start for Free',
-			features: [
-				{ name: '10 Auto reply', available: true },
-				{ name: '50 Broadcast', available: true },
-				{ name: '5 Campaign', available: true },
-				{ name: '50 Contact', available: true },
-				{ name: '5 Device', available: true },
-				{ name: 'Excel / CSV Contact Import', available: true },
-				{ name: 'Google Contact Sync', available: false },
-				{ name: 'Whatsapp Contact Sync', available: false },
-
-			],
-			cardStyle: ''
-		},
-		{
-			title: 'Starter',
-			body: 'Start your 14-day trial and experience efficient message forwarding, simplified contact management, and a glimpse of campaign scheduling. Unleash the potential of streamlined communication and explore how FowardIt can elevate your messaging game.',
-			price: 'Rp. 300.000',
-			buttonText: 'Start for Free',
-			features: [
-				{ name: '10 Auto reply', available: true },
-				{ name: '50 Broadcast', available: true },
-				{ name: '5 Campaign', available: true },
-				{ name: '50 Contact', available: true },
-				{ name: '5 Device', available: true },
-				{ name: 'Excel / CSV Contact Import', available: true },
-				{ name: 'Google Contact Sync', available: false },
-				{ name: 'Whatsapp Contact Sync', available: false },
-
-			],
-			cardStyle: ''
-		},
-	]
 	const features = [
 		{
 			feature: '100 Auto reply',
@@ -144,6 +71,9 @@ const Payment = () => {
 					item.yearlyPrice = parseInt(item.yearlyPrice as any)
 					return item
 				}))
+				setselectedPlan('basic')
+				setisLoaded(true)
+
 			} else {
 				toast.error('failed to fetch data')
 				console.log(resultData)
@@ -153,6 +83,7 @@ const Payment = () => {
 			toast.error('failed to fetch data')
 			console.log(error)
 		}
+
 	}
 	const handleClick = async () => {
 		setisLoading(true)
@@ -172,25 +103,29 @@ const Payment = () => {
 			} else {
 				toast.error('failed to pay')
 				console.log(resultData)
+				setisLoading(false)
 			}
 		} catch (error) {
 			console.log(error)
-		} finally {
 			setisLoading(false)
 		}
 	}
 	useEffect(() => {
-		fetchSubscriptionPlans()
+		if (!isLoaded)
+			fetchSubscriptionPlans()
+
 	}, [session?.user?.token])
 	useEffect(() => {
-		setfindPlan(plans.find(item => item.name.toLowerCase() === selectedPlan.toLowerCase()))
-		if (findPlan) {
-			const currentDurationPlan = (durationPlan === 'Monthly' ? findPlan.monthlyPrice : findPlan.yearlyPrice)
+		const find = plans.find(item => item.name.toLowerCase() === selectedPlan.toLowerCase())
+		if (find) {
+			const currentDurationPlan = (durationPlan === 'Monthly' ? find.monthlyPrice : find.yearlyPrice)
 			const vat = (currentDurationPlan * 2.9 / 100) + 2000
-			setcurrentPlan({
-				...findPlan,
-				vat: vat,
-				sum: currentDurationPlan + vat
+			setcurrentPlan(prev => {
+				return {
+					...find,
+					vat: vat,
+					sum: currentDurationPlan + vat
+				}
 			})
 		}
 
@@ -215,63 +150,68 @@ const Payment = () => {
 						<p className="text-primary text-sm">Kembali ke dashboard</p>
 					</Link>
 				</div>
-				<div className="h-full w-full flex justify-center items-center">
+				<div className="h-full w-full flex justify-center items-center py-12 lg:py-0">
 					<Card className="rounded-md max-w-xl w-full">
 						<CardBody className="overflow-hidden font-inter">
+
 							<div className="flex justify-between mb-unit-2">
 								<div className="font-bold text-2xl font-lexend">Plan Subscription</div>
 								<div>
-									<Tabs
-										items={[
-											{
-												id: '1',
-												text: 'Monthly'
-											},
-											{
-												id: '2',
-												text: 'Yearly'
-											},
-										]}
-										color="primary"
-										variant="light"
-										selectedKey={durationPlan}
-										onSelectionChange={setdurationPlan as any} size="sm" radius="full"
-									>
+									<Skeleton isLoaded={isLoaded}>
+										<Tabs
+											items={[
+												{
+													id: '1',
+													text: 'Monthly'
+												},
+												{
+													id: '2',
+													text: 'Yearly'
+												},
+											]}
+											color="primary"
+											variant="light"
+											selectedKey={durationPlan}
+											onSelectionChange={setdurationPlan as any} size="sm" radius="full"
+										>
 
-										{(item) => (
-											<Tab key={item.text} title={item.text} />
-										)}
-									</Tabs>
+											{(item) => (
+												<Tab key={item.text} title={item.text} />
+											)}
+										</Tabs>
+									</Skeleton >
 								</div>
 							</div>
+							<Skeleton isLoaded={isLoaded}>
+								<Tabs
+									color="primary"
+									variant="underlined"
+									fullWidth={true}
+									selectedKey={selectedPlan}
+									onSelectionChange={setselectedPlan as any}
+								>
+									<Tab key={plans[0]?.name} title={plans[0]?.name} className="">
+										<BasicPlan planData={plans[0]} durationPlan={durationPlan} features={features} />
+									</Tab>
+									<Tab key={plans[1]?.name} title={plans[1]?.name} className="">
+										<BasicPlan planData={plans[1]} durationPlan={durationPlan} features={features} />
+									</Tab>
+									<Tab key={plans[2]?.name} title={plans[2]?.name} className="">
+										<BasicPlan planData={plans[2]} durationPlan={durationPlan} features={features} />
+									</Tab>
 
-							<Tabs
-
-								color="primary"
-								variant="underlined"
-								fullWidth={true}
-								selectedKey={selectedPlan}
-								onSelectionChange={setselectedPlan as any}
-							>
-								<Tab key={plans[0]?.name} title={plans[0]?.name} className="">
-									<BasicPlan planData={plans[0]} durationPlan={durationPlan} features={features} />
-								</Tab>
-								<Tab key={plans[1]?.name} title={plans[1]?.name} className="">
-									<BasicPlan planData={plans[1]} durationPlan={durationPlan} features={features} />
-								</Tab>
-								<Tab key={plans[2]?.name} title={plans[2]?.name} className="">
-									<BasicPlan planData={plans[2]} durationPlan={durationPlan} features={features} />
-								</Tab>
-
-							</Tabs>
+								</Tabs>
+							</Skeleton>
 						</CardBody>
 					</Card>
 				</div>
 			</div>
-			<div className="bg-white w-full max-w-md py-20 px-4">
+			<div className="bg-white w-full max-w-md py-20 px-4 mx-auto">
 				<div className="flex flex-col justify-between h-full w-full max-w-xs mx-auto">
 					<div>
-						<p className="font-lexend font-bold text-2xl">Ringkasan Pembayaran</p>
+						<Skeleton isLoaded={isLoaded}>
+							<p className="font-lexend font-bold text-2xl">Ringkasan Pembayaran</p>
+						</Skeleton>
 						<table className="text-sm w-full mt-16">
 							<tbody >
 								<tr>
@@ -281,11 +221,11 @@ const Payment = () => {
 								<tr>
 									<th className='font-normal'>Harga Paket</th>
 
-									<td className="flex justify-end font-bold">Rp.{durationPlan === 'Monthly' ? currentPlan?.monthlyPrice : currentPlan?.yearlyPrice}</td>
+									<td className="flex justify-end font-bold">{formatCurrencyIDR(durationPlan === 'Monthly' ? currentPlan?.monthlyPrice! : currentPlan?.yearlyPrice!)}</td>
 								</tr>
 								<tr>
 									<th className='font-normal'>VAT (2.9% + Rp 2.000)</th>
-									<td className="flex justify-end font-bold">Rp.{currentPlan?.vat}</td>
+									<td className="flex justify-end font-bold">{formatCurrencyIDR(currentPlan?.vat!)}</td>
 								</tr>
 							</tbody>
 
@@ -295,7 +235,7 @@ const Payment = () => {
 								Total:
 							</div>
 							<div className="text-2xl font-bold flex justify-end w-full">
-								Rp.{currentPlan?.sum!}
+								{formatCurrencyIDR(currentPlan?.sum!)}
 							</div>
 						</div>
 					</div>
