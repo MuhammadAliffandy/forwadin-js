@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { IncomingMessage, MultipleCheckboxRef } from '@/utils/types';
 import IncomingList from './IncomingList';
 import AddContactModal from '@/components/dashboard/contact/AddContactModal';
+import { Pagination } from '@nextui-org/react';
 
 const IncomingTable = () => {
     const { push } = useRouter()
@@ -13,29 +14,19 @@ const IncomingTable = () => {
     const [isChecked, setisChecked] = useState(false)
     const [messageData, setmessageData] = useState<IncomingMessage[]>([
         {
+            pkId: 1,
             id: '1',
             from: '6281678923',
-            message: "Join us this month for a celebration of",
             contact: {
-                id: '1',
-                phone: "6281357995175",
-                firstName: 'Ihsanul',
-                lastName: 'Afkar',
-                initial: 'IA',
-                colorCode: '4FBEAB',
-                gender: "Laki-laki",
-                email: 'ihsanulafkar@gmail.com',
-                honorific: 'Mr',
-                country: 'Indonesia',
-                dob: '10/10/2010',
-                ContactLabel: [],
-                createdAt: '11.9.2023, 2:43 PM',
-                updatedAt: '11.9.2023, 2:43 PM'
+                name: 'Ihsanul Afkar',
+                colorCode: 'D14343',
+                initial: 'IA'
             },
-            received_at: "10/09/2023 13:35:00",
-            type: 'broadcast',
-            created_at: "10/09/2023 13:35:00",
-            updated_at: "10/09/2023 13:35:00",
+            message: "Join us this month for a celebration of",
+            receivedAt: "10/09/2023 13:35:00",
+            createdAt: "10/09/2023 13:35:00",
+            updatedAt: "10/09/2023 13:35:00",
+            sessionId: '6ff83c6c-3a9c-4ea2-9405-1deffe173bf7',
             checked: false
         },
     ])
@@ -148,9 +139,8 @@ const IncomingTable = () => {
                             </th>
                             <th className='p-4 whitespace-pre'>Nomor HP</th>
                             <th className='p-4'>Nama</th>
-                            <th className='p-4'>Tipe</th>
                             <th className='p-4 whitespace-pre'>Diterima Pada</th>
-                            <th className='p-4'>Detail</    th>
+                            <th className='p-4'>Lihat Chat</th>
                         </tr>
                     </thead>
                     <tbody className='bg-white'>
@@ -172,6 +162,7 @@ const IncomingTable = () => {
                         )}
                     </tbody>
                 </table>
+
                 {messageData.length === 0 && (
                     <div className='w-full bg-white p-12'>
                         <div className='w-full max-w-md mx-auto flex flex-col gap-4'>
@@ -187,6 +178,7 @@ const IncomingTable = () => {
                     </div>
                 )}
             </div >
+            <Pagination total={10} initialPage={1} variant="light" size='sm' />
         </>
     )
 }

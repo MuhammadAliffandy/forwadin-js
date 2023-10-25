@@ -91,7 +91,7 @@ const ProfileDetail = () => {
                     <tr>
                         <th className='font-medium whitespace-pre'>Labels</th>
                         <td className='flex flex-wrap justify-center lg:justify-start items-center gap-2'>
-                            {contactData.ContactLabel.map((item, idx) => (
+                            {contactData.ContactLabel?.map((item, idx) => (
                                 <div key={idx} className='text-white bg-primary px-4 py-1 rounded-full'>
                                     {item.label.name}
                                 </div>

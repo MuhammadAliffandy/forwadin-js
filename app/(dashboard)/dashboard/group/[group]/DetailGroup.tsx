@@ -1,72 +1,33 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ContactData, MultipleCheckboxRef } from '@/utils/types';
+import { ContactData, GroupData, MultipleCheckboxRef } from '@/utils/types';
 import ContactList from '../../contact/ContactList';
 import AddContactModal from '@/components/dashboard/group/AddContactModal';
 import DeleteGroupModal from '@/components/dashboard/group/DeleteGroupModal';
 import DeleteContactModal from '@/components/dashboard/group/DeleteContactModal';
-
-const DetailGroup = ({ params }: { params: any }) => {
+import { useSession } from 'next-auth/react';
+import { fetchClient } from '@/utils/helper/fetchClient';
+import { toast } from 'react-toastify';
+import { Button, Skeleton } from '@nextui-org/react';
+interface DetailGroupProps {
+    groupId: string,
+    groupName: string,
+    setcountContact: Dispatch<SetStateAction<number>>,
+    setgroupName: Dispatch<SetStateAction<string>>
+}
+const DetailGroup = ({ groupId, groupName, setcountContact, setgroupName }: DetailGroupProps) => {
+    const { data: session } = useSession()
     const { push } = useRouter()
-    const [groupName, setgroupName] = useState(params.group)
+    const [isLoaded, setisLoaded] = useState(false)
+    const [isLoading, setIsLoading] = useState(false)
     const mainCheckboxRef = useRef<HTMLInputElement>(null)
+    const [currentGroupName, setcurrentGroupName] = useState(groupName)
     const groupCheckboxRef = useRef<MultipleCheckboxRef>({})
     const [isChecked, setisChecked] = useState(false)
-    const [contactData, setcontactData] = useState<ContactData[]>([
-        {
-            id: '1',
-            phone: "6281357995175",
-            firstName: 'Ihsanul',
-            lastName: 'Afkar',
-            initial: 'IA',
-            colorCode: '4FBEAB',
-            gender: "Laki-laki",
-            email: 'ihsanulafkar@gmail.com',
-            honorific: 'Mr',
-            country: 'Indonesia',
-            dob: '10/10/2010',
-            ContactLabel: [],
-            checked: false,
-            createdAt: '11.9.2023, 2:43 PM',
-            updatedAt: '11.9.2023, 2:43 PM',
-        },
-        {
-            id: '2',
-            phone: "6281357995175",
-            firstName: 'Ihsanul',
-            lastName: 'Afkar',
-            initial: 'IA',
-            colorCode: '4FBEAB',
-            gender: "Laki-laki",
-            email: 'ihsanulafkar@gmail.com',
-            honorific: 'Mr',
-            country: 'Indonesia',
-            dob: '10/10/2010',
-            ContactLabel: [],
-            checked: false,
-            createdAt: '11.9.2023, 2:43 PM',
-            updatedAt: '11.9.2023, 2:43 PM',
-        },
-        {
-            id: '3',
-            phone: "6281357995175",
-            firstName: 'Ihsanul',
-            lastName: 'Afkar',
-            initial: 'IA',
-            colorCode: '4FBEAB',
-            gender: "Laki-laki",
-            email: 'ihsanulafkar@gmail.com',
-            honorific: 'Mr',
-            country: 'Indonesia',
-            dob: '10/10/2010',
-            ContactLabel: [],
-            checked: false,
-            createdAt: '11.9.2023, 2:43 PM',
-            updatedAt: '11.9.2023, 2:43 PM',
-        },
-    ])
+    const [groupData, setgroupData] = useState<GroupData>()
+    const [contactData, setcontactData] = useState<ContactData[]>([])
     const [searchText, setsearchText] = useState('')
     const [searchedContact, setsearchedContact] = useState<ContactData[]>([])
     const [addContactModal, setaddContactModal] = useState(false)
@@ -107,9 +68,9 @@ const DetailGroup = ({ params }: { params: any }) => {
     const filterDevice = (text: string) => {
         const regex = new RegExp(text, 'i')
         return contactData.filter(item => {
-            if (regex.test(item.firstName) || regex.test(item.lastName) || regex.test(item.phone))
+            if (regex.test(item.firstName) || regex.test(item.lastName) || regex.test(item.phone) || regex.test(item.email))
                 return item
-            const findLabel = item.ContactLabel.find(item => regex.test(item.label.name))
+            const findLabel = item.ContactLabel?.find(item => regex.test(item.label.name))
             if (findLabel)
                 return item
         })
@@ -122,9 +83,48 @@ const DetailGroup = ({ params }: { params: any }) => {
         const checkedGroups = contactData.filter(item => item.checked === false).map(item => item)
         setcontactData(checkedGroups)
     }
-    const handleAddContact = () => {
-
+    const handleUpdateGroup = async () => {
+        setIsLoading(true)
+        const result = await fetchClient({
+            url: '/groups/' + groupId + '/update',
+            method: 'PUT',
+            body: JSON.stringify({
+                name: currentGroupName,
+                isCampaign: false
+            }),
+            user: session?.user
+        })
+        if (result) {
+            const resultData = await result.json()
+            if (result.ok) {
+                toast.success('Berhasil update group')
+                fetchGroupData()
+            } else {
+                toast.error('Gagal update group')
+            }
+        }
+        setIsLoading(false)
     }
+    const fetchGroupData = async () => {
+        const result = await fetchClient({
+            url: '/groups/' + groupId,
+            method: 'GET',
+            user: session?.user
+        })
+        if (result) {
+            const resultData: GroupData = await result.json()
+            if (result.ok) {
+                setgroupData(resultData)
+                setcontactData(resultData.contactGroups!.map(item => item.contact))
+                setgroupName(resultData.name)
+                setcountContact(resultData.contactGroups?.length!)
+                setisLoaded(true)
+            } else {
+                toast.error('Gagal fetch data')
+            }
+        }
+    }
+
     useEffect(() => {
         if (mainCheckboxRef.current) {
             const checkObject = contactData.find(obj => obj.checked === true)
@@ -156,33 +156,38 @@ const DetailGroup = ({ params }: { params: any }) => {
         const searchResult = filterDevice(searchText)
         setsearchedContact(searchResult)
     }, [searchText])
-
+    useEffect(() => {
+        fetchGroupData()
+    }, [session?.user?.token])
     return (
         <>
-            <AddContactModal openModal={addContactModal} setopenModal={setaddContactModal} />
-            <DeleteGroupModal openModal={deleteGroupModal} setopenModal={setDeleteGroupModal} group={params.group} />
+            {isLoaded &&
+                <AddContactModal openModal={addContactModal} setopenModal={setaddContactModal} fetchGroupData={fetchGroupData} groupId={groupId} activeContactData={contactData} />
+            }
+            <DeleteGroupModal openModal={deleteGroupModal} setopenModal={setDeleteGroupModal} group={groupId} />
             <DeleteContactModal openModal={deleteContactModal} setopenModal={setdeleteContactModal} contacts={contactData.filter(contact => contact.checked)} />
             <div className="mt-4 p-4 bg-white rounded-md">
                 <div className='flex sm:flex-row flex-col gap-2 items-center justify-between'>
                     <div className="w-full max-w-sm">
                         <input type="text" className="text-xs rounded-md w-full border border-customGray" placeholder="Nama Group"
-                            value={groupName}
-                            onChange={e => setgroupName(e.currentTarget.value)}
+                            value={currentGroupName}
+                            onChange={e => setcurrentGroupName(e.currentTarget.value)}
                         />
                     </div>
                     <div className='flex lg:flex-row flex-col lg:justify-end justify-between gap-2 w-full max-w-sm'>
                         <div onClick={() => setDeleteGroupModal(true)} className="bg-white rounded-md px-6 border border-customGray text-center items-center flex hover:cursor-pointer justify-center p-2">
                             Hapus Group
                         </div>
-                        <button onClick={() => { }} className="bg-primary rounded-md px-6 text-white text-center items-center flex justify-center p-2 disabled:opacity-50" disabled={(params.group === groupName)}>
+                        <Button color='primary' onClick={handleUpdateGroup} isLoading={isLoading} className='rounded-md px-6 disabled:opacity-50' disabled={(groupData?.name === currentGroupName)}>
                             Simpan
-                        </button>
+                        </Button>
+
 
                     </div>
                 </div>
                 <div className="flex sm:flex-row flex-col gap-2 items-center justify-between mt-2">
                     <div className="w-full max-w-sm">
-                        <input type="text" className="text-xs rounded-md w-full border border-customGray" placeholder="Cari nama / nomor / label"
+                        <input type="text" className="text-xs rounded-md w-full border border-customGray" placeholder="Cari nama / nomor / label / email"
                             value={searchText}
                             onChange={handleSearch}
                         />
@@ -199,42 +204,51 @@ const DetailGroup = ({ params }: { params: any }) => {
                     </div>
                 </div>
             </div>
-            <div className='overflow-x-scroll allowed-scroll'>
-                <table className="w-full text-center font-nunito text-xs font-bold ">
-                    <thead className='bg-neutral-75'>
-                        <tr className=''>
-                            <th className='py-4 checkbox'>
-                                <input ref={mainCheckboxRef} type="checkbox" name="main_checkbox" id="main_checkbox" className='rounded-sm focus:ring-transparent' onClick={handleIndexCheckbox} />
-                            </th>
-                            <th className='p-4'>Nama</th>
-                            <th className='p-4 whitespace-pre'>Nomor HP</th>
-                            <th className='p-4'>Label Kategori</th>
-                            <th className='p-4'>Email</th>
-                            <th className='p-4'>Dibuat pada</th>
-                            <th className='p-4'>Detail</    th>
-                        </tr>
-                    </thead>
-                    <tbody className='bg-white'>
-                        {searchText ? (
-                            <ContactList
-                                contactData={searchedContact}
-                                multipleCheckboxRef={groupCheckboxRef}
-                                handleCheckBoxClick={handleCheckBoxClick}
-                                handleOpenDetailModal={handleOpenDetailModal}
-                            />
-                        ) : (
-                            <ContactList
-                                contactData={contactData}
-                                multipleCheckboxRef={groupCheckboxRef}
-                                handleCheckBoxClick={handleCheckBoxClick}
-                                handleOpenDetailModal={handleOpenDetailModal}
-                            />
+            {isLoaded ? (
 
-                        )}
-                    </tbody>
-                </table>
+                <div className='overflow-x-scroll allowed-scroll'>
+                    <table className="w-full text-center font-nunito text-xs font-bold ">
+                        <thead className='bg-neutral-75'>
+                            <tr className=''>
+                                <th className='py-4 checkbox'>
+                                    <input ref={mainCheckboxRef} type="checkbox" name="main_checkbox" id="main_checkbox" className='rounded-sm focus:ring-transparent' onClick={handleIndexCheckbox} />
+                                </th>
+                                <th className='p-4'>Nama</th>
+                                <th className='p-4 whitespace-pre'>Nomor HP</th>
+                                <th className='p-4'>Label Kategori</th>
+                                <th className='p-4'>Email</th>
+                                <th className='p-4'>Dibuat pada</th>
+                                <th className='p-4'>Detail</    th>
+                            </tr>
+                        </thead>
+                        <tbody className='bg-white'>
+                            {searchText ? (
+                                <ContactList
+                                    contactData={searchedContact}
+                                    multipleCheckboxRef={groupCheckboxRef}
+                                    handleCheckBoxClick={handleCheckBoxClick}
+                                    handleOpenDetailModal={handleOpenDetailModal}
+                                />
+                            ) : (
+                                <ContactList
+                                    contactData={contactData}
+                                    multipleCheckboxRef={groupCheckboxRef}
+                                    handleCheckBoxClick={handleCheckBoxClick}
+                                    handleOpenDetailModal={handleOpenDetailModal}
+                                />
 
-            </div >
+                            )}
+                        </tbody>
+                    </table>
+
+                </div >
+            ) : (
+                <div className='mt-4 flex flex-col gap-2 p-4 bg-white'>
+                    <Skeleton className={'w-full h-3 rounded-full'} />
+                    <Skeleton className={'w-full h-3 rounded-full'} />
+                    <Skeleton className={'w-full h-3 rounded-full'} />
+                </div>
+            )}
         </>
     )
 }

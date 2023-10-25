@@ -5,8 +5,7 @@ import { DeviceData, Label } from "@/utils/types"
 import { useRouter } from "next/navigation"
 
 import React, { useEffect, useState } from "react"
-import Skeleton from "react-loading-skeleton"
-import 'react-loading-skeleton/dist/skeleton.css'
+import { Button, Skeleton } from "@nextui-org/react"
 import { PulseLoader } from "react-spinners"
 import { toast } from "react-toastify"
 const DetailDevice = ({ device }: { device: string }) => {
@@ -16,27 +15,28 @@ const DetailDevice = ({ device }: { device: string }) => {
     const [deviceData, setdeviceData] = useState<DeviceData>()
     const [labelList, setlabelList] = useState<Label[]>([])
     const fetchDetailDevice = async () => {
-
         const result = await fetchClient({ method: 'GET', url: '/devices/' + device })
-        const data: DeviceData = await result.json()
-        if (result.status === 200) {
-            document.title = data.name + "'s Detail"
-            setdeviceData(data)
-            const newLabelList = data.DeviceLabel.map(obj => {
-                return {
-                    label: {
-                        name: obj.label.name,
-                        active: true
+        if (result) {
+            const data: DeviceData = await result.json()
+            if (result.status === 200) {
+                document.title = data.name + "'s Detail"
+                setdeviceData(data)
+                const newLabelList = data.DeviceLabel.map(obj => {
+                    return {
+                        label: {
+                            name: obj.label.name,
+                            active: true
+                        }
                     }
-                }
-            })
-            setlabelList(newLabelList)
-            setdeviceName(data.name)
-            setisLoaded(true)
-        } else {
-            toast.error('failed to fetch data')
+                })
+                setlabelList(newLabelList)
+                setdeviceName(data.name)
+                setisLoaded(true)
+            } else {
+                toast.error('device not found')
+                console.log(data)
+            }
         }
-
     }
     const handleUpdateDevice = async () => {
         setisLoading(true)
@@ -47,11 +47,13 @@ const DetailDevice = ({ device }: { device: string }) => {
                 label: newLabel
             }), url: '/devices/' + deviceData?.id
         })
-        if (updateDevice.status === 200) {
-            toast.success('Device berhasil diubah!')
-            fetchDetailDevice()
-        } else {
-            toast.error('Device gagal diubah!')
+        if (updateDevice) {
+            if (updateDevice.status === 200) {
+                toast.success('Device berhasil diubah!')
+                fetchDetailDevice()
+            } else {
+                toast.error('Device gagal diubah!')
+            }
         }
         setisLoading(false)
     }
@@ -67,25 +69,32 @@ const DetailDevice = ({ device }: { device: string }) => {
                             <p className='font-lexend text-2xl font-bold '>Device Detail</p>
 
                             <p className='mt-8'>Nama Device</p>
+
                             <input type="text" name='inputText' className='rounded-md border border-customGray text-sm w-full py-3 px-4 mt-4' value={deviceName} onChange={e => setdeviceName(e.currentTarget.value)} />
+
                             <p className='mt-8'>Labels</p>
                             <MultipleInputLabel labelList={labelList} setlabelList={setlabelList} />
+
                             <p className='mt-8'>API Key</p>
+
                             <div className='w-full px-4 py-3 bg-neutral-75 rounded-md break-words mt-4 text-[#777C88]'>
                                 {deviceData?.apiKey}
                             </div>
                             <div className='px-4 py-3 text-center border border-black/50 rounded-md mt-4'>Generate API key baru</div>
-                            <div className='mt-8 bg-primary rounded-md text-white border border-primary px-4 py-3 text-center hover:cursor-pointer' onClick={handleUpdateDevice}>
-                                {isLoading ? (<PulseLoader size={10} color="#F3F5F8" />)
-                                    : (<p>
-                                        Simpan Perubahan
-                                    </p>)}
-                            </div>
+
+                            <Button fullWidth={true} type='button' color="primary" isLoading={isLoading} className='rounded-md mt-8' size='lg' onClick={handleUpdateDevice}>
+                                Simpan Perubahan
+                            </Button>
                             <div className='mt-4 bg-white rounded-md text-danger border border-black/50 px-4 py-3 text-center'>Hapus</div>
-                        </>
-                    ) : (
-                        <Skeleton count={3} />
+                        </>) : (
+                        <div className='mt-4 flex flex-col gap-2'>
+                            <Skeleton className={'w-full h-3 rounded-full'} />
+                            <Skeleton className={'w-full h-3 rounded-full'} />
+                            <Skeleton className={'w-full h-3 rounded-full'} />
+                        </div>
                     )}
+
+
                 </div>
                 <div className='bg-white rounded-md w-full max-w-md lg:max-w-none mx-auto p-4 flex flex-col gap-4'>
                     {isLoaded ? (
@@ -101,7 +110,14 @@ const DetailDevice = ({ device }: { device: string }) => {
                             </div>
                         </>)
                         : (
-                            <Skeleton count={3} />
+                            // <Skeleton count={3} />
+                            <>
+                                <div className='mt-4 flex flex-col gap-2'>
+                                    <Skeleton className={'w-full h-3 rounded-full'} />
+                                    <Skeleton className={'w-full h-3 rounded-full'} />
+                                    <Skeleton className={'w-full h-3 rounded-full'} />
+                                </div>
+                            </>
                         )}
                 </div>
             </div>

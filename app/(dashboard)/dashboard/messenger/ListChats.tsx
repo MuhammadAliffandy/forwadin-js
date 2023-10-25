@@ -2,11 +2,11 @@ import { ContactData } from "@/utils/types"
 import { Dispatch, SetStateAction, useState } from "react"
 
 interface ListChatsProps {
-    listUser: any,
-    currentUser: ContactData,
-    setcurrentUser: Dispatch<SetStateAction<ContactData>>
+    listContact: ContactData[],
+    currentContact: ContactData | undefined,
+    setcurrentContact: Dispatch<SetStateAction<ContactData | undefined>>
 }
-const ListChats = ({ listUser, currentUser, setcurrentUser }: ListChatsProps) => {
+const ListChats = ({ listContact, currentContact, setcurrentContact }: ListChatsProps) => {
     const [switchButton, setswitchButton] = useState('open')
 
 
@@ -32,19 +32,23 @@ const ListChats = ({ listUser, currentUser, setcurrentUser }: ListChatsProps) =>
             </div>
             <div className=" flex flex-col gap-2 overflow-y-auto">
                 {/* Contacts */}
-                {listUser.map((user: any) => (
-                    <div className={"rounded-md p-3 hover:cursor-pointer " + (currentUser.id === user.id ? 'bg-white' : '')} onClick={() => setcurrentUser(user)}>
+                {listContact.map(contact => (
+                    <div className={"rounded-md p-3 hover:cursor-pointer " + (currentContact?.id === contact.id ? 'bg-white' : '')} onClick={() => setcurrentContact(contact)}>
                         <div className="flex gap-2 items-center w-full">
                             <div style={{
-                                backgroundColor: '#' + user.profileColor
-                            }} className={`flex-none rounded-full text-white w-8 h-8 flex items-center justify-center`}>{user.initial}</div>
+                                backgroundColor: '#' + contact.colorCode
+                            }} className={`flex-none rounded-full text-white w-8 h-8 flex items-center justify-center`}>{contact.initial}</div>
                             <div className=" w-48">
-                                <p>{user.firstName} {user.lastName}</p>
-                                <p className="truncate text-ellipsis overflow-hidden  whitespace-nowrap text-[#777C88] mt-1">{user.lastMessage}</p>
+                                <p>{contact.firstName} {contact.lastName}</p>
+                                <p className="truncate text-ellipsis overflow-hidden  whitespace-nowrap text-[#777C88] mt-1">
+                                    {/* {contact.lastMessage} */}
+                                    lorem
+                                </p>
                             </div>
                         </div>
                         <div className="text-end text-[#777C88] mt-2">
-                            {user.lastReceived}
+                            {/* {contact.} */}
+                            lorem
                         </div>
                     </div>
                 ))}

@@ -3,7 +3,7 @@ import OneStep from '@/components/landing/OneStep'
 import FAQ from '@/components/landing/FAQ'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
-import { Animator, ScrollContainer, ScrollPage, batch, Fade, Move, StickyOut } from "react-scroll-motion";
+import { Animator, ScrollContainer, ScrollPage, batch, Fade, Move, StickyOut, Sticky } from "react-scroll-motion";
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useSession } from 'next-auth/react'
@@ -15,12 +15,13 @@ export default function Home() {
   // const FadeUp = Sticky()
   const { data: session } = useSession()
   const { push } = useRouter()
-  const FadeUp = batch(Fade(), Move(), StickyOut());
+  const FadeUp = batch(Move(), Fade(), StickyOut());
   const [buttonActive, setButtonActive] = useState('monthly')
   const [selected, setSelected] = useState(1)
   const [currentSection, setcurrentSection] = useState('getStarted')
   const activeStyleButton = 'text-white-50 bg-primary'
   const inactiveStyleButton = 'text-primary bg-white'
+  // merchant_id=G265815203&order_id=ORDER-1698215438034-f9gd9a&status_code=200&transaction_status=settlement
   const subscriptionContent = [
     {
       title: 'Starter',
@@ -153,35 +154,12 @@ export default function Home() {
         setcurrentSection('contact')
       // else if (window.scrollY >= section.contact.offsetTop)
     }
-    const clickHandler = async () => {
-      console.log(session?.user)
-      if (session?.user) {
-        const result = await fetchClient({
-          method: 'POST',
-          body: JSON.stringify({
-            subscriptionId: "cc5c6d53-372e-49da-af3d-fba302902314",
-            paidType: "monthly"
-          }),
-          url: '/payment/pay',
-          user: session.user
-        })
-        if (result.ok) {
-          const resultData = await result.json()
-          console.log(resultData)
-          // snap.pay(resultData.token)
-        }
-      } else {
-        toast.error('not logged in!')
-        // push('/signin')
-      }
-    }
+
     document.addEventListener('scroll', scrollHandler)
-    const paymentButton = document.getElementById('plan_0')!
-    paymentButton.addEventListener('click', clickHandler)
+
 
     return () => {
       document.removeEventListener('scroll', scrollHandler)
-      paymentButton.removeEventListener('click', clickHandler)
     }
   }, [])
   return (<>
@@ -298,61 +276,62 @@ export default function Home() {
         </ScrollPage>
         <ScrollPage style={{
         }} className='bg-no-repeat bg-cover pricing'>
-          <Animator animation={FadeUp} className='w-full overflow-x-scroll max-h-[100vh]'>
-            <div className='px-6 container mx-auto pt-12'>
-              <p className='text-center text-xl'>Our Pricing</p>
-              <p className='text-center text-4xl font-bold mt-2'>Subscription</p>
-            </div>
-            <div className="flex justify-center my-8 text-sm">
-              <div className="flex bg-white p-2 rounded-full gap-2">
-                <div className={(buttonActive === 'monthly' ? activeStyleButton : inactiveStyleButton) + " px-6 py-2 rounded-full hover:cursor-pointer"} onClick={() => setButtonActive('monthly')}>Monthly</div>
-                <div className={(buttonActive === 'yearly' ? activeStyleButton : inactiveStyleButton) + " px-6 py-2 rounded-full hover:cursor-pointer"} onClick={() => setButtonActive('yearly')}>Yearly</div>
+          <Animator animation={FadeUp} className='w-full'>
+            <div className=' overflow-x-scroll h-[100vh]'>
+              <div className='px-6 container mx-auto pt-12'>
+                <p className='text-center text-xl'>Our Pricing</p>
+                <p className='text-center text-4xl font-bold mt-2'>Subscription</p>
               </div>
-            </div>
-            <div className="flex overflow-x-scroll gap-4 lg:gap-12 flex-nowrap px-2 lg:justify-start text-xs mx-auto pb-12 lg:pl-32">
-              {/* card */}
-              {subscriptionContent.map((data, i) => (
-                <div className={"relative max-w-[280px] flex-none"} key={i}>
-                  <div className={(selected === i ? 'bg-white shadow-xl ' : 'shadow-xl md:shadow-none') + ' px-8 pt-16 pb-8 rounded-xl '} onMouseEnter={() => setSelected(i)}>
-                    {data.isFavorite && (
-                      <div className="absolute top-6 w-full flex">
-                        <div className="bg-[#FFB020] rounded-lg px-2 py-[2px] font-semibold">
-                          Most Popular
-                        </div>
-                      </div>
-                    )}
-                    <p className="text-2xl font-lexend">{data.title}</p>
-                    <p className="mt-4">{data.body}</p>
-                    <div className="flex items-baseline">
-                      <p className="mt-8 mb-4 font-bold font-lexend text-2xl">{data.price}</p>
-                      <p className="ml-1">/bulan</p>
-                    </div>
-                    <div id={'plan_' + i} className={(data.isFavorite ? 'bg-[#FFB020] border-[#FFB020]' : 'bg-primary border-primary') + ' border rounded-full px-6 py-2 text-center whitespace-nowrap text-white w-full block'}>
-                      {data.buttonText}
-                    </div>
-                  </div>
-                  <div className="mt-10 flex flex-col gap-4 px-8">
-                    {data.features.map((feature, j) => (
-                      <div className="flex gap-2" key={i + '' + j}>
-
-                        {feature.available ? (
-                          <img src={'assets/icons/checklist.svg'}
-                            width={20}
-                            height={20}
-                            alt="checklist" />
-                        ) : (
-                          <img src={'assets/icons/no sign.svg'}
-                            width={20}
-                            height={20}
-                            alt="checklist" />)}
-
-                        <p>{feature.name}</p>
-                      </div>
-                    ))}
-                  </div>
+              <div className="flex justify-center my-8 text-sm">
+                <div className="flex bg-white p-2 rounded-full gap-2">
+                  <div className={(buttonActive === 'monthly' ? activeStyleButton : inactiveStyleButton) + " px-6 py-2 rounded-full hover:cursor-pointer"} onClick={() => setButtonActive('monthly')}>Monthly</div>
+                  <div className={(buttonActive === 'yearly' ? activeStyleButton : inactiveStyleButton) + " px-6 py-2 rounded-full hover:cursor-pointer"} onClick={() => setButtonActive('yearly')}>Yearly</div>
                 </div>
-              ))}
+              </div>
+              <div className="flex overflow-x-scroll gap-4 lg:gap-12 flex-nowrap px-2 lg:justify-start text-xs mx-auto pb-12 lg:pl-32">
+                {/* card */}
+                {subscriptionContent.map((data, i) => (
+                  <div className={"relative max-w-[280px] flex-none"} key={i}>
+                    <div className={(selected === i ? 'bg-white shadow-xl ' : 'shadow-xl md:shadow-none') + ' px-8 pt-16 pb-8 rounded-xl '} onMouseEnter={() => setSelected(i)}>
+                      {data.isFavorite && (
+                        <div className="absolute top-6 w-full flex">
+                          <div className="bg-[#FFB020] rounded-lg px-2 py-[2px] font-semibold">
+                            Most Popular
+                          </div>
+                        </div>
+                      )}
+                      <p className="text-2xl font-lexend">{data.title}</p>
+                      <p className="mt-4">{data.body}</p>
+                      <div className="flex items-baseline">
+                        <p className="mt-8 mb-4 font-bold font-lexend text-2xl">{data.price}</p>
+                        <p className="ml-1">/bulan</p>
+                      </div>
+                      <div id={'plan_' + i} className={(data.isFavorite ? 'bg-[#FFB020] border-[#FFB020]' : 'bg-primary border-primary') + ' border rounded-full px-6 py-2 text-center whitespace-nowrap text-white w-full block'}>
+                        {data.buttonText}
+                      </div>
+                    </div>
+                    <div className="mt-10 flex flex-col gap-4 px-8">
+                      {data.features.map((feature, j) => (
+                        <div className="flex gap-2" key={i + '' + j}>
 
+                          {feature.available ? (
+                            <img src={'assets/icons/checklist.svg'}
+                              width={20}
+                              height={20}
+                              alt="checklist" />
+                          ) : (
+                            <img src={'assets/icons/no sign.svg'}
+                              width={20}
+                              height={20}
+                              alt="checklist" />)}
+
+                          <p>{feature.name}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </Animator>
         </ScrollPage>

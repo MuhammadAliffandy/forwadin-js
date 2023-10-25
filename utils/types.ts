@@ -50,6 +50,11 @@ interface CountryCode {
     code: string,
     flag: string
 }
+interface DetailContactGroup {
+    group: {
+        name: string
+    }
+}
 interface ContactData {
     id: string,
     phone: string,
@@ -61,7 +66,8 @@ interface ContactData {
     honorific?: string,
     country?: string,
     dob?: string,
-    ContactLabel: Label[],
+    ContactLabel?: Label[],
+    contactGroups?: DetailContactGroup[],
     email: string,
     device?: string,
     createdAt: string,
@@ -88,14 +94,19 @@ interface MediaMessageData {
     checked?: boolean
 }
 interface IncomingMessage {
+    pkId: number,
     id: string,
     from: string,
-    contact: ContactData,
+    contact: {
+        name: string,
+        colorCode: string,
+        initial: string
+    },
     message: string,
-    received_at: string,
-    created_at: string,
-    updated_at: string,
-    type: string,
+    receivedAt: string,
+    createdAt: string,
+    updatedAt: string,
+    sessionId: string,
     checked?: boolean
 }
 interface OutgoingMessage {

@@ -27,10 +27,8 @@ const QRModal = ({ openModal, setopenModal, data, session, update, refresh }: QR
                 }),
                 url: '/sessions/create'
             })
-            const resultData = await result.json()
-            console.log(resultData)
-            if (result.status === 200) {
-                // if device already in session
+            if (result && result.ok) {
+                const resultData = await result.json()
                 if (session?.user?.device?.find(obj => obj.id === data?.id)) {
                     const newDeviceList = session.user.device.map(obj => obj.id === data?.id ? { ...obj, sessionId: resultData.sessionId } : obj)
                     await update({
@@ -54,7 +52,6 @@ const QRModal = ({ openModal, setopenModal, data, session, update, refresh }: QR
                 }
                 setqrData(resultData.qr)
                 setisLoaded(true)
-
             } else {
                 toast.error('Gagal generate QR')
                 setisLoaded(true)
@@ -71,13 +68,15 @@ const QRModal = ({ openModal, setopenModal, data, session, update, refresh }: QR
                     method: 'GET',
                     url: '/sessions/' + device?.sessionId + '/status'
                 })
-                const body = await checkResult.json()
-                console.log(body)
-                if (body.status === 'AUTHENTICATED') {
-                    toast.success('Device berhasil terkoneksi')
+                if (checkResult) {
+                    const body = await checkResult.json()
+                    console.log(body)
+                    if (body.status === 'AUTHENTICATED') {
+                        toast.success('Device berhasil terkoneksi')
 
-                    clearInterval(checkScan)
-                    setopenModal(false)
+                        clearInterval(checkScan)
+                        setopenModal(false)
+                    }
                 }
             }
         }, 7000)

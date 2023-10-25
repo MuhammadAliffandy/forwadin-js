@@ -66,8 +66,6 @@ export const authConfig: NextAuthOptions = {
                 identifier: {},
             },
             authorize: async (credentials: any) => {
-                // TODO: Perform API call to backend
-
                 const result = await fetch(process.env.BACKEND_URL + '/auth/login', {
                     method: 'POST',
                     headers: {
@@ -123,10 +121,12 @@ export const authConfig: NextAuthOptions = {
                     })
                 })
                 const resultData = await result.json()
+
                 if (result.ok) {
                     user.id = resultData.id
                     user.token = resultData.accessToken
                     user.refreshToken = resultData.refreshToken
+                    user.device = []
                     return user
                 } else {
                     return null

@@ -1,188 +1,115 @@
 'use client'
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import ProfileDetail from "./ProfileDetail"
 import Chat from "./Chat"
 import ListChats from "./ListChats"
 import { ContactData, DeviceData } from "@/utils/types"
 import TextAreaInput from "@/components/dashboard/chat/TextAreaInput"
+import { useSession } from "next-auth/react"
+import { fetchClient } from "@/utils/helper/fetchClient"
+import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@nextui-org/react"
 
 const Messenger = () => {
+    const { data: session } = useSession()
+
     const currentDate = new Date()
     const [textInput, settextInput] = useState('')
+    const [sendMessageLoading, setsendMessageLoading] = useState(false)
     const [mobileDropdown, setmobileDropdown] = useState(false)
-    const [listDevice, setlistDevice] = useState<DeviceData[]>([
-        {
-            pkId: 1,
-            id: 'asdasdadad',
-            name: 'Coba coba',
-            phone: '6291919191',
-            apiKey: 'oaod-1091d-12en',
-            serverId: 1,
-            status: 'CONNECTED',
-            created_at: '11.9.2023, 2:43 PM',
-            updated_at: '11.9.2023, 2:43 PM',
-            userId: 1,
-            DeviceLabel: [],
-        }
-    ])
-    const [listUser, setlistUser] = useState([
-        {
-            id: '1',
-            phone: "6281357995175",
-            firstName: 'Ihsanul',
-            lastName: 'Afkar',
-            initial: 'IA',
-            profileColor: '4FBEAB',
-            gender: "Laki-laki",
-            email: 'ihsanulafkar@gmail.com',
-            honorific: 'Mr',
-            country: 'Indonesia',
-            birthDate: '10/10/2010',
-            label: ['Personal', 'Realme', 'Aktif', 'asd', 'asd2', 'asd3'],
-            lastMessage: 'Join us this month for a celebration this day',
-            lastReceived: '9/27/2023',
-            created_at: '11.9.2023, 2:43 PM'
-        },
-        {
-            id: '2',
-            phone: "6281357995175",
-            firstName: 'Ihsanul',
-            lastName: 'Afkar',
-            initial: 'IA',
-            profileColor: 'D14343',
-            gender: "Laki-laki",
-            email: 'ihsanulafkar@gmail.com',
-            honorific: 'Mr',
-            country: 'Indonesia',
-            birthDate: '10/10/2010',
-            label: ['Personal', 'Realme', 'Aktif', 'asd', 'asd2', 'asd3'],
-            lastMessage: 'Join us this month for a celebration this day',
-            lastReceived: '9/27/2023',
-            created_at: '11.9.2023, 2:43 PM'
-        },
-        {
-            id: '3',
-            phone: "6281357995175",
-            firstName: 'Ihsanul',
-            lastName: 'Afkar',
-            initial: 'IA',
-            profileColor: '3366FF',
-            gender: "Laki-laki",
-            email: 'ihsanulafkar@gmail.com',
-            honorific: 'Mr',
-            country: 'Indonesia',
-            birthDate: '10/10/2010',
-            label: ['Personal', 'Realme', 'Aktif', 'asd', 'asd2', 'asd3'],
-            lastMessage: 'Join us this month for a celebration this day',
-            lastReceived: '9/27/2023',
-            created_at: '11.9.2023, 2:43 PM'
-        },
-        {
-            id: '4',
-            phone: "6281357995175",
-            firstName: 'Ihsanul',
-            lastName: 'Afkar',
-            initial: 'IA',
-            profileColor: '3366FF',
-            gender: "Laki-laki",
-            email: 'ihsanulafkar@gmail.com',
-            honorific: 'Mr',
-            country: 'Indonesia',
-            birthDate: '10/10/2010',
-            label: ['Personal', 'Realme', 'Aktif', 'asd', 'asd2', 'asd3'],
-            lastMessage: 'Join us this month for a celebration this day',
-            lastReceived: '9/27/2023',
-            created_at: '11.9.2023, 2:43 PM'
-        },
-        {
-            id: '5',
-            phone: "6281357995175",
-            firstName: 'Ihsanul',
-            lastName: 'Afkar',
-            initial: 'IA',
-            profileColor: '3366FF',
-            gender: "Laki-laki",
-            email: 'ihsanulafkar@gmail.com',
-            honorific: 'Mr',
-            country: 'Indonesia',
-            birthDate: '10/10/2010',
-            label: ['Personal', 'Realme', 'Aktif', 'asd', 'asd2', 'asd3'],
-            lastMessage: 'Join us this month for a celebration this day',
-            lastReceived: '9/27/2023',
-            created_at: '11.9.2023, 2:43 PM'
-        },
-        {
-            id: '6',
-            phone: "6281357995175",
-            firstName: 'Ihsanul',
-            lastName: 'Afkar',
-            initial: 'IA',
-            profileColor: '3366FF',
-            gender: "Laki-laki",
-            email: 'ihsanulafkar@gmail.com',
-            honorific: 'Mr',
-            country: 'Indonesia',
-            birthDate: '10/10/2010',
-            label: ['Personal', 'Realme', 'Aktif', 'asd', 'asd2', 'asd3'],
-            lastMessage: 'Join us this month for a celebration this day',
-            lastReceived: '9/27/2023',
-            created_at: '11.9.2023, 2:43 PM'
-        },
-    ])
-    const [currentUser, setcurrentUser] = useState<ContactData>({
-        id: '3',
-        phone: "6281357995175",
-        firstName: 'Ihsanul',
-        lastName: 'Afkar',
-        initial: 'IA',
-        colorCode: '3366FF',
-        gender: "Laki-laki",
-        email: 'ihsanulafkar@gmail.com',
-        honorific: 'Mr',
-        country: 'Indonesia',
-        dob: '10/10/2010',
-        ContactLabel: [],
-        createdAt: '11.9.2023, 2:43 PM',
-        updatedAt: '11.9.2023, 2:43 PM'
-    })
+    const [listDevice, setlistDevice] = useState<DeviceData[]>([])
+    const [currentDevice, setcurrentDevice] = useState<DeviceData>()
+    const [listContact, setlistContact] = useState<ContactData[]>([])
+    const [currentContact, setcurrentContact] = useState<ContactData>()
 
     const [listMessage, setlistMessage] = useState([
         {
             id: '1',
             message: "Join us this month for a celebration of",
-            // message: "Join us this month for a celebration of art and music! We'll be hosting the Harmony Heights Music Festival, Samantha Knight's solo art exhibition, and an album release party for River Reed's new album 'Echoes in the Wilderness'. Don't miss out on this exciting lineup of events! [website link]",
             status: 0,
             to: '',
             from: '',
         }
     ])
+    const fetchListContact = async () => {
+        const result = await fetchClient({
+            url: '/contacts',
+            method: 'GET',
+            user: session?.user
+        })
+        if (result && result.ok) {
+            const resultData: ContactData[] = await result.json()
+            setlistContact(resultData)
+            console.log(resultData)
+        }
+    }
+    const fetchListDevice = async () => {
+        const result = await fetchClient({
+            url: '/devices',
+            method: 'GET',
+            user: session?.user
+        })
+        if (result && result.ok) {
+            const resultData = await result.json()
+            setlistDevice(resultData)
+        }
+    }
+    const fetchAll = async () => {
+        await fetchListDevice()
+        await fetchListContact()
+    }
+    const sendMessage = async () => {
+        setsendMessageLoading(true)
+        setsendMessageLoading(false)
+    }
+    useEffect(() => {
+        fetchAll()
+    }, [session?.user?.token])
+
     return (
         <div className=" overflow-y-auto lg:overflow-y-hidden">
-            <div className='flex lg:flex-row flex-col items-center justify-between gap-4 mb-12 lg:mb-0'>
-                <div className='max-w-md lg:max-w-[250px] w-full lg:max-h-[78vh] bg-white lg:bg-neutral-75 p-4 lg:p-0 text-xs'>
-                    <div className="bg-white border border-customGray p-3 flex justify-between gap-2 hover:cursor-pointer rounded-md w-full items-center">
-                        <div className="flex-none">
-                            <img src="/assets/icons/dashboard/Devices.svg" alt="" className="invert-[1] grayscale-0" />
-                        </div>
-                        <p>RMX123</p>
-                        <p className="text-customGray">+6281357995175</p>
-                        <div className="flex-none px-2">
-                            <img src="/assets/icons/chevron-down.svg" alt="" width={12} />
-                        </div>
-                    </div>
-                    <ListChats listUser={listUser} currentUser={currentUser} setcurrentUser={setcurrentUser} />
+            <div className='flex lg:flex-row flex-col items-center justify-between gap-4 mb-12 lg:mb-0 lg:h-[82vh]'>
+                <div className='max-w-md lg:max-w-[250px] w-full lg:h-[78vh] bg-white lg:bg-neutral-75 p-4 lg:p-0 text-xs'>
+                    <Dropdown>
+                        <DropdownTrigger>
+                            <div className="bg-white border border-customGray p-3 flex justify-between gap-2 hover:cursor-pointer rounded-md w-full items-center">
+                                <div className="flex-none">
+                                    <img src="/assets/icons/dashboard/Devices.svg" alt="" className="invert-[1] grayscale-0" />
+                                </div>
+                                <p className="font-bold">{currentDevice?.name}</p>
+                                <p className="text-customGray">{currentDevice?.phone}</p>
+                                <div className="flex-none px-2">
+                                    <img src="/assets/icons/chevron-down.svg" alt="" width={12} />
+                                </div>
+                            </div>
+                        </DropdownTrigger>
+                        <DropdownMenu items={listDevice}>
+                            {(item: any) => (
+                                <DropdownItem
+                                    key={item.id}
+                                    onClick={() => setcurrentDevice(item)}
+                                >
+                                    <div className="flex gap-2">
+                                        <p className="font-bold">{item.name}</p>
+                                        <p>{item.phone}</p>
+                                    </div>
+                                </DropdownItem>
+                            )}
+                        </DropdownMenu>
+                    </Dropdown>
+
+                    <ListChats listContact={listContact} currentContact={currentContact} setcurrentContact={setcurrentContact} />
                 </div>
-                <div className="bg-white p-4 rounded-md w-full max-w-md lg:max-w-full ">
-                    <div className='text-xs w-full max-h-[78vh] flex flex-col'>
-                        <div className="flex flex-col overflow-y-auto allowed-scroll pr-2 h-full">
-                            <Chat currentUser={currentUser} currentDate={currentDate} />
+                <div className={"bg-white p-4 rounded-md w-full max-w-md lg:max-w-full h-full " + (!currentContact && "opacity-50 pointer-events-none")}>
+                    <div className='text-xs w-full flex flex-col h-full'>
+                        <div className="flex flex-col overflow-y-auto allowed-scroll pr-2 grow">
+                            <Chat currentContact={currentContact} currentDate={currentDate} />
                         </div>
-                        <div className="py-2 ">
+                        <div className="py-2 flex-none">
                             <TextAreaInput text={textInput} settext={settextInput} />
                             <div className="flex justify-end mt-2">
-                                <div className="rounded-md bg-primary px-6 py-3 text-center text-white text-sm">
+                                <Button className="rounded-md" color="primary" onClick={sendMessage} isLoading={sendMessageLoading}>
                                     Kirim
-                                </div>
+                                </Button>
                             </div>
                         </div>
                     </div>

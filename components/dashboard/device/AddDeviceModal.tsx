@@ -31,8 +31,8 @@ const AddDeviceModal = (
                 url: '/devices/create'
             })
             setisLoading(false)
-            const body = await result.json()
-            if (result.ok) {
+            if (result && result.ok) {
+                const body = await result.json()
                 toast.success('Device berhasil ditambahkan')
                 setopenModal(false)
                 fetchData()

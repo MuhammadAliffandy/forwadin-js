@@ -6,11 +6,11 @@ import { useForm } from "react-hook-form"
 import MultipleInputLabel from "../MultipleInputLabel"
 import ButtonSubmit from "@/components/form/ButtonSubmit"
 import { fetchClient } from "@/utils/helper/fetchClient"
-import Skeleton from "react-loading-skeleton"
 import { toast } from "react-toastify"
 import { animated, useTransition } from "@react-spring/web"
 import CountryFlagSvg from "country-list-with-dial-code-and-flag/dist/flag-svg"
 import { formatPhoneCode, getCountryList } from "@/utils/helper/countryCode"
+import { Skeleton } from "@nextui-org/react"
 interface AddContactModalProps {
     openModal: boolean,
     setopenModal: Dispatch<SetStateAction<boolean>>,
@@ -73,7 +73,7 @@ const AddContactModal = ({ openModal, setopenModal, fetchData }: AddContactModal
             url: '/contacts/create'
         })
 
-        if (result.status === 200) {
+        if (result && result.ok) {
             toast.success('Kontak berhasil ditambahkan')
             fetchData()
             setisLoading(false)
@@ -88,8 +88,6 @@ const AddContactModal = ({ openModal, setopenModal, fetchData }: AddContactModal
                 }
             }))
         } else {
-            const body = await result.json()
-            console.log(body)
             toast.error('Gagal menyimpan kontak')
             setisLoading(false)
         }
@@ -99,8 +97,8 @@ const AddContactModal = ({ openModal, setopenModal, fetchData }: AddContactModal
             method: 'GET',
             url: '/devices'
         })
-        const body = await result.json()
-        if (result.status === 200) {
+        if (result && result.ok) {
+            const body = await result.json()
             setdeviceList(body)
             setisLoaded(true)
         } else {
@@ -253,7 +251,11 @@ const AddContactModal = ({ openModal, setopenModal, fetchData }: AddContactModal
                     </form>
                 </>
             ) : (
-                <Skeleton count={5} className='' />
+                <div className=' flex flex-col gap-2'>
+                    <Skeleton className={'w-full h-3 rounded-full'} />
+                    <Skeleton className={'w-full h-3 rounded-full'} />
+                    <Skeleton className={'w-full h-3 rounded-full'} />
+                </div>
             )}
         </ModalTemplate>
     )

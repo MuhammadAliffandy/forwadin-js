@@ -57,12 +57,12 @@ const Payment = () => {
 		},
 	]
 	const fetchSubscriptionPlans = async () => {
-		try {
-			const result = await fetchClient({
-				url: '/payment/subscriptions',
-				method: 'GET',
-				user: session?.user
-			})
+		const result = await fetchClient({
+			url: '/payment/subscriptions',
+			method: 'GET',
+			user: session?.user
+		})
+		if (result) {
 			const resultData: PlansProps[] = await result.json()
 			if (result.ok) {
 				console.log(resultData)
@@ -73,29 +73,24 @@ const Payment = () => {
 				}))
 				setselectedPlan('basic')
 				setisLoaded(true)
-
 			} else {
 				toast.error('failed to fetch data')
 				console.log(resultData)
 			}
-
-		} catch (error) {
-			toast.error('failed to fetch data')
-			console.log(error)
 		}
 
 	}
 	const handleClick = async () => {
 		setisLoading(true)
-		try {
-			const result = await fetchClient({
-				url: '/payment/pay',
-				method: 'POST',
-				body: JSON.stringify({
-					subscriptionId: currentPlan?.id,
-					paidType: durationPlan.toLowerCase()
-				})
+		const result = await fetchClient({
+			url: '/payment/pay',
+			method: 'POST',
+			body: JSON.stringify({
+				subscriptionId: currentPlan?.id,
+				subscriptionType: durationPlan.toLowerCase()
 			})
+		})
+		if (result) {
 			const resultData = await result.json()
 			if (result.ok) {
 				console.log(resultData)
@@ -105,9 +100,6 @@ const Payment = () => {
 				console.log(resultData)
 				setisLoading(false)
 			}
-		} catch (error) {
-			console.log(error)
-			setisLoading(false)
 		}
 	}
 	useEffect(() => {
@@ -209,14 +201,15 @@ const Payment = () => {
 			<div className="bg-white w-full max-w-md py-20 px-4 mx-auto">
 				<div className="flex flex-col justify-between h-full w-full max-w-xs mx-auto">
 					<div>
-						<Skeleton isLoaded={isLoaded}>
-							<p className="font-lexend font-bold text-2xl">Ringkasan Pembayaran</p>
-						</Skeleton>
+						<p className="font-lexend font-bold text-2xl">Ringkasan Pembayaran</p>
+
 						<table className="text-sm w-full mt-16">
 							<tbody >
 								<tr>
 									<th className='font-normal'>Nama Paket</th>
-									<td className="flex justify-end font-bold">{currentPlan?.name}</td>
+									<td className="flex justify-end font-bold">
+										{currentPlan?.name}
+									</td>
 								</tr>
 								<tr>
 									<th className='font-normal'>Harga Paket</th>

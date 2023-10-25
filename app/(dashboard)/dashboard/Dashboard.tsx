@@ -21,9 +21,9 @@ const Dashboard = () => {
         email: '',
         phone: ''
     })
-    useEffect(() => {
-        const fetchProfile = async () => {
-            const result = await fetchClient({ url: '/users', method: 'GET' })
+    const fetchProfile = async () => {
+        const result = await fetchClient({ url: '/users', method: 'GET' })
+        if (result) {
             const data = await result.json()
             if (result.status === 200) {
                 setuserProfile(data)
@@ -32,8 +32,11 @@ const Dashboard = () => {
                 toast.error('Failed to fetch')
             }
         }
+    }
+    useEffect(() => {
+
         fetchProfile()
-        toast.info('Klo mau logout, klik logo forwardin di sidenav')
+
     }, [])
     return (
         <>
