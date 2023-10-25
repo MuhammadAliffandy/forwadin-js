@@ -1,21 +1,18 @@
 'use client'
-// import EditContactModal from '@/components/dashboard/contact/detail/EditContactModal'
 import dynamic from 'next/dynamic'
 const EditContactModal = dynamic(() => import('@/components/dashboard/contact/detail/EditContactModal'), { ssr: false })
 import { formatBirthDate } from '@/utils/helper'
 import { fetchClient } from '@/utils/helper/fetchClient'
 import { ContactData, MediaMessageData, MessageData, MultipleCheckboxRef } from '@/utils/types'
 import Link from 'next/link'
-
+import { Skeleton } from '@nextui-org/react'
 import { useEffect, useRef, useState } from 'react'
-import Skeleton from 'react-loading-skeleton'
 import { toast } from 'react-toastify'
 
 const DetailContact = ({ contactId }: { contactId: string }) => {
     const [openModal, setopenModal] = useState(false)
     const [isLoaded, setisLoaded] = useState(false)
     const [contactData, setcontactData] = useState<ContactData>()
-    const [contactGroup, setcontactGroup] = useState<string[]>(['ADS', 'Teman'])
     const [switchButton, setswitchButton] = useState('history')
     const [message, setmessage] = useState<MessageData[]>([
         {
@@ -126,11 +123,11 @@ const DetailContact = ({ contactId }: { contactId: string }) => {
         }
     }, [mediaMessage])
     const fetchDetailContact = async () => {
-        try {
-            const result = await fetchClient({
-                method: 'GET',
-                url: '/contacts/' + contactId,
-            })
+        const result = await fetchClient({
+            method: 'GET',
+            url: '/contacts/' + contactId,
+        })
+        if (result) {
             const data: ContactData = await result.json()
             if (result.status === 200) {
                 data.dob = formatBirthDate(data.dob!)
@@ -140,10 +137,8 @@ const DetailContact = ({ contactId }: { contactId: string }) => {
                 console.log(data)
                 toast.error('Gagal mendapatkan kontak')
             }
-        } catch (error) {
-            console.log(error)
-            toast.error('Gagal mendapatkan kontak')
         }
+
     }
 
     useEffect(() => {
@@ -154,7 +149,7 @@ const DetailContact = ({ contactId }: { contactId: string }) => {
             <EditContactModal setopenModal={setopenModal} openModal={openModal} contactData={contactData} fetchData={fetchDetailContact} />
             <div className='flex justify-center items-center lg:items-start lg:flex-row flex-col gap-4 mt-8'>
                 <div className='max-w-sm w-full items-center flex flex-col gap-4'>
-                    <div className='w-full bg-white rounded-md p-4 relative'>
+                    <div className='w-full max bg-white rounded-md p-4 relative'>
                         {isLoaded ? (
                             <>
                                 <div className='absolute block lg:hidden right-8 top-8' onClick={() => setmobileDropdown(!mobileDropdown)}>
@@ -277,7 +272,11 @@ const DetailContact = ({ contactId }: { contactId: string }) => {
                                 </div>
                             </>
                         ) : (
-                            <Skeleton count={3} />
+                            <div className='mt-4 flex flex-col gap-2'>
+                                <Skeleton className={'w-full h-3 rounded-full'} />
+                                <Skeleton className={'w-full h-3 rounded-full'} />
+                                <Skeleton className={'w-full h-3 rounded-full'} />
+                            </div>
                         )}
                     </div>
                     <div className='w-full bg-white rounded-md p-4'>
@@ -291,18 +290,20 @@ const DetailContact = ({ contactId }: { contactId: string }) => {
                         </div>
                         {isLoaded ? (
                             <div className='flex gap-2 mt-6'>
-                                {contactGroup.map((item, idx) => (
+                                {contactData?.contactGroups?.map((item, idx) => (
                                     <div className='px-3 py-1 text-xs text-white bg-black rounded-md' key={idx}>
-                                        {item}
+                                        {item.group.name}
                                     </div>
                                 ))}
                             </div>
                         ) : (
-                            <Skeleton count={1} />
+                            <div className='mt-4 flex flex-col gap-2'>
+                                <Skeleton className={'w-full h-3 rounded-full'} />
+                            </div>
                         )}
                     </div>
                 </div>
-                <div className='w-full max-w-sm lg:max-w-full'>
+                <div className='max-w-sm lg:max-w-none w-full'>
                     <div className='bg-white w-full p-4'>
                         {isLoaded ? (
                             <>
@@ -378,7 +379,13 @@ const DetailContact = ({ contactId }: { contactId: string }) => {
                                 </div>
                             </>
                         ) : (
-                            <Skeleton count={5} />
+                            <div className='mt-4 flex flex-col gap-2'>
+                                <Skeleton className={'w-full h-3 rounded-full'} />
+                                <Skeleton className={'w-full h-3 rounded-full'} />
+                                <Skeleton className={'w-full h-3 rounded-full'} />
+                                <Skeleton className={'w-full h-3 rounded-full'} />
+                                <Skeleton className={'w-full h-3 rounded-full'} />
+                            </div>
                         )}
                     </div>
                 </div>

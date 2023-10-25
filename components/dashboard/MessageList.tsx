@@ -4,8 +4,13 @@ import NavButton from "./NavButton";
 const MessageList = ({ currentPage }: { currentPage: string }) => {
     const [isDropdown, setIsDropdown] = useState(false)
     const [isActive, setisActive] = useState(false)
+    const listActivePages = [
+        'Incoming Chat',
+        'Outgoing Chat',
+        'Messenger'
+    ]
     useEffect(() => {
-        if (currentPage === 'Incoming Chat' || currentPage === 'Outgoing Chat')
+        if (listActivePages.find(item => item === currentPage))
             setisActive(true)
         else
             setisActive(false)
@@ -13,8 +18,8 @@ const MessageList = ({ currentPage }: { currentPage: string }) => {
 
     return (
         <>
-            <div className={(isActive ? 'bg-primary text-white' : 'hover:text-primary') + ' select-none hover:cursor-pointer rounded-xl py-2 px-4 flex gap-2 items-center relative'} onClick={() => setIsDropdown(!isDropdown)} >
-                <img src={`/assets/icons/dashboard/Message List.svg`} alt="" className={(isActive ? '' : 'invert-[1] grayscale-0')} />
+            <div className={(isActive ? 'bg-[#F3F5F8]' : 'hover:text-primary') + ' select-none hover:cursor-pointer rounded-xl py-2 px-4 flex gap-2 items-center relative'} onClick={() => setIsDropdown(!isDropdown)} >
+                <img src={`/assets/icons/dashboard/Message List.svg`} alt="" className={'invert-[1] grayscale-0'} />
                 <p>Message List</p>
                 <img src="/assets/icons/caret-down.svg" className="absolute invert-[1] grayscale-0 right-4 top-1/2 -translate-y-1/2" />
             </div>

@@ -1,14 +1,42 @@
-import Accordion from "./utils/Accordion"
-
+import { Accordion, AccordionItem } from "@nextui-org/react";
+import { useEffect, useRef, useState } from "react";
+interface FAQContent {
+    title: string,
+    content: string
+}
 const FAQ = () => {
-    const faqContent = [1, 2, 3, 4, 5]
+    const [searchedText, setsearchedText] = useState('')
+    const [faqContent, setfaqContent] = useState<FAQContent[]>([
+        {
+            title: "Apa itu Forwardin?",
+            content: "Fowardin is a powerful communication management tool that simplifies message forwarding, enhances contact management, and streamlines campaign scheduling for businesses of all sizes."
+        },
+        {
+            title: "Apakah Forwardin cocok untuk saya?",
+            content: "Fowardin is a powerful communication management tool that simplifies message forwarding, enhances contact management, and streamlines campaign scheduling for businesses of all sizes."
+        },
+        {
+            title: "Apakah Forwardin perlu di-install ke komputer?",
+            content: "Fowardin is a powerful communication management tool that simplifies message forwarding, enhances contact management, and streamlines campaign scheduling for businesses of all sizes."
+        },
+    ])
+    const [searchedFaq, setsearchedFaq] = useState<FAQContent[]>([])
+    const inputRef = useRef<HTMLInputElement>(null)
+    const filterFaq = (text: string) => {
+        const regex = new RegExp(text, 'i')
+        return faqContent.filter(faq => regex.test(faq.title))
+    }
+    useEffect(() => {
+        const searchedResult = filterFaq(searchedText)
+        setsearchedFaq(searchedResult)
+    }, [searchedText])
     return (
         <div className='px-6 container mx-auto mb-20 mt-20'>
             <p className="text-center text-white font-bold text-3xl font-lexend my-16">Frequently Asked Questions</p>
             <div className="max-w-lg w-full mx-auto ">
                 <div className="flex gap-2">
-                    <input type="text" placeholder="lorem" className="p-2 rounded-md flex-grow" />
-                    <div className="p-2 rounded-md flex-none flex items-center">
+                    <input ref={inputRef} type="text" placeholder="Cari FAQ" className="p-2 rounded-md flex-grow" value={searchedText} onChange={e => setsearchedText(e.target.value)} />
+                    <div className="p-2 rounded-md hover:cursor-pointer flex-none flex items-center" onClick={() => inputRef.current?.focus()}>
                         <img
                             src={'/assets/icons/search.png'}
                             width={18}
@@ -17,10 +45,31 @@ const FAQ = () => {
                         />
                     </div>
                 </div>
-                <div className="h-60 mt-8 overflow-x-auto flex flex-col gap-4">
-                    {faqContent.map(i => (
-                        <Accordion title='What is Forwardin?' content='FowardIt is a powerful communication management tool that simplifies message forwarding, enhances contact management, and streamlines campaign scheduling for businesses of all sizes.' />
-                    ))}
+                <div className="h-60 mt-8 overflow-x-auto">
+                    {searchedText ? (
+                        <Accordion selectionMode="multiple" variant="splitted" className="" itemClasses={{
+                            title: "text-black text-[16px] font-bold font-inter",
+                            content: 'text-xs text-black'
+                        }} >
+                            {searchedFaq.map((item, idx) => (
+                                <AccordionItem key={idx} aria-label={item.title} title={item.title} className="bg-white" >
+                                    {item.content}
+                                </AccordionItem>
+                            ))}
+                        </Accordion>
+                    ) : (
+                        <Accordion selectionMode="multiple" variant="splitted" className="" itemClasses={{
+                            title: "text-black text-[16px] font-bold font-inter",
+                            content: 'text-xs text-black'
+                        }} >
+                            {faqContent.map((item, idx) => (
+                                <AccordionItem key={idx} aria-label={item.title} title={item.title} className="bg-white" >
+                                    {item.content}
+                                </AccordionItem>
+                            ))}
+                        </Accordion>
+                    )
+                    }
                 </div>
             </div>
         </div>

@@ -1,6 +1,6 @@
 'use client'
 import { useState } from "react"
-import Skeleton from "react-loading-skeleton"
+import { Skeleton } from "@nextui-org/react"
 
 const DetailBroadcast = () => {
     const [isLoaded, setisLoaded] = useState(true)

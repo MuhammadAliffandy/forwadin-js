@@ -28,16 +28,17 @@ const IncomingList = ({ incomingData, handleCheckBoxClick, multipleCheckboxRef, 
                                     backgroundColor: '#' + item.contact.colorCode
                                 }} className={`flex-none rounded-full text-white w-8 h-8 flex items-center justify-center`}>{item.contact.initial}</div>
                             </div>
-                            <p>{item.contact.firstName + ' ' + item.contact.lastName}</p>
+                            <p>{item.contact.name}</p>
+                            {/* <p>{item.contact.firstName + ' ' + item.contact.lastName}</p> */}
                         </div>
                     </td>
-                    <td className="p-4">
+                    {/* <td className="p-4">
                         <PrintType type={item.type} chatId={item.id} />
-                    </td>
+                    </td> */}
 
-                    <td className="p-4">{item.received_at}</td>
+                    <td className="p-4">{item.receivedAt}</td>
                     <td className='p-4'>
-                        <div className='py-1 text-center px-2 border border-black/20 rounded-sm hover:cursor-pointer' onClick={() => handleOpenDetailModal(item.id.toString())}>Detail</div>
+                        <div className='py-1 text-center px-2 border border-black/20 rounded-md hover:cursor-pointer' onClick={() => handleOpenDetailModal(item.id.toString())}>Lihat Chat</div>
                     </td>
                 </tr>
             ))}

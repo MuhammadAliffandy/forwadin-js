@@ -9,8 +9,6 @@ import Profile from "./Profile"
 import Device from "./Device"
 import System from "./System"
 import { UserProfile } from "@/utils/types"
-import Skeleton from "react-loading-skeleton"
-import 'react-loading-skeleton/dist/skeleton.css'
 
 const Settings = () => {
     const [isLoaded, setisLoaded] = useState(false)
@@ -39,8 +37,8 @@ const Settings = () => {
     useEffect(() => {
         const fetchUser = async () => {
             const result = await fetchClient({ url: '/users/', method: 'GET' })
-            const data = await result.json()
-            if (result.status === 200) {
+            if (result && result.ok) {
+                const data = await result.json()
                 setuserData(data)
             } else {
                 toast.error('Failed to fetch user!')
@@ -97,7 +95,8 @@ const Settings = () => {
                             ))}
                         </>
                     ) : (
-                        <Skeleton count={3} />
+                        <>
+                        </>
                     )}
                 </div>
 

@@ -3,11 +3,17 @@ import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import NavButton from '../../components/dashboard/NavButton'
 import MessageList from '../../components/dashboard/MessageList'
 import ContactList from '@/components/dashboard/ContactList'
-import { signOut } from "next-auth/react";
-import 'react-loading-skeleton/dist/skeleton.css'
+import { signOut, useSession } from "next-auth/react";
+import { Dropdown, DropdownItem, DropdownMenu, DropdownSection, DropdownTrigger } from "@nextui-org/react";
+import { UserProfile } from "@/utils/types";
+import { fetchClient } from "@/utils/helper/fetchClient";
+import { useRouter } from "next/navigation";
 const DashboardTemplate = ({ currentPage, children }: { currentPage: string, children: React.ReactNode }) => {
+    const { data: session } = useSession()
+    const router = useRouter()
     const [sideNavDropdown, setsideNavDropdown] = useState(false)
-
+    const [profileDropdown, setprofileDropdown] = useState(false)
+    const [user, setuser] = useState<UserProfile>()
     const handleClick = (event: React.MouseEvent) => {
         setsideNavDropdown(true)
     }
@@ -17,12 +23,26 @@ const DashboardTemplate = ({ currentPage, children }: { currentPage: string, chi
             if (mainContent?.contains(e.target as Node))
                 setsideNavDropdown(false)
     }
+    const fetchUserProfile = async () => {
+        const result = await fetchClient({
+            url: '/users',
+            method: 'GET',
+            user: session?.user
+        })
+        if (result && result.ok) {
+            const body: UserProfile = await result.json()
+            setuser(body)
+        }
+    }
+    useEffect(() => {
+        fetchUserProfile()
+    }, [session?.user?.token])
 
     return (
         <>
             <div className={(sideNavDropdown ? 'block' : 'hidden') + " h-full w-[200px] lg:w-[250px] z-10 top-0 left-0 overflow-y-auto bg-white fixed lg:block pb-12"} id="side_nav">
                 <nav className="mt-8 px-4 " >
-                    <div className='flex justify-center items-center gap-2 hover:cursor-pointer' onClick={() => signOut()}>
+                    <div className='flex justify-center items-center gap-2 hover:cursor-pointer' onClick={() => router.push('/')}>
                         <div className=''>
                             <img src={'/assets/icons/logo.png'} alt="logo" />
 
@@ -83,14 +103,45 @@ const DashboardTemplate = ({ currentPage, children }: { currentPage: string, chi
                         <div className='flex-none bg-white rounded-full p-2 hover:cursor-pointer'>
                             <img src="/assets/icons/dashboard/bell.svg" alt="" />
                         </div>
-                        <div className='flex-none bg-white rounded-full hover:cursor-pointer flex w-[180px]'>
-                            <div className='flex-1 flex justify-center items-center'>
-                                <p>User Name</p>
-                            </div>
-                            <div className='flex-none bg-primary rounded-full p-2 hover:cursor-pointer'>
-                                <img src="/assets/icons/dashboard/user.svg" alt="" />
-                            </div>
-                        </div>
+                        <Dropdown>
+                            <DropdownTrigger>
+                                <div className='flex-none bg-white rounded-full hover:cursor-pointer flex w-[180px]'>
+                                    <div className='flex-1 flex justify-center items-center'>
+                                        <p>{user?.username}</p>
+                                    </div>
+                                    {session?.user?.image ? (
+                                        <img src={session.user.image} alt="" className="rounded-full" width={33} />
+                                    ) : (
+                                        <div className='flex-none bg-primary rounded-full p-2 hover:cursor-pointer'>
+                                            <img src="/assets/icons/dashboard/user.svg" alt="" />
+                                        </div>
+                                    )}
+                                </div>
+                            </DropdownTrigger>
+                            <DropdownMenu
+                                disabledKeys={["profile"]}>
+                                <DropdownSection showDivider={true}>
+                                    <DropdownItem
+                                        isReadOnly
+                                        key={'profile'}
+                                        className="opacity-100"
+                                    >
+                                        <div className="flex justify-center">
+                                            <img
+                                                src={session?.user?.image ? session.user.image : '/assets/icons/dashboard/user.svg'} alt="profile"
+                                                width={54}
+                                                height={54}
+                                                className="rounded-full" />
+                                        </div>
+                                        <p className="font-bold text-sm text-center mt-2">{user?.firstName} {user?.lastName}</p>
+                                        <p className="text-[10px] text-center">{user?.email}</p>
+                                    </DropdownItem>
+                                </DropdownSection>
+                                <DropdownItem key={'forwardin profile'}>Forwardin Profile</DropdownItem>
+                                <DropdownItem key={'subscription'}>Subscription</DropdownItem>
+                                <DropdownItem key='sign out' className="text-danger" onClick={() => signOut()}>Sign Out</DropdownItem>
+                            </DropdownMenu>
+                        </Dropdown>
                         <div className='flex-none bg-white rounded-full p-2 hover:cursor-pointer'>
                             <img src="/assets/icons/dashboard/gear.svg" alt="" />
                         </div>

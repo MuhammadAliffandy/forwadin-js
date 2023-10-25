@@ -5,7 +5,6 @@ import { useState, Dispatch, SetStateAction, useEffect, useRef, } from "react"
 import { useForm } from "react-hook-form"
 import ButtonSubmit from "@/components/form/ButtonSubmit"
 import { fetchClient } from "@/utils/helper/fetchClient"
-import Skeleton from "react-loading-skeleton"
 import { toast } from "react-toastify"
 import { animated, useTransition } from "@react-spring/web"
 import CountryFlagSvg from "country-list-with-dial-code-and-flag/dist/flag-svg"
@@ -69,24 +68,25 @@ const EditContactModal = ({ openModal, setopenModal, fetchData, contactData }: E
             body: JSON.stringify(bodyForm),
             url: '/contacts/' + contactData?.id
         })
-
-        if (result.status === 200) {
-            toast.success('Kontak berhasil diubah')
-            fetchData()
-            setisLoading(false)
-            setopenModal(false)
-        } else {
-            const body = await result.json()
-            console.log(body)
-            toast.error('Gagal menyimpan kontak')
-            setisLoading(false)
+        if (result) {
+            if (result.status === 200) {
+                toast.success('Kontak berhasil diubah')
+                fetchData()
+                setisLoading(false)
+                setopenModal(false)
+            } else {
+                const body = await result.json()
+                console.log(body)
+                toast.error('Gagal menyimpan kontak')
+                setisLoading(false)
+            }
         }
     }
     useEffect(() => {
         setcountryCodeData(getCountryList() as CountryCode[])
         setcurrentCountryCode(getCountryList('+62') as CountryCode)
         if (contactData) {
-            const newLabelList = contactData.ContactLabel.map(obj => {
+            const newLabelList = contactData.ContactLabel?.map(obj => {
                 return {
                     label: {
                         name: obj.label.name,
@@ -94,7 +94,7 @@ const EditContactModal = ({ openModal, setopenModal, fetchData, contactData }: E
                     }
                 }
             })
-            setlabelList(newLabelList)
+            setlabelList(newLabelList!)
         }
     }, [contactData])
     useEffect(() => {

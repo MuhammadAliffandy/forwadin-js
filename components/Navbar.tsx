@@ -3,8 +3,9 @@ import { animated, useTransition } from "@react-spring/web";
 import Link from "next/link"
 import { useRouter } from "next/navigation";
 import React, { useState } from 'react'
-import Button from "./landing/Button";
+import ButtonCustom from "./landing/Button";
 import { useSession } from "next-auth/react";
+import { Button } from "@nextui-org/react";
 const Navbar = () => {
     const { data: session } = useSession()
     const router = useRouter()
@@ -102,7 +103,11 @@ const Navbar = () => {
                     {session?.user ? (<>
                         <div className="bg-primary px-8 py-2 text-white rounded-md hover:cursor-pointer whitespace-pre" onClick={() => router.push('/dashboard')}>Dashboard</div>
                     </>) : (<>
-                        <div className="bg-primary px-8 py-2 text-white rounded-md hover:cursor-pointer whitespace-pre" onClick={() => setSignInDropdown(!signInDropdown)}>Sign In</div>
+                        {/* <div className="bg-primary px-8 py-2 text-white rounded-md hover:cursor-pointer whitespace-pre" onClick={ }>Sign In</div> */}
+                        <Button
+                            onClick={() => setSignInDropdown(!signInDropdown)}
+                            color="primary"
+                            className="px-8 rounded-md">Sign In</Button>
                         {buttonTransition((style, item) => item && (
                             <animated.div style={style} className="absolute bg-white px-8 py-4 -left-10 top-16 flex flex-col text-center gap-4 rounded-md shadow-xl">
                                 <Link href={'/signin'} className=" hover:text-primary">Admin</Link >
@@ -138,7 +143,7 @@ const Navbar = () => {
                             <div className='border border-primary rounded-full px-6 py-2 text-center whitespace-nowrap bg-primary text-white flex gap-2 justify-center'
                                 onClick={() => router.push('/dashboard')}>Dashboard</div>
                         </>) : (<>
-                            <Button text={'Sign Up'} href={'/signup'} isPrimary={false} />
+                            <ButtonCustom text={'Sign Up'} href={'/signup'} isPrimary={false} />
                             <div className='border border-primary rounded-full px-6 py-2 text-center whitespace-nowrap bg-primary text-white flex gap-2 justify-center'
                                 onClick={() => setSignInDropdown(!signInDropdown)}>
                                 <p>Sign in </p>

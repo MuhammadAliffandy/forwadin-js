@@ -1,16 +1,16 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { GroupData, MultipleCheckboxRef } from '@/utils/types';
 import GroupList from './GroupList';
 import AddGroupModal from '@/components/dashboard/group/AddGroupModal';
-import Skeleton from 'react-loading-skeleton';
+import { Skeleton } from '@nextui-org/react';
 import { fetchClient } from '@/utils/helper/fetchClient';
 import { toast } from 'react-toastify';
 import { useSession } from 'next-auth/react';
 
-const GroupTable = () => {
+const GroupTable = ({ setcountGroup }: { setcountGroup: Dispatch<SetStateAction<number>> }) => {
     const { data: session } = useSession()
     const { push } = useRouter()
     const [isLoaded, setisLoaded] = useState(false)
@@ -67,20 +67,17 @@ const GroupTable = () => {
         // setgroupData(checkedGroups)
     }
     const fetchData = async () => {
-        try {
-            const result = await fetchClient({
-                url: '/groups',
-                method: 'GET',
-                user: session?.user
-            })
+        const result = await fetchClient({
+            url: '/groups',
+            method: 'GET',
+            user: session?.user
+        })
+        if (result) {
             const resultData: GroupData[] = await result.json()
             if (result.status === 200) {
                 setgroupData(resultData)
                 setisLoaded(true)
             }
-        } catch (error) {
-            toast.error('failed to fetch data')
-            console.log(error)
         }
     }
     useEffect(() => {
@@ -192,8 +189,11 @@ const GroupTable = () => {
                     )}
                 </div >
             ) : (
-                <div className='bg-white w-full p-4'>
-                    <Skeleton count={3} className='' />
+                <div className='mt-4 flex flex-col gap-2 p-4 bg-white'>
+
+                    <Skeleton className={'w-full h-3 rounded-full'} />
+                    <Skeleton className={'w-full h-3 rounded-full'} />
+                    <Skeleton className={'w-full h-3 rounded-full'} />
                 </div>
             )}
         </>

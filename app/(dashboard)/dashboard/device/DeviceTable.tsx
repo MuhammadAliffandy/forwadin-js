@@ -1,17 +1,17 @@
 'use client';
 import DeviceList from '@/components/dashboard/device/DeviceList';
 import QRModal from '@/components/dashboard/device/QRModal';
-import { useEffect, useRef, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import AddDeviceModal from '@/components/dashboard/device/AddDeviceModal';
 import { MultipleCheckboxRef, DeviceData } from '@/utils/types'
 import { useSession } from 'next-auth/react';
 import { fetchClient } from '@/utils/helper/fetchClient';
 import { toast } from 'react-toastify';
-import Skeleton from 'react-loading-skeleton';
+import { Skeleton } from '@nextui-org/react';
 import DeleteModal from '@/components/dashboard/device/DeleteModal';
 
-const DeviceTable = () => {
+const DeviceTable = ({ setcountDevice }: { setcountDevice: Dispatch<SetStateAction<number>> }) => {
     const { data: session, update } = useSession()
     const [isLoaded, setisLoaded] = useState(false)
     const { push } = useRouter()
@@ -79,23 +79,21 @@ const DeviceTable = () => {
     }
 
     const fetchData = async () => {
-        try {
-            const fetchDeviceData = await fetchClient({
-                method: 'GET',
-                url: '/devices',
-                user: session?.user
-            })
+        const fetchDeviceData = await fetchClient({
+            method: 'GET',
+            url: '/devices',
+            user: session?.user
+        })
+        if (fetchDeviceData) {
             const data: DeviceData[] = await fetchDeviceData.json()
             if (fetchDeviceData.status === 200) {
+                setcountDevice(data.length)
                 setdeviceData(data)
                 setisLoaded(true)
             } else {
                 console.log(data)
                 toast.error('gagal mendapatkan data')
             }
-        } catch (error) {
-            toast.error('gagal mendapatkan data, cek koneksi internet')
-            console.log(error)
         }
     }
     const deleteDevice = async () => {
@@ -107,14 +105,16 @@ const DeviceTable = () => {
             url: '/devices',
             user: session?.user
         })
-        if (result.status === 200) {
-            toast.success('Berhasil menghapus device')
-            setisLoaded(false)
-            fetchData()
-        } else {
-            const error = await result.json()
-            console.log(error)
-            toast.error('Gagal menghapus device')
+        if (result) {
+            if (result.status === 200) {
+                toast.success('Berhasil menghapus device')
+                setisLoaded(false)
+                fetchData()
+            } else {
+                const error = await result.json()
+                console.log(error)
+                toast.error('Gagal menghapus device')
+            }
         }
     }
     useEffect(() => {
@@ -237,9 +237,10 @@ const DeviceTable = () => {
                     )}
                 </div >
             ) : (
-                <div className='bg-white w-full p-4'>
-
-                    <Skeleton count={3} className='' />
+                <div className='mt-4 flex flex-col gap-2 p-4 bg-white'>
+                    <Skeleton className={'w-full h-3 rounded-full'} />
+                    <Skeleton className={'w-full h-3 rounded-full'} />
+                    <Skeleton className={'w-full h-3 rounded-full'} />
                 </div>
             )}
         </>

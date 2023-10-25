@@ -1,11 +1,12 @@
 import { useState } from "react"
 import { animated, useSpring, useTransition } from '@react-spring/web'
+import { Tabs, Tab } from "@nextui-org/react";
 interface ObjectContent {
     [key: string]: any
 }
 
 const OneStep = () => {
-    const [buttonActive, setButtonActive] = useState<String>('button1')
+    const [buttonActive, setButtonActive] = useState('button1')
     const [isDropdown, setIsDropdown] = useState(false)
     const [buttonContent, setButtonContent] = useState<ObjectContent>({
         button1: "Bisnis dan Pemasaran",
@@ -21,8 +22,6 @@ const OneStep = () => {
         enter: { opacity: "1", transform: "scale(1)" },
         leave: { opacity: "0", transform: "scale(0.5)" },
     })
-    const activeStyleButton = 'text-white-50 bg-primary'
-    const inactiveStyleButton = 'text-primary bg-white'
     const textContent: ObjectContent = {
         'button1': {
             label: "Bisnis dan Pemasaran",
@@ -73,7 +72,7 @@ const OneStep = () => {
             <div className='w-full lg:w-[80%] mx-auto'>
                 <p className='text-center text-primary text-4xl font-bold'>"One Step Closer to More Effective and Connected Communication!"</p>
             </div>
-            <div className='flex flex-col lg:flex-row mt-20 gap-20 lg:gap-0'>
+            <div className='flex flex-col lg:flex-row lg:mt-20 gap-12 lg:gap-0'>
                 <div className='flex-none lg:basis-2/5 flex justify-center'>
                     <img
                         src='/assets/images/landing_image6.png'
@@ -84,11 +83,12 @@ const OneStep = () => {
                     />
                 </div>
                 <div className='lg:basis-3/5'>
-                    <div className='hidden lg:flex gap-4'>
-                        <div id='button1' onClick={() => setButtonActive('button1')} className={(buttonActive === 'button1' ? activeStyleButton : inactiveStyleButton) + ' border border-primary rounded-full px-6 py-2 hover:cursor-pointer text-center whitespace-nowrap hover:bg-primary hover:text-white-50'}>Bisnis dan Pemasaran</div>
-                        <div id='button2' onClick={() => setButtonActive('button2')} className={(buttonActive === 'button2' ? activeStyleButton : inactiveStyleButton) + ' border border-primary rounded-full px-6 py-2 hover:cursor-pointer text-center whitespace-nowrap hover:bg-primary hover:text-white-50'}>Komersial dan Penjualan</div>
-                        <div id='button3' onClick={() => setButtonActive('button3')} className={(buttonActive === 'button3' ? activeStyleButton : inactiveStyleButton) + ' border border-primary rounded-full px-6 py-2 hover:cursor-pointer text-center whitespace-nowrap hover:bg-primary hover:text-white-50'}>Organisasi Sosial</div>
-                    </div>
+                    <Tabs color="primary" variant="light" fullWidth selectedKey={buttonActive} onSelectionChange={setButtonActive as any} className="hidden lg:block">
+                        <Tab key={'button1'} title="Bisnis dan Pemasaran" />
+                        <Tab key={'button2'} title="Komersial dan Penjualan" />
+                        <Tab key={'button3'} title="Organisasi Sosial" />
+                    </Tabs>
+
                     <div className='lg:hidden block'>
                         <div className='border border-primary rounded-full px-6 py-2 text-center whitespace-nowrap bg-primary text-white flex gap-2 justify-center'
                             onClick={() => setIsDropdown(!isDropdown)}>
@@ -100,12 +100,7 @@ const OneStep = () => {
                                     height={9}
                                     alt='caret down'
                                 />
-                                {/* <Image
-                                    src={'/assets/icons/caret-down.svg'}
-                                    width={14}
-                                    height={9}
-                                    alt='caret down'
-                                /> */}
+
                             </div>
                         </div>
                         <div className='relative'>

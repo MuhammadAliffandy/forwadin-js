@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ContactData, MultipleCheckboxRef } from '@/utils/types';
 import ContactList from './ContactList';
@@ -8,12 +8,13 @@ import dynamic from 'next/dynamic';
 const AddContactModal = dynamic(() => import('@/components/dashboard/contact/AddContactModal'), { ssr: false, })
 import { fetchClient } from '@/utils/helper/fetchClient';
 import { toast } from 'react-toastify';
-import Skeleton from 'react-loading-skeleton';
 import { formatDate, getInitials } from '@/utils/helper';
 import DeleteContactModal from '@/components/dashboard/contact/DeleteContactModal';
-
-const ContactTable = () => {
+import { useSession } from 'next-auth/react';
+import { Skeleton } from "@nextui-org/react";
+const ContactTable = ({ setcontactCount }: { setcontactCount: Dispatch<SetStateAction<number>> }) => {
     const { push } = useRouter()
+    const { data: session } = useSession()
     const mainCheckboxRef = useRef<HTMLInputElement>(null)
     const contactCheckboxRef = useRef<MultipleCheckboxRef>({})
     const [isLoaded, setisLoaded] = useState(false)
@@ -43,7 +44,7 @@ const ContactTable = () => {
             else
                 setcontactData(() => newArray)
         } else {
-            const newArray = currentcontactData.map((obj, idx) => {
+            const newArray = currentcontactData.map(obj => {
                 contactCheckboxRef.current[`checkbox_${obj.id}`].checked = true
                 return { ...obj, checked: true }
             })
@@ -61,7 +62,7 @@ const ContactTable = () => {
         return contactData.filter(item => {
             if (regex.test(item.firstName) || regex.test(item.lastName) || regex.test(item.phone) || regex.test(item.email))
                 return item
-            const findLabel = item.ContactLabel.find(item => regex.test(item.label.name))
+            const findLabel = item.ContactLabel?.find(item => regex.test(item.label.name))
             if (findLabel)
                 return item
         })
@@ -71,12 +72,13 @@ const ContactTable = () => {
     }
     const handleDeleteContact = async () => {
         const checkedContacts = contactData.filter(item => item.checked === true).map(item => item.id)
-        try {
-            const result = await fetchClient({
-                method: 'DELETE',
-                url: '/contacts',
-                body: JSON.stringify({ contactIds: checkedContacts }),
-            })
+        const result = await fetchClient({
+            method: 'DELETE',
+            url: '/contacts',
+            body: JSON.stringify({ contactIds: checkedContacts }),
+            user: session?.user
+        })
+        if (result) {
             if (result.status === 200) {
                 toast.success('Berhasil menghapus kontak')
                 setisLoaded(false)
@@ -87,17 +89,15 @@ const ContactTable = () => {
                 toast.error('Gagal menghapus kontak')
                 console.log(body)
             }
-        } catch (error) {
-            toast.error('Gagal menghapus kontak')
-            console.log(error)
         }
     }
     const fetchData = async () => {
-        try {
-            const fetchContactData = await fetchClient({
-                method: 'GET',
-                url: '/contacts',
-            })
+        const fetchContactData = await fetchClient({
+            method: 'GET',
+            url: '/contacts',
+            user: session?.user
+        })
+        if (fetchContactData) {
             const data: ContactData[] = await fetchContactData.json()
             if (fetchContactData.status === 200) {
                 // console.log(data)
@@ -107,20 +107,18 @@ const ContactTable = () => {
                     obj.initial = getInitials(obj.firstName + ' ' + obj.lastName)
                     return obj
                 })
+                setcontactCount(newContactData.length)
                 setcontactData(data)
                 setisLoaded(true)
             } else {
                 console.log(data)
                 toast.error('gagal mendapatkan data')
             }
-        } catch (error) {
-            toast.error('gagal mendapatkan data, cek koneksi internet')
-            console.log(error)
         }
     }
     useEffect(() => {
         fetchData()
-    }, [])
+    }, [session?.user?.token])
     useEffect(() => {
         if (mainCheckboxRef.current) {
             const checkObject = contactData.find(obj => obj.checked === true)
@@ -198,6 +196,7 @@ const ContactTable = () => {
                                 <th className='p-4'>Detail</    th>
                             </tr>
                         </thead>
+
                         <tbody className='bg-white'>
                             {searchText ? (
                                 <ContactList
@@ -233,9 +232,14 @@ const ContactTable = () => {
                     )}
                 </div >
             ) : (
-                <div className='bg-white w-full p-4'>
-                    <Skeleton count={3} className='' />
-                </div>
+                <>
+                    <div className='mt-4 flex flex-col gap-2 p-4 bg-white'>
+
+                        <Skeleton className={'w-full h-3 rounded-full'} />
+                        <Skeleton className={'w-full h-3 rounded-full'} />
+                        <Skeleton className={'w-full h-3 rounded-full'} />
+                    </div>
+                </>
             )}
         </>
     )

@@ -18,16 +18,8 @@ export default function Layout({
                                 src={'/assets/icons/logo.png'}
                                 alt="logo"
                             />
-                            {/* <Image
-                                src={logoPic}
-                                alt="logo"
-                            /> */}
                         </div>
                         <div className="">
-                            {/* <Image
-                                src={forwardInPic}
-                                alt="forwardin"
-                            /> */}
                             <img
                                 src={'/assets/icons/forwardin_black.png'}
                                 alt="forwardin"
@@ -36,7 +28,7 @@ export default function Layout({
                     </Link>
                 </div>
             </nav>
-            <main className='h-full lg:h-[100vh] flex justify-center items-center bg-neutral-75'>
+            <main className='h-[100vh] flex justify-center items-center bg-neutral-75'>
                 <div className='container w-full xl:w-[85%] mx-auto flex items-center h-[80%] gap-28 mt-24 lg:mt-0'>
                     <div className='lg:basis-1/2 h-full hidden lg:flex justify-end'>
                         <CustomCarousel />

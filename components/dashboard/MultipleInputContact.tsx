@@ -27,6 +27,7 @@ const MultipleInputContact = (
     const [inputText, setinputText] = useState('')
     const handleContactDataClick = (contactId: string, status: boolean) => {
         const newContactDataList: ContactData[] = contactList.map((list => list.id === contactId ? { ...list, active: status } : list))
+        // console.log(newContactDataList)
         setcontactList(newContactDataList)
     }
     useEffect(() => {
@@ -36,10 +37,6 @@ const MultipleInputContact = (
         )
         setsearchContactList(newSearchContactData)
     }, [inputText])
-    useEffect(() => {
-
-    }, [inputText])
-
     return (
         <>
             <div className='rounded-t-md text-xs w-full border border-customGray relative'>

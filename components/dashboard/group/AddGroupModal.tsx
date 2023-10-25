@@ -20,26 +20,20 @@ const AddGroupModal = (
     const { register, handleSubmit, formState: { errors } } = useForm<GroupSubmitProps>()
     const onSubmit = async (formData: GroupSubmitProps) => {
         setisLoading(true)
-        // console.log(JSON.stringify(formData))
-        try {
-            const result = await fetchClient({
-                method: 'POST',
-                url: '/groups/create',
-                body: JSON.stringify({ name: formData.name })
-            })
-            if (result.status === 200) {
-                toast.success('Group berhasil ditambahkan')
-                fetchData()
-                setopenModal(false)
-            } else {
-                toast.error('Gagal buat group')
-                const body = await result.json()
-                console.log(body)
-            }
-        } catch (error) {
+
+        const result = await fetchClient({
+            method: 'POST',
+            url: '/groups/create',
+            body: JSON.stringify({ name: formData.name })
+        })
+        if (result && result.ok) {
+            toast.success('Group berhasil ditambahkan')
+            fetchData()
+            setopenModal(false)
+        } else {
             toast.error('Gagal buat group')
-            console.log(error)
         }
+
         setisLoading(false)
     }
     return (
