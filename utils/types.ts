@@ -97,16 +97,37 @@ interface IncomingMessage {
     pkId: number,
     id: string,
     from: string,
-    contact: {
-        name: string,
-        colorCode: string,
-        initial: string
-    },
+
     message: string,
     receivedAt: string,
     createdAt: string,
     updatedAt: string,
     sessionId: string,
+    contact: {
+        firstName: string,
+        lastName: string,
+        colorCode: string,
+        initial: string
+    },
+    checked?: boolean
+}
+export interface ConversationMessage {
+    pkId: number,
+    id: string,
+    message: string,
+    receivedAt: string,
+    createdAt: string,
+    updatedAt: string,
+    sessionId: string,
+    status: number,
+    from?: string,
+    to?: string,
+    contact: {
+        firstName: string,
+        lastName: string,
+        colorCode: string,
+        initial: string
+    },
     checked?: boolean
 }
 interface OutgoingMessage {

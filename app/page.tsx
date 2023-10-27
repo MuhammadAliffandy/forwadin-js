@@ -15,13 +15,15 @@ export default function Home() {
   // const FadeUp = Sticky()
   const { data: session } = useSession()
   const { push } = useRouter()
-  const FadeUp = batch(Move(), Fade(), StickyOut());
+  const FadeUp = batch(Move(), Fade());
   const [buttonActive, setButtonActive] = useState('monthly')
   const [selected, setSelected] = useState(1)
   const [currentSection, setcurrentSection] = useState('getStarted')
   const activeStyleButton = 'text-white-50 bg-primary'
   const inactiveStyleButton = 'text-primary bg-white'
   // merchant_id=G265815203&order_id=ORDER-1698215438034-f9gd9a&status_code=200&transaction_status=settlement
+  const titleTextStyle = "font-lexend font-bold text-2xl xl:text-4xl"
+  const contentTextStyle = "lg:text-sm text-xs"
   const subscriptionContent = [
     {
       title: 'Starter',
@@ -96,7 +98,7 @@ export default function Home() {
       cardStyle: ''
     },
   ]
-  const animatorClass = 'w-full px-4 lg:px-0 lg:max-w-[70%]'
+  const animatorClass = 'w-full px-4 lg:px-0 lg:max-w-[70%] mx-auto h-full flex flex-col items-center justify-center'
   const handleNavigationClick = (key: string) => {
     const gotoElement = document.getElementsByClassName(key)[0] as HTMLDivElement
     window.scrollTo({
@@ -106,13 +108,6 @@ export default function Home() {
   }
 
   useEffect(() => {
-    const script = document.createElement('script')
-    // <script type="text/javascript" src=""
-    //             data-client-key="SB-Mid-client-61XuGAwQ8Bj8LxSS"></script>
-    script.type = "text/javascript"
-    script.src = "https://app.sandbox.midtrans.com/snap/snap.js"
-    script.async = true
-    script.setAttribute('data-client-key', process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY!)
     const section = {
       getStarted: document.getElementsByClassName('getStarted')[0] as HTMLDivElement,
       broadcast: document.getElementsByClassName('broadcast')[0] as HTMLDivElement,
@@ -163,7 +158,7 @@ export default function Home() {
     }
   }, [])
   return (<>
-    <main>
+    <main className='text-xs lg:text-sm'>
       <Navbar />
       <div id='sideNav' className='hidden fixed left-8 top-1/2 -translate-y-1/2 z-10 text-sm border-l-2 border-black/40 lg:flex flex-col gap-4 pl-4 text-black/40 pr-2 py-2'>
         <div id='nav_getStarted' onClick={() => handleNavigationClick('getStarted')} className={(currentSection === 'getStarted' ? 'text-black' : '') + ' hover:cursor-pointer'}>Get Started</div>
@@ -178,7 +173,7 @@ export default function Home() {
       <ScrollContainer className='relative' snap='mandatory'>
         <ScrollPage style={{
           backgroundImage: 'url(/assets/images/bg1.png)',
-        }} className='bg-no-repeat bg-cover getStarted bg-[#ECF2FA]'>
+        }} className='bg-no-repeat bg-cover getStarted bg-[#ECF2FA] '>
           <Animator animation={FadeUp} className={animatorClass}>
             <div className='flex flex-col lg:flex-row-reverse justify-center lg:justify-between items-center gap-8 w-full'>
               <div className='flex-none lg:basis-1/2 flex justify-end'>
@@ -191,8 +186,8 @@ export default function Home() {
                 />
               </div>
               <div className='flex flex-col gap-8'>
-                <p className='font-lexend font-bold text-4xl'>Elevate Your Messaging Efficiency with Our Innovative Admin Tools</p>
-                <p>Selamat datang di Fowardit! Pengelolaan pesan Anda menjadi lebih mudah dengan Admin Tools kami. Penerusan pesan jadi lebih lancar melalui fitur otomatis, sehingga Anda dapat lebih fokus pada interaksi dengan pelanggan. Dapatkan kendali penuh atas pesan dan informasi dengan manajemen konten dan kontak yang praktis.</p>
+                <p className={titleTextStyle}>Elevate Your Messaging Efficiency with Our Innovative Admin Tools</p>
+                <p className={contentTextStyle}>Selamat datang di Fowardit! Pengelolaan pesan Anda menjadi lebih mudah dengan Admin Tools kami. Penerusan pesan jadi lebih lancar melalui fitur otomatis, sehingga Anda dapat lebih fokus pada interaksi dengan pelanggan. Dapatkan kendali penuh atas pesan dan informasi dengan manajemen konten dan kontak yang praktis.</p>
                 <div className='flex w-full '>
                   <Link href={'/signup'} className='flex justify-between items-center bg-black rounded-md text-white px-2 hover:cursor-pointer'>
                     <p className='px-4 py-2'>Daftar Sekarang</p>

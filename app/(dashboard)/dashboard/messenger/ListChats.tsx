@@ -30,7 +30,7 @@ const ListChats = ({ listContact, currentContact, setcurrentContact }: ListChats
                     <img src="/assets/icons/filter_list.svg" alt="" width={24} />
                 </div>
             </div>
-            <div className=" flex flex-col gap-2 overflow-y-auto">
+            <div className=" flex flex-col gap-2 overflow-y-auto pb-12">
                 {/* Contacts */}
                 {listContact.map(contact => (
                     <div className={"rounded-md p-3 hover:cursor-pointer " + (currentContact?.id === contact.id ? 'bg-white' : '')} onClick={() => setcurrentContact(contact)}>
@@ -41,15 +41,14 @@ const ListChats = ({ listContact, currentContact, setcurrentContact }: ListChats
                             <div className=" w-48">
                                 <p>{contact.firstName} {contact.lastName}</p>
                                 <p className="truncate text-ellipsis overflow-hidden  whitespace-nowrap text-[#777C88] mt-1">
-                                    {/* {contact.lastMessage} */}
-                                    lorem
+                                    +{contact.phone}
                                 </p>
                             </div>
                         </div>
-                        <div className="text-end text-[#777C88] mt-2">
-                            {/* {contact.} */}
+                        {/* <div className="text-end text-[#777C88] mt-2">
+                           
                             lorem
-                        </div>
+                        </div> */}
                     </div>
                 ))}
             </div>

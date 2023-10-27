@@ -3,7 +3,7 @@ import { useEffect, useState } from "react"
 interface BubbleChatProps {
     text: string,
     received: string,
-    status: boolean,
+    status: number,
     isOutgoing?: boolean,
     currentDate: Date
 }
@@ -19,12 +19,11 @@ const BubbleChat = ({ text, received, status, isOutgoing = false, currentDate }:
     if (isOutgoing)
         return (
             <div className="flex justify-end">
-
                 <div className="border-primary  border pt-4 px-4 pb-2 text-sm mt-2 rounded-l-2xl rounded-br-2xl bg-primary text-white">
                     <p>{text}</p>
                     <div className="flex justify-end items-center gap-2 mt-2">
-                        <p>{receivedMessage}</p>
-                        <p>&#10003;</p>
+                        <p className="text-customGray">{receivedMessage}</p>
+                        <p>{status}</p>
                     </div>
                 </div>
             </div>
@@ -34,8 +33,8 @@ const BubbleChat = ({ text, received, status, isOutgoing = false, currentDate }:
             <div className="border-customGray border pt-4 px-4 pb-2 text-sm mt-2 rounded-r-2xl rounded-bl-2xl bg-white">
                 <p>{text}</p>
                 <div className="flex justify-end items-center gap-2 mt-2">
-                    <p>{receivedMessage}</p>
-                    <p>&#10003;</p>
+                    <p className="text-customGray">{receivedMessage}</p>
+                    <p >{status}</p>
                 </div>
             </div>
         </div>

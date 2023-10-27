@@ -1,6 +1,6 @@
 'use client'
 import { animated, useTransition } from "@react-spring/web"
-import { Dispatch, SetStateAction, useRef } from "react"
+import { Dispatch, SetStateAction, useEffect, useRef } from "react"
 interface ModalTemplateProps {
     children: React.ReactNode,
     openModal: boolean,
@@ -16,13 +16,22 @@ const ModalTemplate = ({ children, openModal, setopenModal, outsideClose = true 
                 setopenModal(false)
             }
     }
+    const handleKeyPress = (event: React.KeyboardEvent) => {
+        if (event.key === 'Escape') {
+            setopenModal(false)
+        }
+    }
+    useEffect(() => {
+        window.addEventListener('keydown', handleKeyPress as any);
+        return () => {
+            window.removeEventListener('keydown', handleKeyPress as any);
+        };
+    }, [])
     const componentTransition = useTransition(openModal, {
         from: {
-            // transform: "translateX(100px)",
             opacity: "0",
         },
         enter: {
-            // transform: "translateX(0px)",
             opacity: "1",
         },
         leave: {

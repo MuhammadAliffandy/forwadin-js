@@ -86,8 +86,8 @@ const Payment = () => {
 			url: '/payment/pay',
 			method: 'POST',
 			body: JSON.stringify({
-				subscriptionId: currentPlan?.id,
-				subscriptionType: durationPlan.toLowerCase()
+				subscriptionPlanId: currentPlan?.id,
+				subscriptionPlanType: durationPlan.toLowerCase()
 			})
 		})
 		if (result) {

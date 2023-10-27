@@ -1,35 +1,22 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { IncomingMessage, MultipleCheckboxRef } from '@/utils/types';
 import IncomingList from './IncomingList';
-import AddContactModal from '@/components/dashboard/contact/AddContactModal';
 import { Pagination } from '@nextui-org/react';
+import { useSession } from 'next-auth/react';
 
-const IncomingTable = () => {
+interface IncomingMessageProps {
+    setmessageCount: Dispatch<SetStateAction<number>>
+}
+const IncomingTable = ({ setmessageCount }: IncomingMessageProps) => {
+    const { data: session } = useSession()
     const { push } = useRouter()
     const mainCheckboxRef = useRef<HTMLInputElement>(null)
     const messageCheckboxRef = useRef<MultipleCheckboxRef>({})
     const [isChecked, setisChecked] = useState(false)
-    const [messageData, setmessageData] = useState<IncomingMessage[]>([
-        {
-            pkId: 1,
-            id: '1',
-            from: '6281678923',
-            contact: {
-                name: 'Ihsanul Afkar',
-                colorCode: 'D14343',
-                initial: 'IA'
-            },
-            message: "Join us this month for a celebration of",
-            receivedAt: "10/09/2023 13:35:00",
-            createdAt: "10/09/2023 13:35:00",
-            updatedAt: "10/09/2023 13:35:00",
-            sessionId: '6ff83c6c-3a9c-4ea2-9405-1deffe173bf7',
-            checked: false
-        },
-    ])
+    const [messageData, setmessageData] = useState<IncomingMessage[]>([])
     const [searchText, setsearchText] = useState('')
     const [searchedMessage, setsearchedMessage] = useState<IncomingMessage[]>([])
     const handleCheckBoxClick = (e: React.FormEvent<HTMLInputElement>, id: string) => {
@@ -110,6 +97,12 @@ const IncomingTable = () => {
         const searchResult = filterMessage(searchText)
         setsearchedMessage(searchResult)
     }, [searchText])
+    const fetchIncomingMessage = async () => {
+
+    }
+    useEffect(() => {
+
+    }, [session?.user?.token])
 
     return (
         <>
