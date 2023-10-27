@@ -2,36 +2,23 @@ import { ContactData } from "@/utils/types"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 
-const ProfileDetail = () => {
+const ProfileDetail = ({ currentContact }: { currentContact: ContactData | undefined }) => {
     const { push } = useRouter()
-    const [contactData, setcontactData] = useState<ContactData>({
-        id: '1',
-        phone: "6281357995175",
-        firstName: 'Ihsanul',
-        lastName: 'Afkar',
-        initial: 'IA',
-        colorCode: '4FBEAB',
-        gender: "Laki-laki",
-        email: 'ihsanulafkar@gmail.com',
-        honorific: 'Mr',
-        country: 'Indonesia',
-        dob: '10/10/2010',
-        ContactLabel: [],
-        checked: false,
-        createdAt: '11.9.2023, 2:43 PM',
-        updatedAt: '11.9.2023, 2:43 PM'
-    })
+    if (!currentContact)
+        return (<>
+            <div className="" ></div>
+        </>)
     return (
         <>
             <div className='flex flex-col items-center'>
                 <div style={{
                     backgroundColor: '#' + '4FBEAB'
                 }} className={`flex-none rounded-full text-white w-20 h-20 text-[32px] flex items-center justify-center`}>IA</div>
-                <p className='font-lexend text-2xl font-bold mt-4'>{contactData.firstName} {contactData.lastName}</p>
-                <p className='mt-2 text-[#777C88]'>+{contactData.phone}</p>
+                <p className='font-lexend text-2xl font-bold mt-4'>{currentContact.firstName} {currentContact.lastName}</p>
+                <p className='mt-2 text-[#777C88]'>+{currentContact.phone}</p>
             </div>
             <div className="border border-customGray text-center py-2 rounded-md my-4 hover:cursor-pointer"
-                onClick={() => push('/dashboard/contact/' + contactData.id)}>
+                onClick={() => push('/dashboard/contact/' + currentContact.id)}>
                 Detail
             </div>
             <div className="flex gap-2 ">
@@ -58,40 +45,40 @@ const ProfileDetail = () => {
                 <tbody >
                     <tr>
                         <th className='font-medium whitespace-pre '>First Name</th>
-                        <td>{contactData.firstName}</td>
+                        <td>{currentContact.firstName}</td>
                     </tr>
                     <tr>
                         <th className='font-medium whitespace-pre'>Last Name</th>
-                        <td>{contactData.lastName}</td>
+                        <td>{currentContact.lastName}</td>
                     </tr>
                     <tr>
                         <th className='font-medium whitespace-pre'>Email</th>
-                        <td>{contactData.email}</td>
+                        <td>{currentContact.email}</td>
                     </tr>
                     <tr>
                         <th className='font-medium whitespace-pre'>Phone Number</th>
-                        <td>+{contactData.phone}</td>
+                        <td>+{currentContact.phone}</td>
                     </tr>
                     <tr>
                         <th className='font-medium whitespace-pre'>Gender</th>
-                        <td>{contactData.gender ? contactData.gender : '-'}</td>
+                        <td>{currentContact.gender ? currentContact.gender : '-'}</td>
                     </tr>
                     <tr>
                         <th className='font-medium whitespace-pre'>Honorific</th>
-                        <td>{contactData.honorific ? contactData.honorific : '-'}</td>
+                        <td>{currentContact.honorific ? currentContact.honorific : '-'}</td>
                     </tr>
                     <tr>
                         <th className='font-medium whitespace-pre'>Country</th>
-                        <td>{contactData.country ? contactData.country : '-'}</td>
+                        <td>{currentContact.country ? currentContact.country : '-'}</td>
                     </tr>
                     <tr>
                         <th className='font-medium whitespace-pre'>Birthdate</th>
-                        <td>{contactData.dob ? contactData.dob : '-'}</td>
+                        <td>{currentContact.dob ? currentContact.dob : '-'}</td>
                     </tr>
                     <tr>
                         <th className='font-medium whitespace-pre'>Labels</th>
                         <td className='flex flex-wrap justify-center lg:justify-start items-center gap-2'>
-                            {contactData.ContactLabel?.map((item, idx) => (
+                            {currentContact.ContactLabel?.map((item, idx) => (
                                 <div key={idx} className='text-white bg-primary px-4 py-1 rounded-full'>
                                     {item.label.name}
                                 </div>

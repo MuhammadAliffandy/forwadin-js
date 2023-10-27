@@ -28,7 +28,7 @@ const IncomingList = ({ incomingData, handleCheckBoxClick, multipleCheckboxRef, 
                                     backgroundColor: '#' + item.contact.colorCode
                                 }} className={`flex-none rounded-full text-white w-8 h-8 flex items-center justify-center`}>{item.contact.initial}</div>
                             </div>
-                            <p>{item.contact.name}</p>
+                            <p>{item.contact.firstName}</p>
                             {/* <p>{item.contact.firstName + ' ' + item.contact.lastName}</p> */}
                         </div>
                     </td>
