@@ -31,6 +31,42 @@ export const formatBackendBirthDate = (inputDate: any) => {
     const day = String(date.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
 }
+export const formatDateBahasa = (inputDate: string) => {
+    const days = [
+        "Minggu",
+        "Senin",
+        "Selasa",
+        "Rabu",
+        "Kamis",
+        "Jumat",
+        "Sabtu"
+    ];
+
+    const months = [
+        "Januari",
+        "Februari",
+        "Maret",
+        "April",
+        "Mei",
+        "Juni",
+        "Juli",
+        "Agustus",
+        "September",
+        "Oktober",
+        "November",
+        "Desember"
+    ];
+    const today = new Date(inputDate);
+
+    const hari = days[today.getDay()];
+    const tanggal = today.getDate();
+    const bulan = months[today.getMonth()];
+    const tahun = today.getFullYear();
+
+    const result = hari + ", " + tanggal + " " + bulan + " " + tahun;
+
+    return result
+}
 export const getTodayDateBahasa = () => {
     const days = [
         "Minggu",

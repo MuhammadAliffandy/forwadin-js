@@ -1,3 +1,4 @@
+import { formatDate, getInitials } from "@/utils/helper"
 import { IncomingMessage, MultipleCheckboxRef } from "@/utils/types"
 import Link from "next/link"
 
@@ -26,9 +27,9 @@ const IncomingList = ({ incomingData, handleCheckBoxClick, multipleCheckboxRef, 
                             <div className="">
                                 <div style={{
                                     backgroundColor: '#' + item.contact.colorCode
-                                }} className={`flex-none rounded-full text-white w-8 h-8 flex items-center justify-center`}>{item.contact.initial}</div>
+                                }} className={`flex-none rounded-full text-white w-8 h-8 flex items-center justify-center`}>{getInitials((item.contact.firstName + ' ' + item.contact.lastName))}</div>
                             </div>
-                            <p>{item.contact.firstName}</p>
+                            <p>{item.contact.firstName} {item.contact.lastName}</p>
                             {/* <p>{item.contact.firstName + ' ' + item.contact.lastName}</p> */}
                         </div>
                     </td>
@@ -36,7 +37,7 @@ const IncomingList = ({ incomingData, handleCheckBoxClick, multipleCheckboxRef, 
                         <PrintType type={item.type} chatId={item.id} />
                     </td> */}
 
-                    <td className="p-4">{item.receivedAt}</td>
+                    <td className="p-4">{formatDate(item.receivedAt)}</td>
                     <td className='p-4'>
                         <div className='py-1 text-center px-2 border border-black/20 rounded-md hover:cursor-pointer' onClick={() => handleOpenDetailModal(item.id.toString())}>Lihat Chat</div>
                     </td>

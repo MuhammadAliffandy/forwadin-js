@@ -212,7 +212,7 @@ const Register = ({ setCurrentStep, setUserData, userData }: {
                     }} />
                     <div className="flex gap-2 relative">
                         <div className="flex" >
-                            <div className="rounded-md border-[#B0B4C5] border flex items-center justify-between gap-1 w-full py-3 px-2  hover:cursor-pointer" onClick={() => setcountryCodeDropdown(!countryCodeDropdown)}>
+                            <div className="rounded-md border-[#B0B4C5]/50 hover:border-[#B0B4C5] border flex items-center justify-between gap-1 w-full py-3 px-2  hover:cursor-pointer" onClick={() => setcountryCodeDropdown(!countryCodeDropdown)}>
                                 <div className="flex gap-2 font-bold ">
                                     <div className="w-4" dangerouslySetInnerHTML={{ __html: CountryFlagSvg[currentCountryCode.code] }} />
                                     <div>{currentCountryCode?.code}</div>
@@ -225,7 +225,7 @@ const Register = ({ setCurrentStep, setUserData, userData }: {
                         </div>
                         <div className="relative flex-1 flex">
                             {errors.phone && (<p className="px-1 text-danger absolute right-4 top-1/2 -translate-y-1/2">{`${errors.phone.message}`}</p>)}
-                            <div className={'flex items-center px-2 text-sm rounded-md focus:outline-none focus:ring-0 w-full border ' + (errors.phone ? 'border-danger focus:border-danger' : 'border-[#B0B4C5] focus:border-primary')} style={{ MozAppearance: 'textfield', WebkitAppearance: 'textfield' }}>
+                            <div className={'flex items-center px-2 text-sm rounded-md focus:outline-none focus:ring-0 w-full border ' + (errors.phone ? 'border-danger/50 hover:border-danger focus:border-danger' : 'border-[#B0B4C5]/50 hover:border-[#B0B4C5] focus:border-primary')} style={{ MozAppearance: 'textfield', WebkitAppearance: 'textfield' }}>
                                 <div className=" text-customGray ">{currentCountryCode.dial_code}</div>
                                 <input type="text" placeholder='Whatsapp Number' className='focus:ring-0 focus:outline-none border-none' {...register('phone', {
                                     required: 'Required',
@@ -260,7 +260,7 @@ const Register = ({ setCurrentStep, setUserData, userData }: {
                     </div>
                     <div className="relative">
                         {errors.password && (<p className="px-1 text-danger absolute right-4 top-1/2 -translate-y-1/2">{`${errors.password.message}`}</p>)}
-                        <input type="password" placeholder='Password' className={'text-sm px-4 py-3 focus:outline-none  rounded-md focus:ring-0 w-full ' + (errors.password ? 'border-danger focus:border-danger' : 'border-[#B0B4C5] focus:border-primary ')} {...register('password', {
+                        <input type="password" placeholder='Password' className={'text-sm px-4 py-3 focus:outline-none  rounded-md focus:ring-0 w-full ' + (errors.password ? 'border-danger/50 hover:border-danger focus:border-danger' : 'border-[#B0B4C5]/50 hover:border-[#B0B4C5] focus:border-primary ')} {...register('password', {
                             required: true,
                         })} onFocus={() => setshowPasswordCriteria(true)} />
                         {showPasswordCriteria && (

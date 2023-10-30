@@ -97,7 +97,6 @@ interface IncomingMessage {
     pkId: number,
     id: string,
     from: string,
-
     message: string,
     receivedAt: string,
     createdAt: string,
@@ -180,5 +179,25 @@ export interface UserProfile {
     email: string,
     accountApiKey: string,
     affiliationCode: string
+}
+export interface SubscriptionTypes {
+    pkId: number,
+    startDate: string,
+    endDate: string,
+    autoReplyUsed: number,
+    broadcastUsed: number,
+    contactUsed: number,
+    deviceUsed: number,
+    autoReplyMax: number,
+    broadcastMax: number,
+    contactMax: number,
+    deviceMax: number,
+    subscriptionPlanId: number,
+    userId: number,
+    createdAt: string,
+    updatedAt: string,
+    subscriptionPlan: {
+        name: string
+    }
 }
 export type { UserRegisterData, MultipleCheckboxRef, CheckboxRef, DeviceData, Label, CountryCode, ContactData, MessageData, MediaMessageData, GroupData, IncomingMessage, OutgoingMessage, MultipleInputRef, ResetUserData, BroadcastData }

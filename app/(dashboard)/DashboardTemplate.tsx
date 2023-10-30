@@ -3,7 +3,7 @@ import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import NavButton from '../../components/dashboard/NavButton'
 import MessageList from '../../components/dashboard/MessageList'
 import ContactList from '@/components/dashboard/ContactList'
-import { signOut, useSession } from "next-auth/react";
+import { signIn, signOut, useSession } from "next-auth/react";
 import { Dropdown, DropdownItem, DropdownMenu, DropdownSection, DropdownTrigger } from "@nextui-org/react";
 import { UserProfile } from "@/utils/types";
 import { fetchClient } from "@/utils/helper/fetchClient";
@@ -24,6 +24,7 @@ const DashboardTemplate = ({ currentPage, children }: { currentPage: string, chi
                 setsideNavDropdown(false)
     }
     const fetchUserProfile = async () => {
+
         const result = await fetchClient({
             url: '/users',
             method: 'GET',
@@ -36,6 +37,7 @@ const DashboardTemplate = ({ currentPage, children }: { currentPage: string, chi
     }
     useEffect(() => {
         fetchUserProfile()
+
     }, [session?.user?.token])
 
     return (
@@ -75,9 +77,9 @@ const DashboardTemplate = ({ currentPage, children }: { currentPage: string, chi
 
                     </div>
                     <div className='flex justify-end gap-2'>
-                        <div className='flex-none bg-white rounded-full p-2 hover:cursor-pointer'>
+                        {/* <div className='flex-none bg-white rounded-full p-2 hover:cursor-pointer'>
                             <img src="/assets/icons/dashboard/comments.svg" alt="" />
-                        </div>
+                        </div> */}
                         <div className='flex-none bg-white rounded-full p-2 hover:cursor-pointer'>
                             <img src="/assets/icons/dashboard/bell.svg" alt="" />
                         </div>
@@ -94,12 +96,12 @@ const DashboardTemplate = ({ currentPage, children }: { currentPage: string, chi
                         </div>
                     </div>
                 </div>
-                <div className='bg-neutral-75 h-[95vh] overflow-y-scroll rounded-2xl text-sm p-2 lg:pt-6 lg:px-6 relative '>
+                <div className='bg-neutral-75 h-[95vh] overflow-y-scroll rounded-2xl text-sm p-2 lg:pt-6 lg:px-6 relative'>
                     {/* Desktop Dashboard nav */}
                     <div className='lg:flex w-full justify-end gap-2 hidden'>
-                        <div className='flex-none bg-white rounded-full p-2 hover:cursor-pointer'>
+                        {/* <div className='flex-none bg-white rounded-full p-2 hover:cursor-pointer'>
                             <img src="/assets/icons/dashboard/comments.svg" alt="" />
-                        </div>
+                        </div> */}
                         <div className='flex-none bg-white rounded-full p-2 hover:cursor-pointer'>
                             <img src="/assets/icons/dashboard/bell.svg" alt="" />
                         </div>
@@ -112,7 +114,7 @@ const DashboardTemplate = ({ currentPage, children }: { currentPage: string, chi
                                     {session?.user?.image ? (
                                         <img src={session.user.image} alt="" className="rounded-full" width={33} />
                                     ) : (
-                                        <div className='flex-none bg-primary rounded-full p-2 hover:cursor-pointer'>
+                                        <div className='flex-none bg-primary rounded-full p-2 hover:cursor-pointer flex items-center justify-center'>
                                             <img src="/assets/icons/dashboard/user.svg" alt="" />
                                         </div>
                                     )}
@@ -127,11 +129,17 @@ const DashboardTemplate = ({ currentPage, children }: { currentPage: string, chi
                                         className="opacity-100"
                                     >
                                         <div className="flex justify-center">
-                                            <img
-                                                src={session?.user?.image ? session.user.image : '/assets/icons/dashboard/user.svg'} alt="profile"
-                                                width={54}
-                                                height={54}
-                                                className="rounded-full" />
+                                            {session?.user?.image ? (
+                                                <img
+                                                    src={session.user.image} alt="profile"
+                                                    width={54}
+                                                    height={54}
+                                                    className="rounded-full" />
+                                            ) : (
+                                                <div className='flex-none bg-primary rounded-full w-[54px] h-[54px] p-4 hover:cursor-pointer flex items-center justify-center'>
+                                                    <img src="/assets/icons/dashboard/user.svg" alt="" className="w-full" />
+                                                </div>
+                                            )}
                                         </div>
                                         <p className="font-bold text-sm text-center mt-2">{user?.firstName} {user?.lastName}</p>
                                         <p className="text-[10px] text-center">{user?.email}</p>
