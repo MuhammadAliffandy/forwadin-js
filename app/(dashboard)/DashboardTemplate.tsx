@@ -57,13 +57,13 @@ const DashboardTemplate = ({ currentPage, children }: { currentPage: string, chi
                     <div className='flex flex-col mt-12 gap-2'>
                         <NavButton text='Dashboard' href='/dashboard' currentPage={currentPage} />
                         <NavButton text='Devices' href='/dashboard/device' currentPage={currentPage} />
-                        <ContactList currentPage={currentPage} />
+                        <ContactList currentPage={currentPage} user={session?.user} />
                         {/* Message List */}
-                        <MessageList currentPage={currentPage} />
+                        <MessageList currentPage={currentPage} user={session?.user} />
                         <p className='text-sm mt-2'>Tools</p>
-                        <NavButton text='Broadcast' href='/dashboard/broadcast' currentPage={currentPage} />
-                        <NavButton text='Campaign' href='/dashboard/campaign' currentPage={currentPage} />
-                        <NavButton text='Auto Reply' href='/dashboard/auto-reply' currentPage={currentPage} />
+                        <NavButton text='Broadcast' href='/dashboard/broadcast' currentPage={currentPage} isDisabled={session?.user?.device.length === 0} />
+                        <NavButton text='Campaign' href='/dashboard/campaign' currentPage={currentPage} isDisabled={session?.user?.device.length === 0} />
+                        <NavButton text='Auto Reply' href='/dashboard/auto-reply' currentPage={currentPage} isDisabled={session?.user?.device.length === 0} />
                         <p className='text-sm mt-2'>Others</p>
                         <NavButton text='Settings' href='/dashboard/settings' currentPage={currentPage} />
                     </div>

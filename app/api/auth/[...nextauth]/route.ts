@@ -176,7 +176,7 @@ export const authConfig: NextAuthOptions = {
             session.user = token.user;
             return session;
         },
-        async jwt({ token, user, trigger, session, account }) {
+        async jwt({ token, user, trigger, session }) {
             if (trigger === 'update') {
                 token.user = session.user
             }
