@@ -9,6 +9,7 @@ import Profile from "./Profile"
 import Device from "./Device"
 import System from "./System"
 import { UserProfile } from "@/utils/types"
+import { Tab, Tabs } from "@nextui-org/react"
 
 const Settings = () => {
     const [isLoaded, setisLoaded] = useState(false)
@@ -55,19 +56,14 @@ const Settings = () => {
         <>
             <div className="w-full bg-white rounded-md px-3 py-3 pb-6 mt-2">
                 <div className="flex gap-2">
-
-                    <div className={"rounded-md px-4 py-2 " + (currentPage === 'profile' ? activeButtonStyle : inactiveButtonStyle)} onClick={() => setcurrentPage('profile')}>
-                        Profile
-                    </div>
-                    <div className={"rounded-md px-4 py-2 " + (currentPage === 'device' ? activeButtonStyle : inactiveButtonStyle)} onClick={() => setcurrentPage('device')}>
-                        Device
-                    </div>
-                    <div className={"rounded-md px-4 py-2 " + (currentPage === 'account' ? activeButtonStyle : inactiveButtonStyle)} onClick={() => setcurrentPage('account')}>
-                        Account
-                    </div>
-                    <div className={"rounded-md px-4 py-2 " + (currentPage === 'system' ? activeButtonStyle : inactiveButtonStyle)} onClick={() => setcurrentPage('system')}>
-                        System
-                    </div>
+                    <Tabs aria-label="Options" variant="light" color="primary" radius="md" size="lg"
+                        selectedKey={currentPage}
+                        onSelectionChange={setcurrentPage as any}>
+                        <Tab key="profile" title="Profile" />
+                        <Tab key="device" title="Device" />
+                        <Tab key="account" title="Account" />
+                        <Tab key="system" title="System" />
+                    </Tabs>
                 </div>
 
                 <div className="w-full max-w-2xl mx-auto mt-4">

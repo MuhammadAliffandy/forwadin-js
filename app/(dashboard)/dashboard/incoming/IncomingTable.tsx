@@ -6,19 +6,27 @@ import { IncomingMessage, MultipleCheckboxRef } from '@/utils/types';
 import IncomingList from './IncomingList';
 import { Pagination } from '@nextui-org/react';
 import { useSession } from 'next-auth/react';
+import { User } from 'next-auth';
+import { fetchClient } from '@/utils/helper/fetchClient';
 
 interface IncomingMessageProps {
-    setmessageCount: Dispatch<SetStateAction<number>>
+    setmessageCount: Dispatch<SetStateAction<number>>,
+    sessionId: string,
+    user: User | undefined
 }
-const IncomingTable = ({ setmessageCount }: IncomingMessageProps) => {
-    const { data: session } = useSession()
+const IncomingTable = ({ setmessageCount, sessionId, user }: IncomingMessageProps) => {
     const { push } = useRouter()
+    const [isLoaded, setisLoaded] = useState(false)
+    const paginationBatch = 10
+    const [cursor, setcursor] = useState(1)
     const mainCheckboxRef = useRef<HTMLInputElement>(null)
     const messageCheckboxRef = useRef<MultipleCheckboxRef>({})
     const [isChecked, setisChecked] = useState(false)
     const [messageData, setmessageData] = useState<IncomingMessage[]>([])
     const [searchText, setsearchText] = useState('')
     const [searchedMessage, setsearchedMessage] = useState<IncomingMessage[]>([])
+    const [paginationTotal, setpaginationTotal] = useState(1)
+    const [paginationInitial, setpaginationInitial] = useState(1)
     const handleCheckBoxClick = (e: React.FormEvent<HTMLInputElement>, id: string) => {
         const newmessageData = messageData.map(obj => {
             return (obj.id === id ? { ...obj, checked: e.currentTarget.checked } : obj)
@@ -99,10 +107,28 @@ const IncomingTable = ({ setmessageCount }: IncomingMessageProps) => {
     }, [searchText])
     const fetchIncomingMessage = async () => {
 
+        const result = await fetchClient({
+            url: `/messages/${sessionId}/incoming?limit=${paginationBatch}`,
+            method: 'GET',
+            user: user
+        })
+        if (result) {
+            const resultData = await result.json()
+            if (result.ok) {
+                setmessageData(resultData.data)
+                setcursor((resultData.cursor ? resultData.cursor : 1))
+                setpaginationTotal(Math.ceil(resultData.total / paginationBatch))
+                console.log(resultData)
+            } else {
+
+            }
+        }
+
     }
     useEffect(() => {
-
-    }, [session?.user?.token])
+        console.log(sessionId)
+        fetchIncomingMessage()
+    }, [user?.token])
 
     return (
         <>
@@ -159,19 +185,15 @@ const IncomingTable = ({ setmessageCount }: IncomingMessageProps) => {
                 {messageData.length === 0 && (
                     <div className='w-full bg-white p-12'>
                         <div className='w-full max-w-md mx-auto flex flex-col gap-4'>
-                            <p className='text-[16px] font-bold'>Kontak masih kosong</p>
-                            <p className='text-xs text-[#777C88]'>Tambahkan nomor ke dalam kontak anda.</p>
-                            <p className='text-xs'>Dengan kontak ini, Anda dapat dengan mudah berkomunikasi dengan kontak yang anda simpan</p>
-                            <div className='flex'>
-                                <div onClick={() => { }} className="bg-primary rounded-md px-6 text-white text-center items-center flex hover:cursor-pointer justify-center p-2">
-                                    Tambah Chat
-                                </div>
-                            </div>
+                            <p className='text-[16px] font-bold'>Pesan masuk masih kosong</p>
+                            <p className='text-xs text-[#777C88]'>Pesan yang dikirimkan kepada anda akan masuk di sini</p>
                         </div>
                     </div>
                 )}
             </div >
-            <Pagination total={10} initialPage={1} variant="light" size='sm' />
+            {messageData.length !== 0 && (
+                <Pagination total={paginationTotal} initialPage={paginationInitial} variant="light" size='sm' />
+            )}
         </>
     )
 }

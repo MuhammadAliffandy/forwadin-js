@@ -2,23 +2,34 @@ import NextAuth, { DefaultSession } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import type { NextAuthOptions, User } from 'next-auth'
-interface SessionDevice {
+import { DeviceData, SubscriptionTypes } from "@/utils/types";
+interface DeviceSession {
     id: string,
     sessionId: string
+}
+interface Subscription {
+    status: number,
+    name?: string
 }
 declare module "next-auth" {
     interface User {
         id: string | undefined,
         token: string | undefined,
         refreshToken: string | undefined,
-        device?: SessionDevice[]
+        device: DeviceSession[],
+        subscription: Subscription
     }
 
     interface Session extends DefaultSession {
         user?: User;
     }
 }
-
+interface GetSession {
+    sessionId: string,
+    device: {
+        id: string
+    }
+}
 export const authConfig: NextAuthOptions = {
     session: {
         strategy: "jwt",
@@ -33,25 +44,58 @@ export const authConfig: NextAuthOptions = {
             id: 'refresh',
             name: 'Refresh',
             credentials: {
-                refreshToken: {},
-                device: {}
+                user: {}
             },
-            authorize: async (credentials: any) => {
+            authorize: async (credentials) => {
+                let device: DeviceSession[] = []
+                let subscription: Subscription = {
+                    status: 0
+                }
+                const userData: User = JSON.parse(credentials?.user!)
                 const result = await fetch(process.env.BACKEND_URL + '/auth/refresh-token', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ refreshToken: credentials?.refreshToken })
+                    body: JSON.stringify({ refreshToken: userData.refreshToken })
                 })
-                const resultData = await result.json()
-                const user = {
-                    id: resultData.id,
-                    token: resultData.accessToken,
-                    refreshToken: credentials?.refreshToken,
-                    device: credentials?.device
-                }
-                if (user && result.ok) {
+                if (result.ok) {
+                    const resultData = await result.json()
+
+                    const userSubscription = await fetch(process.env.BACKEND_URL + '/users/subscription/', {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': 'Bearer ' + resultData.accessToken
+                        },
+                    })
+                    if (userSubscription.ok) {
+                        const userSubscriptionResult = await userSubscription.json()
+                        subscription = {
+                            status: 1,
+                            name: userSubscriptionResult.subscriptionPlan.name
+                        }
+                        const fetchSession = await fetch(process.env.BACKEND_URL + '/sessions', {
+                            method: 'GET',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': 'Bearer ' + resultData.accessToken
+                            },
+                        })
+                        if (fetchSession.ok) {
+                            const fetchSessionData: GetSession[] = await fetchSession.json()
+                            if (fetchSessionData.length) {
+                                device = fetchSessionData.map(ses => { ses.sessionId, ses.device.id }) as any
+                            }
+                        }
+                    }
+                    const user = {
+                        ...userData,
+                        id: resultData.id,
+                        token: resultData.accessToken,
+                        device: device,
+                        subscription: subscription
+                    }
                     return user
                 } else {
                     return null
@@ -63,24 +107,61 @@ export const authConfig: NextAuthOptions = {
             name: "Credentials",
             credentials: {
                 identifier: {},
+                password: {}
             },
-            authorize: async (credentials: any) => {
+            authorize: async (credentials) => {
                 const result = await fetch(process.env.BACKEND_URL + '/auth/login', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ identifier: credentials.identifier, password: credentials.password })
+                    body: JSON.stringify({ identifier: credentials?.identifier, password: credentials?.password })
                 })
-                const resultData = await result.json()
-                const user = {
-                    id: resultData.id,
-                    token: resultData.accessToken,
-                    refreshToken: resultData.refreshToken,
-                    device: []
-                }
-                if (user && result.ok) {
-                    return user
+                if (result.ok) {
+                    const resultData = await result.json()
+                    const user = {
+                        id: resultData.id,
+                        token: resultData.accessToken,
+                        refreshToken: resultData.refreshToken,
+                        subscription: {},
+                        device: []
+                    }
+                    const userSubscription = await fetch(process.env.BACKEND_URL + '/users/subscription/', {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': 'Bearer ' + resultData.accessToken
+                        },
+                    })
+                    if (userSubscription.ok) {
+                        const userSubscriptionResult = await userSubscription.json()
+                        user.subscription = {
+                            status: 1,
+                            name: userSubscriptionResult.subscriptionPlan.name
+                        }
+                        const fetchSession = await fetch(process.env.BACKEND_URL + '/sessions', {
+                            method: 'GET',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': 'Bearer ' + resultData.accessToken
+                            },
+                        })
+                        if (fetchSession.ok) {
+                            const fetchSessionData: GetSession[] = await fetchSession.json()
+                            if (fetchSessionData.length) {
+                                user.device = fetchSessionData.map(ses => { ses.sessionId, ses.device.id }) as any
+                            } else {
+                                user.device = []
+                            }
+                        } else {
+                            user.device = []
+                        }
+                    } else {
+                        user.subscription = {
+                            status: 0
+                        }
+                    }
+                    return user as any
                 } else {
                     return null
                 }
@@ -95,10 +176,7 @@ export const authConfig: NextAuthOptions = {
             session.user = token.user;
             return session;
         },
-        async jwt({ token, user, trigger, session, account }) {
-            // Token OAUTH
-            // Klo login google
-
+        async jwt({ token, user, trigger, session }) {
             if (trigger === 'update') {
                 token.user = session.user
             }
@@ -120,12 +198,45 @@ export const authConfig: NextAuthOptions = {
                     })
                 })
                 const resultData = await result.json()
-
                 if (result.ok) {
                     user.id = resultData.id
                     user.token = resultData.accessToken
                     user.refreshToken = resultData.refreshToken
-                    user.device = []
+                    const userSubscription = await fetch(process.env.BACKEND_URL + '/users/subscription/', {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': 'Bearer ' + resultData.accessToken
+                        },
+                    })
+                    if (userSubscription.ok) {
+                        const userSubscriptionResult = await userSubscription.json()
+                        user.subscription = {
+                            status: 1,
+                            name: userSubscriptionResult.subscriptionPlan.name
+                        }
+                        const fetchSession = await fetch(process.env.BACKEND_URL + '/sessions', {
+                            method: 'GET',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': 'Bearer ' + resultData.accessToken
+                            },
+                        })
+                        if (fetchSession.ok) {
+                            const fetchSessionData: GetSession[] = await fetchSession.json()
+                            if (fetchSessionData.length) {
+                                user.device = fetchSessionData.map(ses => { ses.sessionId, ses.device.id }) as any
+                            } else {
+                                user.device = []
+                            }
+                        } else {
+                            user.device = []
+                        }
+                    } else {
+                        user.subscription = {
+                            status: 0
+                        }
+                    }
                     return user
                 } else {
                     return null

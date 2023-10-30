@@ -2,7 +2,9 @@
 import { useEffect, useState } from 'react'
 import DashboardTemplate from '@/app/(dashboard)/DashboardTemplate'
 import { usePathname } from 'next/navigation'
+import { useSession } from 'next-auth/react'
 const Template = ({ children }: { children: React.ReactNode }) => {
+
     const [currentPage, setCurrentPage] = useState<string>('')
     const pathName = usePathname()
     useEffect(() => {

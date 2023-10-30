@@ -7,6 +7,7 @@ export const metadata: Metadata = {
 }
 
 export default function Home() {
+    // Cek ada device apa gak
     return (
         <>
             <div className='flex'>

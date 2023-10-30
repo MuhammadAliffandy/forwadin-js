@@ -14,6 +14,7 @@ const config: Config = {
         'primary': '#3366FF',
         'white-50': '#FAFBFF',
         'neutral-75': '#F3F5F8',
+        'customNeutral': '#777C88',
         'danger': '#D14343',
         'green-40': '#4FBEAB',
         'customGray': '#B0B4C5'
@@ -28,6 +29,15 @@ const config: Config = {
   },
   darkMode: "class",
   // plugins: [ nextui()],
-  plugins: [require("flowbite/plugin"), nextui()],
+  plugins: [require("flowbite/plugin"), nextui({
+    layout: {
+      borderWidth: {
+        small: '1px',
+        medium: '1px',
+        large: '1px',
+      },
+    },
+
+  })],
 }
 export default config

@@ -6,6 +6,7 @@ import ModalTemplate from '../../template/ModalTemplate';
 import { MoonLoader } from 'react-spinners';
 import { fetchClient } from '@/utils/helper/fetchClient';
 import { Session } from 'next-auth';
+import { signIn } from 'next-auth/react';
 interface QRModalProps {
     openModal: boolean,
     setopenModal: Dispatch<SetStateAction<boolean>>,
@@ -29,27 +30,6 @@ const QRModal = ({ openModal, setopenModal, data, session, update, refresh }: QR
             })
             if (result && result.ok) {
                 const resultData = await result.json()
-                if (session?.user?.device?.find(obj => obj.id === data?.id)) {
-                    const newDeviceList = session.user.device.map(obj => obj.id === data?.id ? { ...obj, sessionId: resultData.sessionId } : obj)
-                    await update({
-                        ...session,
-                        user: {
-                            ...session?.user,
-                            device: newDeviceList
-                        }
-                    })
-                } else {
-                    // If new
-                    const currentDeviceList = session?.user?.device!
-                    currentDeviceList.push({ id: data?.id as string, sessionId: resultData.sessionId })
-                    await update({
-                        ...session,
-                        user: {
-                            ...session?.user,
-                            device: currentDeviceList
-                        }
-                    })
-                }
                 setqrData(resultData.qr)
                 setisLoaded(true)
             } else {
@@ -80,9 +60,16 @@ const QRModal = ({ openModal, setopenModal, data, session, update, refresh }: QR
                 }
             }
         }, 7000)
+        const refreshSession = async () => {
+            await signIn('refresh', {
+                redirect: false,
+                user: session?.user
+            })
+        }
         return () => {
             clearInterval(checkScan)
             refresh()
+            refreshSession()
         }
 
     }, [])

@@ -25,8 +25,7 @@ const fetchClient = async ({ method, body = null, url, user }: FetchClientParams
                     console.log('refresh token')
                     const refresh = await signIn('refresh', {
                         redirect: false,
-                        refreshToken: user.refreshToken,
-                        device: user.device
+                        user: JSON.stringify(user)
                     })
                     if (refresh?.error) {
                         signOut()
@@ -72,8 +71,7 @@ const fetchClient = async ({ method, body = null, url, user }: FetchClientParams
                 console.log('refresh token')
                 const refresh = await signIn('refresh', {
                     redirect: false,
-                    refreshToken: session.user.refreshToken,
-                    device: session.user.device
+                    user: JSON.stringify(session?.user)
                 })
                 if (refresh?.error) {
                     signOut()
