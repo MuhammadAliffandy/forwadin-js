@@ -1,7 +1,8 @@
 import { NextApiResponseWithSocket } from "@/utils/socketTypes";
 import { Server as NetServer } from "http";
 import { NextRequest } from "next/server";
-import { Server as ServerIO } from 'Socket.IO'
+// @ts-ignore
+import { Server as ServerIO } from 'socket.io'
 
 export const config = {
     api: {
