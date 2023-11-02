@@ -39,6 +39,19 @@ const DashboardTemplate = ({ currentPage, children }: { currentPage: string, chi
         fetchUserProfile()
 
     }, [session?.user?.token])
+    const handleDelete = async () => {
+        if (window.confirm('Delete User?')) {
+            const deleteUser = await fetchClient({
+                url: "/users/delete",
+                method: 'DELETE'
+            })
+            if (deleteUser && deleteUser.ok) {
+                signOut({
+                    callbackUrl: '/signup'
+                })
+            }
+        }
+    }
 
     return (
         <>
@@ -61,9 +74,9 @@ const DashboardTemplate = ({ currentPage, children }: { currentPage: string, chi
                         {/* Message List */}
                         <MessageList currentPage={currentPage} user={session?.user} />
                         <p className='text-sm mt-2'>Tools</p>
-                        <NavButton text='Broadcast' href='/dashboard/broadcast' currentPage={currentPage} isDisabled={session?.user?.device.length === 0} />
-                        <NavButton text='Campaign' href='/dashboard/campaign' currentPage={currentPage} isDisabled={session?.user?.device.length === 0} />
-                        <NavButton text='Auto Reply' href='/dashboard/auto-reply' currentPage={currentPage} isDisabled={session?.user?.device.length === 0} />
+                        <NavButton text='Broadcast' href='/dashboard/broadcast' currentPage={currentPage} isDisabled={session?.user?.device?.length === 0} />
+                        <NavButton text='Campaign' href='/dashboard/campaign' currentPage={currentPage} isDisabled={session?.user?.device?.length === 0} />
+                        <NavButton text='Auto Reply' href='/dashboard/auto-reply' currentPage={currentPage} isDisabled={session?.user?.device?.length === 0} />
                         <p className='text-sm mt-2'>Others</p>
                         <NavButton text='Settings' href='/dashboard/settings' currentPage={currentPage} />
                     </div>
@@ -147,7 +160,10 @@ const DashboardTemplate = ({ currentPage, children }: { currentPage: string, chi
                                 </DropdownSection>
                                 <DropdownItem key={'forwardin profile'}>Forwardin Profile</DropdownItem>
                                 <DropdownItem key={'subscription'}>Subscription</DropdownItem>
-                                <DropdownItem key='sign out' className="text-danger" onClick={() => signOut()}>Sign Out</DropdownItem>
+                                <DropdownItem key='sign out' className="text-danger" onClick={() => signOut({ callbackUrl: '/signin' })}>Sign Out</DropdownItem>
+                                <DropdownItem onClick={handleDelete}>
+                                    Delete User (Dev)
+                                </DropdownItem>
                             </DropdownMenu>
                         </Dropdown>
                         <div className='flex-none bg-white rounded-full p-2 hover:cursor-pointer'>

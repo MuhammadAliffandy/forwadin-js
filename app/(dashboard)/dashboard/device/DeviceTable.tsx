@@ -10,9 +10,11 @@ import { fetchClient } from '@/utils/helper/fetchClient';
 import { toast } from 'react-toastify';
 import { Skeleton } from '@nextui-org/react';
 import DeleteModal from '@/components/dashboard/device/DeleteModal';
+import { useSocket } from '@/app/SocketProvider';
 
 const DeviceTable = ({ setcountDevice }: { setcountDevice: Dispatch<SetStateAction<number>> }) => {
     const { data: session, update } = useSession()
+    const { isConnected, socket } = useSocket()
     const [isLoaded, setisLoaded] = useState(false)
     const { push } = useRouter()
     const mainCheckboxRef = useRef<HTMLInputElement>(null)
@@ -119,7 +121,7 @@ const DeviceTable = ({ setcountDevice }: { setcountDevice: Dispatch<SetStateActi
     }
     useEffect(() => {
         fetchData()
-    }, [session?.user])
+    }, [session?.user?.token])
     useEffect(() => {
         if (mainCheckboxRef.current) {
             const checkObject = deviceData.find(obj => obj.checked === true)
@@ -154,7 +156,7 @@ const DeviceTable = ({ setcountDevice }: { setcountDevice: Dispatch<SetStateActi
     return (
         <>
             {openQrModal && (
-                <QRModal openModal={openQrModal} setopenModal={setopenQrModal} data={qrModalData} session={session} update={update} refresh={fetchData} />
+                <QRModal openModal={openQrModal} setopenModal={setopenQrModal} data={qrModalData} session={session} socket={socket} refresh={fetchData} />
             )}
             <DeleteModal setopenModal={setdeleteModal} openModal={deleteModal} count={deviceData.map(item => item.checked === true).length} deleteDevice={deleteDevice} />
             <AddDeviceModal openModal={deviceModal} setopenModal={setdeviceModal} fetchData={fetchData} />

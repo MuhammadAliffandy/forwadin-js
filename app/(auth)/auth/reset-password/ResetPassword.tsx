@@ -27,7 +27,7 @@ const ResetPassword = () => {
         document.querySelector('body')?.scroll(0, 0)
     }, [currentStep])
     useEffect(() => {
-        if (searchParams.get('token'))
+        if (searchParams?.get('token'))
             settoken(searchParams.get('token')!)
         else
             push('/auth/forgot-password')

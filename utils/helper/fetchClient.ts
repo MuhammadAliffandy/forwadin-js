@@ -15,7 +15,8 @@ const fetchClient = async ({ method, body = null, url, user }: FetchClientParams
                 method: method,
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' + user.token
+                    'Authorization': 'Bearer ' + user.token,
+                    'Access-Control-Allow-Origin': '*'
                 },
                 body: body,
             })

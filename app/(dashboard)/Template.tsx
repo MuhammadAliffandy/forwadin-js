@@ -6,7 +6,7 @@ import { useSession } from 'next-auth/react'
 const Template = ({ children }: { children: React.ReactNode }) => {
 
     const [currentPage, setCurrentPage] = useState<string>('')
-    const pathName = usePathname()
+    const pathName = usePathname()!
     useEffect(() => {
         if (pathName.includes('/dashboard/device'))
             setCurrentPage('Devices')

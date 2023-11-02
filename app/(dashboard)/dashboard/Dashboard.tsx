@@ -93,9 +93,9 @@ const Dashboard = () => {
 
         fetchProfile()
         fetchSubscription()
-        console.log(session?.user)
     }, [session?.user?.token])
-
+    useEffect(() => {
+    }, [session?.user?.device])
     return (
         <>
             {session?.user?.subscription.status === 0 && <ActivatePlanModal user={session.user} />}
@@ -116,7 +116,7 @@ const Dashboard = () => {
                     </div>
                 </div>
             </div>
-            {session?.user?.device.length === 0 && (
+            {session?.user?.device?.length === 0 && (
                 <div className='border-2 border-danger rounded-md px-4 py-3 flex justify-between mt-4'>
                     <div className='flex gap-4 items-center'>
                         <div className='flex-none'>

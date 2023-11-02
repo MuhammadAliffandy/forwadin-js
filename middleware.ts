@@ -17,7 +17,7 @@ export const middleware = async (request: NextRequest) => {
         })
         if (token) {
             const user = token?.user as User
-            if (user.device.length > 0) {
+            if (user.device?.length > 0) {
                 return NextResponse.next()
             }
             return NextResponse.redirect(new URL("/dashboard/device", request.url));

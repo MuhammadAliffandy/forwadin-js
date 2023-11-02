@@ -2,11 +2,8 @@ import NextAuth, { DefaultSession } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import type { NextAuthOptions, User } from 'next-auth'
-import { DeviceData, SubscriptionTypes } from "@/utils/types";
-interface DeviceSession {
-    id: string,
-    sessionId: string
-}
+import { DeviceData, DeviceSession, SubscriptionTypes } from "@/utils/types";
+
 interface Subscription {
     status: number,
     name?: string
@@ -29,6 +26,32 @@ interface GetSession {
     device: {
         id: string
     }
+}
+const getDeviceSession = async (data: GetSession[], token: string) => {
+    const newArray = await Promise.all(
+        data.map(async (ses) => {
+            const fetchDeviceDetails = await fetch(process.env.BACKEND_URL + '/devices/' + ses.device.id, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token
+                },
+            })
+
+            if (fetchDeviceDetails.ok) {
+                const body: DeviceData = await fetchDeviceDetails.json()
+                const asd = {
+                    id: ses.device.id,
+                    sessionId: ses.sessionId,
+                    name: body.name,
+                    phone: body.phone
+                }
+                return asd
+            }
+        })
+    )
+    console.log(newArray)
+    return newArray as any
 }
 export const authConfig: NextAuthOptions = {
     session: {
@@ -85,7 +108,7 @@ export const authConfig: NextAuthOptions = {
                         if (fetchSession.ok) {
                             const fetchSessionData: GetSession[] = await fetchSession.json()
                             if (fetchSessionData.length) {
-                                device = fetchSessionData.map(ses => { ses.sessionId, ses.device.id }) as any
+                                device = await getDeviceSession(fetchSessionData, resultData.accessToken)
                             }
                         }
                     }
@@ -149,7 +172,7 @@ export const authConfig: NextAuthOptions = {
                         if (fetchSession.ok) {
                             const fetchSessionData: GetSession[] = await fetchSession.json()
                             if (fetchSessionData.length) {
-                                user.device = fetchSessionData.map(ses => { ses.sessionId, ses.device.id }) as any
+                                user.device = await getDeviceSession(fetchSessionData, resultData.accessToken)
                             } else {
                                 user.device = []
                             }
@@ -225,7 +248,8 @@ export const authConfig: NextAuthOptions = {
                         if (fetchSession.ok) {
                             const fetchSessionData: GetSession[] = await fetchSession.json()
                             if (fetchSessionData.length) {
-                                user.device = fetchSessionData.map(ses => { ses.sessionId, ses.device.id }) as any
+                                user.device = await getDeviceSession(fetchSessionData, resultData.accessToken)
+                                console.log(user.device)
                             } else {
                                 user.device = []
                             }

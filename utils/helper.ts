@@ -116,3 +116,7 @@ export const formatCurrencyIDR = (number: number) => {
     }
     return '-'
 }
+export const getNumberFromString = (text: string) => {
+    const parts = text.split('@');
+    return parts[0]
+} 

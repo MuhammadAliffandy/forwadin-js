@@ -19,8 +19,10 @@
     "@types/react-dom": "18.2.7",
     "autoprefixer": "10.4.15",
     "bcrypt": "^5.1.1",
+    "bufferutil": "^4.0.8",
     "chart.js": "^4.0.0",
     "chartjs-plugin-zoom": "^2.0.1",
+    "cors": "^2.8.5",
     "country-list-with-dial-code-and-flag": "^5.0.3",
     "eslint-config-next": "^13.5.4",
     "flowbite": "^1.8.1",
@@ -28,6 +30,7 @@
     "framer-motion": "^10.16.4",
     "google-libphonenumber": "^3.2.33",
     "hammerjs": "^2.0.8",
+    "http": "^0.0.1-security",
     "next": "^13.5.4",
     "next-auth": "^4.23.1",
     "nodemailer": "^6.9.5",
@@ -44,9 +47,13 @@
     "react-toastify": "^9.1.3",
     "recharts": "^2.8.0",
     "sharp": "^0.32.6",
+    "socket.io": "^4.7.2",
+    "socket.io-client": "^4.7.2",
     "supports-color": "^8.1.1",
     "tailwindcss": "3.3.3",
-    "typescript": "5.2.2"
+    "typescript": "5.2.2",
+    "utf-8-validate": "^5.0.10",
+    "ws": "^8.14.2"
   },
   "devDependencies": {
     "@types/google-libphonenumber": "^7.4.26",

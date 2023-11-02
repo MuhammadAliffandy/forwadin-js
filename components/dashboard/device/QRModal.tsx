@@ -7,72 +7,76 @@ import { MoonLoader } from 'react-spinners';
 import { fetchClient } from '@/utils/helper/fetchClient';
 import { Session } from 'next-auth';
 import { signIn } from 'next-auth/react';
+import { Socket, io } from "socket.io-client";
+import { useSocket } from '@/app/SocketProvider';
 interface QRModalProps {
     openModal: boolean,
     setopenModal: Dispatch<SetStateAction<boolean>>,
     data: DeviceData | undefined,
     session: Session | null,
-    update: (data?: any) => Promise<Session | null>,
+    socket: Socket | null,
     refresh: () => void
 }
-
-const QRModal = ({ openModal, setopenModal, data, session, update, refresh }: QRModalProps) => {
+const QRModal = ({ openModal, setopenModal, data, session, socket, refresh }: QRModalProps) => {
     const [isLoaded, setisLoaded] = useState(false)
     const [qrData, setqrData] = useState('')
-    useEffect(() => {
-        const generateQR = async () => {
-            const result = await fetchClient({
-                method: 'POST',
-                body: JSON.stringify({
-                    deviceId: data?.id,
-                }),
-                url: '/sessions/create'
-            })
-            if (result && result.ok) {
-                const resultData = await result.json()
-                setqrData(resultData.qr)
-                setisLoaded(true)
-            } else {
-                toast.error('Gagal generate QR')
-                setisLoaded(true)
-            }
+    const generateQR = async () => {
+        const result = await fetchClient({
+            method: 'POST',
+            body: JSON.stringify({
+                deviceId: data?.id,
+            }),
+            url: '/sessions/create'
+        })
+        if (result && result.ok) {
+            const resultData = await result.json()
+            setqrData(resultData.qr)
+            setisLoaded(true)
+        } else {
+            toast.error('Gagal generate QR')
+            setisLoaded(true)
         }
+    }
+    useEffect(() => {
+
         generateQR()
-        const checkScan = setInterval(async () => {
-            if (session?.user?.device && data) {
-                const device = session?.user?.device.find(obj => obj.id === data.id)
-                console.log(device?.sessionId)
-                console.log(session.user.token)
 
-                const checkResult = await fetchClient({
-                    method: 'GET',
-                    url: '/sessions/' + device?.sessionId + '/status'
+        const refreshSession = async () => {
+            if (session?.user) {
+                const refresh = await signIn('refresh', {
+                    redirect: false,
+                    user: JSON.stringify(session?.user)
                 })
-                if (checkResult) {
-                    const body = await checkResult.json()
-                    console.log(body)
-                    if (body.status === 'AUTHENTICATED') {
-                        toast.success('Device berhasil terkoneksi')
-
-                        clearInterval(checkScan)
-                        setopenModal(false)
-                    }
+                if (refresh?.error) {
+                    toast.error('gagal update session')
+                    console.log(refresh.error)
                 }
             }
-        }, 7000)
-        const refreshSession = async () => {
-            await signIn('refresh', {
-                redirect: false,
-                user: session?.user
+        }
+        return () => {
+            refreshSession()
+            refresh()
+        }
+    }, [])
+    useEffect(() => {
+        const channel = `device:${data?.id}:status`
+        console.log(channel)
+        if (socket) {
+            socket.on(channel, (status: string) => {
+                console.log(status)
+                if (status === 'open') {
+                    toast.success('Connected!')
+                    setopenModal(false)
+                }
+                if (status === 'connecting') {
+                    toast.info('Connecting...')
+                }
             })
         }
         return () => {
-            clearInterval(checkScan)
-            refresh()
-            refreshSession()
+            socket?.off(channel)
         }
-
-    }, [])
+    }, [socket])
     return (
         <>
             <ModalTemplate openModal={openModal} setopenModal={setopenModal} outsideClose={false}>
