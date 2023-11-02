@@ -110,6 +110,33 @@ interface IncomingMessage {
     },
     checked?: boolean
 }
+export interface GetIncomingMessage {
+    data: IncomingMessage[],
+    metadata: {
+        totalMessages: number,
+        currentPage: number,
+        totalPages: number,
+        hasMore: boolean
+    }
+}
+export interface GetOutgoingMessage {
+    data: OutgoingMessage[],
+    metadata: {
+        totalMessages: number,
+        currentPage: number,
+        totalPages: number,
+        hasMore: boolean
+    }
+}
+export interface GetConversationMessage {
+    data: ConversationMessage[],
+    metadata: {
+        totalMessages: number,
+        currentPage: number,
+        totalPages: number,
+        hasMore: boolean
+    }
+}
 export interface ConversationMessage {
     pkId: number,
     id: string,
@@ -199,5 +226,20 @@ export interface SubscriptionTypes {
     subscriptionPlan: {
         name: string
     }
+}
+export interface DeviceSession {
+    id: string,
+    sessionId: string,
+    name: string,
+    phone: string,
+    // apiKey: string,
+    // serverId: number,
+    // status: string,
+    // created_at: string,
+    // updated_at: string,
+    // businessHourId?: number,
+    // userId: number,
+    // DeviceLabel: Label[],
+    // checked?: boolean
 }
 export type { UserRegisterData, MultipleCheckboxRef, CheckboxRef, DeviceData, Label, CountryCode, ContactData, MessageData, MediaMessageData, GroupData, IncomingMessage, OutgoingMessage, MultipleInputRef, ResetUserData, BroadcastData }

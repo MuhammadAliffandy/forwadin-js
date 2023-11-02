@@ -75,10 +75,10 @@ const ChatDetails = ({ message }: { message: ConversationMessage }) => {
         <>
             <div className="flex gap-2 items-center w-full">
                 <div style={{
-                    backgroundColor: '#' + message.contact.colorCode
-                }} className={`flex-none rounded-full text-white w-8 h-8 flex items-center justify-center`}>{getInitials(message.contact.firstName + ' ' + message.contact.lastName)}</div>
+                    backgroundColor: '#' + message.contact?.colorCode
+                }} className={`flex-none rounded-full text-white w-8 h-8 flex items-center justify-center`}>{getInitials(message.contact?.firstName + ' ' + message.contact?.lastName)}</div>
                 <div className="">
-                    <p>{message.contact.firstName} {message.contact.lastName}</p>
+                    <p>{message.contact?.firstName} {message.contact?.lastName}</p>
                     <p className="text-[#777C88]">{message.createdAt}</p>
                 </div>
             </div>

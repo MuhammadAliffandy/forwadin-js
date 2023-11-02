@@ -63,6 +63,7 @@ const EditContactModal = ({ openModal, setopenModal, fetchData, contactData }: E
             gender: formData.gender,
             dob: formatBackendBirthDate((formData.dob ? formData.dob : contactData?.dob))
         }
+        toast.success(contactData?.id)
         const result = await fetchClient({
             method: 'PUT',
             body: JSON.stringify(bodyForm),
