@@ -1,7 +1,7 @@
 import type { Server as HTTPServer } from 'http'
 import type { NextApiResponse } from 'next'
 import type { Socket as NetSocket } from 'net'
-import type { Server as IOServer } from 'Socket.IO'
+import type { Server as IOServer } from 'socket.io'
 
 interface SocketServer extends HTTPServer {
     io?: IOServer | undefined
