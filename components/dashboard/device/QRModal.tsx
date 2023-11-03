@@ -6,7 +6,7 @@ import ModalTemplate from '../../template/ModalTemplate';
 import { MoonLoader } from 'react-spinners';
 import { fetchClient } from '@/utils/helper/fetchClient';
 import { Session } from 'next-auth';
-import { signIn } from 'next-auth/react';
+import { signIn, useSession } from 'next-auth/react';
 import { Socket, io } from "socket.io-client";
 import { useSocket } from '@/app/SocketProvider';
 interface QRModalProps {
@@ -26,8 +26,11 @@ const QRModal = ({ openModal, setopenModal, data, session, socket, refresh }: QR
             body: JSON.stringify({
                 deviceId: data?.id,
             }),
-            url: '/sessions/create'
+            url: '/sessions/create',
+            user: session?.user
+
         })
+        console.log(result?.status)
         if (result && result.ok) {
             const resultData = await result.json()
             setqrData(resultData.qr)
@@ -58,6 +61,7 @@ const QRModal = ({ openModal, setopenModal, data, session, socket, refresh }: QR
             refresh()
         }
     }, [])
+
     useEffect(() => {
         const channel = `device:${data?.id}:status`
         console.log(channel)

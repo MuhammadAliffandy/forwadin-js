@@ -3,6 +3,7 @@ import ButtonSubmit from '@/components/form/ButtonSubmit'
 import InputForm from '@/components/form/InputForm'
 import ModalTemplate from '@/components/template/ModalTemplate'
 import { fetchClient } from '@/utils/helper/fetchClient'
+import { useSession } from 'next-auth/react'
 import { Dispatch, SetStateAction, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'react-toastify'
@@ -16,6 +17,7 @@ const AddGroupModal = (
             fetchData: () => void
         }
 ) => {
+    const { data: session } = useSession()
     const [isLoading, setisLoading] = useState(false)
     const { register, handleSubmit, formState: { errors } } = useForm<GroupSubmitProps>()
     const onSubmit = async (formData: GroupSubmitProps) => {
@@ -24,7 +26,8 @@ const AddGroupModal = (
         const result = await fetchClient({
             method: 'POST',
             url: '/groups/create',
-            body: JSON.stringify({ name: formData.name })
+            body: JSON.stringify({ name: formData.name }),
+            user: session?.user
         })
         if (result && result.ok) {
             toast.success('Group berhasil ditambahkan')

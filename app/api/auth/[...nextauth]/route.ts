@@ -50,7 +50,6 @@ const getDeviceSession = async (data: GetSession[], token: string) => {
             }
         })
     )
-    console.log(newArray)
     return newArray as any
 }
 export const authConfig: NextAuthOptions = {
@@ -85,7 +84,7 @@ export const authConfig: NextAuthOptions = {
                 if (result.ok) {
                     const resultData = await result.json()
 
-                    const userSubscription = await fetch(process.env.BACKEND_URL + '/users/subscription/', {
+                    const userSubscription = await fetch(process.env.BACKEND_URL + '/users/' + userData.id + '/subscription/', {
                         method: 'GET',
                         headers: {
                             'Content-Type': 'application/json',
@@ -149,7 +148,7 @@ export const authConfig: NextAuthOptions = {
                         subscription: {},
                         device: []
                     }
-                    const userSubscription = await fetch(process.env.BACKEND_URL + '/users/subscription/', {
+                    const userSubscription = await fetch(process.env.BACKEND_URL + '/users/' + user.id + '/subscription/', {
                         method: 'GET',
                         headers: {
                             'Content-Type': 'application/json',
@@ -225,7 +224,7 @@ export const authConfig: NextAuthOptions = {
                     user.id = resultData.id
                     user.token = resultData.accessToken
                     user.refreshToken = resultData.refreshToken
-                    const userSubscription = await fetch(process.env.BACKEND_URL + '/users/subscription/', {
+                    const userSubscription = await fetch(process.env.BACKEND_URL + '/users/' + user.id + '/subscription/', {
                         method: 'GET',
                         headers: {
                             'Content-Type': 'application/json',
@@ -249,7 +248,6 @@ export const authConfig: NextAuthOptions = {
                             const fetchSessionData: GetSession[] = await fetchSession.json()
                             if (fetchSessionData.length) {
                                 user.device = await getDeviceSession(fetchSessionData, resultData.accessToken)
-                                console.log(user.device)
                             } else {
                                 user.device = []
                             }

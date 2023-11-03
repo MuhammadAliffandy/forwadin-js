@@ -26,7 +26,7 @@ const DashboardTemplate = ({ currentPage, children }: { currentPage: string, chi
     const fetchUserProfile = async () => {
 
         const result = await fetchClient({
-            url: '/users',
+            url: '/users/' + session?.user?.id,
             method: 'GET',
             user: session?.user
         })
@@ -42,8 +42,9 @@ const DashboardTemplate = ({ currentPage, children }: { currentPage: string, chi
     const handleDelete = async () => {
         if (window.confirm('Delete User?')) {
             const deleteUser = await fetchClient({
-                url: "/users/delete",
-                method: 'DELETE'
+                url: "/users/" + session?.user?.id + "/delete",
+                method: 'DELETE',
+                user: session?.user
             })
             if (deleteUser && deleteUser.ok) {
                 signOut({

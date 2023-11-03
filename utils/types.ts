@@ -69,7 +69,12 @@ interface ContactData {
     ContactLabel?: Label[],
     contactGroups?: DetailContactGroup[],
     email: string,
-    device?: string,
+    contactDevices: {
+        device: {
+            name: string,
+            id: string
+        }
+    }[],
     createdAt: string,
     updatedAt: string,
     checked?: boolean,
@@ -110,17 +115,8 @@ interface IncomingMessage {
     },
     checked?: boolean
 }
-export interface GetIncomingMessage {
-    data: IncomingMessage[],
-    metadata: {
-        totalMessages: number,
-        currentPage: number,
-        totalPages: number,
-        hasMore: boolean
-    }
-}
-export interface GetOutgoingMessage {
-    data: OutgoingMessage[],
+export interface GetMessage<T> {
+    data: T[],
     metadata: {
         totalMessages: number,
         currentPage: number,
@@ -157,16 +153,24 @@ export interface ConversationMessage {
     checked?: boolean
 }
 interface OutgoingMessage {
+
+    pkId: number,
     id: string,
     to: string,
     message: string,
-    contact: ContactData,
-    status: string,
-    created_at: string,
-    updated_at: string,
+    schedule: string,
+    status: number,
     source: string,
-    type: string,
-    checked?: boolean
+    createdAt: string,
+    updatedAt: string,
+    sessionId: string,
+    contactId: number,
+    contact: {
+        firstName: string,
+        lastName: string,
+        colorCode: string
+    }
+
 }
 interface GroupData {
     pkId: number,
@@ -232,14 +236,20 @@ export interface DeviceSession {
     sessionId: string,
     name: string,
     phone: string,
-    // apiKey: string,
-    // serverId: number,
-    // status: string,
-    // created_at: string,
-    // updated_at: string,
-    // businessHourId?: number,
-    // userId: number,
-    // DeviceLabel: Label[],
-    // checked?: boolean
 }
+
+export interface AutoReply {
+    pkId: number,
+    id: string,
+    name: string,
+    request: string[],
+    response: string,
+    schedule: string,
+    status: boolean,
+    receivers: string[],
+    createdAt: string,
+    updatedAt: string,
+    deviceId: string
+}
+
 export type { UserRegisterData, MultipleCheckboxRef, CheckboxRef, DeviceData, Label, CountryCode, ContactData, MessageData, MediaMessageData, GroupData, IncomingMessage, OutgoingMessage, MultipleInputRef, ResetUserData, BroadcastData }

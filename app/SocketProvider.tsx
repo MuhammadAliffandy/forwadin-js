@@ -39,6 +39,7 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
             console.log(`Received message from server: ${message}`);
         });
         socketInstance.on("disconnected", () => {
+            console.log('socket disconnected')
             setisConnected(false)
         })
         setsocket(socketInstance)

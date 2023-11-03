@@ -2,23 +2,38 @@
 import ModalTemplate from '@/components/template/ModalTemplate'
 import { fetchClient } from '@/utils/helper/fetchClient'
 import { ContactData } from '@/utils/types'
+import { User } from 'next-auth'
 import { Dispatch, SetStateAction } from 'react'
+import { toast } from 'react-toastify'
 const DeleteContactModal = (
-    { openModal, setopenModal, contacts }:
+    { openModal, setopenModal, contacts, user, groupId, refresh }:
         {
-            openModal: boolean, setopenModal: Dispatch<SetStateAction<boolean>>,
-            contacts: ContactData[]
+            openModal: boolean,
+            setopenModal: Dispatch<SetStateAction<boolean>>,
+            contacts: ContactData[],
+            user: User,
+            groupId: string,
+            refresh: () => void
         }
 ) => {
     const deleteContact = async () => {
+
         const result = await fetchClient({
             url: '/groups/remove',
             method: 'DELETE',
+            user: user,
             body: JSON.stringify({
-
-            })
+                groupId: groupId,
+                contactIds: contacts.map(item => item.id)
+            }),
         })
-        console.log(contacts)
+        if (result && result.ok) {
+            toast.success('Berhasil hapus member')
+            refresh()
+            setopenModal(false)
+        } else {
+            toast.error('Gagal hapus member')
+        }
     }
     return (
         <ModalTemplate outsideClose={true} openModal={openModal} setopenModal={setopenModal}>

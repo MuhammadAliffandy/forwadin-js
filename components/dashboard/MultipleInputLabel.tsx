@@ -3,8 +3,12 @@ import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react"
 import { animated, useTransition } from "@react-spring/web";
 
 const MultipleInputLabel = (
-    { labelList, setlabelList }:
-        { labelList: Label[], setlabelList: Dispatch<SetStateAction<Label[]>>, }
+    { labelList, setlabelList, placeholder }:
+        {
+            labelList: Label[],
+            setlabelList: Dispatch<SetStateAction<Label[]>>,
+            placeholder?: string
+        }
 ) => {
     const labelInputRef = useRef<HTMLInputElement>(null)
     const [isLabelOpen, setisLabelOpen] = useState(false)
@@ -75,7 +79,7 @@ const MultipleInputLabel = (
                             <div className="hover:cursor-pointer" onClick={() => labelInputRef.current?.focus()} >
                                 <img src="/assets/icons/search_grey.png" alt="" />
                             </div>
-                            <input maxLength={10} ref={labelInputRef} type="text" placeholder="Cari / Tambah label" className=" flex-1 w-full text-xs outline-none border-none focus:ring-0 focus:outline-none focus:border-transparent" value={inputText} onChange={(e) => setinputText(e.target.value)}
+                            <input maxLength={15} ref={labelInputRef} type="text" placeholder={placeholder ? placeholder : "Cari / Tambah label"} className=" flex-1 w-full text-xs outline-none border-none focus:ring-0 focus:outline-none focus:border-transparent" value={inputText} onChange={(e) => setinputText(e.target.value)}
                                 onKeyDown={handleEnter}
                             />
                         </div>

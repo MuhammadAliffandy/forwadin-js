@@ -34,7 +34,7 @@ const Dashboard = () => {
         color: 'success'
     })
     const fetchProfile = async () => {
-        const result = await fetchClient({ url: '/users', method: 'GET', user: session?.user })
+        const result = await fetchClient({ url: '/users/' + session?.user?.id, method: 'GET', user: session?.user })
         if (result) {
             const data = await result.json()
             if (result.status === 200) {
@@ -47,8 +47,9 @@ const Dashboard = () => {
     }
     const fetchSubscription = async () => {
         const result = await fetchClient({
-            url: '/users/subscription',
-            method: 'GET'
+            url: '/users/' + session?.user?.id + '/subscription',
+            method: 'GET',
+            user: session?.user
         })
         if (result && result.ok) {
             const resultData: SubscriptionTypes = await result.json()
@@ -90,7 +91,6 @@ const Dashboard = () => {
         }
     }
     useEffect(() => {
-
         fetchProfile()
         fetchSubscription()
     }, [session?.user?.token])

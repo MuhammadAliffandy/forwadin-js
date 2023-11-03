@@ -12,6 +12,7 @@ const AddDeviceModal = (
     { openModal, setopenModal, fetchData }:
         { openModal: boolean, setopenModal: Dispatch<SetStateAction<boolean>>, fetchData: () => void }
 ) => {
+    const { data: session } = useSession()
     const [isLoading, setisLoading] = useState(false)
     const [deviceName, setdeviceName] = useState('')
     const [inputError, setinputError] = useState({ error: false, message: '' })
@@ -28,7 +29,8 @@ const AddDeviceModal = (
                     name: deviceName,
                     labels: (labelList ? labelList.filter(item => item.label.active).map(item => item.label.name) : null)
                 }),
-                url: '/devices/create'
+                url: '/devices/create',
+                user: session?.user
             })
             setisLoading(false)
             if (result && result.ok) {

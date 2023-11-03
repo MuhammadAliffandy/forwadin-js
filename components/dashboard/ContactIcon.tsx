@@ -9,16 +9,18 @@ interface ContactIconProps {
     phone: string
 }
 const ContactIcon = ({ contact, phone }: ContactIconProps) => {
-    if (contact) {
-        <>
-            <div className="">
-                <div style={{
-                    backgroundColor: '#' + contact?.colorCode
-                }} className={`flex-none rounded-full text-white w-7 h-7 flex s-center justify-center`}>{getInitials((contact.firstName + ' ' + contact.lastName))}</div>
-            </div>
-            <p>{contact.firstName} {contact.lastName}</p>
-        </>
 
+    if (contact) {
+        return (
+            <>
+                <div className="">
+                    <div style={{
+                        backgroundColor: '#' + contact.colorCode
+                    }} className={`flex-none rounded-full text-white w-7 h-7 flex items-center justify-center`}>{getInitials(contact.firstName + ' ' + contact.lastName)}</div>
+                </div>
+                <p>{contact.firstName} {contact.lastName}</p>
+            </>
+        )
     }
     return (
         <>
