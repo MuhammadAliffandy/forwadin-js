@@ -1,78 +1,34 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { OutgoingMessage, MultipleCheckboxRef } from '@/utils/types';
-import OutgoingList from './OutgoingList';
-const OutgoingTable = () => {
+import { GetMessage, OutgoingMessage } from '@/utils/types';
+import { Pagination, Skeleton, Spinner, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@nextui-org/react';
+import ContactIcon from '@/components/dashboard/ContactIcon';
+import { getNumberFromString, formatDate } from '@/utils/helper';
+import { useSession } from 'next-auth/react';
+import { fetchClient } from '@/utils/helper/fetchClient';
+import { User } from 'next-auth';
+import { PAGINATION_BATCH } from '@/utils/constant';
+const OutgoingTable = ({ settotalMessage, totalMessage, sessionId, user }: {
+    settotalMessage: Dispatch<SetStateAction<number>>,
+    totalMessage: number,
+    sessionId: string,
+    user: User | undefined
+}) => {
     const { push } = useRouter()
-    const mainCheckboxRef = useRef<HTMLInputElement>(null)
-    const messageCheckboxRef = useRef<MultipleCheckboxRef>({})
+    const [isLoaded, setisLoaded] = useState(false)
+    const [isLoading, setisLoading] = useState(false)
     const [isChecked, setisChecked] = useState(false)
     const [messageData, setmessageData] = useState<OutgoingMessage[]>([
-        {
-            id: '1',
-            to: '6281678923',
-            message: "Join us this month for a celebration of",
-            contact: {
-                id: '1',
-                phone: "6281357995175",
-                firstName: 'Ihsanul',
-                lastName: 'Afkar',
-                initial: 'IA',
-                colorCode: '4FBEAB',
-                gender: "Laki-laki",
-                email: 'ihsanulafkar@gmail.com',
-                honorific: 'Mr',
-                country: 'Indonesia',
-                dob: '10/10/2010',
-                ContactLabel: [],
-                createdAt: '11.9.2023, 2:43 PM',
-                updatedAt: '11.9.2023, 2:43 PM'
-            },
-            status: "received",
-            type: 'broadcast',
-            source: '6281678923',
-            created_at: "10/09/2023 13:35:00",
-            updated_at: "10/09/2023 13:35:00",
-            checked: false
-        },
     ])
     const [searchText, setsearchText] = useState('')
     const [searchedMessage, setsearchedMessage] = useState<OutgoingMessage[]>([])
-    const [addContactModal, setaddContactModal] = useState(false)
-    const handleCheckBoxClick = (e: React.FormEvent<HTMLInputElement>, id: string) => {
-        const newmessageData = messageData.map(obj => {
-            return (obj.id === id ? { ...obj, checked: e.currentTarget.checked } : obj)
-        })
-        setmessageData(() => newmessageData)
-    }
+    const [currentPage, setcurrentPage] = useState(1)
+    const [totalPage, settotalPage] = useState(1)
+    const [hasMore, sethasMore] = useState(false)
+    const [selectedMessage, setselectedMessage] = useState(new Set())
 
-    const handleIndexCheckbox = (e: React.MouseEvent) => {
-        const currentmessageData = (searchText ? searchedMessage : messageData)
-        if (mainCheckboxRef.current && !mainCheckboxRef.current.checked) {
-            const newArray = currentmessageData.map((obj, idx) => {
-                messageCheckboxRef.current[`checkbox_${obj.id}`].checked = false
-                return { ...obj, checked: false }
-            })
-            if (searchText)
-                setsearchedMessage(newArray)
-            else
-                setmessageData(() => newArray)
-        } else {
-            const newArray = currentmessageData.map((obj, idx) => {
-                messageCheckboxRef.current[`checkbox_${obj.id}`].checked = true
-                return { ...obj, checked: true }
-            })
-            if (searchText)
-                setsearchedMessage(() => newArray)
-            else
-                setmessageData(() => newArray)
-        }
-    }
-    const handleOpenDetailModal = (params: string) => {
-        push('/dashboard/contact/' + params)
-    }
     const filterMessage = (text: string) => {
         const regex = new RegExp(text, 'i')
         return messageData.filter(item => {
@@ -85,44 +41,40 @@ const OutgoingTable = () => {
     }
     const handleDeleteMessage = () => {
         // TODO
-        const checkedContacts = messageData.filter(item => item.checked === false).map(item => item)
-        setmessageData(checkedContacts)
     }
-    useEffect(() => {
-        if (mainCheckboxRef.current) {
-            const checkObject = messageData.find(obj => obj.checked === true)
-            if (checkObject) {
-                mainCheckboxRef.current.checked = true
-                setisChecked(true)
-            }
-            else {
-                mainCheckboxRef.current.checked = false
-                setisChecked(false)
-            }
+    const fetchOutgoingMessage = async () => {
+        setisLoading(true)
+        const result = await fetchClient({
+            url: `/messages/${sessionId}/outgoing?page=${currentPage}&pageSize=${PAGINATION_BATCH}`,
+            method: 'GET',
+            user: user
+        })
+        if (result && result.ok) {
+            const resultData: GetMessage<OutgoingMessage> = await result.json()
+            setmessageData(resultData.data)
+            setcurrentPage(resultData.metadata.currentPage)
+            sethasMore(resultData.metadata.hasMore)
+            settotalPage(resultData.metadata.totalPages)
+            settotalMessage(resultData.metadata.totalMessages)
         }
-    }, [messageData])
-    useEffect(() => {
-        if (mainCheckboxRef.current) {
-            const checkObject = searchedMessage.find(obj => obj.checked === true)
-            if (checkObject) {
-                mainCheckboxRef.current.checked = true
-                setisChecked(true)
-            }
-            else {
-                mainCheckboxRef.current.checked = false
-                setisChecked(false)
-            }
-        }
-    }, [searchedMessage])
-
+        setisLoaded(true)
+        setisLoading(false)
+    }
     useEffect(() => {
         const searchResult = filterMessage(searchText)
         setsearchedMessage(searchResult)
     }, [searchText])
+    useEffect(() => {
+        if (user?.token && sessionId)
+            fetchOutgoingMessage()
+
+    }, [user?.token, sessionId])
+    useEffect(() => {
+        fetchOutgoingMessage()
+    }, [currentPage])
 
     return (
         <>
-            {/* <AddContactModal openModal={addContactModal} setopenModal={setaddContactModal} /> */}
             <div className="mt-8 p-4 bg-white rounded-md">
                 <div className="flex sm:flex-row flex-col gap-2 justify-between">
                     <div className="basis-1/2">
@@ -140,54 +92,86 @@ const OutgoingTable = () => {
                     </div>
                 </div>
             </div>
-            <div className='overflow-x-scroll allowed-scroll'>
-                <table className="w-full text-center font-nunito text-xs font-bold ">
-                    <thead className='bg-neutral-75'>
-                        <tr className=''>
-                            <th className='py-4 checkbox'>
-                                <input ref={mainCheckboxRef} type="checkbox" name="main_checkbox" id="main_checkbox" className='rounded-sm focus:ring-transparent' onClick={handleIndexCheckbox} />
-                            </th>
-                            <th className='p-4 whitespace-pre'>Nomor HP</th>
-                            <th className='p-4'>Nama</th>
-                            <th className='p-4'>Tipe</th>
-                            <th className='p-4 whitespace-pre'>Dikirim Pada</th>
-                            <th className='p-4'>Detail</th>
-                        </tr>
-                    </thead>
-                    <tbody className='bg-white'>
-                        {searchText ? (
-                            <OutgoingList
-                                outgoingData={searchedMessage}
-                                multipleCheckboxRef={messageCheckboxRef}
-                                handleCheckBoxClick={handleCheckBoxClick}
-                                handleOpenDetailModal={handleOpenDetailModal}
-                            />
-                        ) : (
-                            <OutgoingList
-                                outgoingData={messageData}
-                                multipleCheckboxRef={messageCheckboxRef}
-                                handleCheckBoxClick={handleCheckBoxClick}
-                                handleOpenDetailModal={handleOpenDetailModal}
-                            />
+            {isLoaded ? (
 
-                        )}
-                    </tbody>
-                </table>
-                {messageData.length === 0 && (
-                    <div className='w-full bg-white p-12'>
-                        <div className='w-full max-w-md mx-auto flex flex-col gap-4'>
-                            <p className='text-[16px] font-bold'>Kontak masih kosong</p>
-                            <p className='text-xs text-[#777C88]'>Tambahkan nomor ke dalam kontak anda.</p>
-                            <p className='text-xs'>Dengan kontak ini, Anda dapat dengan mudah berkomunikasi dengan kontak yang anda simpan</p>
-                            <div className='flex'>
-                                <div onClick={() => setaddContactModal(true)} className="bg-primary rounded-md px-6 text-white text-center items-center flex hover:cursor-pointer justify-center p-2">
-                                    Tambah Kontak
+                <div className=' mt-4'>
+                    <Table
+                        aria-label="Incoming Chat"
+                        color='default'
+                        selectionMode="multiple"
+                        isHeaderSticky
+                        classNames={{
+                            td: 'text-[11px] font-nunito',
+                            tr: 'text-[11px] font-nunito',
+                            base: "max-h-[55vh] overflow-y-scroll",
+                            table: "",
+                            thead: 'rounded-md',
+                            wrapper: 'rounded-md'
+                        }}
+                        radius='md'
+                        selectedKeys={selectedMessage as any}
+                        onSelectionChange={setselectedMessage as any}
+                    >
+                        <TableHeader>
+                            <TableColumn
+                            >Nomor HP</TableColumn>
+                            <TableColumn
+                            >Nama</TableColumn>
+                            <TableColumn
+                            >Diterima Pada</TableColumn>
+                            <TableColumn
+                            >Lihat Chat</TableColumn>
+                        </TableHeader>
+                        <TableBody
+                            isLoading={isLoading}
+                            loadingContent={<Spinner label="Loading..." />}
+                            emptyContent={<div className='w-full bg-white p-12'>
+                                <div className='w-full max-w-md mx-auto flex flex-col gap-4'>
+                                    <p className='text-[16px] font-bold'>Pesan masuk masih kosong</p>
+                                    <p className='text-xs text-[#777C88]'>Pesan yang dikirimkan kepada anda akan masuk di sini</p>
                                 </div>
-                            </div>
-                        </div>
+                            </div>} items={messageData}>
+                            {(item: OutgoingMessage) => (
+                                <TableRow key={item.id}>
+                                    <TableCell >+{getNumberFromString(item.to)}</TableCell>
+                                    <TableCell> <div className="flex items-center gap-2">
+                                        <ContactIcon phone={item.to} contact={item.contact} />
+                                    </div></TableCell>
+                                    <TableCell>
+                                        {formatDate(item.createdAt)}
+                                    </TableCell>
+                                    <TableCell>
+                                        {item.message}
+                                    </TableCell>
+                                </TableRow>
+                            )}
+                        </TableBody>
+                    </Table>
+
+                    <div className="flex w-full justify-center mt-2">
+                        <Pagination
+                            isCompact
+
+                            showControls
+                            showShadow
+                            color="primary"
+                            page={currentPage}
+                            total={totalPage}
+                            onChange={setcurrentPage}
+                            variant="light"
+                            size='sm'
+                        />
                     </div>
-                )}
-            </div >
+                </div >
+
+            ) : (
+                <div className='mt-4 flex flex-col gap-2 p-4 bg-white'>
+
+                    <Skeleton className={'w-full h-3 rounded-full'} />
+                    <Skeleton className={'w-full h-3 rounded-full'} />
+                    <Skeleton className={'w-full h-3 rounded-full'} />
+                </div>
+            )}
         </>
     )
 }

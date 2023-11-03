@@ -42,6 +42,7 @@
     "react-chartjs-2": "^5.0.0",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.46.1",
+    "react-infinite-scroll-component": "^6.1.0",
     "react-scroll-motion": "^0.3.2",
     "react-spinners": "^0.13.8",
     "react-toastify": "^9.1.3",

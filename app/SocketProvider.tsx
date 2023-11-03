@@ -16,18 +16,20 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
     const [socket, setsocket] = useState(null)
     const [isConnected, setisConnected] = useState(false)
     useEffect(() => {
-        console.log(process.env.NEXT_PUBLIC_BASE_URL)
-        const socketInstance = new (ClientIO as any)(process.env.NEXT_PUBLIC_SITE_URL!, {
-            path: '/api/socket/io',
-            addTrailingSlash: false,
+        // console.log(process.env.NEXT_PUBLIC_BACKEND_URL)
+        const socketInstance = new (ClientIO as any)(process.env.NEXT_PUBLIC_BACKEND_URL!, {
+            // path: '/api/socket/io',
+            // addTrailingSlash: false,
             reconnection: true,
             reconnectionAttempts: 5,
             reconnectionDelay: 1000
         })
         socketInstance.on("connect", () => {
+            console.log('socket connected')
             setisConnected(true)
         })
         socketInstance.on("disconnected", () => {
+            console.log('socket disconnected')
             setisConnected(false)
         })
         setsocket(socketInstance)

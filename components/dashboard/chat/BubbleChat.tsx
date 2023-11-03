@@ -1,9 +1,10 @@
+import { formatDate } from "@/utils/helper"
 import { useEffect, useState } from "react"
 
 interface BubbleChatProps {
     text: string,
     received: string,
-    status: number,
+    status?: number,
     isOutgoing?: boolean,
     currentDate: Date
 }
@@ -11,10 +12,11 @@ const BubbleChat = ({ text, received, status, isOutgoing = false, currentDate }:
     const messageDate = new Date(Date.parse(received))
     const [receivedMessage, setreceivedMessage] = useState(received)
     useEffect(() => {
-        console.log(messageDate)
-
+        console.log(received)
         if (Math.abs(currentDate.getTime() - messageDate.getTime()) <= 300000)
             setreceivedMessage('now')
+        else
+            setreceivedMessage(received)
     }, [])
     if (isOutgoing)
         return (
@@ -23,7 +25,9 @@ const BubbleChat = ({ text, received, status, isOutgoing = false, currentDate }:
                     <p>{text}</p>
                     <div className="flex justify-end items-center gap-2 mt-2">
                         <p className="text-customGray">{receivedMessage}</p>
-                        <p>{status}</p>
+                        {status && (
+                            <p>{status}</p>
+                        )}
                     </div>
                 </div>
             </div>

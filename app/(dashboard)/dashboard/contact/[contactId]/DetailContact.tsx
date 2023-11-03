@@ -1,52 +1,25 @@
 'use client'
 import dynamic from 'next/dynamic'
 const EditContactModal = dynamic(() => import('@/components/dashboard/contact/detail/EditContactModal'), { ssr: false })
-import { formatBirthDate } from '@/utils/helper'
+import { formatBirthDate, formatDate, getInitials } from '@/utils/helper'
 import { fetchClient } from '@/utils/helper/fetchClient'
-import { ContactData, MediaMessageData, MessageData, MultipleCheckboxRef } from '@/utils/types'
+import { ContactData, GetMessage, IncomingMessage, MediaMessageData, MessageData, MultipleCheckboxRef } from '@/utils/types'
 import Link from 'next/link'
 import { Skeleton } from '@nextui-org/react'
 import { useEffect, useRef, useState } from 'react'
 import { toast } from 'react-toastify'
+import { useSession } from 'next-auth/react'
+import BubbleChat from '@/components/dashboard/chat/BubbleChat'
 
 const DetailContact = ({ contactId }: { contactId: string }) => {
+    const { data: session } = useSession()
+    const currentDate = new Date()
     const [openModal, setopenModal] = useState(false)
     const [isLoaded, setisLoaded] = useState(false)
     const [contactData, setcontactData] = useState<ContactData>()
     const [switchButton, setswitchButton] = useState('history')
-    const [message, setmessage] = useState<MessageData[]>([
-        {
-            id: '1',
-            from: 'Lorem Ipsum',
-            message: "Join us this month for a celebration of art and music! We'll be hosting the Harmony Heights Music Festival, Samantha Knight's solo art exhibition, and an album release party for River Reed's new album 'Echoes in the Wilderness'. Don't miss out on this exciting lineup of events! [website link]",
-            created_at: '11.9.2023, 2:43 PM',
-            received_at: '11.9.2023, 2:43 PM',
-            updated_at: '11.9.2023, 2:43 PM',
-        },
-        {
-            id: '2',
-            from: 'Lorem Ipsum',
-            message: "Join us this month for a celebration of art and music! We'll be hosting the Harmony Heights Music Festival, Samantha Knight's solo art exhibition, and an album release party for River Reed's new album 'Echoes in the Wilderness'. Don't miss out on this exciting lineup of events! [website link]",
-            created_at: '11.9.2023, 2:43 PM',
-            received_at: '11.9.2023, 2:43 PM',
-            updated_at: '11.9.2023, 2:43 PM',
-        },
-        {
-            id: '3',
-            from: 'Lorem Ipsum',
-            message: "Join us this month for a celebration of art and music! We'll be hosting the Harmony Heights Music Festival, Samantha Knight's solo art exhibition, and an album release party for River Reed's new album 'Echoes in the Wilderness'. Don't miss out on this exciting lineup of events! [website link]",
-            created_at: '11.9.2023, 2:43 PM',
-            received_at: '11.9.2023, 2:43 PM',
-            updated_at: '11.9.2023, 2:43 PM',
-        },
-        {
-            id: '4',
-            from: 'Lorem Ipsum',
-            message: "Join us this month for a celebration of art and music! We'll be hosting the Harmony Heights Music Festival, Samantha Knight's solo art exhibition, and an album release party for River Reed's new album 'Echoes in the Wilderness'. Don't miss out on this exciting lineup of events! [website link]",
-            created_at: '11.9.2023, 2:43 PM',
-            received_at: '11.9.2023, 2:43 PM',
-            updated_at: '11.9.2023, 2:43 PM',
-        },
+    const [messageCount, setmessageCount] = useState(0)
+    const [message, setmessage] = useState<IncomingMessage[]>([
     ])
     const mainCheckboxRef = useRef<HTMLInputElement>(null)
     const mediaMessageCheckboxRef = useRef<MultipleCheckboxRef>({})
@@ -126,6 +99,7 @@ const DetailContact = ({ contactId }: { contactId: string }) => {
         const result = await fetchClient({
             method: 'GET',
             url: '/contacts/' + contactId,
+            user: session?.user
         })
         if (result) {
             const data: ContactData = await result.json()
@@ -140,13 +114,36 @@ const DetailContact = ({ contactId }: { contactId: string }) => {
         }
 
     }
-
+    const fetchContactMessage = async () => {
+        const contactSession = session?.user?.device.find(item => item.id === contactData?.contactDevices[0].device.id)
+        if (contactSession?.sessionId) {
+            const result = await fetchClient({
+                url: `/messages/${contactSession?.sessionId}/incoming?phoneNumber=${contactData?.phone}`,
+                method: 'GET',
+                user: session?.user
+            })
+            if (result && result.ok) {
+                const resultData: GetMessage<IncomingMessage> = await result.json()
+                setmessage(resultData.data)
+                setmessageCount(resultData.data.length)
+                console.log(resultData)
+            } else {
+                toast.error('gagal fetch message')
+            }
+        }
+    }
     useEffect(() => {
         fetchDetailContact()
-    }, [])
+    }, [session?.user?.token])
+    useEffect(() => {
+        if (contactData)
+            fetchContactMessage()
+    }, [contactData])
     return (
         <>
-            <EditContactModal setopenModal={setopenModal} openModal={openModal} contactData={contactData} fetchData={fetchDetailContact} />
+            {contactData && (
+                <EditContactModal setopenModal={setopenModal} openModal={openModal} contactData={contactData} fetchData={fetchDetailContact} />
+            )}
             <div className='flex justify-center items-center lg:items-start lg:flex-row flex-col gap-4 mt-8'>
                 <div className='max-w-sm w-full items-center flex flex-col gap-4'>
                     <div className='w-full max bg-white rounded-md p-4 relative'>
@@ -311,7 +308,7 @@ const DetailContact = ({ contactId }: { contactId: string }) => {
                                     <div className='flex gap-2'>
                                         <div className={'flex gap-2 px-4 py-2 items-center rounded-md group hover:bg-primary hover:cursor-pointer ' + (switchButton === 'history' ? 'bg-primary' : 'bg-white')} onClick={() => setswitchButton('history')}>
                                             <div className={'group-hover:text-white ' + (switchButton === 'history' ? 'text-white' : 'text-black')}>History</div>
-                                            <div className={'rounded-md group-hover:text-black group-hover:bg-white flex items-center justify-center h-5 w-5 text-xs ' + (switchButton === 'history' ? 'bg-white text-black' : 'bg-black text-white')} >3</div>
+                                            <div className={'rounded-md group-hover:text-black group-hover:bg-white flex items-center justify-center h-5 w-5 text-xs ' + (switchButton === 'history' ? 'bg-white text-black' : 'bg-black text-white')} >{messageCount}</div>
                                         </div>
                                         <div className={'flex gap-2 px-4 py-2 items-center rounded-md group hover:bg-primary hover:cursor-pointer ' + (switchButton === 'media' ? 'bg-primary' : 'bg-white')} onClick={() => setswitchButton('media')}>
                                             <div className={'group-hover:text-white ' + (switchButton === 'media' ? 'text-white' : 'text-black')}>Media</div>
@@ -328,20 +325,27 @@ const DetailContact = ({ contactId }: { contactId: string }) => {
                                 <div className='mt-4 max-h-[550px] overflow-y-auto flex flex-col gap-8 allowed-scroll pr-4'>
                                     {switchButton === 'history' ? (
                                         <>
-                                            {message.map(item => (
-                                                <div key={item.id}>
-                                                    <div className='flex gap-2 items-center'>
-                                                        <div style={{
-                                                            backgroundColor: '#' + '4FBEAB'
-                                                        }} className={`flex-none rounded-full text-white w-8 h-8 flex items-center justify-center`}>IA</div>
-                                                        <p>Ihsanul Afkar</p>
-                                                    </div>
-                                                    <div className='border border-customGray rounded-md mt-2 p-4 pb-6 relative'>
-                                                        <p>{item.message}</p>
-                                                        <div className='absolute bottom-1 right-4 text-customGray'>{item.received_at}</div>
-                                                    </div>
-                                                </div>
-                                            ))}
+                                            {message ? (
+                                                <>
+                                                    {message.map(msg => (
+                                                        <div className="w-full">
+                                                            <div className="flex gap-2 items-center w-full">
+                                                                <div style={{
+                                                                    backgroundColor: '#' + msg.contact?.colorCode
+                                                                }} className={`flex-none rounded-full text-white w-8 h-8 flex items-center justify-center`}>{getInitials(msg.contact?.firstName + ' ' + msg.contact?.lastName)}</div>
+                                                                <div className="">
+                                                                    <p>{msg.contact?.firstName} {msg.contact?.lastName}</p>
+                                                                </div>
+                                                            </div>
+                                                            <BubbleChat text={msg.message} received={msg.receivedAt} currentDate={currentDate} />
+                                                        </div>
+                                                    ))}
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <p>Belum ada pesan dari {contactData?.firstName}</p>
+                                                </>
+                                            )}
                                         </>
                                     ) : (
                                         <>

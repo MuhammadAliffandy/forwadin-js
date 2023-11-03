@@ -74,7 +74,8 @@ const Messenger = () => {
                             text: textInput
                         }
                     }
-                ])
+                ]),
+                user: session?.user
             })
             if (result && result.ok) {
                 toast.success('Berhasil kirim pesan')

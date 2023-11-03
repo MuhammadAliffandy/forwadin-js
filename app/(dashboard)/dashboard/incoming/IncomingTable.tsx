@@ -2,15 +2,14 @@
 
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { GetIncomingMessage, IncomingMessage, MultipleCheckboxRef } from '@/utils/types';
-import IncomingList from './IncomingList';
+import { GetMessage, IncomingMessage } from '@/utils/types';
 import { Pagination, Skeleton, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@nextui-org/react';
-import { useSession } from 'next-auth/react';
 import { User } from 'next-auth';
 import { fetchClient } from '@/utils/helper/fetchClient';
 import { toast } from 'react-toastify';
 import { formatDate, getNumberFromString } from '@/utils/helper';
 import ContactIcon from '@/components/dashboard/ContactIcon';
+import { PAGINATION_BATCH } from '@/utils/constant';
 
 interface IncomingMessageProps {
     settotalMessage: Dispatch<SetStateAction<number>>,
@@ -21,10 +20,6 @@ interface IncomingMessageProps {
 const IncomingTable = ({ settotalMessage, totalMessage, sessionId, user }: IncomingMessageProps) => {
     const { push } = useRouter()
     const [isLoaded, setisLoaded] = useState(false)
-    const paginationBatch = 10
-
-    const mainCheckboxRef = useRef<HTMLInputElement>(null)
-    const messageCheckboxRef = useRef<MultipleCheckboxRef>({})
     const [isChecked, setisChecked] = useState(false)
     const [messageData, setmessageData] = useState<IncomingMessage[]>([])
     const [searchText, setsearchText] = useState('')
@@ -32,38 +27,7 @@ const IncomingTable = ({ settotalMessage, totalMessage, sessionId, user }: Incom
     const [currentPage, setcurrentPage] = useState(1)
     const [totalPage, settotalPage] = useState(1)
     const [hasMore, sethasMore] = useState(false)
-    const handleCheckBoxClick = (e: React.FormEvent<HTMLInputElement>, id: string) => {
-        const newmessageData = messageData.map(obj => {
-            return (obj.id === id ? { ...obj, checked: e.currentTarget.checked } : obj)
-        })
-        setmessageData(() => newmessageData)
-    }
-
-    const handleIndexCheckbox = (e: React.MouseEvent) => {
-        const currentmessageData = (searchText ? searchedMessage : messageData)
-        if (mainCheckboxRef.current && !mainCheckboxRef.current.checked) {
-            const newArray = currentmessageData.map((obj, idx) => {
-                messageCheckboxRef.current[`checkbox_${obj.id}`].checked = false
-                return { ...obj, checked: false }
-            })
-            if (searchText)
-                setsearchedMessage(newArray)
-            else
-                setmessageData(() => newArray)
-        } else {
-            const newArray = currentmessageData.map((obj, idx) => {
-                messageCheckboxRef.current[`checkbox_${obj.id}`].checked = true
-                return { ...obj, checked: true }
-            })
-            if (searchText)
-                setsearchedMessage(() => newArray)
-            else
-                setmessageData(() => newArray)
-        }
-    }
-    const handleOpenDetailModal = (params: string) => {
-
-    }
+    const [selectedMessage, setselectedMessage] = useState(new Set())
     const filterMessage = (text: string) => {
         const regex = new RegExp(text, 'i')
         return messageData.filter(item => {
@@ -81,45 +45,18 @@ const IncomingTable = ({ settotalMessage, totalMessage, sessionId, user }: Incom
     }
 
     useEffect(() => {
-        if (mainCheckboxRef.current) {
-            const checkObject = messageData.find(obj => obj.checked === true)
-            if (checkObject) {
-                mainCheckboxRef.current.checked = true
-                setisChecked(true)
-            }
-            else {
-                mainCheckboxRef.current.checked = false
-                setisChecked(false)
-            }
-        }
-    }, [messageData])
-    useEffect(() => {
-        if (mainCheckboxRef.current) {
-            const checkObject = searchedMessage.find(obj => obj.checked === true)
-            if (checkObject) {
-                mainCheckboxRef.current.checked = true
-                setisChecked(true)
-            }
-            else {
-                mainCheckboxRef.current.checked = false
-                setisChecked(false)
-            }
-        }
-    }, [searchedMessage])
-
-    useEffect(() => {
         const searchResult = filterMessage(searchText)
         setsearchedMessage(searchResult)
     }, [searchText])
     const fetchIncomingMessage = async () => {
         setisLoaded(false)
         const result = await fetchClient({
-            url: `/messages/${sessionId}/incoming?page=${currentPage}&pageSize=${paginationBatch}`,
+            url: `/messages/${sessionId}/incoming?page=${currentPage}&pageSize=${PAGINATION_BATCH}`,
             method: 'GET',
             user: user
         })
         if (result) {
-            const resultData: GetIncomingMessage = await result.json()
+            const resultData: GetMessage<IncomingMessage> = await result.json()
             if (result.ok) {
                 setmessageData(resultData.data)
                 settotalMessage(resultData.metadata.totalMessages)
@@ -140,6 +77,15 @@ const IncomingTable = ({ settotalMessage, totalMessage, sessionId, user }: Incom
     useEffect(() => {
         fetchIncomingMessage()
     }, [currentPage])
+    useEffect(() => {
+        console.log(selectedMessage)
+        // @ts-ignore
+        if (selectedMessage.size > 0 || selectedMessage === 'all') {
+            setisChecked(true)
+        } else {
+            setisChecked(false)
+        }
+    }, [selectedMessage])
     return (
         <>
             <div className="mt-8 p-4 bg-white rounded-md">
@@ -176,7 +122,8 @@ const IncomingTable = ({ settotalMessage, totalMessage, sessionId, user }: Incom
                             wrapper: 'rounded-md'
                         }}
                         radius='md'
-                    // removeWrapper
+                        selectedKeys={selectedMessage as any}
+                        onSelectionChange={setselectedMessage as any}
                     >
                         <TableHeader>
                             <TableColumn
@@ -210,46 +157,7 @@ const IncomingTable = ({ settotalMessage, totalMessage, sessionId, user }: Incom
                             )}
                         </TableBody>
                     </Table>
-                    {/* <table className="w-full text-center font-nunito text-[11px] font-bold ">
-                        <thead className='bg-neutral-75 sticky'>
-                            <tr className=''>
-                                <th className='py-4 checkbox'>
-                                    <input ref={mainCheckboxRef} type="checkbox" name="main_checkbox" id="main_checkbox" className='rounded-sm focus:ring-transparent' onClick={handleIndexCheckbox} />
-                                </th>
-                                <th className='p-4 whitespace-pre'>Nomor HP</th>
-                                <th className='p-4'>Nama</th>
-                                <th className='p-4 whitespace-pre'>Diterima Pada</th>
-                                <th className='p-4'>Lihat Chat</th>
-                            </tr>
-                        </thead>
-                        <tbody className='bg-white '>
-                            {searchText ? (
-                                <IncomingList
-                                    incomingData={searchedMessage}
-                                    multipleCheckboxRef={messageCheckboxRef}
-                                    handleCheckBoxClick={handleCheckBoxClick}
-                                    handleOpenDetailModal={handleOpenDetailModal}
-                                />
-                            ) : (
-                                <IncomingList
-                                    incomingData={messageData}
-                                    multipleCheckboxRef={messageCheckboxRef}
-                                    handleCheckBoxClick={handleCheckBoxClick}
-                                    handleOpenDetailModal={handleOpenDetailModal}
-                                />
 
-                            )}
-                        </tbody>
-                    </table> */}
-
-                    {/* {messageData.length === 0 && (
-                        <div className='w-full bg-white p-12'>
-                            <div className='w-full max-w-md mx-auto flex flex-col gap-4'>
-                                <p className='text-[16px] font-bold'>Pesan masuk masih kosong</p>
-                                <p className='text-xs text-[#777C88]'>Pesan yang dikirimkan kepada anda akan masuk di sini</p>
-                            </div>
-                        </div>
-                    )} */}
                     <div className="flex w-full justify-center mt-2">
                         <Pagination
                             isCompact

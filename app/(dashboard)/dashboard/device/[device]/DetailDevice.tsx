@@ -8,14 +8,20 @@ import React, { useEffect, useState } from "react"
 import { Button, Skeleton } from "@nextui-org/react"
 import { PulseLoader } from "react-spinners"
 import { toast } from "react-toastify"
+import { useSession } from "next-auth/react"
 const DetailDevice = ({ device }: { device: string }) => {
+    const { data: session } = useSession()
     const [isLoading, setisLoading] = useState(false)
     const [isLoaded, setisLoaded] = useState(false)
     const [deviceName, setdeviceName] = useState('')
     const [deviceData, setdeviceData] = useState<DeviceData>()
     const [labelList, setlabelList] = useState<Label[]>([])
     const fetchDetailDevice = async () => {
-        const result = await fetchClient({ method: 'GET', url: '/devices/' + device })
+        const result = await fetchClient({
+            method: 'GET',
+            url: '/devices/' + device,
+            user: session?.user
+        })
         if (result) {
             const data: DeviceData = await result.json()
             if (result.status === 200) {
@@ -42,10 +48,13 @@ const DetailDevice = ({ device }: { device: string }) => {
         setisLoading(true)
         const newLabel = labelList.filter(obj => obj.label.active).map(obj => obj.label.name)
         const updateDevice = await fetchClient({
-            method: 'PUT', body: JSON.stringify({
+            method: 'PUT',
+            body: JSON.stringify({
                 name: deviceName,
                 label: newLabel
-            }), url: '/devices/' + deviceData?.id
+            }),
+            url: '/devices/' + deviceData?.id,
+            user: session?.user
         })
         if (updateDevice) {
             if (updateDevice.status === 200) {

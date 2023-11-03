@@ -165,7 +165,15 @@ const DetailGroup = ({ groupId, groupName, setcountContact, setgroupName }: Deta
                 <AddContactModal openModal={addContactModal} setopenModal={setaddContactModal} fetchGroupData={fetchGroupData} groupId={groupId} activeContactData={contactData} />
             }
             <DeleteGroupModal openModal={deleteGroupModal} setopenModal={setDeleteGroupModal} group={groupId} />
-            <DeleteContactModal openModal={deleteContactModal} setopenModal={setdeleteContactModal} contacts={contactData.filter(contact => contact.checked)} />
+            {session?.user && (
+                <DeleteContactModal
+                    groupId={groupId}
+                    user={session.user}
+                    openModal={deleteContactModal}
+                    setopenModal={setdeleteContactModal}
+                    contacts={contactData.filter(contact => contact.checked)}
+                    refresh={fetchGroupData} />
+            )}
             <div className="mt-4 p-4 bg-white rounded-md">
                 <div className='flex sm:flex-row flex-col gap-2 items-center justify-between'>
                     <div className="w-full max-w-sm">

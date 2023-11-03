@@ -1,3 +1,5 @@
+import { Label } from "./types";
+
 export const getInitials = (name: string) => {
     const words = name.split(' ');
     const initials = words.map((word) => word[0]);
@@ -119,4 +121,7 @@ export const formatCurrencyIDR = (number: number) => {
 export const getNumberFromString = (text: string) => {
     const parts = text.split('@');
     return parts[0]
-} 
+}
+export const convertLabelList = (labels: Label[], checked: boolean) => {
+    return labels.filter(item => item.label.active === checked).map(item => item.label.name)
+}

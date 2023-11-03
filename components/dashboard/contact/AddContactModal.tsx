@@ -11,15 +11,27 @@ import { animated, useTransition } from "@react-spring/web"
 import CountryFlagSvg from "country-list-with-dial-code-and-flag/dist/flag-svg"
 import { formatPhoneCode, getCountryList } from "@/utils/helper/countryCode"
 import { Skeleton } from "@nextui-org/react"
+import { useSession } from "next-auth/react"
 interface AddContactModalProps {
     openModal: boolean,
     setopenModal: Dispatch<SetStateAction<boolean>>,
     fetchData: () => void
 }
+interface ContactDataForm {
+    firstName: string,
+    lastName: string,
+    email: string,
+    phone: string,
+    gender: string,
+    dob: string,
+    device: string,
+}
+
 const AddContactModal = ({ openModal, setopenModal, fetchData }: AddContactModalProps) => {
+    const { data: session } = useSession()
     const [isLoaded, setisLoaded] = useState(false)
     const [isLoading, setisLoading] = useState(false)
-    const { handleSubmit, register, reset, formState: { errors } } = useForm<ContactData>()
+    const { handleSubmit, register, reset, formState: { errors } } = useForm<ContactDataForm>()
     const [labelList, setlabelList] = useState<Label[]>([
     ])
     const [deviceList, setdeviceList] = useState<DeviceData[]>([])
@@ -53,7 +65,7 @@ const AddContactModal = ({ openModal, setopenModal, fetchData }: AddContactModal
         }
 
     })
-    const onSubmit = async (formData: ContactData) => {
+    const onSubmit = async (formData: ContactDataForm) => {
         setisLoading(true)
         const formattedPhone = formatPhoneCode(formData.phone, currentCountryCode.dial_code)
         formData.phone = formattedPhone.replace('+', '')
@@ -70,7 +82,8 @@ const AddContactModal = ({ openModal, setopenModal, fetchData }: AddContactModal
         const result = await fetchClient({
             method: 'POST',
             body: JSON.stringify(bodyForm),
-            url: '/contacts/create'
+            url: '/contacts/create',
+            user: session?.user
         })
 
         if (result && result.ok) {
@@ -95,21 +108,22 @@ const AddContactModal = ({ openModal, setopenModal, fetchData }: AddContactModal
     const fetchDevice = async () => {
         const result = await fetchClient({
             method: 'GET',
-            url: '/devices'
+            url: '/devices',
+            user: session?.user
         })
         if (result && result.ok) {
             const body = await result.json()
             setdeviceList(body)
             setisLoaded(true)
         } else {
-            alert('Tidak dapat fetching data device')
+            toast.error('Tidak dapat fetching data device')
         }
     }
     useEffect(() => {
         setcountryCodeData(getCountryList() as CountryCode[])
         setcurrentCountryCode(getCountryList('+62') as CountryCode)
         fetchDevice()
-    }, [])
+    }, [session?.user?.token])
     useEffect(() => {
         const newCountryCodeData = countryCodeData.filter(item => item.name.toLowerCase().includes(countryCodeSearchText.toLowerCase()) || item.dial_code.includes(countryCodeSearchText) || item.code.includes(countryCodeSearchText))
         setcountryCodeSearchData(newCountryCodeData)

@@ -88,7 +88,8 @@ const Payment = () => {
 			body: JSON.stringify({
 				subscriptionPlanId: currentPlan?.id,
 				subscriptionPlanType: durationPlan.toLowerCase()
-			})
+			}),
+			user: session?.user
 		})
 		if (result) {
 			const resultData = await result.json()

@@ -10,8 +10,10 @@ import Device from "./Device"
 import System from "./System"
 import { UserProfile } from "@/utils/types"
 import { Tab, Tabs } from "@nextui-org/react"
+import { useSession } from "next-auth/react"
 
 const Settings = () => {
+    const { data: session } = useSession()
     const [isLoaded, setisLoaded] = useState(false)
     const activeButtonStyle = 'bg-primary text-white'
     const inactiveButtonStyle = 'hover:cursor-pointer bg-white hover:text-primary text-black hover:bg-neutral-75'
@@ -37,7 +39,10 @@ const Settings = () => {
     })
     useEffect(() => {
         const fetchUser = async () => {
-            const result = await fetchClient({ url: '/users/', method: 'GET' })
+            const result = await fetchClient({
+                url: '/users/' + session?.user?.id, method: 'GET',
+                user: session?.user
+            })
             if (result && result.ok) {
                 const data = await result.json()
                 setuserData(data)
@@ -46,11 +51,13 @@ const Settings = () => {
             }
             setisLoaded(true)
         }
-        fetchUser()
+        if (session?.user?.token) {
+            fetchUser()
+        }
         return () => {
 
         }
-    }, [])
+    }, [session?.user?.token])
 
     return (
         <>

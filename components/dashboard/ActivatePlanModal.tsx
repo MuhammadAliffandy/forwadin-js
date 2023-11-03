@@ -3,34 +3,39 @@
 import { fetchClient } from "@/utils/helper/fetchClient"
 import { Button, Link } from "@nextui-org/react"
 import { User } from "next-auth"
-import { signIn } from "next-auth/react"
+import { signIn, useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { toast } from "react-toastify"
 
 const ActivatePlanModal = ({ user }: { user: User }) => {
+    const { data: session } = useSession()
     const [isLoading, setisLoading] = useState(false)
     const router = useRouter()
     const handleClick = async () => {
         setisLoading(true)
-        const result = await fetchClient({
-            url: '/payment/trial',
-            method: 'POST',
-        })
-        if (result) {
-            if (result.ok) {
-                const refresh = await signIn('refresh', {
-                    redirect: false,
-                    user: JSON.stringify(user)
-                })
-                if (!refresh?.error) {
-                    router.refresh()
-                } else {
-                    toast.error('Gagal refresh')
-                    console.log(refresh.error)
+        if (session?.user) {
+            const result = await fetchClient({
+                url: '/payment/trial',
+                method: 'POST',
+                user: session?.user
+            })
+            if (result) {
+                if (result.ok) {
+                    console.log('berhasil')
+                    const refresh = await signIn('refresh', {
+                        redirect: false,
+                        user: JSON.stringify(session.user)
+                    })
+                    if (!refresh?.error) {
+                        router.refresh()
+                    } else {
+                        toast.error('Gagal refresh')
+                        console.log(refresh.error)
+                    }
+                } else if (result.status === 403) {
+                    toast.error('User sudah trial')
                 }
-            } else if (result.status === 403) {
-                toast.error('User sudah trial')
             }
         }
         setisLoading(false)

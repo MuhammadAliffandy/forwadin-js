@@ -10,14 +10,16 @@ import { animated, useTransition } from "@react-spring/web"
 import CountryFlagSvg from "country-list-with-dial-code-and-flag/dist/flag-svg"
 import { formatPhoneCode, getCountryList } from "@/utils/helper/countryCode"
 import MultipleInputLabel from "../../MultipleInputLabel"
-import { formatBackendBirthDate } from "@/utils/helper"
+import { convertLabelList, formatBackendBirthDate } from "@/utils/helper"
+import { useSession } from "next-auth/react"
 interface EditContactModalProps {
     openModal: boolean,
     setopenModal: Dispatch<SetStateAction<boolean>>,
     fetchData: () => void,
-    contactData: ContactData | undefined
+    contactData: ContactData
 }
 const EditContactModal = ({ openModal, setopenModal, fetchData, contactData }: EditContactModalProps) => {
+    const { data: session } = useSession()
     const [isLoading, setisLoading] = useState(false)
     const [labelList, setlabelList] = useState<Label[]>([])
     const countryCodeInputRef = useRef<HTMLInputElement>(null)
@@ -61,13 +63,16 @@ const EditContactModal = ({ openModal, setopenModal, fetchData, contactData }: E
             email: formData.email,
             phone: formData.phone,
             gender: formData.gender,
-            dob: formatBackendBirthDate((formData.dob ? formData.dob : contactData?.dob))
+            dob: formatBackendBirthDate((formData.dob ? formData.dob : contactData?.dob)),
+            labels: convertLabelList(labelList, true),
+            deviceId: contactData?.contactDevices[0].device.id
         }
-        toast.success(contactData?.id)
+        console.log(bodyForm)
         const result = await fetchClient({
             method: 'PUT',
             body: JSON.stringify(bodyForm),
-            url: '/contacts/' + contactData?.id
+            url: '/contacts/' + contactData?.id,
+            user: session?.user
         })
         if (result) {
             if (result.status === 200) {
@@ -169,10 +174,13 @@ const EditContactModal = ({ openModal, setopenModal, fetchData, contactData }: E
 
                         <div className="relative flex-1 flex">
                             {errors.phone && (<p className="px-1 text-danger absolute right-4 top-1/2 -translate-y-1/2">{`${errors.phone.message}`}</p>)}
-                            <div className="absolute top-1/2 -translate-y-1/2 text-customGray left-4">{currentCountryCode.dial_code}</div>
-                            <input type="text" defaultValue={contactData?.phone} placeholder='Whatsapp Number' className={'text-sm pr-4 pl-12 py-3 focus:outline-none  rounded-md focus:ring-0 w-full ' + (errors.phone ? 'border-danger focus:border-danger' : 'border-[#B0B4C5] focus:border-primary ')} {...register('phone', {
-                                required: 'Required'
-                            })} />
+                            <div className={'flex items-center px-2 text-sm rounded-md focus:outline-none focus:ring-0 w-full border ' + (errors.phone ? 'border-danger/50 hover:border-danger focus:border-danger' : 'border-[#B0B4C5]/50 hover:border-[#B0B4C5] focus:border-primary')} style={{ MozAppearance: 'textfield', WebkitAppearance: 'textfield' }}>
+                                <div className=" text-customGray ">{currentCountryCode.dial_code}</div>
+                                <input type="text" placeholder='Whatsapp Number' className='focus:ring-0 focus:outline-none border-none text-sm' {...register('phone', {
+                                    required: 'Required',
+                                    value: contactData?.phone.substring(2)
+                                })} />
+                            </div>
                         </div>
                         {componentTransition((style, item) => item && (
                             <animated.div style={style} className="absolute bg-white rounded-md border border-customGray w-full mt-16 z-10 shadow-lg text-sm">
