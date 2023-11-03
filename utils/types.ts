@@ -246,7 +246,7 @@ export interface AutoReply {
     response: string,
     schedule: string,
     status: boolean,
-    receivers: string[],
+    recipients: string[],
     createdAt: string,
     updatedAt: string,
     deviceId: string

@@ -116,7 +116,6 @@ const Messenger = () => {
                         listDevice={listDevice}
                         setcurrentDevice={setcurrentDevice}
                     />
-
                     <ListChats listContact={listContact} currentContact={currentContact} setcurrentContact={setcurrentContact} />
                 </div>
                 <div className={"bg-white p-4 rounded-md w-full max-w-md lg:max-w-full h-full " + (chatDisabled && "opacity-50 pointer-events-none")}>

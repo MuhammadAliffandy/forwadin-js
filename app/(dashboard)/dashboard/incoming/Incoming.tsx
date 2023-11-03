@@ -22,10 +22,6 @@ const Incoming = () => {
     useEffect(() => {
         setcurrentDevice(listDevice[0])
     }, [listDevice])
-    // useEffect(() => {
-    //     if (currentDevice)
-    //         fetchIncomingMessage()
-    // }, [currentDevice])
 
     return (
         <>

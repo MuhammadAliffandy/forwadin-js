@@ -22,13 +22,14 @@ const AutoReplyTable = ({ sessionId, settotalMessage, totalMessage, user }: Auto
     const [searchedAutoReplyData, setsearchedAutoReplyData] = useState<AutoReply[]>([])
     const fetchAutoReply = async () => {
         const result = await fetchClient({
-            url: '/auto-reply',
+            url: '/auto-replies',
             method: 'GET',
             user: session?.user
         })
         if (result?.ok) {
             const resultData: AutoReply[] = await result.json()
             setautoReplyData(resultData)
+            console.log(resultData)
         }
         setisLoaded(true)
     }
@@ -105,7 +106,7 @@ const AutoReplyTable = ({ sessionId, settotalMessage, totalMessage, user }: Auto
                                         <Switch size='sm' />
                                     </TableCell>
                                     <TableCell>
-                                        {item.receivers.length}
+                                        {item.recipients.length}
                                     </TableCell>
                                     <TableCell>
                                         <Button variant='bordered'>
