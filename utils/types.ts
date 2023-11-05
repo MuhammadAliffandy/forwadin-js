@@ -124,15 +124,7 @@ export interface GetMessage<T> {
         hasMore: boolean
     }
 }
-export interface GetConversationMessage {
-    data: ConversationMessage[],
-    metadata: {
-        totalMessages: number,
-        currentPage: number,
-        totalPages: number,
-        hasMore: boolean
-    }
-}
+
 export interface ConversationMessage {
     pkId: number,
     id: string,
@@ -141,7 +133,7 @@ export interface ConversationMessage {
     createdAt: string,
     updatedAt: string,
     sessionId: string,
-    status: number,
+    status: string,
     from?: string,
     to?: string,
     contact: {

@@ -55,6 +55,7 @@ const Messenger = () => {
         })
         if (result && result.ok) {
             const resultData = await result.json()
+            console.log(resultData)
             setcursor(resultData.cursor)
             setlistMessage(resultData.data)
             console.log(resultData)
@@ -63,7 +64,7 @@ const Messenger = () => {
 
     const sendMessage = async () => {
         setsendMessageLoading(true)
-        if (currentDevice && currentContact) {
+        if (currentDevice && currentContact && textInput.length > 0) {
             const result = await fetchClient({
                 url: '/messages/' + currentDevice.sessionId + '/send',
                 method: 'POST',
@@ -132,7 +133,7 @@ const Messenger = () => {
                         <div className="py-2 flex-none">
                             <TextAreaInput text={textInput} settext={settextInput} />
                             <div className="flex justify-end mt-2">
-                                <Button className="rounded-md" color="primary" onClick={sendMessage} isLoading={sendMessageLoading}>
+                                <Button className="rounded-md" color="primary" onClick={sendMessage} isLoading={sendMessageLoading} isDisabled={textInput.length === 0}>
                                     Kirim
                                 </Button>
                             </div>

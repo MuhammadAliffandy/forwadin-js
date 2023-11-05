@@ -103,7 +103,7 @@ const AutoReplyTable = ({ sessionId, settotalMessage, totalMessage, user }: Auto
                                 <TableRow key={item.id}>
                                     <TableCell >{item.name}</TableCell>
                                     <TableCell>
-                                        <Switch size='sm' />
+                                        <Switch size='sm' isSelected={item.status} />
                                     </TableCell>
                                     <TableCell>
                                         {item.recipients.length}

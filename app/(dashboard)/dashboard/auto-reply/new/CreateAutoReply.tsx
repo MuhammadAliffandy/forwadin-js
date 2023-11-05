@@ -27,7 +27,7 @@ const CreateAutoReply = () => {
     const [currentDevice, setcurrentDevice] = useState<DeviceSession>()
     const [isDisabled, setisDisabled] = useState(true)
     const { handleSubmit, register, reset, formState: { errors } } = useForm<AutoReplyForm>()
-    const [receiverList, setreceiverList] = useState<Label[]>([])
+    const [receiverList, setreceiverList] = useState<ContactData[]>([])
     const [requestList, setrequestList] = useState<Label[]>([])
     const [textInput, settextInput] = useState<string>('')
     const listVariables = [
@@ -81,7 +81,7 @@ const CreateAutoReply = () => {
     const onSubmit = async (formData: any) => {
         setisLoading(true)
         let mark = true
-        if (!receiverList.some(item => item.label.active === true)) {
+        if (!receiverList.some(item => item.active === true)) {
             toast.error('Penerima masih kosong!')
             mark = false
         }
@@ -97,7 +97,7 @@ const CreateAutoReply = () => {
             const autoReplyData = {
                 name: formData.name,
                 deviceId: formData.deviceId,
-                recipients: receiverList.map(item => item.label.name),
+                recipients: receiverList.filter(item => item.active === true).map(item => item.phone),
                 requests: requestList.map(item => item.label.name),
                 response: textInput
             }
@@ -118,13 +118,25 @@ const CreateAutoReply = () => {
         }
         setisLoading(false)
     }
+    const fetchContactData = async () => {
+        const result = await fetchClient({
+            url: '/contacts',
+            method: 'GET',
+            user: session?.user
+        })
+        if (result?.ok) {
+            const resultData = await result.json()
+            setreceiverList(resultData)
+        }
+    }
     useEffect(() => {
         if (session?.user?.device) {
             setlistDevice(session.user.device)
+            fetchContactData()
         }
     }, [session?.user?.device])
     useEffect(() => {
-        if (textInput.length > 0 && receiverList.some(item => item.label.active === true) && requestList.some(item => item.label.active === true)) {
+        if (textInput.length > 0 && receiverList.some(item => item.active === true) && requestList.some(item => item.label.active === true)) {
             setisDisabled(false)
         } else {
             setisDisabled(true)
@@ -158,7 +170,7 @@ const CreateAutoReply = () => {
                     </div>
                     <div>
                         <p className="mb-2">Penerima</p>
-                        <MultipleInputLabel labelList={receiverList} setlabelList={setreceiverList} placeholder="cari / tambah penerima" />
+                        <MultipleInputContact contactList={receiverList} setcontactList={setreceiverList} />
                     </div>
                 </div>
                 <div className='w-full bg-white rounded-md p-4'>

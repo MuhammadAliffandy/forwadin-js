@@ -58,7 +58,6 @@ const MultipleInputContact = (
                         ))}
                     </div>
                 </div>
-
             </div>
             <div className="bg-white w-full border-x border-x-customGray">
                 <div className="flex items-center gap-2 px-6 py-2">
