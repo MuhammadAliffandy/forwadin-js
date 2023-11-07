@@ -9,6 +9,7 @@ const DropdownDevice = ({ listDevice, currentDevice, setcurrentDevice }: {
 }) => {
     const [isLoaded, setisLoaded] = useState(false)
     useEffect(() => {
+        console.log('masuk list')
         if (listDevice) {
             setcurrentDevice(listDevice[0])
             setisLoaded(true)

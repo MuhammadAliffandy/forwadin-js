@@ -11,49 +11,21 @@ import { toast } from 'react-toastify';
 import { formatDate, getInitials } from '@/utils/helper';
 import DeleteContactModal from '@/components/dashboard/contact/DeleteContactModal';
 import { useSession } from 'next-auth/react';
-import { Skeleton } from "@nextui-org/react";
+import { Skeleton, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from "@nextui-org/react";
+import ContactIcon from '@/components/dashboard/ContactIcon';
 const ContactTable = ({ setcontactCount }: { setcontactCount: Dispatch<SetStateAction<number>> }) => {
     const { push } = useRouter()
     const { data: session } = useSession()
-    const mainCheckboxRef = useRef<HTMLInputElement>(null)
-    const contactCheckboxRef = useRef<MultipleCheckboxRef>({})
     const [isLoaded, setisLoaded] = useState(false)
     const [isChecked, setisChecked] = useState(false)
     const [contactData, setcontactData] = useState<ContactData[]>([
     ])
+    const [selectedKeys, setSelectedKeys] = useState(new Set())
     const [searchText, setsearchText] = useState('')
     const [searchedContact, setsearchedContact] = useState<ContactData[]>([])
     const [addContactModal, setaddContactModal] = useState(false)
     const [deleteContactModal, setdeleteContactModal] = useState(false)
-    const handleCheckBoxClick = (e: React.FormEvent<HTMLInputElement>, id: string) => {
-        const newcontactData = contactData.map(obj => {
-            return (obj.id === id ? { ...obj, checked: e.currentTarget.checked } : obj)
-        })
-        setcontactData(() => newcontactData)
-    }
 
-    const handleIndexCheckbox = (e: React.MouseEvent) => {
-        const currentcontactData = (searchText ? searchedContact : contactData)
-        if (mainCheckboxRef.current && !mainCheckboxRef.current.checked) {
-            const newArray = currentcontactData.map((obj, idx) => {
-                contactCheckboxRef.current[`checkbox_${obj.id}`].checked = false
-                return { ...obj, checked: false }
-            })
-            if (searchText)
-                setsearchedContact(newArray)
-            else
-                setcontactData(() => newArray)
-        } else {
-            const newArray = currentcontactData.map(obj => {
-                contactCheckboxRef.current[`checkbox_${obj.id}`].checked = true
-                return { ...obj, checked: true }
-            })
-            if (searchText)
-                setsearchedContact(() => newArray)
-            else
-                setcontactData(() => newArray)
-        }
-    }
     const handleOpenDetailModal = (params: string) => {
         push('/dashboard/contact/' + params)
     }
@@ -119,32 +91,6 @@ const ContactTable = ({ setcontactCount }: { setcontactCount: Dispatch<SetStateA
     useEffect(() => {
         fetchData()
     }, [session?.user?.token])
-    useEffect(() => {
-        if (mainCheckboxRef.current) {
-            const checkObject = contactData.find(obj => obj.checked === true)
-            if (checkObject) {
-                mainCheckboxRef.current.checked = true
-                setisChecked(true)
-            }
-            else {
-                mainCheckboxRef.current.checked = false
-                setisChecked(false)
-            }
-        }
-    }, [contactData])
-    useEffect(() => {
-        if (mainCheckboxRef.current) {
-            const checkObject = searchedContact.find(obj => obj.checked === true)
-            if (checkObject) {
-                mainCheckboxRef.current.checked = true
-                setisChecked(true)
-            }
-            else {
-                mainCheckboxRef.current.checked = false
-                setisChecked(false)
-            }
-        }
-    }, [searchedContact])
 
     useEffect(() => {
         const searchResult = filterDevice(searchText)
@@ -180,57 +126,122 @@ const ContactTable = ({ setcontactCount }: { setcontactCount: Dispatch<SetStateA
                 </div>
             </div>
             {isLoaded ? (
-
-                <div className='overflow-x-scroll allowed-scroll'>
-                    <table className="w-full text-center font-nunito text-xs font-bold ">
-                        <thead className='bg-neutral-75'>
-                            <tr className=''>
-                                <th className='py-4 checkbox'>
-                                    <input ref={mainCheckboxRef} type="checkbox" name="main_checkbox" id="main_checkbox" className='rounded-sm focus:ring-transparent' onClick={handleIndexCheckbox} />
-                                </th>
-                                <th className='p-4'>Nama</th>
-                                <th className='p-4 whitespace-pre'>Nomor HP</th>
-                                <th className='p-4'>Label Kategori</th>
-                                <th className='p-4'>Email</th>
-                                <th className='p-4'>Dibuat pada</th>
-                                <th className='p-4'>Detail</    th>
-                            </tr>
-                        </thead>
-
-                        <tbody className='bg-white'>
-                            {searchText ? (
-                                <ContactList
-                                    contactData={searchedContact}
-                                    multipleCheckboxRef={contactCheckboxRef}
-                                    handleCheckBoxClick={handleCheckBoxClick}
-                                    handleOpenDetailModal={handleOpenDetailModal}
-                                />
-                            ) : (
-                                <ContactList
-                                    contactData={contactData}
-                                    multipleCheckboxRef={contactCheckboxRef}
-                                    handleCheckBoxClick={handleCheckBoxClick}
-                                    handleOpenDetailModal={handleOpenDetailModal}
-                                />
-
-                            )}
-                        </tbody>
-                    </table>
-                    {contactData.length === 0 && (
-                        <div className='w-full bg-white p-12'>
-                            <div className='w-full max-w-md mx-auto flex flex-col gap-4'>
-                                <p className='text-[16px] font-bold'>Kontak masih kosong</p>
-                                <p className='text-xs text-[#777C88]'>Tambahkan nomor ke dalam kontak anda.</p>
-                                <p className='text-xs'>Dengan kontak ini, Anda dapat dengan mudah berkomunikasi dengan kontak yang anda simpan</p>
-                                <div className='flex'>
-                                    <div onClick={() => setaddContactModal(true)} className="bg-primary rounded-md px-6 text-white text-center items-center flex hover:cursor-pointer justify-center p-2">
-                                        Tambah Kontak
+                <div className=' mt-4'>
+                    <Table
+                        aria-label="Incoming Chat"
+                        color='default'
+                        selectionMode="multiple"
+                        isHeaderSticky
+                        classNames={{
+                            td: 'text-[11px] font-nunito',
+                            tr: 'text-[11px] font-nunito',
+                            base: "max-h-[55vh] overflow-y-scroll",
+                            table: "",
+                            thead: 'rounded-md',
+                            wrapper: 'rounded-md'
+                        }}
+                        radius='md'
+                        selectedKeys={selectedKeys as any}
+                        onSelectionChange={setSelectedKeys as any}
+                    >
+                        <TableHeader>
+                            <TableColumn>Nama</TableColumn>
+                            <TableColumn>Nomor HP</TableColumn>
+                            <TableColumn>Label Kategori</TableColumn>
+                            <TableColumn>Email</TableColumn>
+                            <TableColumn>Dibuat pada</TableColumn>
+                            <TableColumn>Detail</TableColumn>
+                        </TableHeader>
+                        <TableBody emptyContent={
+                            <div className='w-full bg-white p-12'>
+                                <div className='w-full max-w-md mx-auto flex flex-col gap-4'>
+                                    <p className='text-[16px] font-bold'>Kontak masih kosong</p>
+                                    <p className='text-xs text-[#777C88]'>Tambahkan nomor ke dalam kontak anda.</p>
+                                    <p className='text-xs'>Dengan kontak ini, Anda dapat dengan mudah berkomunikasi dengan kontak yang anda simpan</p>
+                                    <div className='flex'>
+                                        <div onClick={() => setaddContactModal(true)} className="bg-primary rounded-md px-6 text-white text-center items-center flex hover:cursor-pointer justify-center p-2">
+                                            Tambah Kontak
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    )}
+
+                        } items={searchText ? searchedContact : contactData}>
+                            {(item: ContactData) => (
+                                <TableRow key={item.id}>
+                                    <TableCell className='flex gap-2 items-center'>
+                                        <ContactIcon phone={item.phone} contact={item} />
+                                    </TableCell>
+                                    <TableCell >{item.phone}</TableCell>
+                                    <TableCell className='flex flex-wrap justify-center lg:justify-start items-center gap-2'>  {item.ContactLabel?.map((item, idx) => (
+                                        <div key={idx} className='border-2 border-primary px-2 py-1 rounded-full'>
+                                            {item.label.name}
+                                        </div>
+                                    ))}</TableCell>
+                                    <TableCell >{item.email}</TableCell>
+                                    <TableCell >
+                                        {item.createdAt}
+                                    </TableCell>
+                                    <TableCell>
+                                        <div className="flex items-center">
+                                            <div className='py-1 px-4 text-center border border-black/20 rounded-md hover:cursor-pointer' onClick={() => handleOpenDetailModal(item.id)}>Detail</div>
+                                        </div>
+                                    </TableCell>
+                                </TableRow>
+                            )}
+                        </TableBody>
+                    </Table>
                 </div >
+                // <div className='overflow-x-scroll allowed-scroll'>
+                //     <table className="w-full text-center font-nunito text-xs font-bold ">
+                //         <thead className='bg-neutral-75'>
+                //             <tr className=''>
+                //                 <th className='py-4 checkbox'>
+                //                     <input ref={mainCheckboxRef} type="checkbox" name="main_checkbox" id="main_checkbox" className='rounded-sm focus:ring-transparent' onClick={handleIndexCheckbox} />
+                //                 </th>
+                //                 <th className='p-4'>Nama</th>
+                //                 <th className='p-4 whitespace-pre'>Nomor HP</th>
+                //                 <th className='p-4'>Label Kategori</th>
+                //                 <th className='p-4'>Email</th>
+                //                 <th className='p-4'>Dibuat pada</th>
+                //                 <th className='p-4'>Detail</    th>
+                //             </tr>
+                //         </thead>
+
+                //         <tbody className='bg-white'>
+                //             {searchText ? (
+                //                 <ContactList
+                //                     contactData={searchedContact}
+                //                     multipleCheckboxRef={contactCheckboxRef}
+                //                     handleCheckBoxClick={handleCheckBoxClick}
+                //                     handleOpenDetailModal={handleOpenDetailModal}
+                //                 />
+                //             ) : (
+                //                 <ContactList
+                //                     contactData={contactData}
+                //                     multipleCheckboxRef={contactCheckboxRef}
+                //                     handleCheckBoxClick={handleCheckBoxClick}
+                //                     handleOpenDetailModal={handleOpenDetailModal}
+                //                 />
+
+                //             )}
+                //         </tbody>
+                //     </table>
+                //     {contactData.length === 0 && (
+                //         <div className='w-full bg-white p-12'>
+                //             <div className='w-full max-w-md mx-auto flex flex-col gap-4'>
+                //                 <p className='text-[16px] font-bold'>Kontak masih kosong</p>
+                //                 <p className='text-xs text-[#777C88]'>Tambahkan nomor ke dalam kontak anda.</p>
+                //                 <p className='text-xs'>Dengan kontak ini, Anda dapat dengan mudah berkomunikasi dengan kontak yang anda simpan</p>
+                //                 <div className='flex'>
+                //                     <div onClick={() => setaddContactModal(true)} className="bg-primary rounded-md px-6 text-white text-center items-center flex hover:cursor-pointer justify-center p-2">
+                //                         Tambah Kontak
+                //                     </div>
+                //                 </div>
+                //             </div>
+                //         </div>
+                //     )}
+                // </div >
             ) : (
                 <>
                     <div className='mt-4 flex flex-col gap-2 p-4 bg-white'>
