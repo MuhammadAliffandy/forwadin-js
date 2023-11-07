@@ -64,7 +64,7 @@ const Messenger = () => {
 
     const sendMessage = async () => {
         setsendMessageLoading(true)
-        if (inputFile) {
+        if (inputFile.length > 0) {
             if (currentDevice && currentContact && inputFile) {
                 const formdata = new FormData()
                 formdata.append("caption", textInput)
@@ -91,6 +91,7 @@ const Messenger = () => {
                         const resultData = await result.json()
                         console.log(resultData)
                         setinputFile([])
+                        settextInput('')
                         toast.success('Berhasil kirim image')
 
                     } else {
