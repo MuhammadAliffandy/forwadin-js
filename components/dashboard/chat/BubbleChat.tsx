@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 interface BubbleChatProps {
     text: string,
     received: string,
-    status?: number,
+    status?: string,
     isOutgoing?: boolean,
     currentDate: Date
 }
@@ -16,7 +16,7 @@ const BubbleChat = ({ text, received, status, isOutgoing = false, currentDate }:
         if (Math.abs(currentDate.getTime() - messageDate.getTime()) <= 300000)
             setreceivedMessage('now')
         else
-            setreceivedMessage(received)
+            setreceivedMessage(formatDate(received) as string)
     }, [])
     if (isOutgoing)
         return (
@@ -25,8 +25,11 @@ const BubbleChat = ({ text, received, status, isOutgoing = false, currentDate }:
                     <p>{text}</p>
                     <div className="flex justify-end items-center gap-2 mt-2">
                         <p className="text-customGray">{receivedMessage}</p>
-                        {status && (
-                            <p>{status}</p>
+                        {status === 'read' && (
+                            <img src="/assets/icons/dashboard/message_send.svg" alt="" />
+                        )}
+                        {status === 'delivery_ack' && (
+                            <img src="/assets/icons/dashboard/message_send.svg" alt="" />
                         )}
                     </div>
                 </div>
@@ -36,9 +39,9 @@ const BubbleChat = ({ text, received, status, isOutgoing = false, currentDate }:
         <div className="flex justify-start">
             <div className="border-customGray border pt-4 px-4 pb-2 text-sm mt-2 rounded-r-2xl rounded-bl-2xl bg-white">
                 <p>{text}</p>
-                <div className="flex justify-end items-center gap-2 mt-2">
+                <div className="flex items-center gap-2 mt-2">
                     <p className="text-customGray">{receivedMessage}</p>
-                    <p >{status}</p>
+                    {/* <p>{status}</p> */}
                 </div>
             </div>
         </div>

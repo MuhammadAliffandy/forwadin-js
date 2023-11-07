@@ -7,8 +7,18 @@ import { NextRequest } from 'next/server'
 
 // This function can be marked `async` if using `await` inside
 const requireDevice = ['/contacts', '/group', '/incoming', '/messenger', '/outgoing', '/auto-reply', '/broadcast']
+const authUrl = ['/signin', '/signup']
 export const middleware = async (request: NextRequest) => {
     const pathName = request.nextUrl.pathname
+    if (authUrl.some((path) => pathName.startsWith(path))) {
+        const token = await getToken({
+            req: request,
+            secret: process.env.NEXTAUTH_SECRET
+        })
+        console.log('masuk middleware auth')
+        if (token)
+            return NextResponse.redirect('/dashboard')
+    }
     if (requireDevice.some((path) => pathName.startsWith('/dashboard' + path))) {
         // const getSession()
         const token = await getToken({

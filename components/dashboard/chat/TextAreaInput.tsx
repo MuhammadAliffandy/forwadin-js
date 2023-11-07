@@ -10,7 +10,7 @@ const TextAreaInput = ({ text, settext }: {
     }, [text])
     return (
         <div className="relative">
-            <textarea className="rounded-md w-full overflow-y-auto" placeholder="Tuliskan pesan anda" cols={4} rows={4} value={text} onChange={e => settext(e.target.value)} maxLength={1500}></textarea>
+            <textarea className="rounded-md w-full overflow-y-auto text-sm" placeholder="Tuliskan pesan anda" cols={4} rows={4} value={text} onChange={e => settext(e.target.value)} maxLength={1500}></textarea>
             <div className="absolute bottom-3 right-3 text-customGray text-sm">
                 <p>{counter}/1500</p>
             </div>

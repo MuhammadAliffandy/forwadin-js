@@ -1,5 +1,5 @@
 'use client'
-import { useEffect, useState } from "react"
+import { ChangeEvent, useEffect, useState } from "react"
 import ProfileDetail from "./ProfileDetail"
 import Chat from "./Chat"
 import ListChats from "./ListChats"
@@ -7,16 +7,20 @@ import { ContactData, DeviceData, ConversationMessage, DeviceSession } from "@/u
 import TextAreaInput from "@/components/dashboard/chat/TextAreaInput"
 import { useSession } from "next-auth/react"
 import { fetchClient } from "@/utils/helper/fetchClient"
-import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@nextui-org/react"
+import { Button, ButtonGroup, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Popover, PopoverContent, PopoverTrigger } from "@nextui-org/react"
 import { formatBirthDate, getInitials } from "@/utils/helper"
 import { toast } from "react-toastify"
 import DropdownDevice from "@/components/dashboard/DropdownDevice"
-
+import UploadFile from "@/components/dashboard/UploadFile"
+import { useSearchParams } from 'next/navigation'
 const Messenger = () => {
+    const searchParams = useSearchParams()
     const { data: session } = useSession()
 
     const currentDate = new Date()
     const [textInput, settextInput] = useState('')
+    const [inputFile, setinputFile] = useState<File[]>([]);
+    const [showfile, setshowfile] = useState(false)
     const [sendMessageLoading, setsendMessageLoading] = useState(false)
     const [mobileDropdown, setmobileDropdown] = useState(false)
     const [listDevice, setlistDevice] = useState<DeviceSession[]>([])
@@ -43,8 +47,6 @@ const Messenger = () => {
                     dob: formatBirthDate(contact.dob!)
                 }
             }))
-            console.log(resultData)
-
         }
     }
     const fetchChatMessage = async () => {
@@ -57,33 +59,83 @@ const Messenger = () => {
             const resultData = await result.json()
             setcursor(resultData.cursor)
             setlistMessage(resultData.data)
-            console.log(resultData)
         }
     }
 
     const sendMessage = async () => {
         setsendMessageLoading(true)
-        if (currentDevice && currentContact) {
-            const result = await fetchClient({
-                url: '/messages/' + currentDevice.sessionId + '/send',
-                method: 'POST',
-                body: JSON.stringify([
-                    {
-                        recipient: currentContact.phone,
-                        message: {
-                            text: textInput
-                        }
+        if (inputFile.length > 0) {
+            if (currentDevice && currentContact && inputFile) {
+                const formdata = new FormData()
+                formdata.append("caption", textInput)
+                // @ts-ignore
+                formdata.set('image', inputFile[0].file, inputFile[0].name)
+                formdata.append("recipients[0]", currentContact.phone)
+                formdata.append("sessionId", currentDevice.sessionId)
+                try {
+                    // const result = await fetch(process.env.NEXT_PUBLIC_BACKEND_URL + '/messages/' + currentDevice.sessionId + '/send/image', {
+                    //     method: 'POST',
+                    //     headers: {
+                    //         'Content-Type': 'multipart/form-data',
+                    //         'Authorization': 'Bearer ' + session?.user?.token,
+                    //         'Access-Control-Allow-Origin': '*'
+                    //     },
+                    //     body: formdata
+                    // })
+                    const result = await fetch('/api/message/media', {
+                        method: 'POST',
+                        body: formdata
+                    })
+                    // console.log(result.body)
+                    if (result?.ok) {
+                        const resultData = await result.json()
+                        console.log(resultData)
+                        setinputFile([])
+                        settextInput('')
+                        toast.success('Berhasil kirim image')
+
+                    } else {
+                        const resultData = await result.text()
+                        console.log(resultData)
+                        toast.error('gagal kirim media')
                     }
-                ]),
-                user: session?.user
-            })
-            if (result && result.ok) {
-                toast.success('Berhasil kirim pesan')
-                settextInput('')
+                } catch (error) {
+                    console.log(error)
+                }
+
+            }
+
+        }
+
+        else {
+            if (currentDevice && currentContact && textInput.length > 0) {
+                const result = await fetchClient({
+                    url: '/messages/' + currentDevice.sessionId + '/send',
+                    method: 'POST',
+                    body: JSON.stringify([
+                        {
+                            recipient: currentContact.phone,
+                            message: {
+                                text: textInput
+                            }
+                        }
+                    ]),
+                    user: session?.user
+                })
+                if (result && result.ok) {
+                    toast.success('Berhasil kirim pesan')
+                    settextInput('')
+                }
             }
         }
         setsendMessageLoading(false)
     }
+    // const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+    //     if (event.target.files?.[0]) {
+    //         const file = event.target.files?.[0];
+    //         setinputFile(file);
+    //     }
+    // }
     useEffect(() => {
         if (currentContact && currentDevice) {
             setchatDisabled(false)
@@ -97,13 +149,22 @@ const Messenger = () => {
         fetchChatMessage()
     }, [currentContact])
     useEffect(() => {
-        if (session?.user?.device)
+        if (session?.user?.device && listDevice.length === 0)
             setlistDevice(session.user.device)
     }, [session?.user?.device])
     useEffect(() => {
-        setcurrentDevice(listDevice[0])
-    }, [listDevice])
+        const paramsContact = searchParams?.get('contact')
+        console.log(paramsContact)
+        if (paramsContact) {
+            const findContact = listContact.find(item => item.id === paramsContact)
+            console.log(findContact)
+            if (findContact) {
+                setcurrentContact(findContact)
+            }
+        }
+    }, [listContact])
     useEffect(() => {
+        console.log('masuk device')
         if (currentDevice)
             fetchListContact()
     }, [currentDevice])
@@ -116,7 +177,6 @@ const Messenger = () => {
                         listDevice={listDevice}
                         setcurrentDevice={setcurrentDevice}
                     />
-
                     <ListChats listContact={listContact} currentContact={currentContact} setcurrentContact={setcurrentContact} />
                 </div>
                 <div className={"bg-white p-4 rounded-md w-full max-w-md lg:max-w-full h-full " + (chatDisabled && "opacity-50 pointer-events-none")}>
@@ -131,11 +191,23 @@ const Messenger = () => {
                             />
                         </div>
                         <div className="py-2 flex-none">
+                            {/* {showfile && (
+                                <input type="file" onChange={handleFileChange} />
+                            )} */}
+                            {showfile && (
+                                <UploadFile files={inputFile} setfiles={setinputFile} />
+                            )}
                             <TextAreaInput text={textInput} settext={settextInput} />
+
                             <div className="flex justify-end mt-2">
-                                <Button className="rounded-md" color="primary" onClick={sendMessage} isLoading={sendMessageLoading}>
-                                    Kirim
-                                </Button>
+                                <ButtonGroup color="primary" className="rounded-md">
+                                    <Button isIconOnly onClick={() => setshowfile(!showfile)}>
+                                        <img src="/assets/icons/attach_file.svg" alt="" />
+                                    </Button>
+                                    <Button onClick={sendMessage} isLoading={sendMessageLoading} >
+                                        Kirim
+                                    </Button>
+                                </ButtonGroup>
                             </div>
                         </div>
                     </div>

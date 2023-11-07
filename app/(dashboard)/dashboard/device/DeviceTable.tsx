@@ -8,7 +8,7 @@ import { MultipleCheckboxRef, DeviceData } from '@/utils/types'
 import { useSession } from 'next-auth/react';
 import { fetchClient } from '@/utils/helper/fetchClient';
 import { toast } from 'react-toastify';
-import { Skeleton } from '@nextui-org/react';
+import { Skeleton, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@nextui-org/react';
 import DeleteModal from '@/components/dashboard/device/DeleteModal';
 import { useSocket } from '@/app/SocketProvider';
 
@@ -17,11 +17,10 @@ const DeviceTable = ({ setcountDevice }: { setcountDevice: Dispatch<SetStateActi
     const { isConnected, socket } = useSocket()
     const [isLoaded, setisLoaded] = useState(false)
     const { push } = useRouter()
-    const mainCheckboxRef = useRef<HTMLInputElement>(null)
-    const deviceCheckboxRef = useRef<MultipleCheckboxRef>({})
     const [isChecked, setisChecked] = useState(false)
     const [deviceData, setdeviceData] = useState<DeviceData[]>([
     ])
+    const [selectedKeys, setSelectedKeys] = useState(new Set())
 
     const [searchText, setsearchText] = useState('')
     const [searchedDevice, setsearchedDevice] = useState<DeviceData[]>([])
@@ -29,35 +28,6 @@ const DeviceTable = ({ setcountDevice }: { setcountDevice: Dispatch<SetStateActi
     const [deleteModal, setdeleteModal] = useState(false)
     const [qrModalData, setqrModalData] = useState<DeviceData>()
     const [deviceModal, setdeviceModal] = useState(false)
-    const handleCheckBoxClick = (e: React.FormEvent<HTMLInputElement>, pkId: number) => {
-        const newDeviceData = deviceData.map(obj => {
-            return (obj.pkId === pkId ? { ...obj, checked: e.currentTarget.checked } : obj)
-        })
-        setdeviceData(() => newDeviceData)
-    }
-
-    const handleIndexCheckbox = (e: React.MouseEvent) => {
-        const currentDeviceData = (searchText ? searchedDevice : deviceData)
-        if (mainCheckboxRef.current && !mainCheckboxRef.current.checked) {
-            const newArray = currentDeviceData.map((obj, idx) => {
-                deviceCheckboxRef.current[`checkbox_${obj.pkId}`].checked = false
-                return { ...obj, checked: false }
-            })
-            if (searchText)
-                setsearchedDevice(newArray)
-            else
-                setdeviceData(() => newArray)
-        } else {
-            const newArray = currentDeviceData.map((obj, idx) => {
-                deviceCheckboxRef.current[`checkbox_${obj.pkId}`].checked = true
-                return { ...obj, checked: true }
-            })
-            if (searchText)
-                setsearchedDevice(() => newArray)
-            else
-                setdeviceData(() => newArray)
-        }
-    }
     const handleOpenQRModal = (params: DeviceData) => {
         const device = deviceData.find(obj => obj.pkId === params.pkId)
         setqrModalData(device)
@@ -122,32 +92,6 @@ const DeviceTable = ({ setcountDevice }: { setcountDevice: Dispatch<SetStateActi
     useEffect(() => {
         fetchData()
     }, [session?.user?.token])
-    useEffect(() => {
-        if (mainCheckboxRef.current) {
-            const checkObject = deviceData.find(obj => obj.checked === true)
-            if (checkObject) {
-                mainCheckboxRef.current.checked = true
-                setisChecked(true)
-            }
-            else {
-                mainCheckboxRef.current.checked = false
-                setisChecked(false)
-            }
-        }
-    }, [deviceData])
-    useEffect(() => {
-        if (mainCheckboxRef.current) {
-            const checkObject = searchedDevice.find(obj => obj.checked === true)
-            if (checkObject) {
-                mainCheckboxRef.current.checked = true
-                setisChecked(true)
-            }
-            else {
-                mainCheckboxRef.current.checked = false
-                setisChecked(false)
-            }
-        }
-    }, [searchedDevice])
 
     useEffect(() => {
         const searchResult = filterDevice(searchText)
@@ -158,7 +102,7 @@ const DeviceTable = ({ setcountDevice }: { setcountDevice: Dispatch<SetStateActi
             {openQrModal && (
                 <QRModal openModal={openQrModal} setopenModal={setopenQrModal} data={qrModalData} session={session} socket={socket} refresh={fetchData} />
             )}
-            <DeleteModal setopenModal={setdeleteModal} openModal={deleteModal} count={deviceData.map(item => item.checked === true).length} deleteDevice={deleteDevice} />
+            <DeleteModal setopenModal={setdeleteModal} openModal={deleteModal} count={selectedKeys.size} deleteDevice={deleteDevice} />
             <AddDeviceModal openModal={deviceModal} setopenModal={setdeviceModal} fetchData={fetchData} />
             <div className="mt-8 p-4 bg-white rounded-md">
                 <div className="flex sm:flex-row flex-col gap-2 justify-between">
@@ -180,63 +124,83 @@ const DeviceTable = ({ setcountDevice }: { setcountDevice: Dispatch<SetStateActi
                 </div>
             </div>
             {isLoaded ? (
-                <div className='overflow-x-scroll allowed-scroll'>
-                    <table className="w-full text-center font-nunito text-xs font-bold">
-                        <thead className='bg-neutral-75'>
-                            <tr className=''>
-                                <th className='py-4 checkbox'>
-                                    <input ref={mainCheckboxRef} type="checkbox" name="main_checkbox" id="main_checkbox" className='rounded-sm focus:ring-transparent' onClick={handleIndexCheckbox} />
-                                </th>
-                                <th className='p-4'>Nama</th>
-                                <th className='p-4 whitespace-pre'>API Key</th>
-                                <th className='p-4 whitespace-pre'>Nomor HP</th>
-                                <th className='p-4'>Label Kategori</th>
-                                <th className='p-4'>Status</th>
-                                <th className='p-4'>Scan QR</th>
-                                <th className='p-4'>Detail</th>
-                            </tr>
-                        </thead>
-                        <tbody className='bg-white '>
-                            {searchText ? (
-                                <DeviceList
-                                    deviceData={searchedDevice}
-                                    deviceCheckboxRef={deviceCheckboxRef}
-                                    handleCheckBoxClick={handleCheckBoxClick}
-                                    handleOpenQRModal={handleOpenQRModal}
-                                    handleOpenDetailModal={handleOpenDetailModal}
-                                />
-                            ) : (
-                                <DeviceList
-                                    deviceData={deviceData}
-                                    deviceCheckboxRef={deviceCheckboxRef}
-                                    handleCheckBoxClick={handleCheckBoxClick}
-                                    handleOpenQRModal={handleOpenQRModal}
-                                    handleOpenDetailModal={handleOpenDetailModal}
-                                />
-
-                            )}
-                        </tbody>
-                    </table>
-                    {deviceData.length === 0 && (
-                        <div className='w-full bg-white p-12'>
-                            <div className='w-full max-w-md mx-auto flex flex-col gap-4'>
-                                <p className='text-[16px] font-bold'>Hubungkan device anda</p>
-                                <p className='text-xs text-[#777C88]'>Tambahkan perangkat Anda untuk mengirim pesan broadcast, kampanye, dan autoreply yang canggih melalui WhatsApp. Dengan ini, Anda bisa:</p>
-                                <ul className='text-xs list-disc list-outside pl-4'>
-                                    <li>Kirim pesan personal kepada penerima di saluran percakapan terakhir mereka.</li>
-                                    <li>Gunakan variabel personalisasi untuk berinteraksi langsung tanpa perlu membuat grup.</li>
-                                    <li>Buat daftar kontak secara manual, otomatis, atau dengan mengimpor untuk mengelompokkan kontak Anda.</li>
-                                    <li>Kirim gambar atau berkas media lainnya.</li>
-                                    <li>Pantau metrik untuk mengukur efektivitas pemasaran pesan Anda.</li>
-                                </ul>
-                                <div className='flex'>
-                                    <div onClick={() => setdeviceModal(true)} className="bg-primary rounded-md px-6 text-white text-center items-center flex hover:cursor-pointer justify-center p-2">
-                                        Tambah Device
+                <div className=' mt-4'>
+                    <Table
+                        aria-label="Incoming Chat"
+                        color='default'
+                        selectionMode="multiple"
+                        isHeaderSticky
+                        classNames={{
+                            td: 'text-[11px] font-nunito',
+                            tr: 'text-[11px] font-nunito',
+                            base: "max-h-[55vh] overflow-y-scroll",
+                            table: "",
+                            thead: 'rounded-md',
+                            wrapper: 'rounded-md'
+                        }}
+                        radius='md'
+                        selectedKeys={selectedKeys as any}
+                        onSelectionChange={setSelectedKeys as any}
+                    >
+                        <TableHeader>
+                            <TableColumn>Nama</TableColumn>
+                            <TableColumn>API Key</TableColumn>
+                            <TableColumn>Nomor HP</TableColumn>
+                            <TableColumn>Label Kategori</TableColumn>
+                            <TableColumn>Status</TableColumn>
+                            <TableColumn>Scan QR</TableColumn>
+                            <TableColumn>Detail</TableColumn>
+                        </TableHeader>
+                        <TableBody emptyContent={
+                            <div className='w-full bg-white p-12'>
+                                <div className='w-full max-w-md mx-auto flex flex-col gap-4'>
+                                    <p className='text-[16px] font-bold'>Hubungkan device anda</p>
+                                    <p className='text-xs text-[#777C88]'>Tambahkan perangkat Anda untuk mengirim pesan broadcast, kampanye, dan autoreply yang canggih melalui WhatsApp. Dengan ini, Anda bisa:</p>
+                                    <ul className='text-xs list-disc list-outside pl-4'>
+                                        <li>Kirim pesan personal kepada penerima di saluran percakapan terakhir mereka.</li>
+                                        <li>Gunakan variabel personalisasi untuk berinteraksi langsung tanpa perlu membuat grup.</li>
+                                        <li>Buat daftar kontak secara manual, otomatis, atau dengan mengimpor untuk mengelompokkan kontak Anda.</li>
+                                        <li>Kirim gambar atau berkas media lainnya.</li>
+                                        <li>Pantau metrik untuk mengukur efektivitas pemasaran pesan Anda.</li>
+                                    </ul>
+                                    <div className='flex'>
+                                        <div onClick={() => setdeviceModal(true)} className="bg-primary rounded-md px-6 text-white text-center items-center flex hover:cursor-pointer justify-center p-2">
+                                            Tambah Device
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                    )}
+
+                            </div>} items={searchText ? searchedDevice : deviceData}>
+                            {(item: DeviceData) => (
+                                <TableRow key={item.id}>
+                                    <TableCell >{item.name}</TableCell>
+                                    <TableCell >{item.apiKey}</TableCell>
+                                    <TableCell >{item.phone ? item.phone : '-'}</TableCell>
+                                    <TableCell className='flex flex-wrap justify-center lg:justify-start items-center  gap-2' >  {item.DeviceLabel?.map((item, idx) => (
+                                        <div key={idx} className='border-2 border-primary px-2 py-1 rounded-full'>
+                                            {item.label.name}
+                                        </div>
+                                    ))}</TableCell>
+                                    <TableCell >{item.status === 'open' ? 'Terkoneksi' : 'Tidak Terkoneksi'}</TableCell>
+                                    <TableCell >
+                                        <div className="flex items-center">
+                                            {item.status === 'open' ? (
+                                                <div>Sudah terkoneksi</div>
+                                            ) : (
+                                                <div className='text-primary py-1 px-4  border border-black/20 rounded-md hover:cursor-pointer whitespace-nowrap  flex items-center' onClick={() => handleOpenQRModal(item)}>Scan QR</div>
+                                            )}
+
+                                        </div>
+                                    </TableCell>
+                                    <TableCell>
+                                        <div className="flex items-center">
+                                            <div className='py-1 px-4 text-center border border-black/20 rounded-md hover:cursor-pointer' onClick={() => handleOpenDetailModal(item.id)}>Detail</div>
+                                        </div>
+                                    </TableCell>
+                                </TableRow>
+                            )}
+                        </TableBody>
+                    </Table>
                 </div >
             ) : (
                 <div className='mt-4 flex flex-col gap-2 p-4 bg-white'>

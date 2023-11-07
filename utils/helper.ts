@@ -8,6 +8,7 @@ export const getInitials = (name: string) => {
     return result;
 }
 export const formatDate = (inputDate: string) => {
+    console.log(inputDate)
     const date = new Date(inputDate);
     const formatter = new Intl.DateTimeFormat('en-US', {
         year: 'numeric',
@@ -17,7 +18,14 @@ export const formatDate = (inputDate: string) => {
         minute: '2-digit',
         hour12: true,
     });
-    return formatter.format(date);
+    try {
+
+        return formatter.format(date).toString();
+    } catch (error) {
+        console.log(error)
+        return inputDate;
+
+    }
 }
 export const formatBirthDate = (inputDate: string) => {
     const originalDate = new Date(inputDate)

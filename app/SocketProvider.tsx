@@ -16,8 +16,8 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
     const [socket, setsocket] = useState(null)
     const [isConnected, setisConnected] = useState(false)
     useEffect(() => {
-         // console.log(process.env.NEXT_PUBLIC_BASE_URL)
-        const socketInstance = new (ClientIO as any)(process.env.NEXT_PUBLIC_SITE_URL!, {
+        // console.log(process.env.NEXT_PUBLIC_BASE_URL)
+        const socketInstance = new (ClientIO as any)(process.env.NEXT_PUBLIC_BACKEND_URL!, {
             // path: '/',
             // addTrasockerilingSlash: false,
             reconnection: true,
@@ -28,14 +28,14 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
             console.log(socketInstance.id)
 
             socketInstance.emit('message', 'Hello from client!');
-                setisConnected(true)
+            setisConnected(true)
         })
 
-        socketInstance.on('statusUpdate', (data:any) => {
+        socketInstance.on('statusUpdate', (data: any) => {
             console.log('Received status update:', data);
         });
 
-        socketInstance.on('message', (message:any) => {
+        socketInstance.on('message', (message: any) => {
             console.log(`Received message from server: ${message}`);
         });
         socketInstance.on("disconnected", () => {

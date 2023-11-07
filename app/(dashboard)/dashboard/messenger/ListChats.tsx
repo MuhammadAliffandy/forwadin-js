@@ -1,4 +1,5 @@
 import { ContactData } from "@/utils/types"
+import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { Dispatch, SetStateAction, useState } from "react"
 
 interface ListChatsProps {
@@ -7,8 +8,16 @@ interface ListChatsProps {
     setcurrentContact: Dispatch<SetStateAction<ContactData | undefined>>
 }
 const ListChats = ({ listContact, currentContact, setcurrentContact }: ListChatsProps) => {
+    const router = useRouter()
+    const pathname = usePathname()
+    const searchParams = useSearchParams()!
     const [switchButton, setswitchButton] = useState('open')
-
+    const handleClickContact = (contact: ContactData) => {
+        setcurrentContact(contact)
+        const params = new URLSearchParams(searchParams)
+        params.set('contact', contact.id)
+        router.push(pathname + '?' + params.toString())
+    }
 
     return (
         <div className="flex flex-col gap-4 mt-4 h-full">
@@ -33,7 +42,7 @@ const ListChats = ({ listContact, currentContact, setcurrentContact }: ListChats
             <div className=" flex flex-col gap-2 overflow-y-auto pb-12">
                 {/* Contacts */}
                 {listContact.map(contact => (
-                    <div className={"rounded-md p-3 hover:cursor-pointer " + (currentContact?.id === contact.id ? 'bg-white' : '')} onClick={() => setcurrentContact(contact)}>
+                    <div className={"rounded-md p-3 hover:cursor-pointer " + (currentContact?.id === contact.id ? 'bg-white' : '')} onClick={() => handleClickContact(contact)}>
                         <div className="flex gap-2 items-center w-full">
                             <div style={{
                                 backgroundColor: '#' + contact.colorCode
