@@ -81,8 +81,8 @@ const OutgoingTable = ({ settotalMessage, totalMessage, sessionId, user }: {
 
     }, [user?.token, sessionId])
     useEffect(() => {
-        if (currentPage > 1)
-            fetchOutgoingMessage()
+        // if (currentPage > 1)
+        fetchOutgoingMessage()
     }, [currentPage])
 
     return (
@@ -162,7 +162,7 @@ const OutgoingTable = ({ settotalMessage, totalMessage, sessionId, user }: {
                                     </TableCell>
                                     <TableCell>
                                         {/* <PrintMessage message={item.message} /> */}
-                                        <Popover placement="left"
+                                        <Popover placement="left-end"
                                             className='font-inter'
                                             radius='sm'
                                             showArrow={true}

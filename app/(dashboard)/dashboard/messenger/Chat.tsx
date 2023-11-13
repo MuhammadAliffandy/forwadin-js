@@ -26,7 +26,7 @@ const Chat = ({ currentContact, currentDate, sessionId, listMessage, setlistMess
             {listMessage.map(message => (
                 <div className="w-full">
                     <ChatDetails message={message} />
-                    <BubbleChat text={message.message} received={message.receivedAt} status={message.status} currentDate={currentDate} isOutgoing={(message.to ? true : false)} />
+                    <BubbleChat text={message.message} received={message.receivedAt} status={message.status} currentDate={currentDate} isOutgoing={(message.to ? true : false)} mediaPath={message.mediaPath} />
                 </div>
             ))}
             {/* <div className="w-full mt-4">

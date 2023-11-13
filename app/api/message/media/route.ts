@@ -36,7 +36,6 @@ export const POST = async (request: NextRequest, response: NextResponse) => {
         const path = join(process.cwd(), 'public', 'uploads', file.name)
         await writeFile(path, buffer)
         const formdata = new FormData()
-        console.log(file.size)
         formdata.set('image', file, path)
         formdata.append('caption', caption)
         formdata.append('recipients[0]', recipients)
@@ -45,7 +44,7 @@ export const POST = async (request: NextRequest, response: NextResponse) => {
             method: 'POST',
             headers: {
                 'Authorization': 'Bearer ' + session.user.token,
-                'Content-Type': 'multipart/form-data'
+                // 'Content-Type': 'multipart/form-data'
             },
             body: formdata
         })
