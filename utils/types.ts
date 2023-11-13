@@ -1,3 +1,5 @@
+
+
 interface UserRegisterData {
     firstName: string,
     lastName: string,
@@ -103,6 +105,7 @@ interface IncomingMessage {
     id: string,
     from: string,
     message: string,
+    mediaPath?: string,
     receivedAt: string,
     createdAt: string,
     updatedAt: string,
@@ -129,6 +132,7 @@ export interface ConversationMessage {
     pkId: number,
     id: string,
     message: string,
+    mediaPath?: string,
     receivedAt: string,
     createdAt: string,
     updatedAt: string,
@@ -150,19 +154,18 @@ interface OutgoingMessage {
     id: string,
     to: string,
     message: string,
+    mediaPath?: string,
     schedule: string,
-    status: number,
+    status: string,
     source: string,
     createdAt: string,
     updatedAt: string,
     sessionId: string,
-    contactId: number,
     contact: {
         firstName: string,
         lastName: string,
         colorCode: string
     }
-
 }
 interface GroupData {
     pkId: number,
@@ -182,17 +185,28 @@ export interface ContactGroup {
     contact: ContactData
 }
 interface BroadcastData {
+    pkId: number,
     id: string,
     name: string,
-    status: string,
-    sent: number,
-    received: number,
-    read: number,
-    reply: number,
-    device: DeviceData,
-    created_at: string,
-    updated_at: string,
-    checked?: boolean
+    recipients: string[]
+    message: string,
+    schedule: string,
+    delay: number,
+    isSent: boolean,
+    deviceId: number,
+    createdAt: string,
+    updatedAt: string,
+    device: DeviceData
+}
+export interface GetBroadcast {
+    id: string,
+    name: string,
+    status: boolean,
+    device: {
+        name: string
+    },
+    createdAt: string,
+    updatedAt: string
 }
 export interface UserProfile {
     firstName: string,
@@ -234,7 +248,7 @@ export interface AutoReply {
     pkId: number,
     id: string,
     name: string,
-    request: string[],
+    requests: string[],
     response: string,
     schedule: string,
     status: boolean,
@@ -242,6 +256,11 @@ export interface AutoReply {
     createdAt: string,
     updatedAt: string,
     deviceId: string
+}
+export interface TagsType {
+    active?: boolean,
+    title: string,
+    value: string
 }
 
 export type { UserRegisterData, MultipleCheckboxRef, CheckboxRef, DeviceData, Label, CountryCode, ContactData, MessageData, MediaMessageData, GroupData, IncomingMessage, OutgoingMessage, MultipleInputRef, ResetUserData, BroadcastData }

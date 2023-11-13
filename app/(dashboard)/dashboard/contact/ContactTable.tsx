@@ -79,6 +79,7 @@ const ContactTable = ({ setcontactCount }: { setcontactCount: Dispatch<SetStateA
                     obj.initial = getInitials(obj.firstName + ' ' + obj.lastName)
                     return obj
                 })
+                console.log(data)
                 setcontactCount(newContactData.length)
                 setcontactData(data)
                 setisLoaded(true)
@@ -89,7 +90,8 @@ const ContactTable = ({ setcontactCount }: { setcontactCount: Dispatch<SetStateA
         }
     }
     useEffect(() => {
-        fetchData()
+        if (session?.user?.token)
+            fetchData()
     }, [session?.user?.token])
 
     useEffect(() => {

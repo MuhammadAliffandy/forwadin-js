@@ -6,13 +6,13 @@ interface BubbleChatProps {
     received: string,
     status?: string,
     isOutgoing?: boolean,
+    mediaPath?: string,
     currentDate: Date
 }
 const BubbleChat = ({ text, received, status, isOutgoing = false, currentDate }: BubbleChatProps) => {
     const messageDate = new Date(Date.parse(received))
     const [receivedMessage, setreceivedMessage] = useState(received)
     useEffect(() => {
-        console.log(received)
         if (Math.abs(currentDate.getTime() - messageDate.getTime()) <= 300000)
             setreceivedMessage('now')
         else
@@ -26,7 +26,7 @@ const BubbleChat = ({ text, received, status, isOutgoing = false, currentDate }:
                     <div className="flex justify-end items-center gap-2 mt-2">
                         <p className="text-customGray">{receivedMessage}</p>
                         {status === 'read' && (
-                            <img src="/assets/icons/dashboard/message_send.svg" alt="" />
+                            <img src="/assets/icons/dashboard/message_read.svg" alt="" />
                         )}
                         {status === 'delivery_ack' && (
                             <img src="/assets/icons/dashboard/message_send.svg" alt="" />
@@ -41,7 +41,12 @@ const BubbleChat = ({ text, received, status, isOutgoing = false, currentDate }:
                 <p>{text}</p>
                 <div className="flex items-center gap-2 mt-2">
                     <p className="text-customGray">{receivedMessage}</p>
-                    {/* <p>{status}</p> */}
+                    {status === 'read' && (
+                        <img src="/assets/icons/dashboard/message_read.svg" alt="" />
+                    )}
+                    {status === 'delivery_ack' && (
+                        <img src="/assets/icons/dashboard/message_send.svg" alt="" />
+                    )}
                 </div>
             </div>
         </div>

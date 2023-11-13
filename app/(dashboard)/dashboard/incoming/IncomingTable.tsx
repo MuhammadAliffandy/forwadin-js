@@ -75,7 +75,8 @@ const IncomingTable = ({ settotalMessage, totalMessage, sessionId, user }: Incom
             fetchIncomingMessage()
     }, [user?.token, sessionId])
     useEffect(() => {
-        fetchIncomingMessage()
+        if (currentPage > 1)
+            fetchIncomingMessage()
     }, [currentPage])
     useEffect(() => {
         console.log(selectedMessage)
@@ -86,6 +87,9 @@ const IncomingTable = ({ settotalMessage, totalMessage, sessionId, user }: Incom
             setisChecked(false)
         }
     }, [selectedMessage])
+    useEffect(() => {
+
+    }, [messageData])
     return (
         <>
             <div className="mt-8 p-4 bg-white rounded-md">
@@ -161,7 +165,6 @@ const IncomingTable = ({ settotalMessage, totalMessage, sessionId, user }: Incom
                     <div className="flex w-full justify-center mt-2">
                         <Pagination
                             isCompact
-
                             showControls
                             showShadow
                             color="primary"

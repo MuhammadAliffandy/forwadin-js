@@ -212,8 +212,8 @@ const Messenger = () => {
                         </div>
                     </div>
                 </div>
-                <div className="bg-white p-4 rounded-md max-w-md lg:max-w-xs w-full h-full">
-                    <div className='w-full lg:max-h-[78vh] overflow-y-scroll h-full'>
+                <div className="bg-white p-4 rounded-md max-w-md lg:max-w-[250px] w-full h-full">
+                    <div className='w-full lg:max-h-[78vh] overflow-y-scroll h-full '>
                         <ProfileDetail currentContact={currentContact} />
                     </div>
                 </div>

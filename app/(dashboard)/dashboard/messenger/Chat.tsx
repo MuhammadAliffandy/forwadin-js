@@ -1,3 +1,4 @@
+import ProfileAvatar from "@/components/dashboard/ProfileAvatar"
 import BubbleChat from "@/components/dashboard/chat/BubbleChat"
 import MediaChat from "@/components/dashboard/chat/MediaChat"
 import { getInitials } from "@/utils/helper"
@@ -19,7 +20,7 @@ const Chat = ({ currentContact, currentDate, sessionId, listMessage, setlistMess
     // const mediaMessage: MediaMessageData = {
 
     // }
-    useEffect(() => { }, [listMessage])
+
     return (
         <>
             {listMessage.map(message => (
@@ -74,9 +75,10 @@ const ChatDetails = ({ message }: { message: ConversationMessage }) => {
     return (
         <>
             <div className="flex gap-2 items-center w-full">
-                <div style={{
+                <ProfileAvatar profile={message.contact} />
+                {/* <div style={{
                     backgroundColor: '#' + message.contact?.colorCode
-                }} className={`flex-none rounded-full text-white w-8 h-8 flex items-center justify-center`}>{getInitials(message.contact?.firstName + ' ' + message.contact?.lastName)}</div>
+                }} className={`flex-none rounded-full text-white w-8 h-8 flex items-center justify-center`}>{getInitials(message.contact?.firstName + ' ' + message.contact?.lastName)}</div> */}
                 <div className="">
                     <p>{message.contact?.firstName} {message.contact?.lastName}</p>
                     <p className="text-[#777C88]">{message.createdAt}</p>

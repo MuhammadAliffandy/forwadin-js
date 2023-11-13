@@ -1,40 +1,50 @@
 'use client'
-import DropdownDevice from "@/components/dashboard/DropdownDevice"
 import MultipleInputContact from "@/components/dashboard/MultipleInputContact"
 import MultipleInputLabel from "@/components/dashboard/MultipleInputLabel"
-import MultipleInputReceiver from "@/components/dashboard/MultipleInputReceiver"
-import TagsInput from "@/components/dashboard/TagsInput"
 import TextAreaInput from "@/components/dashboard/chat/TextAreaInput"
 import InputForm from "@/components/form/InputForm"
+import { formatDatetoISO8601 } from "@/utils/helper"
 import { fetchClient } from "@/utils/helper/fetchClient"
-import { AutoReply, ContactData, DeviceData, DeviceSession, Label } from "@/utils/types"
-import { Button, Select, SelectItem } from "@nextui-org/react"
+import { ContactData, DeviceSession, Label } from "@/utils/types"
+import { Button } from "@nextui-org/react"
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { toast } from "react-toastify"
-interface AutoReplyForm {
+interface BroadcastForm {
     name: string,
     deviceId: string,
-    receivers: string[],
-    request: string[],
-    response: string
+    recipients: string[],
+    message: string, // limit 255
+    delay: number,
+    schedule: string
 }
-const DetailAutoReply = ({ autoReplyId }: { autoReplyId: string }) => {
+
+const CreateBroadcast = () => {
     const { push } = useRouter()
     const { data: session } = useSession()
     const [isLoading, setisLoading] = useState(false)
     const [listDevice, setlistDevice] = useState<DeviceSession[]>([])
     const [currentDevice, setcurrentDevice] = useState<DeviceSession>()
     const [isDisabled, setisDisabled] = useState(true)
-    const { handleSubmit, register, reset, formState: { errors }, setValue } = useForm<AutoReplyForm>()
-    // change
-    const [receiverList, setreceiverList] = useState<any[]>([])
+    const { handleSubmit, register, reset, formState: { errors } } = useForm<BroadcastForm>()
+    const [receiverList, setreceiverList] = useState<ContactData[]>([
+        {
+            colorCode: '000000',
+            createdAt: '',
+            email: '',
+            firstName: 'all contact',
+            lastName: '',
+            gender: '',
+            id: '1',
+            phone: '*',
+            updatedAt: '',
+            contactDevices: []
+        }
+    ])
     const [requestList, setrequestList] = useState<Label[]>([])
     const [textInput, settextInput] = useState<string>('')
-
-    const [selectedReceiver, setselectedReceiver] = useState<Set<any>[]>(new Set([]) as any)
     const listVariables = [
         'firstName',
         'lastName',
@@ -90,10 +100,6 @@ const DetailAutoReply = ({ autoReplyId }: { autoReplyId: string }) => {
             toast.error('Penerima masih kosong!')
             mark = false
         }
-        if (!requestList.some(item => item.label.active === true)) {
-            toast.error('Request Kata masih kosong!')
-            mark = false
-        }
         if (textInput.length === 0) {
             toast.error('Response masih kosong!')
             mark = false
@@ -103,25 +109,26 @@ const DetailAutoReply = ({ autoReplyId }: { autoReplyId: string }) => {
             mark = false
         }
         if (mark) {
-            const autoReplyData = {
+            const broadcastData: BroadcastForm = {
                 name: formData.name,
                 deviceId: formData.deviceId,
                 recipients: receiverList.filter(item => item.active === true).map(item => item.phone),
-                requests: requestList.map(item => item.label.name),
-                response: textInput
+                delay: 12000,
+                message: textInput,
+                schedule: formatDatetoISO8601(formData.schedule)
             }
-            console.log(autoReplyData)
+            console.log(broadcastData)
             const result = await fetchClient({
-                url: '/auto-replies',
+                url: '/broadcasts',
                 method: 'POST',
-                body: JSON.stringify(autoReplyData),
+                body: JSON.stringify(broadcastData),
                 user: session?.user
             })
             if (result?.ok) {
-                toast.success('Berhasil buat auto reply')
-                push('/dashboard/auto-reply')
+                toast.success('Berhasil buat broadcast')
+                push('/dashboard/broadcast')
             } else {
-                toast.error('Gagal buat auto reply')
+                toast.error('Gagal buat broadcast')
 
             }
         }
@@ -139,51 +146,14 @@ const DetailAutoReply = ({ autoReplyId }: { autoReplyId: string }) => {
             setreceiverList(updatedReceiverList)
         }
     }
-    const fetchAutoReplyData = async () => {
-        const result = await fetchClient({
-            url: '/auto-replies/' + autoReplyId,
-            method: 'GET',
-            user: session?.user
-        })
-        if (result?.ok) {
-            const resultData: AutoReply = await result.json()
-
-            setValue('name', resultData.name)
-            setrequestList(resultData.requests.map(item => {
-                return {
-                    label: {
-                        name: item,
-                        active: true
-                    }
-                }
-            }))
-            settextInput(resultData.response)
-            setreceiverList(resultData.recipients.map(item => {
-                if (item === '*')
-                    return {
-                        title: 'Semua Orang',
-                        value: item
-                    }
-                return {
-                    title: item,
-                    value: item
-                }
-            }))
-
-        }
-    }
-    const fetchAll = async () => {
-        await fetchContactData()
-        fetchAutoReplyData()
-    }
     useEffect(() => {
         if (session?.user?.device && listDevice.length === 0) {
             setlistDevice(session.user.device)
-            fetchAll()
+            fetchContactData()
         }
     }, [session?.user?.device])
     useEffect(() => {
-        if (textInput.length > 0 && receiverList.some(item => item.active === true) && requestList.some(item => item.label.active === true)) {
+        if (textInput.length > 0 && receiverList.some(item => item.active === true)) {
             setisDisabled(false)
         } else {
             setisDisabled(true)
@@ -194,12 +164,12 @@ const DetailAutoReply = ({ autoReplyId }: { autoReplyId: string }) => {
         <form onSubmit={handleSubmit(onSubmit)} className='flex justify-center items-center lg:items-start lg:flex-row flex-col gap-4 mt-4'>
             <div className='max-w-sm w-full items-center flex flex-col gap-4'>
                 <div className='w-full bg-white rounded-md p-4 flex flex-col gap-4'>
-                    <p className="font-lexend font-bold text-2xl">Detail Auto Reply</p>
+                    <p className="font-lexend font-bold text-2xl">Buat Broadcast</p>
                     <div>
                         <p className="mb-2">Nama Broadcast</p>
                         <InputForm register={register} config={{
                             name: 'name',
-                            placeholder: 'Nama Auto Reply',
+                            placeholder: 'Nama broadcast',
                             type: 'text',
                             error: errors.name,
                             registerConfig: {
@@ -207,6 +177,7 @@ const DetailAutoReply = ({ autoReplyId }: { autoReplyId: string }) => {
                             }
                         }} />
                     </div>
+
                     <div>
                         <p className="mb-2">Device</p>
                         <select {...register('deviceId')} className="px-4 py-3 focus:outline-none text-sm rounded-md focus:ring-0 w-full border-[#B0B4C5] focus:border-primary">
@@ -217,23 +188,34 @@ const DetailAutoReply = ({ autoReplyId }: { autoReplyId: string }) => {
                     </div>
                     <div>
                         <p className="mb-2">Penerima</p>
-                        {/* <TagsInput 
-                        
-                        /> */}
-                        <MultipleInputReceiver selectedKeys={selectedReceiver} setselectedKeys={setselectedReceiver} listItems={receiverList} />
+                        {/* <TagsInput /> */}
+                        <MultipleInputContact contactList={receiverList} setcontactList={setreceiverList} />
+                    </div>
+                    <div>
+                        <p className="mb-2">Jadwal Broadcast</p>
+                        <InputForm register={register} config={{
+                            name: 'schedule',
+                            placeholder: 'Nama broadcast',
+                            type: 'datetime-local',
+                            error: errors.schedule,
+                            registerConfig: {
+                                required: 'required'
+                            }
+                        }} />
                     </div>
                 </div>
                 <div className='w-full bg-white rounded-md p-4'>
-                    <p className="font-bold text-xl font-lexend">Request</p>
-                    <div className="mt-4">
+                    <p className="font-bold text-xl font-lexend">Trigger</p>
+                    {/* <div className="mt-4">
                         <p className="mb-2">Kata</p>
                         <MultipleInputLabel setlabelList={setrequestList} labelList={requestList} placeholder="tambah kata" maxChar={20} />
-                    </div>
+                    </div> */}
                 </div>
+
             </div>
             <div className='w-full max-w-sm lg:max-w-full'>
                 <div className='bg-white w-full p-4'>
-                    <p className="font-bold text-xl font-lexend">Pesan Auto Reply</p>
+                    <p className="font-bold text-xl font-lexend">Pesan Broadcast</p>
                     <div className="mt-4">
                         <p>Template</p>
                         <div className="flex gap-2 flex-wrap w-full mt-2">
@@ -246,7 +228,7 @@ const DetailAutoReply = ({ autoReplyId }: { autoReplyId: string }) => {
                     </div>
                     <div className="mt-4">
                         <p className="mb-2">Response</p>
-                        <TextAreaInput text={textInput} settext={settextInput} />
+                        <TextAreaInput text={textInput} settext={settextInput} limit={255} />
                     </div>
                     <div className="flex gap-2 flex-wrap mt-2">
                         {listVariables.map(item => (
@@ -257,7 +239,7 @@ const DetailAutoReply = ({ autoReplyId }: { autoReplyId: string }) => {
                     </div>
                     {textInput && (
                         <div className="mt-4">
-                            <p>Hasil Pesan Auto Reply</p>
+                            <p>Hasil Pesan Broadcast</p>
                             <div className='bg-neutral-75 rounded-md h-full text-[#777C88] p-3 mt-2'>
                                 {parseTextInput(textInput)}
                             </div>
@@ -272,4 +254,4 @@ const DetailAutoReply = ({ autoReplyId }: { autoReplyId: string }) => {
     )
 }
 
-export default DetailAutoReply
+export default CreateBroadcast

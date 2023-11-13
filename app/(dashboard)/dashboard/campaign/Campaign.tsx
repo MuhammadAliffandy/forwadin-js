@@ -1,29 +1,23 @@
 'use client'
+import DropdownDevice from '@/components/dashboard/DropdownDevice'
+import { DeviceSession } from '@/utils/types'
+import { useSession } from 'next-auth/react'
+import { useEffect, useState } from 'react'
+import CampaignTable from './CampaignTable'
 
-import DropdownDevice from "@/components/dashboard/DropdownDevice"
-import { DeviceSession } from "@/utils/types"
-import { useSession } from "next-auth/react"
-import { useEffect, useState } from "react"
-import AutoReplyTable from "./AutoReplyTable"
-import TagsInput from "@/components/dashboard/TagsInput"
-
-const AutoReply = () => {
+const Campaign = () => {
     const { data: session } = useSession()
-    const [totalAutoReply, settotalAutoReply] = useState(0)
+    const [totalCampaign, settotalCampaign] = useState(0)
     const [listDevice, setlistDevice] = useState<DeviceSession[]>([])
     const [currentDevice, setcurrentDevice] = useState<DeviceSession>()
 
 
     useEffect(() => {
-        console.log('session user device')
-        if (session?.user?.device && listDevice.length === 0)
+        if (session?.user?.device)
             setlistDevice(session.user.device)
     }, [session?.user?.device])
     useEffect(() => {
-
-        console.log('list device')
-        if (listDevice)
-            setcurrentDevice(listDevice[0])
+        setcurrentDevice(listDevice[0])
     }, [listDevice])
     return (
         <>
@@ -32,16 +26,16 @@ const AutoReply = () => {
                     <p className='font-lexend text-2xl font-bold'>Auto Reply</p>
                     <div>
                         <div className="flex-none bg-black rounded-full text-white text-[10px] font-regular px-1 flex items-center justify-center">
-                            <p>{totalAutoReply}</p>
+                            <p>{totalCampaign}</p>
                         </div>
                     </div>
                 </div>
                 <DropdownDevice currentDevice={currentDevice} setcurrentDevice={setcurrentDevice} listDevice={session?.user?.device} />
 
             </div>
-            <AutoReplyTable settotalAutoReply={settotalAutoReply} totalAutoReply={totalAutoReply} sessionId={currentDevice?.sessionId!} user={session?.user} />
+            <CampaignTable settotalCampaign={settotalCampaign} totalCampaign={totalCampaign} sessionId={currentDevice?.sessionId!} user={session?.user} />
         </>
     )
 }
 
-export default AutoReply
+export default Campaign

@@ -1,42 +1,21 @@
-import ContactIcon from '@/components/dashboard/ContactIcon'
-import { getNumberFromString, formatDate } from '@/utils/helper'
-import { fetchClient } from '@/utils/helper/fetchClient'
-import { AutoReply } from '@/utils/types'
-import { Button, Link, Pagination, Skeleton, Switch, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@nextui-org/react'
-import { IncomingMessage } from 'http'
+import { Table, Button, TableHeader, TableColumn, TableBody, TableRow, TableCell, Switch, Skeleton } from '@nextui-org/react'
+import { Campaign } from '@prisma/client'
+import { } from 'flowbite-react'
 import { User } from 'next-auth'
-import { Dispatch, SetStateAction, useEffect, useState } from 'react'
-interface AutoReplyTableProps {
-    settotalAutoReply: Dispatch<SetStateAction<number>>,
+import Link from 'next/link'
+import { Dispatch, SetStateAction, useState } from 'react'
+interface CampaignTableProps {
+    settotalCampaign: Dispatch<SetStateAction<number>>,
     sessionId: string,
     user: User | undefined,
-    totalAutoReply: number
+    totalCampaign: number
 }
-const AutoReplyTable = ({ sessionId, settotalAutoReply, totalAutoReply, user }: AutoReplyTableProps) => {
-    // const { data: session } = useSession()
+const CampaignTable = ({ sessionId, settotalCampaign, totalCampaign, user }: CampaignTableProps) => {
     const [isChecked, setisChecked] = useState(false)
     const [isLoaded, setisLoaded] = useState(false)
-    const [autoReplyData, setautoReplyData] = useState<AutoReply[]>([])
+    const [autoReplyData, setautoReplyData] = useState<Campaign[]>([])
     const [searchText, setsearchText] = useState('')
-    const [searchedAutoReplyData, setsearchedAutoReplyData] = useState<AutoReply[]>([])
-    const fetchAutoReply = async () => {
-        const result = await fetchClient({
-            url: '/auto-replies',
-            method: 'GET',
-            user: user
-        })
-        if (result?.ok) {
-            const resultData: AutoReply[] = await result.json()
-            setautoReplyData(resultData)
-            console.log(resultData)
-        }
-        setisLoaded(true)
-    }
-    useEffect(() => {
-        if (user?.token) {
-            fetchAutoReply()
-        }
-    }, [user?.token])
+    const [searchedCampaignData, setsearchedAutoReplyData] = useState<Campaign[]>([])
     return (
         <>
             <div className="mt-8 p-4 bg-white rounded-md">
@@ -98,17 +77,19 @@ const AutoReplyTable = ({ sessionId, settotalAutoReply, totalAutoReply, user }: 
                         </div>}
                             items={autoReplyData}
                         >
-                            {(item: AutoReply) => (
+                            {(item: Campaign) => (
                                 <TableRow key={item.id}>
                                     <TableCell >{item.name}</TableCell>
                                     <TableCell>
-                                        <Switch size='sm' isSelected={item.status} />
+                                        {/* <Switch size='sm' isSelected={item.status} /> */}
+                                        <p>Lorem</p>
                                     </TableCell>
                                     <TableCell>
-                                        {item.recipients.length}
+                                        <p>Lorem</p>
+                                        {/* {item.recipients.length} */}
                                     </TableCell>
                                     <TableCell>
-                                        <Button as={Link} href={'/dashboard/auto-reply/' + item.id} variant='bordered'>
+                                        <Button variant='bordered'>
                                             Detail
                                         </Button>
                                     </TableCell>
@@ -131,4 +112,4 @@ const AutoReplyTable = ({ sessionId, settotalAutoReply, totalAutoReply, user }: 
     )
 }
 
-export default AutoReplyTable
+export default CampaignTable

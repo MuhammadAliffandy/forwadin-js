@@ -2,6 +2,7 @@
 import DropdownDevice from "@/components/dashboard/DropdownDevice"
 import MultipleInputContact from "@/components/dashboard/MultipleInputContact"
 import MultipleInputLabel from "@/components/dashboard/MultipleInputLabel"
+import TagsInput from "@/components/dashboard/TagsInput"
 import TextAreaInput from "@/components/dashboard/chat/TextAreaInput"
 import InputForm from "@/components/form/InputForm"
 import { fetchClient } from "@/utils/helper/fetchClient"
@@ -27,7 +28,20 @@ const CreateAutoReply = () => {
     const [currentDevice, setcurrentDevice] = useState<DeviceSession>()
     const [isDisabled, setisDisabled] = useState(true)
     const { handleSubmit, register, reset, formState: { errors } } = useForm<AutoReplyForm>()
-    const [receiverList, setreceiverList] = useState<ContactData[]>([])
+    const [receiverList, setreceiverList] = useState<ContactData[]>([
+        {
+            colorCode: '000000',
+            createdAt: '',
+            email: '',
+            firstName: 'all contact',
+            lastName: '',
+            gender: '',
+            id: '1',
+            phone: '*',
+            updatedAt: '',
+            contactDevices: []
+        }
+    ])
     const [requestList, setrequestList] = useState<Label[]>([])
     const [textInput, settextInput] = useState<string>('')
     const listVariables = [
@@ -93,6 +107,10 @@ const CreateAutoReply = () => {
             toast.error('Response masih kosong!')
             mark = false
         }
+        if (!formData.deviceId) {
+            toast.error('Device masih kosong!')
+            mark = false
+        }
         if (mark) {
             const autoReplyData = {
                 name: formData.name,
@@ -126,11 +144,12 @@ const CreateAutoReply = () => {
         })
         if (result?.ok) {
             const resultData = await result.json()
-            setreceiverList(resultData)
+            const updatedReceiverList = [...receiverList, ...resultData]
+            setreceiverList(updatedReceiverList)
         }
     }
     useEffect(() => {
-        if (session?.user?.device) {
+        if (session?.user?.device && listDevice.length === 0) {
             setlistDevice(session.user.device)
             fetchContactData()
         }
@@ -170,6 +189,7 @@ const CreateAutoReply = () => {
                     </div>
                     <div>
                         <p className="mb-2">Penerima</p>
+                        {/* <TagsInput /> */}
                         <MultipleInputContact contactList={receiverList} setcontactList={setreceiverList} />
                     </div>
                 </div>
