@@ -4,7 +4,11 @@ import { NextRequest, NextResponse } from 'next/server'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { join } from 'path'
 import { authConfig } from "@/app/api/auth/[...nextauth]/route"
-import { fstat } from 'fs'
+// export const config = {
+//     api: {
+//         bodyParser: false
+//     },
+// }
 export const POST = async (request: NextRequest, response: NextResponse) => {
     const data = await request.formData()
     const file: File | null = data.get('image') as unknown as File
@@ -35,10 +39,12 @@ export const POST = async (request: NextRequest, response: NextResponse) => {
         formdata.set('image', file, path)
         formdata.append('caption', caption)
         formdata.append('recipients[0]', recipients)
+
         const sendMessage = await fetch(process.env.BACKEND_URL + '/messages/' + sessionId + '/send/image', {
             method: 'POST',
             headers: {
                 'Authorization': 'Bearer ' + session.user.token,
+                // 'Content-Type': 'multipart/form-data'
             },
             body: formdata
         })
@@ -51,7 +57,7 @@ export const POST = async (request: NextRequest, response: NextResponse) => {
         return NextResponse.json({ message: 'failed to send' }, { status: 500 })
 
     } catch (error) {
+        console.log(error)
         return NextResponse.json({ error: error }, { status: 500 })
-
     }
 }

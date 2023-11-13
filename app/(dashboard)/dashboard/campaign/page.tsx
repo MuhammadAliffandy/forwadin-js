@@ -1,13 +1,17 @@
 import { Metadata } from "next"
-import AutoReply from "./AutoReply"
+import Campaign from "./Campaign"
+
+type Params = {
+    params: { contactId: string }
+}
 export const metadata: Metadata = {
-    title: 'Auto Reply'
+    title: 'Campaign'
 }
 const page = () => {
 
     return (
         <>
-            <AutoReply />
+            <Campaign />
         </>
     )
 }

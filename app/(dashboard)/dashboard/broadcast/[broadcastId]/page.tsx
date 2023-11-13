@@ -1,20 +1,22 @@
-import type { Metadata } from 'next'
 import Link from 'next/link'
-import CreateBroadcast from './CreateBroadcast'
-
-export const metadata: Metadata = {
-    title: 'Buat Broadcast',
+import { Metadata } from 'next'
+type Params = {
+    params: { device: string }
 }
 
-export default function Home() {
-    // Cek ada device apa gak
+export const metadata: Metadata = {
+    title: 'Detail Device',
+}
+const page = ({ params }: Params) => {
+
     return (
         <>
             <div className='flex'>
                 <Link href={'/dashboard/broadcast'} className='rounded-md py-3 px-4 border border-black/50 text-black/50'>Kembali</Link>
             </div>
-            <p className='text-lexend font-bold text-2xl mt-4'>Buat Broadcast Baru</p>
-            <CreateBroadcast />
+            {/* <DetailDevice device={params.device} /> */}
         </>
     )
 }
+
+export default page

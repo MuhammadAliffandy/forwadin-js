@@ -1,78 +1,32 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { BroadcastData, MultipleCheckboxRef } from '@/utils/types';
-import BroadcastList from './BroadcastList';
-const BroadcastTable = () => {
+import { GetBroadcast, DeviceSession } from '@/utils/types';
+import { Button, Skeleton, Switch, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@nextui-org/react';
+import { fetchClient } from '@/utils/helper/fetchClient';
+import { useSession } from 'next-auth/react';
+import { User } from 'next-auth';
+import { toast } from 'react-toastify';
+interface BroadcastTableProps {
+    settotalBroadcast: Dispatch<SetStateAction<number>>,
+    user: User | undefined,
+    totalBroadcast: number,
+    // currentDevice: DeviceSession
+}
+const BroadcastTable = ({ settotalBroadcast, totalBroadcast, user }: BroadcastTableProps) => {
     const { push } = useRouter()
-    const mainCheckboxRef = useRef<HTMLInputElement>(null)
-    const messageCheckboxRef = useRef<MultipleCheckboxRef>({})
     const [isChecked, setisChecked] = useState(false)
-    const [messageData, setmessageData] = useState<BroadcastData[]>([
-        {
-            id: '1',
-            name: 'broadcast-1',
-            status: 'Ongoing',
-            sent: 12,
-            received: 12,
-            read: 12,
-            reply: 12,
-            device: {
-                pkId: 1,
-                id: 'ftuygibnilkm;123',
-                name: 'DXB12',
-                phone: '0845678902',
-                apiKey: 'bad-0u210n13',
-                serverId: 1,
-                status: 'CONNECTED',
-                created_at: '11.9.2023, 2:43 PM',
-                updated_at: '11.9.2023, 2:43 PM',
-                userId: 23,
-                DeviceLabel: [],
-            },
-            created_at: '11.9.2023, 2:43 PM',
-            updated_at: '11.9.2023, 2:43 PM',
-            checked: false
-        },
-    ])
+    const [isLoaded, setisLoaded] = useState(false)
+    const [broadcastData, setbroadcastData] = useState<GetBroadcast[]>([])
     const [searchText, setsearchText] = useState('')
-    const [searchedData, setsearchedData] = useState<BroadcastData[]>([])
-    const handleCheckBoxClick = (e: React.FormEvent<HTMLInputElement>, id: string) => {
-        const newmessageData = messageData.map(obj => {
-            return (obj.id === id ? { ...obj, checked: e.currentTarget.checked } : obj)
-        })
-        setmessageData(() => newmessageData)
-    }
-
-    const handleIndexCheckbox = (e: React.MouseEvent) => {
-        const currentmessageData = (searchText ? searchedData : messageData)
-        if (mainCheckboxRef.current && !mainCheckboxRef.current.checked) {
-            const newArray = currentmessageData.map((obj, idx) => {
-                messageCheckboxRef.current[`checkbox_${obj.id}`].checked = false
-                return { ...obj, checked: false }
-            })
-            if (searchText)
-                setsearchedData(newArray)
-            else
-                setmessageData(() => newArray)
-        } else {
-            const newArray = currentmessageData.map((obj, idx) => {
-                messageCheckboxRef.current[`checkbox_${obj.id}`].checked = true
-                return { ...obj, checked: true }
-            })
-            if (searchText)
-                setsearchedData(() => newArray)
-            else
-                setmessageData(() => newArray)
-        }
-    }
+    const [searchedGetBroadcast, setsearchedGetBroadcast] = useState<GetBroadcast[]>([])
     const handleOpenDetailModal = (params: string) => {
         push('/dashboard/contact/' + params)
     }
     const filterMessage = (text: string) => {
         const regex = new RegExp(text, 'i')
-        return messageData.filter(item => {
+        return broadcastData.filter(item => {
             if (regex.test(item.name))
                 return item
         })
@@ -82,41 +36,35 @@ const BroadcastTable = () => {
     }
     const handleDeleteMessage = () => {
         // TODO
-        const checkedContacts = messageData.filter(item => item.checked === false).map(item => item)
-        setmessageData(checkedContacts)
     }
-    useEffect(() => {
-        if (mainCheckboxRef.current) {
-            const checkObject = messageData.find(obj => obj.checked === true)
-            if (checkObject) {
-                mainCheckboxRef.current.checked = true
-                setisChecked(true)
-            }
-            else {
-                mainCheckboxRef.current.checked = false
-                setisChecked(false)
-            }
+    const fetchBroadcast = async () => {
+
+        const result = await fetchClient({
+            url: '/broadcasts/',
+            method: 'GET',
+            user: user
+        })
+        if (result?.ok) {
+            const resultData = await result.json()
+            console.log(resultData)
+            setbroadcastData(resultData)
+            settotalBroadcast(resultData.length)
+            setisLoaded(true)
+        } else {
+            toast.error(await result?.text())
         }
-    }, [messageData])
-    useEffect(() => {
-        if (mainCheckboxRef.current) {
-            const checkObject = searchedData.find(obj => obj.checked === true)
-            if (checkObject) {
-                mainCheckboxRef.current.checked = true
-                setisChecked(true)
-            }
-            else {
-                mainCheckboxRef.current.checked = false
-                setisChecked(false)
-            }
-        }
-    }, [searchedData])
+
+    }
 
     useEffect(() => {
         const searchResult = filterMessage(searchText)
-        setsearchedData(searchResult)
+        setsearchedGetBroadcast(searchResult)
     }, [searchText])
-
+    useEffect(() => {
+        if (user?.token) {
+            fetchBroadcast()
+        }
+    }, [user?.token])
     return (
         <>
             {/* <AddContactModal openModal={addContactModal} setopenModal={setaddContactModal} /> */}
@@ -141,58 +89,77 @@ const BroadcastTable = () => {
                     </div>
                 </div>
             </div>
-            <div className='overflow-x-scroll allowed-scroll'>
-                <table className="w-full text-center font-nunito text-xs font-bold ">
-                    <thead className='bg-neutral-75'>
-                        <tr className=''>
-                            <th className='py-4 checkbox'>
-                                <input ref={mainCheckboxRef} type="checkbox" name="main_checkbox" id="main_checkbox" className='rounded-sm focus:ring-transparent' onClick={handleIndexCheckbox} />
-                            </th>
-                            <th className='p-4'>Nama</th>
-                            <th className='p-4'>Status</th>
-                            <th className='p-4'>Terkirim</th>
-                            <th className='p-4'>Diterima</th>
-                            <th className='p-4'>Terbaca</th>
-                            <th className='p-4'>Balasan</th>
-                            <th className='p-4 '>Device</th>
-                            <th className='p-4 '>Tanggal Kirim</th>
-                            <th className='p-4 whitespace-pre'>Terakhir diupdate</th>
-                        </tr>
-                    </thead>
-                    <tbody className='bg-white'>
-                        {searchText ? (
-                            <BroadcastList
-                                broadcastData={searchedData}
-                                multipleCheckboxRef={messageCheckboxRef}
-                                handleCheckBoxClick={handleCheckBoxClick}
-                                handleOpenDetailModal={handleOpenDetailModal}
-                            />
-                        ) : (
-                            <BroadcastList
-                                broadcastData={messageData}
-                                multipleCheckboxRef={messageCheckboxRef}
-                                handleCheckBoxClick={handleCheckBoxClick}
-                                handleOpenDetailModal={handleOpenDetailModal}
-                            />
-
-                        )}
-                    </tbody>
-                </table>
-                {messageData.length === 0 && (
-                    <div className='w-full bg-white p-12'>
-                        <div className='w-full max-w-md mx-auto flex flex-col gap-4'>
-                            <p className='text-[16px] font-bold'>Kontak masih kosong</p>
-                            <p className='text-xs text-[#777C88]'>Tambahkan nomor ke dalam kontak anda.</p>
-                            <p className='text-xs'>Dengan kontak ini, Anda dapat dengan mudah berkomunikasi dengan kontak yang anda simpan</p>
-                            <div className='flex'>
-                                <div onClick={() => { }} className="bg-primary rounded-md px-6 text-white text-center items-center flex hover:cursor-pointer justify-center p-2">
-                                    Tambah Kontak
-                                </div>
+            {isLoaded ? (
+                <div className=' mt-4'>
+                    <Table
+                        aria-label="Incoming Chat"
+                        color='default'
+                        selectionMode="multiple"
+                        isHeaderSticky
+                        classNames={{
+                            td: 'text-[11px] font-nunito',
+                            tr: 'text-[11px] font-nunito',
+                            base: "max-h-[55vh] overflow-y-scroll",
+                            table: "",
+                            thead: 'rounded-md',
+                            wrapper: 'rounded-md'
+                        }}
+                        radius='md'
+                    // selectedKeys={selectedMessage as any}
+                    // onSelectionChange={setselectedMessage as any}
+                    >
+                        <TableHeader>
+                            <TableColumn>Nama</TableColumn>
+                            <TableColumn>Status</TableColumn>
+                            <TableColumn>Device</TableColumn>
+                            <TableColumn>Dibuat Pada</TableColumn>
+                            <TableColumn>Terakhir Update</TableColumn>
+                            <TableColumn>Detail</TableColumn>
+                        </TableHeader>
+                        <TableBody emptyContent={<div className='w-full bg-white p-12'>
+                            <div className='w-full max-w-md mx-auto flex flex-col gap-4'>
+                                <p className='text-[16px] font-bold'>Broadcast masih kosong</p>
+                                <p className='text-xs text-[#777C88]'>Lorem Ipsum</p>
                             </div>
-                        </div>
-                    </div>
-                )}
-            </div >
+                        </div>}
+                            items={broadcastData}
+                        >
+                            {(item: GetBroadcast) => (
+                                <TableRow key={item.id}>
+                                    <TableCell >{item.name}</TableCell>
+                                    <TableCell>
+                                        {item.status ? 'sudah terkirim' : 'belum terkirim'}
+                                        {/* <Switch size='sm' isSelected={item.status} /> */}
+                                    </TableCell>
+                                    <TableCell>
+                                        {item.device.name}
+                                    </TableCell>
+                                    <TableCell>
+                                        {item.createdAt}
+                                    </TableCell>
+                                    <TableCell>
+                                        {item.updatedAt}
+                                    </TableCell>
+                                    <TableCell>
+                                        <Button variant='bordered'>
+                                            Detail
+                                        </Button>
+                                    </TableCell>
+                                </TableRow>
+                            )}
+                        </TableBody>
+                    </Table>
+
+                </div >
+
+            ) : (
+                <div className='mt-4 flex flex-col gap-2 p-4 bg-white'>
+
+                    <Skeleton className={'w-full h-3 rounded-full'} />
+                    <Skeleton className={'w-full h-3 rounded-full'} />
+                    <Skeleton className={'w-full h-3 rounded-full'} />
+                </div>
+            )}
         </>
     )
 }

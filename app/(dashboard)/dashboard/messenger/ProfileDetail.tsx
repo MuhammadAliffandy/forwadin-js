@@ -45,31 +45,31 @@ const ProfileDetail = ({ currentContact }: { currentContact: ContactData | undef
                 <tbody >
                     <tr>
                         <th className='font-medium whitespace-pre '>First Name</th>
-                        <td>{currentContact.firstName}</td>
+                        <td className="break-all">{currentContact.firstName}</td>
                     </tr>
                     <tr>
                         <th className='font-medium whitespace-pre'>Last Name</th>
-                        <td>{currentContact.lastName}</td>
+                        <td className="break-all">{currentContact.lastName}</td>
                     </tr>
                     <tr>
                         <th className='font-medium whitespace-pre'>Email</th>
-                        <td>{currentContact.email}</td>
+                        <td className="break-all">{currentContact.email}</td>
                     </tr>
                     <tr>
                         <th className='font-medium whitespace-pre'>Phone Number</th>
-                        <td>+{currentContact.phone}</td>
+                        <td className="break-all">+{currentContact.phone}</td>
                     </tr>
                     <tr>
                         <th className='font-medium whitespace-pre'>Gender</th>
-                        <td>{currentContact.gender ? currentContact.gender : '-'}</td>
+                        <td className="break-all">{currentContact.gender ? currentContact.gender : '-'}</td>
                     </tr>
                     <tr>
                         <th className='font-medium whitespace-pre'>Honorific</th>
-                        <td>{currentContact.honorific ? currentContact.honorific : '-'}</td>
+                        <td className="break-all">{currentContact.honorific ? currentContact.honorific : '-'}</td>
                     </tr>
                     <tr>
                         <th className='font-medium whitespace-pre'>Country</th>
-                        <td>{currentContact.country ? currentContact.country : '-'}</td>
+                        <td className="break-all">{currentContact.country ? currentContact.country : '-'}</td>
                     </tr>
                     <tr>
                         <th className='font-medium whitespace-pre'>Birthdate</th>
