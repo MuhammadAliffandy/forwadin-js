@@ -73,15 +73,6 @@ const Messenger = () => {
                 formdata.append("recipients[0]", currentContact.phone)
                 formdata.append("sessionId", currentDevice.sessionId)
                 try {
-                    // const result = await fetch(process.env.NEXT_PUBLIC_BACKEND_URL + '/messages/' + currentDevice.sessionId + '/send/image', {
-                    //     method: 'POST',
-                    //     headers: {
-                    //         'Content-Type': 'multipart/form-data',
-                    //         'Authorization': 'Bearer ' + session?.user?.token,
-                    //         'Access-Control-Allow-Origin': '*'
-                    //     },
-                    //     body: formdata
-                    // })
                     const result = await fetch('/api/message/media', {
                         method: 'POST',
                         body: formdata
@@ -130,12 +121,7 @@ const Messenger = () => {
         }
         setsendMessageLoading(false)
     }
-    // const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
-    //     if (event.target.files?.[0]) {
-    //         const file = event.target.files?.[0];
-    //         setinputFile(file);
-    //     }
-    // }
+
     useEffect(() => {
         if (currentContact && currentDevice) {
             setchatDisabled(false)

@@ -205,9 +205,32 @@ export interface GetBroadcast {
     device: {
         name: string
     },
+    recipients?: string[],
+    schedule?: string,
+    message?: string,
     createdAt: string,
     updatedAt: string
 }
+
+export interface OutgoingBroadcast {
+    outgoingBroadcast: ContactBroadcast[]
+}
+export interface ContactBroadcast {
+    pkId: number,
+    id: string,
+    message: string,
+    mediaPath?: string,
+    receivedAt: string,
+    createdAt: string,
+    updatedAt: string,
+    sessionId: string,
+    status: string,
+    from?: string,
+    to?: string,
+    contactId: number,
+    contact: ContactData
+}
+
 export interface UserProfile {
     firstName: string,
     lastName: string,
@@ -217,6 +240,7 @@ export interface UserProfile {
     accountApiKey: string,
     affiliationCode: string
 }
+
 export interface SubscriptionTypes {
     pkId: number,
     startDate: string,
@@ -264,3 +288,29 @@ export interface TagsType {
 }
 
 export type { UserRegisterData, MultipleCheckboxRef, CheckboxRef, DeviceData, Label, CountryCode, ContactData, MessageData, MediaMessageData, GroupData, IncomingMessage, OutgoingMessage, MultipleInputRef, ResetUserData, BroadcastData }
+
+export interface GetCampaign {
+    name: string,
+    status: boolean,
+    recipients: string[],
+    registrationSyntax: string,
+    device: {
+        name: string
+    },
+    createdAt: string,
+    updatedAt: string
+}
+export interface CampaignData {
+    pkId: number,
+    id: string,
+    name: string,
+    syntaxRegistration: string,
+    registrationMessage: string,
+    messageRegistered: string,
+    recipients: string[],
+    isSent: boolean,
+    groupId: number,
+    deviceId: number,
+    createdAt: string,
+    updatedAt: string
+}

@@ -8,6 +8,7 @@ import { fetchClient } from '@/utils/helper/fetchClient';
 import { useSession } from 'next-auth/react';
 import { User } from 'next-auth';
 import { toast } from 'react-toastify';
+import { formatDate } from '@/utils/helper';
 interface BroadcastTableProps {
     settotalBroadcast: Dispatch<SetStateAction<number>>,
     user: User | undefined,
@@ -53,7 +54,6 @@ const BroadcastTable = ({ settotalBroadcast, totalBroadcast, user }: BroadcastTa
         } else {
             toast.error(await result?.text())
         }
-
     }
 
     useEffect(() => {
@@ -94,7 +94,7 @@ const BroadcastTable = ({ settotalBroadcast, totalBroadcast, user }: BroadcastTa
                     <Table
                         aria-label="Incoming Chat"
                         color='default'
-                        selectionMode="multiple"
+                        selectionMode="none"
                         isHeaderSticky
                         classNames={{
                             td: 'text-[11px] font-nunito',
@@ -128,20 +128,19 @@ const BroadcastTable = ({ settotalBroadcast, totalBroadcast, user }: BroadcastTa
                                 <TableRow key={item.id}>
                                     <TableCell >{item.name}</TableCell>
                                     <TableCell>
-                                        {item.status ? 'sudah terkirim' : 'belum terkirim'}
-                                        {/* <Switch size='sm' isSelected={item.status} /> */}
+                                        <Switch size='sm' isSelected={item.status} unselectable='on' />
                                     </TableCell>
                                     <TableCell>
                                         {item.device.name}
                                     </TableCell>
                                     <TableCell>
-                                        {item.createdAt}
+                                        {formatDate(item.createdAt)}
                                     </TableCell>
                                     <TableCell>
-                                        {item.updatedAt}
+                                        {formatDate(item.updatedAt)}
                                     </TableCell>
                                     <TableCell>
-                                        <Button variant='bordered'>
+                                        <Button variant='bordered' onClick={() => push('/dashboard/broadcast/' + item.id)}>
                                             Detail
                                         </Button>
                                     </TableCell>

@@ -13,9 +13,9 @@ interface CampaignTableProps {
 const CampaignTable = ({ sessionId, settotalCampaign, totalCampaign, user }: CampaignTableProps) => {
     const [isChecked, setisChecked] = useState(false)
     const [isLoaded, setisLoaded] = useState(false)
-    const [autoReplyData, setautoReplyData] = useState<Campaign[]>([])
+    const [campaignData, setcampaignData] = useState<Campaign[]>([])
     const [searchText, setsearchText] = useState('')
-    const [searchedCampaignData, setsearchedAutoReplyData] = useState<Campaign[]>([])
+    const [searchedCampaignData, setsearchedcampaignData] = useState<Campaign[]>([])
     return (
         <>
             <div className="mt-8 p-4 bg-white rounded-md">
@@ -33,7 +33,7 @@ const CampaignTable = ({ sessionId, settotalCampaign, totalCampaign, user }: Cam
                             </div>
                         ) : (
                             <Button className='rounded-md text-sm' color='primary' as={Link} href='/dashboard/auto-reply/new'>
-                                Buat Auto Reply Baru
+                                Buat Campaign Baru
                             </Button>
                         )}
                     </div>
@@ -71,11 +71,11 @@ const CampaignTable = ({ sessionId, settotalCampaign, totalCampaign, user }: Cam
                         </TableHeader>
                         <TableBody emptyContent={<div className='w-full bg-white p-12'>
                             <div className='w-full max-w-md mx-auto flex flex-col gap-4'>
-                                <p className='text-[16px] font-bold'>Auto Reply masih kosong</p>
+                                <p className='text-[16px] font-bold'>Campaign masih kosong</p>
                                 <p className='text-xs text-[#777C88]'>Lorem Ipsum</p>
                             </div>
                         </div>}
-                            items={autoReplyData}
+                            items={campaignData}
                         >
                             {(item: Campaign) => (
                                 <TableRow key={item.id}>

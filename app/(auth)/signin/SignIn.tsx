@@ -4,7 +4,7 @@ import { animated, useSpring } from '@react-spring/web'
 import Link from 'next/link'
 import { useForm } from "react-hook-form"
 import { signIn } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import InputForm from '@/components/form/InputForm';
 import ButtonSubmit from '@/components/form/ButtonSubmit';
 import { toast } from 'react-toastify';
@@ -14,6 +14,8 @@ interface UserLoginData {
     password: string
 }
 const SignIn = () => {
+    const searchParams = useSearchParams()!
+    const callbackUrl = (searchParams.has('callbackUrl') ? searchParams.get('callbackUrl') : '/dashboard')!
     const { push } = useRouter()
     const [isLoading, setisLoading] = useState(false)
     const { handleSubmit, setError, register, formState: { errors } } = useForm<UserLoginData>()
@@ -111,7 +113,7 @@ const SignIn = () => {
                     </div>
                     <div>
                         <div className="px-4 py-3 flex items-center justify-center gap-2 rounded-md w-full text-primary bg-white border border-primary text-center hover:cursor-pointer" onClick={() => signIn('google', {
-                            callbackUrl: "/dashboard"
+                            callbackUrl: callbackUrl
                         })}>
                             <div className="flex-none">
                                 <img src="/assets/icons/google-icon.svg" alt="" />
