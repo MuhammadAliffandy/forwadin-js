@@ -4,7 +4,7 @@ import { getSession, signIn, signOut, useSession } from "next-auth/react"
 import { toast } from "react-toastify"
 
 interface FetchClientParams {
-    method: string,
+    method: 'GET' | 'POST' | 'PUT' | 'DELETE',
     body?: string | null,
     url: string,
     user: User | undefined

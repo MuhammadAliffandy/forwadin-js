@@ -1,4 +1,5 @@
 'use client'
+import InputContactAndLabel from "@/components/dashboard/InputContactAndLabel"
 import MultipleInputContact from "@/components/dashboard/MultipleInputContact"
 import MultipleInputLabel from "@/components/dashboard/MultipleInputLabel"
 import TextAreaInput from "@/components/dashboard/chat/TextAreaInput"
@@ -29,20 +30,7 @@ const CreateBroadcast = () => {
     const [currentDevice, setcurrentDevice] = useState<DeviceSession>()
     const [isDisabled, setisDisabled] = useState(true)
     const { handleSubmit, register, reset, formState: { errors } } = useForm<BroadcastForm>()
-    const [receiverList, setreceiverList] = useState<ContactData[]>([
-        {
-            colorCode: '000000',
-            createdAt: '',
-            email: '',
-            firstName: 'all contact',
-            lastName: '',
-            gender: '',
-            id: '1',
-            phone: '*',
-            updatedAt: '',
-            contactDevices: []
-        }
-    ])
+    const [receiverList, setreceiverList] = useState<string[]>([])
     const [requestList, setrequestList] = useState<Label[]>([])
     const [textInput, settextInput] = useState<string>('')
     const listVariables = [
@@ -96,7 +84,7 @@ const CreateBroadcast = () => {
     const onSubmit = async (formData: any) => {
         setisLoading(true)
         let mark = true
-        if (!receiverList.some(item => item.active === true)) {
+        if (receiverList.length === 0) {
             toast.error('Penerima masih kosong!')
             mark = false
         }
@@ -112,8 +100,8 @@ const CreateBroadcast = () => {
             const broadcastData: BroadcastForm = {
                 name: formData.name,
                 deviceId: formData.deviceId,
-                recipients: receiverList.filter(item => item.active === true).map(item => item.phone),
-                delay: 12000,
+                recipients: receiverList,
+                delay: 4000,
                 message: textInput,
                 schedule: formatDatetoISO8601(formData.schedule)
             }
@@ -134,26 +122,26 @@ const CreateBroadcast = () => {
         }
         setisLoading(false)
     }
-    const fetchContactData = async () => {
-        const result = await fetchClient({
-            url: '/contacts',
-            method: 'GET',
-            user: session?.user
-        })
-        if (result?.ok) {
-            const resultData = await result.json()
-            const updatedReceiverList = [...receiverList, ...resultData]
-            setreceiverList(updatedReceiverList)
-        }
-    }
+    // const fetchContactData = async () => {
+    //     const result = await fetchClient({
+    //         url: '/contacts',
+    //         method: 'GET',
+    //         user: session?.user
+    //     })
+    //     if (result?.ok) {
+    //         const resultData = await result.json()
+    //         const updatedReceiverList = [...receiverList, ...resultData]
+    //         setreceiverList(updatedReceiverList)
+    //     }
+    // }
     useEffect(() => {
         if (session?.user?.device && listDevice.length === 0) {
             setlistDevice(session.user.device)
-            fetchContactData()
+            // fetchContactData()
         }
     }, [session?.user?.device])
     useEffect(() => {
-        if (textInput.length > 0 && receiverList.some(item => item.active === true)) {
+        if (textInput.length > 0 && receiverList.length >= 0) {
             setisDisabled(false)
         } else {
             setisDisabled(true)
@@ -189,7 +177,11 @@ const CreateBroadcast = () => {
                     <div>
                         <p className="mb-2">Penerima</p>
                         {/* <TagsInput /> */}
-                        <MultipleInputContact contactList={receiverList} setcontactList={setreceiverList} />
+                        <InputContactAndLabel
+                            selectedKeys={receiverList}
+                            setselectedKeys={setreceiverList}
+                        />
+                        {/* <MultipleInputContact contactList={receiverList} setcontactList={setreceiverList} /> */}
                     </div>
                     <div>
                         <p className="mb-2">Jadwal Broadcast</p>

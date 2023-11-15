@@ -73,6 +73,7 @@ export const authConfig: NextAuthOptions = {
                 let subscription: Subscription = {
                     status: 0
                 }
+
                 const userData: User = JSON.parse(credentials?.user!)
                 const result = await fetch(process.env.BACKEND_URL + '/auth/refresh-token', {
                     method: 'POST',
@@ -81,7 +82,9 @@ export const authConfig: NextAuthOptions = {
                     },
                     body: JSON.stringify({ refreshToken: userData.refreshToken })
                 })
+
                 if (result.ok) {
+                    console.log('sukses fetch refresh')
                     const resultData = await result.json()
 
                     const userSubscription = await fetch(process.env.BACKEND_URL + '/users/' + userData.id + '/subscription/', {
@@ -118,6 +121,7 @@ export const authConfig: NextAuthOptions = {
                         device: device,
                         subscription: subscription
                     }
+
                     return user
                 } else {
                     return null

@@ -9,7 +9,7 @@ import { fetchClient } from '@/utils/helper/fetchClient';
 import { toast } from 'react-toastify';
 import { formatDateBahasa, getTodayDateBahasa } from '@/utils/helper';
 import { Button, Progress, Link as UILink } from '@nextui-org/react';
-import { useSession } from 'next-auth/react';
+import { signIn, useSession } from 'next-auth/react';
 import ActivatePlanModal from '@/components/dashboard/ActivatePlanModal';
 const DynamicAnalytic = dynamic(() => import('@/components/dashboard/Analytic'), { ssr: false })
 const Dashboard = () => {
@@ -90,12 +90,20 @@ const Dashboard = () => {
             }
         }
     }
+    // const testRefresh = async () => {
+    //     const refresh = await signIn('refresh', {
+    //         redirect: false,
+    //         user: JSON.stringify(session?.user)
+    //     })
+    //     console.log(refresh?.error)
+    // }
     useEffect(() => {
-        fetchProfile()
-        fetchSubscription()
+        if (session?.user?.token) {
+            fetchProfile()
+            fetchSubscription()
+            // testRefresh()
+        }
     }, [session?.user?.token])
-    useEffect(() => {
-    }, [session?.user?.device])
     return (
         <>
             {session?.user?.subscription.status === 0 && <ActivatePlanModal user={session.user} />}

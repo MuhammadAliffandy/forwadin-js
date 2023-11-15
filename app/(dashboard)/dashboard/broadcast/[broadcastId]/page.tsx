@@ -1,11 +1,12 @@
 import Link from 'next/link'
 import { Metadata } from 'next'
+import DetailBroadcast from './DetailBroadcast'
 type Params = {
-    params: { device: string }
+    params: { broadcastId: string }
 }
 
 export const metadata: Metadata = {
-    title: 'Detail Device',
+    title: 'Detail Broadcast',
 }
 const page = ({ params }: Params) => {
 
@@ -14,7 +15,7 @@ const page = ({ params }: Params) => {
             <div className='flex'>
                 <Link href={'/dashboard/broadcast'} className='rounded-md py-3 px-4 border border-black/50 text-black/50'>Kembali</Link>
             </div>
-            {/* <DetailDevice device={params.device} /> */}
+            <DetailBroadcast broadcastId={params.broadcastId} />
         </>
     )
 }

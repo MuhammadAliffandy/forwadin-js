@@ -82,7 +82,11 @@ const OutgoingTable = ({ settotalMessage, totalMessage, sessionId, user }: {
     }, [user?.token, sessionId])
     useEffect(() => {
         // if (currentPage > 1)
-        fetchOutgoingMessage()
+        if (currentPage === 1 && messageData.length === 0)
+            return
+        else {
+            fetchOutgoingMessage()
+        }
     }, [currentPage])
 
     return (
