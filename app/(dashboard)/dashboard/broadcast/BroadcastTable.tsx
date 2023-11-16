@@ -3,7 +3,7 @@
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { GetBroadcast, DeviceSession } from '@/utils/types';
-import { Button, Skeleton, Switch, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@nextui-org/react';
+import { Button, Link, Skeleton, Switch, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@nextui-org/react';
 import { fetchClient } from '@/utils/helper/fetchClient';
 import { useSession } from 'next-auth/react';
 import { User } from 'next-auth';
@@ -82,9 +82,9 @@ const BroadcastTable = ({ settotalBroadcast, totalBroadcast, user }: BroadcastTa
                                 Hapus
                             </div>
                         ) : (
-                            <div onClick={() => push('/dashboard/broadcast/new')} className="bg-primary rounded-md w-full lg:w-auto px-8 text-white text-center items-center flex hover:cursor-pointer justify-center p-2">
+                            <Button className='rounded-md text-sm' color='primary' as={Link} href='/dashboard/broadcast/new'>
                                 Buat Broadcast Baru
-                            </div>
+                            </Button>
                         )}
                     </div>
                 </div>

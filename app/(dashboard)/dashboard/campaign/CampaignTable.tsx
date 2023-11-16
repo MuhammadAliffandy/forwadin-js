@@ -1,21 +1,48 @@
+import { formatDate } from '@/utils/helper'
+import { fetchClient } from '@/utils/helper/fetchClient'
+import { DeviceSession, GetCampaign } from '@/utils/types'
 import { Table, Button, TableHeader, TableColumn, TableBody, TableRow, TableCell, Switch, Skeleton } from '@nextui-org/react'
 import { Campaign } from '@prisma/client'
 import { } from 'flowbite-react'
 import { User } from 'next-auth'
+import { useSession } from 'next-auth/react'
 import Link from 'next/link'
-import { Dispatch, SetStateAction, useState } from 'react'
+import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 interface CampaignTableProps {
     settotalCampaign: Dispatch<SetStateAction<number>>,
-    sessionId: string,
+    // currentDevice: DeviceSession,
     user: User | undefined,
     totalCampaign: number
 }
-const CampaignTable = ({ sessionId, settotalCampaign, totalCampaign, user }: CampaignTableProps) => {
+const CampaignTable = ({ settotalCampaign, totalCampaign, user }: CampaignTableProps) => {
+    // const { data: session } = useSession()
     const [isChecked, setisChecked] = useState(false)
     const [isLoaded, setisLoaded] = useState(false)
-    const [campaignData, setcampaignData] = useState<Campaign[]>([])
+    const [campaignData, setcampaignData] = useState<GetCampaign[]>([])
     const [searchText, setsearchText] = useState('')
-    const [searchedCampaignData, setsearchedcampaignData] = useState<Campaign[]>([])
+    const [searchedCampaignData, setsearchedcampaignData] = useState<GetCampaign[]>([])
+    const fetchCampaign = async () => {
+        const result = await fetchClient({
+            url: '/campaigns',
+            method: 'GET',
+            user: user
+        })
+        if (result?.ok) {
+            const resultData: GetCampaign[] = await result.json()
+            console.log(resultData)
+            setcampaignData(resultData)
+            settotalCampaign(resultData.length)
+        }
+        setisLoaded(true)
+    }
+    useEffect(() => {
+        // console.log('masuk')
+        if (user?.token && campaignData.length === 0) {
+            // console.log('masuk2')
+            fetchCampaign()
+        }
+    }, [user?.token])
+
     return (
         <>
             <div className="mt-8 p-4 bg-white rounded-md">
@@ -32,7 +59,7 @@ const CampaignTable = ({ sessionId, settotalCampaign, totalCampaign, user }: Cam
                                 Hapus
                             </div>
                         ) : (
-                            <Button className='rounded-md text-sm' color='primary' as={Link} href='/dashboard/auto-reply/new'>
+                            <Button className='rounded-md text-sm' color='primary' as={Link} href='/dashboard/campaign/new'>
                                 Buat Campaign Baru
                             </Button>
                         )}
@@ -65,7 +92,15 @@ const CampaignTable = ({ sessionId, settotalCampaign, totalCampaign, user }: Cam
                             <TableColumn
                             >Status</TableColumn>
                             <TableColumn
-                            >Penerima</TableColumn>
+                            >Register Syntax</TableColumn>
+                            <TableColumn
+                            >Subcscriber</TableColumn>
+                            <TableColumn
+                            >Device</TableColumn>
+                            <TableColumn
+                            >Tanggal Kirim</TableColumn>
+                            <TableColumn
+                            >Tanggal diupdate</TableColumn>
                             <TableColumn
                             >Detail</TableColumn>
                         </TableHeader>
@@ -76,20 +111,42 @@ const CampaignTable = ({ sessionId, settotalCampaign, totalCampaign, user }: Cam
                             </div>
                         </div>}
                             items={campaignData}
+                        // className='font-nunito'
                         >
-                            {(item: Campaign) => (
+                            {(item: GetCampaign) => (
                                 <TableRow key={item.id}>
                                     <TableCell >{item.name}</TableCell>
                                     <TableCell>
-                                        {/* <Switch size='sm' isSelected={item.status} /> */}
-                                        <p>Lorem</p>
+                                        <div className='flex gap-1 items-center'>
+                                            <Switch size='sm' isSelected={item.status} />
+                                            {item.status ? (
+                                                <p className='text-primary font-bold'>Live</p>
+                                            ) : (
+                                                <p className='text-customGray'>off</p>
+                                            )}
+                                        </div>
                                     </TableCell>
                                     <TableCell>
-                                        <p>Lorem</p>
-                                        {/* {item.recipients.length} */}
+                                        <p>{item.registrationSyntax}</p>
                                     </TableCell>
                                     <TableCell>
-                                        <Button variant='bordered'>
+                                        <p>
+                                            {item.recipients[0] === 'all' ? 'Semua' : item.recipients.length}
+                                        </p>
+                                    </TableCell>
+                                    <TableCell>
+                                        <p>
+                                            {item.device.name}
+                                        </p>
+                                    </TableCell>
+                                    <TableCell>
+                                        {formatDate(item.createdAt)}
+                                    </TableCell>
+                                    <TableCell>
+                                        {formatDate(item.updatedAt)}
+                                    </TableCell>
+                                    <TableCell>
+                                        <Button as={Link} href={'/dashboard/campaign/' + item.id} variant='bordered' >
                                             Detail
                                         </Button>
                                     </TableCell>
