@@ -7,9 +7,10 @@ import ContactLabel from "./label/ContactLabel"
 
 interface InputProps {
     selectedKeys: string[],
-    setselectedKeys: Dispatch<SetStateAction<string[]>>
+    setselectedKeys: Dispatch<SetStateAction<string[]>>,
+    isAutoReply?: boolean
 }
-const InputContactAndLabel = ({ selectedKeys, setselectedKeys }: InputProps) => {
+const InputContactAndLabel = ({ selectedKeys, setselectedKeys, isAutoReply = false }: InputProps) => {
     const { data: session } = useSession()
     const labelInputRef = useRef<HTMLInputElement>(null)
     const [isLabelOpen, setisLabelOpen] = useState(false)
@@ -109,6 +110,20 @@ const InputContactAndLabel = ({ selectedKeys, setselectedKeys }: InputProps) => 
         }
     }
     useEffect(() => {
+        if (numberList.length === 0) {
+            if (isAutoReply) {
+                setnumberList(prev => [...prev,
+                { label: { name: '*', active: false } },
+                { label: { name: 'all', active: false } }
+                ])
+            } else {
+                setnumberList(prev => [...prev,
+                { label: { name: 'all', active: false } }
+                ])
+            }
+        }
+    }, [])
+    useEffect(() => {
         if (session?.user?.token && contactLabelList.length === 0) {
             fetchContactLabelList()
             fetchGroupList()
@@ -116,7 +131,7 @@ const InputContactAndLabel = ({ selectedKeys, setselectedKeys }: InputProps) => 
     }, [session?.user?.token])
     useEffect(() => {
         //contact_labelContact, group_namaGroup
-        const contactLabel = contactLabelList.filter(item => item.label.active).map(item => 'contact_' + item.label.name)
+        const contactLabel = contactLabelList.filter(item => item.label.active).map(item => 'label_' + item.label.name)
         const groupLabel = groupList.filter(item => item.label.active).map(item => 'group_' + item.label.name)
         const numberLabel = numberList.filter(item => item.label.active).map(item => item.label.name)
         setselectedKeys([...contactLabel, ...groupLabel, ...numberLabel])
@@ -195,6 +210,24 @@ const InputContactAndLabel = ({ selectedKeys, setselectedKeys }: InputProps) => 
                                         onClick={() => handleGroupLabelList(item.label.name, true)}
                                         radius="md"
                                         color="black"
+                                        key={idx}
+                                    />
+                                ))}
+                            </div>
+                        </div>
+                        <div className="">
+                            <div className="text-xs pt-2 text-customNeutral">
+                                Your Label
+                            </div>
+                            <div className="flex flex-wrap items-start gap-2 overflow-x-auto max-h-48 my-5">
+
+                                {numberList.map((item, idx) => !item.label.active && (
+                                    <ContactLabel idx={idx}
+                                        label={item}
+                                        onClick={() => handleNumberList(item.label.name, true)}
+                                        radius="md"
+                                        color="none"
+                                        isBordered
                                         key={idx}
                                     />
                                 ))}

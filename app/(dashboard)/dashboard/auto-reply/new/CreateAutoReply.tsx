@@ -1,5 +1,6 @@
 'use client'
 import DropdownDevice from "@/components/dashboard/DropdownDevice"
+import InputContactAndLabel from "@/components/dashboard/InputContactAndLabel"
 import MultipleInputContact from "@/components/dashboard/MultipleInputContact"
 import MultipleInputLabel from "@/components/dashboard/MultipleInputLabel"
 import TagsInput from "@/components/dashboard/TagsInput"
@@ -28,20 +29,7 @@ const CreateAutoReply = () => {
     const [currentDevice, setcurrentDevice] = useState<DeviceSession>()
     const [isDisabled, setisDisabled] = useState(true)
     const { handleSubmit, register, reset, formState: { errors } } = useForm<AutoReplyForm>()
-    const [receiverList, setreceiverList] = useState<ContactData[]>([
-        {
-            colorCode: '000000',
-            createdAt: '',
-            email: '',
-            firstName: 'all contact',
-            lastName: '',
-            gender: '',
-            id: '1',
-            phone: '*',
-            updatedAt: '',
-            contactDevices: []
-        }
-    ])
+    const [receiverList, setreceiverList] = useState<string[]>([])
     const [requestList, setrequestList] = useState<Label[]>([])
     const [textInput, settextInput] = useState<string>('')
     const listVariables = [
@@ -77,7 +65,7 @@ const CreateAutoReply = () => {
         }
     ]
     const parseTextInput = (text: string) => {
-        return text.replace(/\${{(\w+)}}/g, (match, placeholder) => {
+        return text.replace(/\{\{\$(\w+)}}/g, (match, placeholder) => {
             // @ts-ignore
             return sampleContact[placeholder] || match;
         });
@@ -89,13 +77,13 @@ const CreateAutoReply = () => {
 
     }
     const handleInsertVariable = (text: string) => {
-        settextInput(prev => prev + '${{' + text + '}}')
+        settextInput(prev => prev + '{{$' + text + '}}')
 
     }
     const onSubmit = async (formData: any) => {
         setisLoading(true)
         let mark = true
-        if (!receiverList.some(item => item.active === true)) {
+        if (receiverList.length === 0) {
             toast.error('Penerima masih kosong!')
             mark = false
         }
@@ -115,7 +103,7 @@ const CreateAutoReply = () => {
             const autoReplyData = {
                 name: formData.name,
                 deviceId: formData.deviceId,
-                recipients: receiverList.filter(item => item.active === true).map(item => item.phone),
+                recipients: receiverList,
                 requests: requestList.map(item => item.label.name),
                 response: textInput
             }
@@ -155,7 +143,7 @@ const CreateAutoReply = () => {
         }
     }, [session?.user?.device])
     useEffect(() => {
-        if (textInput.length > 0 && receiverList.some(item => item.active === true) && requestList.some(item => item.label.active === true)) {
+        if (textInput.length > 0 && receiverList.length > 0 && requestList.some(item => item.label.active === true)) {
             setisDisabled(false)
         } else {
             setisDisabled(true)
@@ -190,7 +178,13 @@ const CreateAutoReply = () => {
                     <div>
                         <p className="mb-2">Penerima</p>
                         {/* <TagsInput /> */}
-                        <MultipleInputContact contactList={receiverList} setcontactList={setreceiverList} />
+                        {/* <MultipleInputContact contactList={receiverList} setcontactList={setreceiverList} /> */}
+                        <InputContactAndLabel
+                            selectedKeys={receiverList}
+                            setselectedKeys={setreceiverList}
+                            isAutoReply={true}
+                        />
+
                     </div>
                 </div>
                 <div className='w-full bg-white rounded-md p-4'>

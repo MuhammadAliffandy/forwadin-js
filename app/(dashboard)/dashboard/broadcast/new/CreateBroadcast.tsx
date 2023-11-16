@@ -27,7 +27,6 @@ const CreateBroadcast = () => {
     const { data: session } = useSession()
     const [isLoading, setisLoading] = useState(false)
     const [listDevice, setlistDevice] = useState<DeviceSession[]>([])
-    const [currentDevice, setcurrentDevice] = useState<DeviceSession>()
     const [isDisabled, setisDisabled] = useState(true)
     const { handleSubmit, register, reset, formState: { errors } } = useForm<BroadcastForm>()
     const [receiverList, setreceiverList] = useState<string[]>([])
@@ -66,7 +65,7 @@ const CreateBroadcast = () => {
         }
     ]
     const parseTextInput = (text: string) => {
-        return text.replace(/\${{(\w+)}}/g, (match, placeholder) => {
+        return text.replace(/\{\{\$(\w+)}}/g, (match, placeholder) => {
             // @ts-ignore
             return sampleContact[placeholder] || match;
         });
@@ -78,7 +77,7 @@ const CreateBroadcast = () => {
 
     }
     const handleInsertVariable = (text: string) => {
-        settextInput(prev => prev + '${{' + text + '}}')
+        settextInput(prev => prev + '{{$' + text + '}}')
 
     }
     const onSubmit = async (formData: any) => {

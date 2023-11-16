@@ -194,56 +194,7 @@ const ContactTable = ({ setcontactCount }: { setcontactCount: Dispatch<SetStateA
                         </TableBody>
                     </Table>
                 </div >
-                // <div className='overflow-x-scroll allowed-scroll'>
-                //     <table className="w-full text-center font-nunito text-xs font-bold ">
-                //         <thead className='bg-neutral-75'>
-                //             <tr className=''>
-                //                 <th className='py-4 checkbox'>
-                //                     <input ref={mainCheckboxRef} type="checkbox" name="main_checkbox" id="main_checkbox" className='rounded-sm focus:ring-transparent' onClick={handleIndexCheckbox} />
-                //                 </th>
-                //                 <th className='p-4'>Nama</th>
-                //                 <th className='p-4 whitespace-pre'>Nomor HP</th>
-                //                 <th className='p-4'>Label Kategori</th>
-                //                 <th className='p-4'>Email</th>
-                //                 <th className='p-4'>Dibuat pada</th>
-                //                 <th className='p-4'>Detail</    th>
-                //             </tr>
-                //         </thead>
 
-                //         <tbody className='bg-white'>
-                //             {searchText ? (
-                //                 <ContactList
-                //                     contactData={searchedContact}
-                //                     multipleCheckboxRef={contactCheckboxRef}
-                //                     handleCheckBoxClick={handleCheckBoxClick}
-                //                     handleOpenDetailModal={handleOpenDetailModal}
-                //                 />
-                //             ) : (
-                //                 <ContactList
-                //                     contactData={contactData}
-                //                     multipleCheckboxRef={contactCheckboxRef}
-                //                     handleCheckBoxClick={handleCheckBoxClick}
-                //                     handleOpenDetailModal={handleOpenDetailModal}
-                //                 />
-
-                //             )}
-                //         </tbody>
-                //     </table>
-                //     {contactData.length === 0 && (
-                //         <div className='w-full bg-white p-12'>
-                //             <div className='w-full max-w-md mx-auto flex flex-col gap-4'>
-                //                 <p className='text-[16px] font-bold'>Kontak masih kosong</p>
-                //                 <p className='text-xs text-[#777C88]'>Tambahkan nomor ke dalam kontak anda.</p>
-                //                 <p className='text-xs'>Dengan kontak ini, Anda dapat dengan mudah berkomunikasi dengan kontak yang anda simpan</p>
-                //                 <div className='flex'>
-                //                     <div onClick={() => setaddContactModal(true)} className="bg-primary rounded-md px-6 text-white text-center items-center flex hover:cursor-pointer justify-center p-2">
-                //                         Tambah Kontak
-                //                     </div>
-                //                 </div>
-                //             </div>
-                //         </div>
-                //     )}
-                // </div >
             ) : (
                 <>
                     <div className='mt-4 flex flex-col gap-2 p-4 bg-white'>

@@ -72,12 +72,12 @@ const GroupTable = ({ setcountGroup }: { setcountGroup: Dispatch<SetStateAction<
             method: 'GET',
             user: session?.user
         })
-        if (result) {
+        if (result?.ok) {
             const resultData: GroupData[] = await result.json()
-            if (result.status === 200) {
-                setgroupData(resultData)
-                setisLoaded(true)
-            }
+
+            setgroupData(resultData)
+            setcountGroup(resultData.length)
+            setisLoaded(true)
         }
     }
     useEffect(() => {

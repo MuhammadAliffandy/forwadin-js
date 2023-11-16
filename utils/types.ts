@@ -290,6 +290,7 @@ export interface TagsType {
 export type { UserRegisterData, MultipleCheckboxRef, CheckboxRef, DeviceData, Label, CountryCode, ContactData, MessageData, MediaMessageData, GroupData, IncomingMessage, OutgoingMessage, MultipleInputRef, ResetUserData, BroadcastData }
 
 export interface GetCampaign {
+    id: string,
     name: string,
     status: boolean,
     recipients: string[],
