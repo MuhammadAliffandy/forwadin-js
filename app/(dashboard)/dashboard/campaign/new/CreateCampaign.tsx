@@ -6,7 +6,7 @@ import TextAreaInput from "@/components/dashboard/chat/TextAreaInput"
 import InputForm from "@/components/form/InputForm"
 import { formatDatetoISO8601 } from "@/utils/helper"
 import { fetchClient } from "@/utils/helper/fetchClient"
-import { ContactData, DeviceSession, Label } from "@/utils/types"
+import { CampaignForm, ContactData, DeviceSession, Label, MessageTypes } from "@/utils/types"
 import { Button, Tab, Tabs } from "@nextui-org/react"
 import { animated, useTransition } from "@react-spring/web"
 import { useSession } from "next-auth/react"
@@ -14,20 +14,8 @@ import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { toast } from "react-toastify"
-interface CampaignForm {
-    name: string,
-    deviceId: string,
-    recipients: string[],
-    registrationSyntax: string,
-    unregistrationSyntax: string,
-    registrationMessage: string,
-    messageRegistered: string,
-    messageFailed: string,
-    messageUnregistered: string,
-    delay: number, // in miliseconds
-    schedule: string
-}
-type MessageTypes = 'registrationMessage' | 'messageRegistered' | 'messageFailed' | 'messageUnregistered'
+
+
 const CreateCampaign = () => {
     const { push } = useRouter()
     const { data: session } = useSession()
@@ -102,7 +90,6 @@ const CreateCampaign = () => {
             if (text === 'messageUnregistered')
                 setmessageUnregistered(findContent)
         }
-
     }
     const handleInsertVariable = (text: string, types: MessageTypes) => {
 

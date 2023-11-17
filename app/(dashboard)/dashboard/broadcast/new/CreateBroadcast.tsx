@@ -6,21 +6,14 @@ import TextAreaInput from "@/components/dashboard/chat/TextAreaInput"
 import InputForm from "@/components/form/InputForm"
 import { formatDatetoISO8601 } from "@/utils/helper"
 import { fetchClient } from "@/utils/helper/fetchClient"
-import { ContactData, DeviceSession, Label } from "@/utils/types"
+import { BroadcastForm, ContactData, DeviceSession, Label } from "@/utils/types"
 import { Button } from "@nextui-org/react"
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { toast } from "react-toastify"
-interface BroadcastForm {
-    name: string,
-    deviceId: string,
-    recipients: string[],
-    message: string, // limit 255
-    delay: number,
-    schedule: string
-}
+
 
 const CreateBroadcast = () => {
     const { push } = useRouter()
@@ -144,7 +137,6 @@ const CreateBroadcast = () => {
             setisDisabled(false)
         } else {
             setisDisabled(true)
-
         }
     }, [textInput, receiverList, requestList])
     return (

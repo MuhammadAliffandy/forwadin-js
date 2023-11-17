@@ -6,6 +6,7 @@ import { Button, Link, Pagination, Skeleton, Switch, Table, TableBody, TableCell
 import { IncomingMessage } from 'http'
 import { User } from 'next-auth'
 import { Dispatch, SetStateAction, useEffect, useState } from 'react'
+import { toast } from 'react-toastify'
 interface AutoReplyTableProps {
     settotalAutoReply: Dispatch<SetStateAction<number>>,
     sessionId: string,
@@ -19,6 +20,7 @@ const AutoReplyTable = ({ sessionId, settotalAutoReply, totalAutoReply, user }: 
     const [autoReplyData, setautoReplyData] = useState<AutoReply[]>([])
     const [searchText, setsearchText] = useState('')
     const [searchedAutoReplyData, setsearchedAutoReplyData] = useState<AutoReply[]>([])
+    const [selectedAutoReply, setselectedAutoReply] = useState<Set<string> | 'all'>(new Set([]))
     const fetchAutoReply = async () => {
         const result = await fetchClient({
             url: '/auto-replies',
@@ -28,15 +30,52 @@ const AutoReplyTable = ({ sessionId, settotalAutoReply, totalAutoReply, user }: 
         if (result?.ok) {
             const resultData: AutoReply[] = await result.json()
             setautoReplyData(resultData)
-            console.log(resultData)
+            settotalAutoReply(resultData.length)
         }
         setisLoaded(true)
+    }
+    const handleToggleAutoReply = async () => {
+
+    }
+    const handleDeleteAutoReply = async () => {
+        // tambah konfirmasi delete
+        let deletedAR = null
+        if (selectedAutoReply === 'all') {
+            deletedAR = autoReplyData.map(item => item.id)
+        }
+        else if ((selectedAutoReply as Set<string>).size > 0) {
+            deletedAR = Array.from(selectedAutoReply)
+        }
+        const isConfirm = window.confirm('Anda yakin ingin menghapus ' + deletedAR?.length + ' auto reply?')
+        if (deletedAR && isConfirm) {
+            const result = await fetchClient({
+                url: '/auto-replies',
+                body: JSON.stringify({ autoReplyIds: deletedAR }),
+                method: 'DELETE',
+                user: user
+            })
+            if (result?.ok) {
+                toast.success('Berhasil hapus auto reply')
+                fetchAutoReply()
+                setselectedAutoReply(new Set())
+            } else {
+                toast.error('Gagal hapus auto reply')
+            }
+            deletedAR = null
+        }
     }
     useEffect(() => {
         if (user?.token) {
             fetchAutoReply()
         }
     }, [user?.token])
+    useEffect(() => {
+        if ((selectedAutoReply as Set<string>).size > 0 || selectedAutoReply === 'all')
+            setisChecked(true)
+        else
+            setisChecked(false)
+
+    }, [selectedAutoReply])
     return (
         <>
             <div className="mt-8 p-4 bg-white rounded-md">
@@ -49,9 +88,7 @@ const AutoReplyTable = ({ sessionId, settotalAutoReply, totalAutoReply, user }: 
                     </div>
                     <div className='flex lg:justify-end justify-between gap-2 w-full max-w-xs'>
                         {isChecked ? (
-                            <div onClick={() => { }} className="bg-danger rounded-md w-full lg:w-auto px-8 text-white text-center items-center flex hover:cursor-pointer justify-center p-2">
-                                Hapus
-                            </div>
+                            <Button onClick={handleDeleteAutoReply} className='rounded-md text-sm' color='danger' >Hapus</Button>
                         ) : (
                             <Button className='rounded-md text-sm' color='primary' as={Link} href='/dashboard/auto-reply/new'>
                                 Buat Auto Reply Baru
@@ -77,8 +114,8 @@ const AutoReplyTable = ({ sessionId, settotalAutoReply, totalAutoReply, user }: 
                             wrapper: 'rounded-md'
                         }}
                         radius='md'
-                    // selectedKeys={selectedMessage as any}
-                    // onSelectionChange={setselectedMessage as any}
+                        selectedKeys={selectedAutoReply as any}
+                        onSelectionChange={setselectedAutoReply as any}
                     >
                         <TableHeader>
                             <TableColumn

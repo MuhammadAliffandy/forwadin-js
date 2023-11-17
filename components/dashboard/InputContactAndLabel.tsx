@@ -11,8 +11,8 @@ interface InputProps {
     isAutoReply?: boolean
 }
 const InputContactAndLabel = ({ selectedKeys, setselectedKeys, isAutoReply = false }: InputProps) => {
+    const [isLoaded, setisLoaded] = useState(false)
     const { data: session } = useSession()
-    const labelInputRef = useRef<HTMLInputElement>(null)
     const [isLabelOpen, setisLabelOpen] = useState(false)
     const [contactLabelList, setcontactLabelList] = useState<Label[]>([])
     const [groupList, setgroupList] = useState<Label[]>([])
@@ -35,7 +35,6 @@ const InputContactAndLabel = ({ selectedKeys, setselectedKeys, isAutoReply = fal
     })
     const isNumber = (text: string) => {
         const nonNumericRegex = /[^0-9]/;
-
         return !nonNumericRegex.test(text)
     }
     const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -77,16 +76,18 @@ const InputContactAndLabel = ({ selectedKeys, setselectedKeys, isAutoReply = fal
             user: session?.user
         })
         if (result?.ok) {
-            const resultData = await result.json()
-            console.log(resultData)
-            setcontactLabelList(resultData.map((item: string) => {
+            const resultData: string[] = await result.json()
+
+            const newArr: Label[] = resultData.filter(item => !contactLabelList.some(ele => ele.label.name === item)).map(item => {
                 return {
                     label: {
                         name: item,
                         active: false
                     }
                 }
-            }))
+
+            })
+            setcontactLabelList(prev => [...prev, ...newArr])
         }
     }
     const fetchGroupList = async () => {
@@ -97,7 +98,7 @@ const InputContactAndLabel = ({ selectedKeys, setselectedKeys, isAutoReply = fal
         })
         if (result?.ok) {
             const resultData: GroupData[] = await result.json()
-            setgroupList(resultData.map(item => {
+            const newArr = resultData.filter(item => !groupList.some(ele => ele.label.name === item.name)).map(item => {
                 return {
                     label: {
                         name: item.name,
@@ -105,39 +106,94 @@ const InputContactAndLabel = ({ selectedKeys, setselectedKeys, isAutoReply = fal
                     }
                 }
 
-            }))
-
+            })
+            setgroupList(prev => [...prev, ...newArr])
         }
     }
-    useEffect(() => {
-        if (numberList.length === 0) {
-            if (isAutoReply) {
-                setnumberList(prev => [...prev,
-                { label: { name: '*', active: false } },
-                { label: { name: 'all', active: false } }
-                ])
-            } else {
-                setnumberList(prev => [...prev,
-                { label: { name: 'all', active: false } }
-                ])
+    const assignNumbers = () => {
+        const numberArray = selectedKeys.filter(item => !(item.startsWith('group_') || item.startsWith('label_') || item.includes('*') || item.includes('all')))
+        console.log(numberArray)
+        const newArray = numberArray.map(item => {
+            return {
+                label: {
+                    name: item,
+                    active: true
+                }
             }
+        })
+
+        setnumberList(prev => [...prev, ...newArray])
+    }
+    const assignGroup = () => {
+        const groupArray = selectedKeys.filter(item => item.startsWith('group_')).map(item => item.replace('group_', ''))
+
+        setgroupList(groupArray.map(item => {
+            return {
+                label: {
+                    name: item,
+                    active: true
+                }
+            }
+        }))
+    }
+    const assignContact = () => {
+        const labelList = selectedKeys.filter(item => item.startsWith('label_')).map(item => item.replace('label_', ''))
+
+        setcontactLabelList(labelList.map(item => {
+            return {
+                label: {
+                    name: item,
+                    active: true
+                }
+            }
+        }))
+
+    }
+    useEffect(() => {
+        if (isAutoReply) {
+            setnumberList(prev => [...prev,
+            { label: { name: '*', active: selectedKeys.includes('*') } },
+            { label: { name: 'all', active: selectedKeys.includes('all') } }])
         }
+        else
+            setnumberList(prev => [...prev,
+            { label: { name: 'all', active: selectedKeys.includes('all') } }])
+        assignGroup()
+        assignNumbers()
+        assignContact()
+        setisLoaded(true)
     }, [])
     useEffect(() => {
-        if (session?.user?.token && contactLabelList.length === 0) {
+
+        if (session?.user?.token && isLoaded) {
             fetchContactLabelList()
             fetchGroupList()
         }
-    }, [session?.user?.token])
+    }, [session?.user?.token, isLoaded])
+
     useEffect(() => {
-        //contact_labelContact, group_namaGroup
-        const contactLabel = contactLabelList.filter(item => item.label.active).map(item => 'label_' + item.label.name)
-        const groupLabel = groupList.filter(item => item.label.active).map(item => 'group_' + item.label.name)
-        const numberLabel = numberList.filter(item => item.label.active).map(item => item.label.name)
-        setselectedKeys([...contactLabel, ...groupLabel, ...numberLabel])
+        //label_contactlabel, group_namaGroup
+        if (isLoaded) {
+            const contactLabel = contactLabelList.filter(item => item.label.active).map(item => 'label_' + item.label.name)
+            const groupLabel = groupList.filter(item => item.label.active).map(item => 'group_' + item.label.name)
+            const numberLabel = numberList.filter(item => item.label.active).map(item => item.label.name)
+            setselectedKeys([...contactLabel, ...groupLabel, ...numberLabel])
+        }
+
     }, [numberList, groupList, contactLabelList])
     return (
         <>
+            <div className="bg-neutral-75 rounded-md text-xs text-customNeutral px-4 py-3 mb-2">
+                <ul className="list-outside list-disc pl-2">
+                    <li>
+                        Jika ingin memasukkan nomor wa, sertakan dengan kode negara. Contoh: 62812345678
+                    </li>
+                    <li>
+                        Kontak hanya akan menerima satu salinan pesan, meskipun mereka ada dalam beberapa label atau grup yang Anda pilih.
+                    </li>
+                </ul>
+
+            </div>
             <div className='rounded-md text-sm w-full border border-customGray relative'>
                 <div className=' flex '>
                     <div className="basis-5/6 flex flex-wrap gap-2 py-3 pl-4 ">
@@ -225,7 +281,7 @@ const InputContactAndLabel = ({ selectedKeys, setselectedKeys, isAutoReply = fal
                                     <ContactLabel idx={idx}
                                         label={item}
                                         onClick={() => handleNumberList(item.label.name, true)}
-                                        radius="md"
+                                        radius="full"
                                         color="none"
                                         isBordered
                                         key={idx}

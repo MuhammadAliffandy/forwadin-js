@@ -302,16 +302,39 @@ export interface GetCampaign {
     updatedAt: string
 }
 export interface CampaignData {
-    pkId: number,
     id: string,
     name: string,
-    syntaxRegistration: string,
+    schedule: string,
+    recipients: string[],
+    registrationMessage: string,
+    unregistrationSyntax: string,
+    messageRegistered: string,
+    messageFailed: string,
+    messageUnregistered: string,
+    device: {
+        name: string
+    }
+}
+export type MessageTypes = 'registrationMessage' | 'messageRegistered' | 'messageFailed' | 'messageUnregistered'
+export interface CampaignForm {
+    name: string,
+    deviceId: string,
+    recipients: string[],
+    registrationSyntax: string,
+    unregistrationSyntax: string,
     registrationMessage: string,
     messageRegistered: string,
-    recipients: string[],
-    isSent: boolean,
-    groupId: number,
-    deviceId: number,
-    createdAt: string,
-    updatedAt: string
+    messageFailed: string,
+    messageUnregistered: string,
+    delay: number, // in miliseconds
+    schedule: string
 }
+export interface BroadcastForm {
+    name: string,
+    deviceId: string,
+    recipients: string[],
+    message: string, // limit 255
+    delay: number,
+    schedule: string
+}
+export type MessageTableStatus = 'Terkirim' | 'Diterima' | 'Terbaca' | 'Balasan'
