@@ -6,13 +6,13 @@ import { formatDate, getNumberFromString } from "@/utils/helper"
 import { ContactBroadcast, ContactData, MessageTableStatus } from "@/utils/types"
 import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Button, Popover, PopoverContent, PopoverTrigger } from "@nextui-org/react"
 import { Dispatch, SetStateAction, useState } from "react"
-interface DetailBroadcastTableProps {
+interface DetailCampaignTableProps {
     selectedKeys: Set<string>,
     setSelectedKeys: Dispatch<SetStateAction<Set<string>>>,
     type: MessageTableStatus,
     data: ContactBroadcast[]
 }
-const DetailBroadcastTable = ({ selectedKeys, setSelectedKeys, data, type }: DetailBroadcastTableProps) => {
+const DetailCampaignTable = ({ selectedKeys, setSelectedKeys, data, type }: DetailCampaignTableProps) => {
     const currentDate = new Date()
     const [messagePhone, setmessagePhone] = useState<string>('')
 
@@ -134,4 +134,4 @@ const DetailBroadcastTable = ({ selectedKeys, setSelectedKeys, data, type }: Det
     )
 }
 
-export default DetailBroadcastTable
+export default DetailCampaignTable

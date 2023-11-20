@@ -4,9 +4,11 @@ import InputContactAndLabel from "@/components/dashboard/InputContactAndLabel"
 import MultipleInputContact from "@/components/dashboard/MultipleInputContact"
 import MultipleInputLabel from "@/components/dashboard/MultipleInputLabel"
 import TagsInput from "@/components/dashboard/TagsInput"
+import UploadFile from "@/components/dashboard/UploadFile"
 import TextAreaInput from "@/components/dashboard/chat/TextAreaInput"
 import InputForm from "@/components/form/InputForm"
 import { fetchClient } from "@/utils/helper/fetchClient"
+import { parseTextInput } from "@/utils/helper/messageUtils"
 import { ContactData, DeviceData, DeviceSession, Label } from "@/utils/types"
 import { Button, Select, SelectItem } from "@nextui-org/react"
 import { useSession } from "next-auth/react"
@@ -29,6 +31,7 @@ const CreateAutoReply = () => {
     const [currentDevice, setcurrentDevice] = useState<DeviceSession>()
     const [isDisabled, setisDisabled] = useState(true)
     const { handleSubmit, register, reset, formState: { errors } } = useForm<AutoReplyForm>()
+    const [files, setfiles] = useState<File[]>([])
     const [receiverList, setreceiverList] = useState<string[]>([])
     const [requestList, setrequestList] = useState<Label[]>([])
     const [textInput, settextInput] = useState<string>('')
@@ -39,19 +42,7 @@ const CreateAutoReply = () => {
         'country',
         'dob'
     ]
-    const sampleContact = {
-        id: "1",
-        firstName: "John",
-        lastName: "Doe",
-        colorCode: 'ffff',
-        email: 'johnDoe@gmail.com',
-        gender: 'male',
-        phone: '0123456789',
-        country: 'Indonesia',
-        dob: '10/10/2000',
-        createdAt: '',
-        updatedAt: ''
-    }
+
     const listTemplate = [
         {
             id: '1',
@@ -64,12 +55,6 @@ const CreateAutoReply = () => {
             content: "Ini template 2"
         }
     ]
-    const parseTextInput = (text: string) => {
-        return text.replace(/\{\{\$(\w+)}}/g, (match, placeholder) => {
-            // @ts-ignore
-            return sampleContact[placeholder] || match;
-        });
-    }
     const handleTemplateClick = (id: string) => {
         const findContent = listTemplate.find(item => item.id === id)?.content
         if (findContent)
@@ -80,7 +65,7 @@ const CreateAutoReply = () => {
         settextInput(prev => prev + '{{$' + text + '}}')
 
     }
-    const onSubmit = async (formData: any) => {
+    const onSubmit = async (ARData: AutoReplyForm) => {
         setisLoading(true)
         let mark = true
         if (receiverList.length === 0) {
@@ -95,23 +80,30 @@ const CreateAutoReply = () => {
             toast.error('Response masih kosong!')
             mark = false
         }
-        if (!formData.deviceId) {
+        if (!ARData.deviceId) {
             toast.error('Device masih kosong!')
             mark = false
         }
         if (mark) {
-            const autoReplyData = {
-                name: formData.name,
-                deviceId: formData.deviceId,
-                recipients: receiverList,
-                requests: requestList.map(item => item.label.name),
-                response: textInput
+            const formData = new FormData()
+            if (files.length > 0) {
+                // @ts-ignore
+                formData.set('media', files[0].file, files[0].name)
             }
-            console.log(autoReplyData)
+            formData.append('name', ARData.name)
+            formData.append('deviceId', ARData.deviceId)
+            requestList.forEach((element, idx) => {
+                formData.append(`requests[${idx}]`, element.label.name)
+            })
+            receiverList.forEach((element, idx) => {
+                formData.append(`recipients[${idx}]`, element)
+            })
+            formData.append('response', textInput)
             const result = await fetchClient({
-                url: '/auto-replies',
+                url: '/auto-replies/',
                 method: 'POST',
-                body: JSON.stringify(autoReplyData),
+                isFormData: true,
+                body: formData,
                 user: session?.user
             })
             if (result?.ok) {
@@ -211,6 +203,10 @@ const CreateAutoReply = () => {
                     <div className="mt-4">
                         <p className="mb-2">Response</p>
                         <TextAreaInput text={textInput} settext={settextInput} />
+                        <UploadFile
+                            files={files}
+                            setfiles={setfiles}
+                        />
                     </div>
                     <div className="flex gap-2 flex-wrap mt-2">
                         {listVariables.map(item => (

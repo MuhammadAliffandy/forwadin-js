@@ -33,8 +33,8 @@ interface DeviceData {
     apiKey: string,
     serverId: number,
     status: string,
-    created_at: string,
-    updated_at: string,
+    createdAt: string,
+    updatedAt: string,
     businessHourId?: number,
     userId: number,
     DeviceLabel: Label[],
@@ -144,7 +144,7 @@ export interface ConversationMessage {
         firstName: string,
         lastName: string,
         colorCode: string,
-        initial: string
+        initial?: string
     },
     checked?: boolean
 }
@@ -167,6 +167,13 @@ interface OutgoingMessage {
         colorCode: string
     }
 }
+export interface MessageMetadata {
+    totalMessages: number,
+    currentPage: number,
+    totalPages: number,
+    hasMore: boolean
+}
+
 interface GroupData {
     pkId: number,
     id: string,
@@ -190,10 +197,10 @@ interface BroadcastData {
     name: string,
     recipients: string[]
     message: string,
+    mediaPath?: string,
     schedule: string,
     delay: number,
     isSent: boolean,
-    deviceId: number,
     createdAt: string,
     updatedAt: string,
     device: DeviceData
@@ -206,6 +213,7 @@ export interface GetBroadcast {
         name: string
     },
     recipients?: string[],
+    mediaPath?: string,
     schedule?: string,
     message?: string,
     createdAt: string,
@@ -277,6 +285,7 @@ export interface AutoReply {
     schedule: string,
     status: boolean,
     recipients: string[],
+    mediaPath?: string,
     createdAt: string,
     updatedAt: string,
     deviceId: string
@@ -302,16 +311,39 @@ export interface GetCampaign {
     updatedAt: string
 }
 export interface CampaignData {
-    pkId: number,
     id: string,
     name: string,
-    syntaxRegistration: string,
+    schedule: string,
+    recipients: string[],
+    registrationMessage: string,
+    unregistrationSyntax: string,
+    messageRegistered: string,
+    messageFailed: string,
+    messageUnregistered: string,
+    device: {
+        name: string
+    }
+}
+export type MessageTypes = 'registrationMessage' | 'messageRegistered' | 'messageFailed' | 'messageUnregistered'
+export interface CampaignForm {
+    name: string,
+    deviceId: string,
+    recipients: string[],
+    registrationSyntax: string,
+    unregistrationSyntax: string,
     registrationMessage: string,
     messageRegistered: string,
-    recipients: string[],
-    isSent: boolean,
-    groupId: number,
-    deviceId: number,
-    createdAt: string,
-    updatedAt: string
+    messageFailed: string,
+    messageUnregistered: string,
+    delay: number, // in miliseconds
+    schedule: string
 }
+export interface BroadcastForm {
+    name: string,
+    deviceId: string,
+    recipients: string[],
+    message: string, // limit 255
+    delay: number,
+    schedule: string
+}
+export type MessageTableStatus = 'Terkirim' | 'Diterima' | 'Terbaca' | 'Balasan'

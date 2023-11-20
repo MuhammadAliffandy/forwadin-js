@@ -5,20 +5,26 @@ import { toast } from "react-toastify"
 
 interface FetchClientParams {
     method: 'GET' | 'POST' | 'PUT' | 'DELETE',
-    body?: string | null,
+    body?: string | FormData | null,
     url: string,
-    user: User | undefined
+    user: User | undefined,
+    isFormData?: boolean
 }
-const fetchClient = async ({ method, body = null, url, user }: FetchClientParams): Promise<Response | null> => {
+const fetchClient = async ({ method, body = null, url, user, isFormData = false }: FetchClientParams): Promise<Response | null> => {
     try {
         if (user) {
+            let headers: any = {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + user.token,
+            }
+            if (isFormData) {
+                headers = {
+                    'Authorization': 'Bearer ' + user.token,
+                }
+            }
             const result = await fetch(process.env.NEXT_PUBLIC_BACKEND_URL + url, {
                 method: method,
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' + user.token,
-                    'Access-Control-Allow-Origin': '*'
-                },
+                headers: headers,
                 body: body,
             })
             if (result.status === 401 || result.status === 403) {
@@ -36,12 +42,10 @@ const fetchClient = async ({ method, body = null, url, user }: FetchClientParams
                     else {
                         console.log('sukses refresh token')
                         const newSession = await getSession()
+                        headers['Authorization'] = newSession?.user?.token
                         const newResult = await fetch(process.env.NEXT_PUBLIC_BACKEND_URL + url, {
                             method: method,
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'Authorization': 'Bearer ' + newSession?.user?.token
-                            },
+                            headers: headers,
                             body: body,
                         })
                         if (newResult.status === 200) {

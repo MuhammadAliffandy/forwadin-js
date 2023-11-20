@@ -3,32 +3,45 @@ import BubbleChat from "@/components/dashboard/chat/BubbleChat"
 import MediaChat from "@/components/dashboard/chat/MediaChat"
 import { getInitials } from "@/utils/helper"
 import { fetchClient } from "@/utils/helper/fetchClient"
-import { ContactData, ConversationMessage } from "@/utils/types"
+import { ContactData, ConversationMessage, MessageMetadata } from "@/utils/types"
 import { User } from "next-auth"
 import { useSession } from "next-auth/react"
 import { Dispatch, SetStateAction, useEffect, useState } from "react"
+import InfiniteScroll from "react-infinite-scroll-component"
 
 interface ChatProps {
     currentContact: ContactData | undefined,
     currentDate: Date,
     sessionId: string | undefined,
     listMessage: ConversationMessage[],
-    setlistMessage: Dispatch<SetStateAction<ConversationMessage[]>>
+    setlistMessage: Dispatch<SetStateAction<ConversationMessage[]>>,
+    metadata: MessageMetadata,
+    fetchChatMessage: () => void
 }
-const Chat = ({ currentContact, currentDate, sessionId, listMessage, setlistMessage }: ChatProps) => {
-
-    // const mediaMessage: MediaMessageData = {
-
-    // }
-
+const Chat = ({ currentContact, currentDate, sessionId, listMessage, setlistMessage, metadata, fetchChatMessage }: ChatProps) => {
+    useEffect(() => {
+        console.log(listMessage)
+    }, [listMessage])
     return (
         <>
-            {listMessage.map(message => (
-                <div className="w-full">
-                    <ChatDetails message={message} />
-                    <BubbleChat text={message.message} received={message.receivedAt} status={message.status} currentDate={currentDate} isOutgoing={(message.to ? true : false)} mediaPath={message.mediaPath} />
-                </div>
-            ))}
+            {metadata && (
+                <InfiniteScroll
+                    dataLength={metadata.totalMessages}
+                    next={fetchChatMessage}
+                    hasMore={metadata.hasMore}
+                    loader={<p className="text-center">Loading...</p>}
+                    endMessage={<p>End of conversation</p>}
+                    inverse={true}
+                    height={'full'}
+                >
+                    {listMessage.map(message => (
+                        <div className="w-full mt-2">
+                            <ChatDetails message={message} />
+                            <BubbleChat text={message.message} received={message.receivedAt} status={message.status} currentDate={currentDate} isOutgoing={(message.to ? true : false)} mediaPath={message.mediaPath} />
+                        </div>
+                    ))}
+                </InfiniteScroll>
+            )}
             {/* <div className="w-full mt-4">
                 <div className="flex justify-end gap-2 items-center w-full">
                     <div className="text-sm">

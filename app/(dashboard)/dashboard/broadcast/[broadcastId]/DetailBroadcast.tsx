@@ -3,11 +3,12 @@ import BubbleChat from "@/components/dashboard/chat/BubbleChat"
 import { formatDate } from "@/utils/helper"
 import { fetchClient } from "@/utils/helper/fetchClient"
 import { ContactBroadcast, GetBroadcast } from "@/utils/types"
-import { Skeleton, Tab, Tabs } from "@nextui-org/react"
+import { Button, Link, Skeleton, Tab, Tabs } from "@nextui-org/react"
 import { animated, useTransition } from "@react-spring/web"
 import { useSession } from "next-auth/react"
 import { useEffect, useState } from "react"
 import DetailBroadcastTable from "./DetailBroadcastTable"
+import DisplayImage from "@/components/dashboard/auto-reply/DisplayImage"
 
 const DetailBroadcast = ({ broadcastId }: { broadcastId: string }) => {
 	const { data: session } = useSession()
@@ -31,6 +32,7 @@ const DetailBroadcast = ({ broadcastId }: { broadcastId: string }) => {
 		if (result?.ok) {
 			const resultData = await result.json()
 			setbroadcastData(resultData)
+			console.log(resultData)
 		}
 		setisbroadcastLoaded(true)
 	}
@@ -123,6 +125,20 @@ const DetailBroadcast = ({ broadcastId }: { broadcastId: string }) => {
 							<div className="absolute bottom-1 right-2 text-customGray text-sm">
 								<p>now &#10003;</p>
 							</div>
+						</div>
+						{broadcastData?.mediaPath && (
+							<>
+								<p className="my-2">Media</p>
+								<DisplayImage imageUrl={broadcastData.mediaPath} />
+							</>
+						)}
+						<div className="flex justify-end gap-2 mt-4">
+							<Button as={Link} href={'/dashboard/broadcast/edit/' + broadcastData?.id} variant="bordered" className="rounded-md">
+								Edit
+							</Button>
+							<Button color="danger" className="rounded-md" >
+								Hapus Broadcast
+							</Button>
 						</div>
 					</div>
 				</div>

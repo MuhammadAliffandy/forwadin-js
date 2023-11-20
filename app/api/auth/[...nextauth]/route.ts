@@ -84,7 +84,7 @@ export const authConfig: NextAuthOptions = {
                 })
 
                 if (result.ok) {
-                    console.log('sukses fetch refresh')
+
                     const resultData = await result.json()
 
                     const userSubscription = await fetch(process.env.BACKEND_URL + '/users/' + userData.id + '/subscription/', {
