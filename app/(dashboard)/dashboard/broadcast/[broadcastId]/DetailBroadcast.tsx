@@ -9,9 +9,12 @@ import { useSession } from "next-auth/react"
 import { useEffect, useState } from "react"
 import DetailBroadcastTable from "./DetailBroadcastTable"
 import DisplayImage from "@/components/dashboard/auto-reply/DisplayImage"
+import { toast } from "react-toastify"
+import { useRouter } from "next/navigation"
 
 const DetailBroadcast = ({ broadcastId }: { broadcastId: string }) => {
 	const { data: session } = useSession()
+	const router = useRouter()
 	const [isbroadcastLoaded, setisbroadcastLoaded] = useState(false)
 	const [broadcastData, setbroadcastData] = useState<GetBroadcast>()
 	const [isDetailBroadcastLoaded, setisDetailBroadcastLoaded] = useState(false)
@@ -46,6 +49,23 @@ const DetailBroadcast = ({ broadcastId }: { broadcastId: string }) => {
 			opacity: "1",
 		},
 	})
+	const handleDeleteBroadcast = async () => {
+		const isConfirm = window.confirm('Anda yakin ingin menghapus broadcast ' + broadcastData?.name + '?')
+		if (isConfirm) {
+			const result = await fetchClient({
+				url: '/broadcasts/',
+				body: JSON.stringify({ broadcastIds: [broadcastData?.id] }),
+				method: 'DELETE',
+				user: session?.user
+			})
+			if (result?.ok) {
+				toast.success('Berhasil hapus broadcast')
+				router.push('/dashboard/broadcast')
+			} else {
+				toast.error('Gagal hapus broadcast')
+			}
+		}
+	}
 	const fetchAllBroadcast = async () => {
 		// server_ack, read, delivery_ack
 		const fetchSent = await fetchClient({
@@ -136,7 +156,7 @@ const DetailBroadcast = ({ broadcastId }: { broadcastId: string }) => {
 							<Button as={Link} href={'/dashboard/broadcast/edit/' + broadcastData?.id} variant="bordered" className="rounded-md">
 								Edit
 							</Button>
-							<Button color="danger" className="rounded-md" >
+							<Button onClick={handleDeleteBroadcast} color="danger" className="rounded-md" >
 								Hapus Broadcast
 							</Button>
 						</div>
