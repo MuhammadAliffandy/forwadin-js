@@ -11,6 +11,8 @@ import { useEffect, useState } from "react"
 import { toast } from "react-toastify"
 import DetailBroadcastTable from "../../broadcast/[broadcastId]/DetailBroadcastTable"
 import DetailCampaignTable from "./DetailCampaignTable"
+import DisplayImage from "@/components/dashboard/auto-reply/DisplayImage"
+import Link from "next/link"
 
 const DetailCampaign = ({ campaignId }: { campaignId: string }) => {
     const { data: session } = useSession()
@@ -179,7 +181,12 @@ const DetailCampaign = ({ campaignId }: { campaignId: string }) => {
                                 trigger: 'py-3 rounded-none '
                             }}>
                             <AccordionItem key="1" aria-label="Tampilan Pesan Subscribe" title="Tampilan Pesan Subscribe">
-                                {campaignData?.registrationMessage}
+                                {campaignData?.mediaPath && (
+                                    <DisplayImage imageUrl={campaignData.mediaPath} />
+                                )}
+                                <p className="mt-2">
+                                    {campaignData?.registrationMessage}
+                                </p>
                             </AccordionItem>
                             <AccordionItem key="2" aria-label="Tampilan Pesan Reply" title="Tampilan Pesan Reply">
                                 {campaignData?.messageRegistered}
@@ -191,6 +198,11 @@ const DetailCampaign = ({ campaignId }: { campaignId: string }) => {
                                 {campaignData?.messageUnregistered}
                             </AccordionItem>
                         </Accordion>
+                        <div className="flex justify-end">
+                            <Button as={Link} href={"/dashboard/campaign/edit/" + campaignData?.id} color="primary" className="rounded-md">
+                                Edit
+                            </Button>
+                        </div>
                     </div>
                 </div>
             ) : (
