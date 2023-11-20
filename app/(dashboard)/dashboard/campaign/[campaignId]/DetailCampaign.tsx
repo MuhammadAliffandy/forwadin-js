@@ -58,26 +58,7 @@ const DetailCampaign = ({ campaignId }: { campaignId: string }) => {
             opacity: "1",
         },
     })
-    const listVariables = [
-        'firstName',
-        'lastName',
-        'gender',
-        'country',
-        'dob'
-    ]
-    const sampleContact = {
-        id: "1",
-        firstName: "John",
-        lastName: "Doe",
-        colorCode: 'ffff',
-        email: 'johnDoe@gmail.com',
-        gender: 'male',
-        phone: '0123456789',
-        country: 'Indonesia',
-        dob: '10/10/2000',
-        createdAt: '',
-        updatedAt: ''
-    }
+
     const listTemplate = [
         {
             id: '1',
@@ -90,12 +71,7 @@ const DetailCampaign = ({ campaignId }: { campaignId: string }) => {
             content: "Ini template 2"
         }
     ]
-    const parseTextInput = (text: string) => {
-        return text.replace(/\{\{\$(\w+)}}/g, (match, placeholder) => {
-            // @ts-ignore
-            return sampleContact[placeholder] || match;
-        });
-    }
+
     const handleTemplateClick = (id: string, text: MessageTypes) => {
         const findContent = listTemplate.find(item => item.id === id)?.content
         if (findContent) {

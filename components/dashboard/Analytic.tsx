@@ -15,6 +15,11 @@ import {
     Legend,
     ArcElement
 } from 'chart.js';
+import { User } from "next-auth";
+import { DeviceData, DeviceSession } from "@/utils/types";
+import { Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@nextui-org/react";
+import { fetchClient } from "@/utils/helper/fetchClient";
+import { formatDate, getYearMonthDate } from "@/utils/helper";
 
 Chart.register(
     CategoryScale,
@@ -28,9 +33,44 @@ Chart.register(
     zoomPlugin,
     ArcElement
 );
+interface AnalyticProps {
+    user: User | undefined,
 
-const Analytic = () => {
+}
+const Analytic = ({ user }: AnalyticProps) => {
+    const [isDeviceLoaded, setisDeviceLoaded] = useState(false)
     const [deviceDropdown, setdeviceDropdown] = useState(false)
+    const [deviceList, setdeviceList] = useState<DeviceSession[]>([])
+    const [currentDevice, setcurrentDevice] = useState<DeviceSession>()
+    const [currentDeviceDetail, setcurrentDeviceDetail] = useState<DeviceData>()
+    const fetchDetailDevice = async () => {
+        const result = await fetchClient({
+            url: '/devices/' + currentDevice?.id,
+            method: 'GET',
+            user: user
+        })
+        if (result?.ok) {
+            const resultData = await result.json()
+            console.log(resultData)
+            setcurrentDeviceDetail(resultData)
+        }
+    }
+    useEffect(() => {
+        if (user?.token) {
+
+        }
+    }, [user?.token])
+    useEffect(() => {
+        if (user?.device) {
+            setdeviceList(user.device)
+            setcurrentDevice(user.device[0])
+            setisDeviceLoaded(true)
+        }
+    }, [user?.device])
+    useEffect(() => {
+        if (currentDevice)
+            fetchDetailDevice()
+    }, [currentDevice])
     return (
         <div className='mt-4 bg-white w-full rounded-md p-4 lg:p-8'>
             <p className='font-lexend text-2xl font-bold'>Analitik</p>
@@ -38,41 +78,37 @@ const Analytic = () => {
                 <div className='border border-black/20 rounded-md w-full lg:max-w-sm p-4'>
                     <p className='font-bold '>Ringkasan hari ini</p>
                     <div className='flex justify-between gap-4 mt-4 '>
-                        <div className='basis-2/3 bg-neutral-75 rounded-sm py-2 px-4 relative'>
-                            <div className='flex justify-between hover:cursor-pointer' onClick={() => setdeviceDropdown(!deviceDropdown)}>
-                                <div>
-                                    <p className='text-[10px]'>Device</p>
-                                    <p className='font-semibold text-sm mt-[-2px]'>SMX18</p>
+                        <Dropdown isDisabled={!isDeviceLoaded}>
+                            <DropdownTrigger className="p-3">
+                                <div className="basis-2/3 bg-neutral-75 rounded-sm py-2 px-4 hover:cursor-pointer">
+                                    <p className="text-[10px]">Device</p>
+                                    <p className="font-bold min-w-0 whitespace-nowrap overflow-hidden overflow-ellipsis w-max text-sm">{currentDevice?.name}</p>
+
                                 </div>
-                                <div className='flex items-center'>
-                                    <img
-                                        src={'/assets/icons/chevron-down.svg'}
-                                        width={18}
-                                        height={15}
-                                        alt='caret down'
-                                    />
-                                    {/* <Image
-                                        src={'/assets/icons/chevron-down.svg'}
-                                        width={18}
-                                        height={15}
-                                        alt='caret down'
-                                    /> */}
-                                </div>
+                            </DropdownTrigger>
+                            <DropdownMenu items={deviceList} aria-label="device list">
+                                {(item: any) => (
+                                    <DropdownItem
+                                        key={item.id}
+                                        onClick={() => {
+                                            setcurrentDevice(item)
+                                        }}
+                                    >
+                                        <div className="flex gap-2">
+                                            <p className="font-bold">{item.name}</p>
+                                            <p>{item.phone}</p>
+                                        </div>
+                                    </DropdownItem>
+                                )}
+                            </DropdownMenu>
+                        </Dropdown>
+
+                        <div className='basis-1/3 bg-neutral-75 rounded-sm p-2 flex items-center'>
+                            <div>
+
+                                <p className='text-[10px]'>Aktif sejak</p>
+                                <p className='text-sm font-bold'>{getYearMonthDate(currentDeviceDetail?.createdAt!)}</p>
                             </div>
-                            {deviceDropdown && (
-                                <div className={'absolute flex flex-col items-center w-[80%] text-center'}>
-                                    <div className='px-4 py-2 bg-white hover:bg-neutral-75 w-full hover:cursor-pointer'>
-                                        Device Name
-                                    </div>
-                                    <div className='px-4 py-2 bg-white hover:bg-neutral-75 w-full hover:cursor-pointer'>
-                                        Device Name
-                                    </div>
-                                </div>
-                            )}
-                        </div>
-                        <div className='basis-1/3 bg-neutral-75 rounded-sm p-2'>
-                            <p className='text-[10px]'>Aktif sejak</p>
-                            <p className='text-sm font-semibold'>29.8.2022</p>
                         </div>
                     </div>
                     <div className='flex justify-between gap-4 mt-4 w-[90%] mx-auto'>
@@ -111,7 +147,6 @@ const Analytic = () => {
                     </div>
                     <div className='basis-1/2  flex justify-end'>
                         <div className="w-[150px]">
-
                             <MessageReceivedChart />
                         </div>
                     </div>

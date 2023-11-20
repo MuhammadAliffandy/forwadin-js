@@ -5,9 +5,12 @@ import MultipleInputContact from "@/components/dashboard/MultipleInputContact"
 import MultipleInputLabel from "@/components/dashboard/MultipleInputLabel"
 import MultipleInputReceiver from "@/components/dashboard/MultipleInputReceiver"
 import TagsInput from "@/components/dashboard/TagsInput"
+import UploadFile from "@/components/dashboard/UploadFile"
+import DisplayImage from "@/components/dashboard/auto-reply/DisplayImage"
 import TextAreaInput from "@/components/dashboard/chat/TextAreaInput"
 import InputForm from "@/components/form/InputForm"
 import { fetchClient } from "@/utils/helper/fetchClient"
+import { getMessageVariables, parseTextInput } from "@/utils/helper/messageUtils"
 import { AutoReply, ContactData, DeviceData, DeviceSession, Label } from "@/utils/types"
 import { Button, Select, SelectItem, Skeleton } from "@nextui-org/react"
 import { useSession } from "next-auth/react"
@@ -31,33 +34,15 @@ const DetailAutoReply = ({ autoReplyId }: { autoReplyId: string }) => {
     const [autoReplyName, setautoReplyName] = useState('')
     const [listDevice, setlistDevice] = useState<DeviceSession[]>([])
     const [currentDevice, setcurrentDevice] = useState<DeviceSession>()
+    const [files, setfiles] = useState<File[]>([])
     const [isDisabled, setisDisabled] = useState(true)
     const { handleSubmit, register, reset, formState: { errors }, setValue } = useForm<AutoReplyForm>()
+    const [autoReplyImage, setautoReplyImage] = useState<string | null>(null)
     // change
     const [receiverList, setreceiverList] = useState<string[]>([])
     const [requestList, setrequestList] = useState<Label[]>([])
     const [textInput, settextInput] = useState<string>('')
 
-    const listVariables = [
-        'firstName',
-        'lastName',
-        'gender',
-        'country',
-        'dob'
-    ]
-    const sampleContact = {
-        id: "1",
-        firstName: "John",
-        lastName: "Doe",
-        colorCode: 'ffff',
-        email: 'johnDoe@gmail.com',
-        gender: 'male',
-        phone: '0123456789',
-        country: 'Indonesia',
-        dob: '10/10/2000',
-        createdAt: '',
-        updatedAt: ''
-    }
     const listTemplate = [
         {
             id: '1',
@@ -70,12 +55,7 @@ const DetailAutoReply = ({ autoReplyId }: { autoReplyId: string }) => {
             content: "Ini template 2"
         }
     ]
-    const parseTextInput = (text: string) => {
-        return text.replace(/\${{(\w+)}}/g, (match, placeholder) => {
-            // @ts-ignore
-            return sampleContact[placeholder] || match;
-        });
-    }
+
     const handleTemplateClick = (id: string) => {
         const findContent = listTemplate.find(item => item.id === id)?.content
         if (findContent)
@@ -83,7 +63,7 @@ const DetailAutoReply = ({ autoReplyId }: { autoReplyId: string }) => {
 
     }
     const handleInsertVariable = (text: string) => {
-        settextInput(prev => prev + '${{' + text + '}}')
+        settextInput(prev => prev + '{{$' + text + '}}')
 
     }
     const onSubmit = async (formData: any) => {
@@ -139,6 +119,7 @@ const DetailAutoReply = ({ autoReplyId }: { autoReplyId: string }) => {
         })
         if (result?.ok) {
             const resultData: AutoReply = await result.json()
+            console.log(resultData)
             setautoReplyName(resultData.name)
             setValue('name', resultData.name)
             setrequestList(resultData.requests.map(item => {
@@ -151,6 +132,9 @@ const DetailAutoReply = ({ autoReplyId }: { autoReplyId: string }) => {
             }))
             settextInput(resultData.response)
             setreceiverList(resultData.recipients)
+            if (resultData.mediaPath) {
+                setautoReplyImage(resultData.mediaPath)
+            }
             setisLoaded(true)
         }
     }
@@ -244,9 +228,10 @@ const DetailAutoReply = ({ autoReplyId }: { autoReplyId: string }) => {
                             <div className="mt-4">
                                 <p className="mb-2">Response</p>
                                 <TextAreaInput text={textInput} settext={settextInput} />
+
                             </div>
                             <div className="flex gap-2 flex-wrap mt-2">
-                                {listVariables.map(item => (
+                                {getMessageVariables().map(item => (
                                     <div key={item} className='rounded-full px-2 py-[2px] border border-customGray hover:cursor-pointer' onClick={() => handleInsertVariable(item)}>
                                         {item}
                                     </div>
@@ -260,6 +245,19 @@ const DetailAutoReply = ({ autoReplyId }: { autoReplyId: string }) => {
                                     </div>
                                 </div>
                             )}
+                            <div className="mt-4">
+                                {autoReplyImage && (
+                                    <>
+                                        <p className="my-2">Media</p>
+                                        <DisplayImage imageUrl={autoReplyImage} />
+                                    </>
+                                )}
+                                <div className="mt-2" />
+                                <UploadFile
+                                    files={files}
+                                    setfiles={setfiles}
+                                />
+                            </div>
                             <Button color="primary" className="rounded-md mt-4" fullWidth type="submit" isLoading={isLoading} isDisabled={isDisabled}>
                                 Simpan
                             </Button>

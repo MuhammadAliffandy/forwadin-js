@@ -213,7 +213,7 @@ const Dashboard = () => {
                     </div>
                 </div>
             </div>
-            <DynamicAnalytic />
+            <DynamicAnalytic user={session?.user} />
         </>
     )
 }

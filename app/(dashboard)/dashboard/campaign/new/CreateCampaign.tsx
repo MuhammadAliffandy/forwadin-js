@@ -2,10 +2,12 @@
 import InputContactAndLabel from "@/components/dashboard/InputContactAndLabel"
 import MultipleInputContact from "@/components/dashboard/MultipleInputContact"
 import MultipleInputLabel from "@/components/dashboard/MultipleInputLabel"
+import UploadFile from "@/components/dashboard/UploadFile"
 import TextAreaInput from "@/components/dashboard/chat/TextAreaInput"
 import InputForm from "@/components/form/InputForm"
 import { formatDatetoISO8601 } from "@/utils/helper"
 import { fetchClient } from "@/utils/helper/fetchClient"
+import { getMessageVariables, parseTextInput } from "@/utils/helper/messageUtils"
 import { CampaignForm, ContactData, DeviceSession, Label, MessageTypes } from "@/utils/types"
 import { Button, Tab, Tabs } from "@nextui-org/react"
 import { animated, useTransition } from "@react-spring/web"
@@ -26,10 +28,15 @@ const CreateCampaign = () => {
     const [receiverList, setreceiverList] = useState<string[]>([])
     const [requestList, setrequestList] = useState<Label[]>([])
     const [registrationMessage, setregistrationMessage] = useState<string>('')
+    const [registrationMessageFiles, setregistrationMessageFiles] = useState<File[]>([])
     const [messageRegistered, setmessageRegistered] = useState('')
+    const [messageRegisteredFiles, setmessageRegisteredFiles] = useState<File[]>([])
     const [messageFailed, setmessageFailed] = useState('')
+    const [messageFailedFiles, setmessageFailedFiles] = useState<File[]>([])
     const [messageUnregistered, setmessageUnregistered] = useState('')
+    const [messageUnregisteredFiles, setmessageUnregisteredFiles] = useState<File[]>([])
     const [currentMessage, setcurrentMessage] = useState<MessageTypes>('registrationMessage')
+
     const componentTransition = useTransition(currentMessage, {
         from: {
             transform: "translateX(100px)",
@@ -40,26 +47,7 @@ const CreateCampaign = () => {
             opacity: "1",
         },
     })
-    const listVariables = [
-        'firstName',
-        'lastName',
-        'gender',
-        'country',
-        'dob'
-    ]
-    const sampleContact = {
-        id: "1",
-        firstName: "John",
-        lastName: "Doe",
-        colorCode: 'ffff',
-        email: 'johnDoe@gmail.com',
-        gender: 'male',
-        phone: '0123456789',
-        country: 'Indonesia',
-        dob: '10/10/2000',
-        createdAt: '',
-        updatedAt: ''
-    }
+
     const listTemplate = [
         {
             id: '1',
@@ -72,12 +60,7 @@ const CreateCampaign = () => {
             content: "Ini template 2"
         }
     ]
-    const parseTextInput = (text: string) => {
-        return text.replace(/\{\{\$(\w+)}}/g, (match, placeholder) => {
-            // @ts-ignore
-            return sampleContact[placeholder] || match;
-        });
-    }
+
     const handleTemplateClick = (id: string, text: MessageTypes) => {
         const findContent = listTemplate.find(item => item.id === id)?.content
         if (findContent) {
@@ -103,10 +86,10 @@ const CreateCampaign = () => {
             setmessageUnregistered(prev => prev + '{{$' + text + '}}')
 
     }
-    const onSubmit = async (formData: CampaignForm) => {
+    const onSubmit = async (campaignFormData: CampaignForm) => {
         setisLoading(true)
         let mark = true
-        console.log(formData)
+        console.log(campaignFormData)
         if (receiverList.length === 0) {
             toast.error('Penerima masih kosong!')
             mark = false
@@ -115,23 +98,41 @@ const CreateCampaign = () => {
             toast.error('Message masih kosong!')
             mark = false
         }
-        if (!formData.deviceId) {
+        if (!campaignFormData.deviceId) {
             toast.error('Device masih kosong!')
             mark = false
         }
         if (mark) {
+            const formData = new FormData()
+            const delay = 4000
+            // media
+            //
+            formData.append('name', campaignFormData.name)
+            formData.append('deviceId', campaignFormData.deviceId)
+            receiverList.forEach((element, idx) => {
+                formData.append(`recipients[${idx}]`, element)
+            })
+            formData.append('registrationMessage', registrationMessage)
+            formData.append('messageRegistered', messageRegistered)
+            formData.append('messageFailed', messageFailed)
+            formData.append('messageUnregistered', messageUnregistered)
+            formData.append('registrationSyntax', campaignFormData.registrationSyntax)
+            formData.append('unregistrationSyntax', campaignFormData.unregistrationSyntax)
+            formData.append('schedule', formatDatetoISO8601(campaignFormData.schedule))
+            formData.append('delay', delay.toString())
+
             const campaignData: CampaignForm = {
-                name: formData.name,
-                deviceId: formData.deviceId,
+                name: campaignFormData.name,
+                deviceId: campaignFormData.deviceId,
                 recipients: receiverList,
                 delay: 4000,
                 registrationMessage: registrationMessage,
                 messageRegistered: messageRegistered,
                 messageFailed: messageFailed,
                 messageUnregistered: messageUnregistered,
-                registrationSyntax: formData.registrationSyntax,
-                unregistrationSyntax: formData.unregistrationSyntax,
-                schedule: formatDatetoISO8601(formData.schedule)
+                registrationSyntax: campaignFormData.registrationSyntax,
+                unregistrationSyntax: campaignFormData.unregistrationSyntax,
+                schedule: formatDatetoISO8601(campaignFormData.schedule)
             }
             console.log(campaignData)
             const result = await fetchClient({
@@ -294,20 +295,45 @@ const CreateCampaign = () => {
                             <div className="mt-4">
                                 <p className="mb-2">Response</p>
                                 {item === 'registrationMessage' && (
-                                    <TextAreaInput text={registrationMessage} settext={setregistrationMessage} limit={255} />
+                                    <>
+                                        <TextAreaInput text={registrationMessage} settext={setregistrationMessage} limit={255} />
+                                        <UploadFile
+                                            files={registrationMessageFiles}
+                                            setfiles={setregistrationMessageFiles}
+                                        />
+                                    </>
+
                                 )}
                                 {item === 'messageRegistered' && (
-                                    <TextAreaInput text={messageRegistered} settext={setmessageRegistered} limit={255} />
+                                    <>
+                                        <TextAreaInput text={messageRegistered} settext={setmessageRegistered} limit={255} />
+                                        <UploadFile
+                                            files={messageRegisteredFiles}
+                                            setfiles={setmessageRegisteredFiles}
+                                        />
+                                    </>
                                 )}
                                 {item === 'messageFailed' && (
-                                    <TextAreaInput text={messageFailed} settext={setmessageFailed} limit={255} />
+                                    <>
+                                        <TextAreaInput text={messageFailed} settext={setmessageFailed} limit={255} />
+                                        <UploadFile
+                                            files={messageFailedFiles}
+                                            setfiles={setmessageFailedFiles}
+                                        />
+                                    </>
                                 )}
                                 {item === 'messageUnregistered' && (
-                                    <TextAreaInput text={messageUnregistered} settext={setmessageUnregistered} limit={255} />
+                                    <>
+                                        <TextAreaInput text={messageUnregistered} settext={setmessageUnregistered} limit={255} />
+                                        <UploadFile
+                                            files={messageUnregisteredFiles}
+                                            setfiles={setmessageUnregisteredFiles}
+                                        />
+                                    </>
                                 )}
                             </div>
                             <div className="flex gap-2 flex-wrap mt-2">
-                                {listVariables.map(list => (
+                                {getMessageVariables().map(list => (
                                     <div key={list} className='rounded-full px-2 py-[2px] border border-customGray hover:cursor-pointer' onClick={() => handleInsertVariable(list, item)}>
                                         {list}
                                     </div>

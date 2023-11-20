@@ -3,7 +3,7 @@ import { ChangeEvent, useEffect, useState } from "react"
 import ProfileDetail from "./ProfileDetail"
 import Chat from "./Chat"
 import ListChats from "./ListChats"
-import { ContactData, DeviceData, ConversationMessage, DeviceSession } from "@/utils/types"
+import { ContactData, DeviceData, ConversationMessage, DeviceSession, MessageMetadata, OutgoingMessage } from "@/utils/types"
 import TextAreaInput from "@/components/dashboard/chat/TextAreaInput"
 import { useSession } from "next-auth/react"
 import { fetchClient } from "@/utils/helper/fetchClient"
@@ -13,6 +13,8 @@ import { toast } from "react-toastify"
 import DropdownDevice from "@/components/dashboard/DropdownDevice"
 import UploadFile from "@/components/dashboard/UploadFile"
 import { useSearchParams } from 'next/navigation'
+import { PAGINATION_BATCH } from "@/utils/constant"
+import { randomInt } from "crypto"
 const Messenger = () => {
     const searchParams = useSearchParams()
     const { data: session } = useSession()
@@ -28,8 +30,7 @@ const Messenger = () => {
     const [listContact, setlistContact] = useState<ContactData[]>([])
     const [currentContact, setcurrentContact] = useState<ContactData>()
     const [chatDisabled, setchatDisabled] = useState(true)
-    const [cursor, setcursor] = useState(0)
-
+    const [messageMetadata, setmessageMetadata] = useState<MessageMetadata>()
     const [listMessage, setlistMessage] = useState<ConversationMessage[]>([])
 
     const fetchListContact = async () => {
@@ -51,14 +52,14 @@ const Messenger = () => {
     }
     const fetchChatMessage = async () => {
         const result = await fetchClient({
-            url: '/messages/' + currentDevice?.sessionId + '/?phoneNumber=' + currentContact?.phone,
+            url: `/messages/${currentDevice?.sessionId}/?phoneNumber=${currentContact?.phone}&page=${messageMetadata?.currentPage}&pageSize=${PAGINATION_BATCH}`,
             method: 'GET',
             user: session?.user
         })
         if (result && result.ok) {
             const resultData = await result.json()
-            setcursor(resultData.cursor)
             setlistMessage(resultData.data)
+            setmessageMetadata(resultData.metadata)
         }
     }
 
@@ -115,6 +116,26 @@ const Messenger = () => {
                 })
                 if (result && result.ok) {
                     toast.success('Berhasil kirim pesan')
+                    const currDate = new Date()
+                    const newMessage: ConversationMessage = {
+                        id: 'lorem',
+                        sessionId: currentDevice.sessionId,
+                        message: textInput,
+                        createdAt: currDate.toISOString(),
+                        updatedAt: currDate.toISOString(),
+                        receivedAt: currDate.toISOString(),
+                        to: currentContact.phone,
+                        contact: {
+                            firstName: currentContact.firstName,
+                            lastName: currentContact.lastName,
+                            colorCode: currentContact.colorCode,
+                        },
+                        pkId: 99,
+                        status: 'delivery_ack',
+                    }
+                    const resultData = await result.json()
+                    console.log(resultData)
+                    setlistMessage(prev => [...prev, newMessage])
                     settextInput('')
                 }
             }
@@ -174,6 +195,8 @@ const Messenger = () => {
                                 listMessage={listMessage}
                                 sessionId={currentDevice?.sessionId}
                                 setlistMessage={setlistMessage}
+                                fetchChatMessage={fetchChatMessage}
+                                metadata={messageMetadata!}
                             />
                         </div>
                         <div className="py-2 flex-none">

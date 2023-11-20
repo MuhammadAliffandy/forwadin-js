@@ -22,6 +22,7 @@ const BroadcastTable = ({ settotalBroadcast, totalBroadcast, user }: BroadcastTa
     const [broadcastData, setbroadcastData] = useState<GetBroadcast[]>([])
     const [searchText, setsearchText] = useState('')
     const [searchedGetBroadcast, setsearchedGetBroadcast] = useState<GetBroadcast[]>([])
+    const [selectedBroadcast, setselectedBroadcast] = useState<Set<string> | 'all'>(new Set([]))
     const handleOpenDetailModal = (params: string) => {
         push('/dashboard/contact/' + params)
     }
@@ -35,11 +36,34 @@ const BroadcastTable = ({ settotalBroadcast, totalBroadcast, user }: BroadcastTa
     const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
         setsearchText(e.target.value)
     }
-    const handleDeleteMessage = () => {
-        // TODO
+    const handleDeleteBroadcast = async () => {
+        // tambah konfirmasi delete
+        let deletedBroadcast = null
+        if (selectedBroadcast === 'all') {
+            deletedBroadcast = broadcastData.map(item => item.id)
+        }
+        else if ((selectedBroadcast as Set<string>).size > 0) {
+            deletedBroadcast = Array.from(selectedBroadcast)
+        }
+        const isConfirm = window.confirm('Anda yakin ingin menghapus ' + deletedBroadcast?.length + ' broadcast?')
+        if (deletedBroadcast && isConfirm) {
+            const result = await fetchClient({
+                url: '/broadcasts/',
+                body: JSON.stringify({ broadcastIds: deletedBroadcast }),
+                method: 'DELETE',
+                user: user
+            })
+            if (result?.ok) {
+                toast.success('Berhasil hapus broadcast')
+                fetchBroadcast()
+                setselectedBroadcast(new Set([]))
+            } else {
+                toast.error('Gagal hapus broadcast')
+            }
+            deletedBroadcast = null
+        }
     }
     const fetchBroadcast = async () => {
-
         const result = await fetchClient({
             url: '/broadcasts/',
             method: 'GET',
@@ -65,9 +89,15 @@ const BroadcastTable = ({ settotalBroadcast, totalBroadcast, user }: BroadcastTa
             fetchBroadcast()
         }
     }, [user?.token])
+    useEffect(() => {
+        if ((selectedBroadcast as Set<string>).size > 0 || selectedBroadcast === 'all')
+            setisChecked(true)
+        else
+            setisChecked(false)
+
+    }, [selectedBroadcast])
     return (
         <>
-            {/* <AddContactModal openModal={addContactModal} setopenModal={setaddContactModal} /> */}
             <div className="mt-8 p-4 bg-white rounded-md">
                 <div className="flex sm:flex-row flex-col gap-2 justify-between">
                     <div className="basis-1/2">
@@ -78,9 +108,9 @@ const BroadcastTable = ({ settotalBroadcast, totalBroadcast, user }: BroadcastTa
                     </div>
                     <div className='flex lg:justify-end justify-between gap-2 w-full max-w-xs'>
                         {isChecked ? (
-                            <div onClick={handleDeleteMessage} className="bg-danger rounded-md w-full lg:w-auto px-8 text-white text-center items-center flex hover:cursor-pointer justify-center p-2">
+                            <Button color='danger' onClick={handleDeleteBroadcast} className="bg-danger rounded-md w-full lg:w-auto px-8 text-white text-center items-center flex hover:cursor-pointer justify-center p-2">
                                 Hapus
-                            </div>
+                            </Button>
                         ) : (
                             <Button className='rounded-md text-sm' color='primary' as={Link} href='/dashboard/broadcast/new'>
                                 Buat Broadcast Baru
@@ -94,7 +124,7 @@ const BroadcastTable = ({ settotalBroadcast, totalBroadcast, user }: BroadcastTa
                     <Table
                         aria-label="Incoming Chat"
                         color='default'
-                        selectionMode="none"
+                        selectionMode="multiple"
                         isHeaderSticky
                         classNames={{
                             td: 'text-[11px] font-nunito',
@@ -105,8 +135,8 @@ const BroadcastTable = ({ settotalBroadcast, totalBroadcast, user }: BroadcastTa
                             wrapper: 'rounded-md'
                         }}
                         radius='md'
-                    // selectedKeys={selectedMessage as any}
-                    // onSelectionChange={setselectedMessage as any}
+                        selectedKeys={selectedBroadcast as any}
+                        onSelectionChange={setselectedBroadcast as any}
                     >
                         <TableHeader>
                             <TableColumn>Nama</TableColumn>

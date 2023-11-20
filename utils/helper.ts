@@ -1,4 +1,3 @@
-import { Conversation, IAudioMessage, IDocumentMessage, IExtendedTextMessage } from "./messageTypes";
 import { Label } from "./types";
 
 export const getInitials = (name: string) => {
@@ -137,5 +136,13 @@ export const convertLabelList = (labels: Label[], checked: boolean) => {
 export const formatDatetoISO8601 = (date: string) => {
     const dateTime = new Date(date)
     return dateTime.toISOString()
+}
+export const getYearMonthDate = (date: string) => {
+    const dateTime = new Date(date);
+    const year = dateTime.getFullYear();
+    const month = String(dateTime.getMonth() + 1).padStart(2, '0');
+    const day = String(dateTime.getDate()).padStart(2, '0');
+    const formattedDate = `${year}.${month}.${day}`;
 
+    return formattedDate;
 }
