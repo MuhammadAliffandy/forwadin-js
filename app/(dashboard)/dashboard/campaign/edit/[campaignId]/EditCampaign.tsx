@@ -3,12 +3,13 @@ import InputContactAndLabel from "@/components/dashboard/InputContactAndLabel"
 import MultipleInputContact from "@/components/dashboard/MultipleInputContact"
 import MultipleInputLabel from "@/components/dashboard/MultipleInputLabel"
 import UploadFile from "@/components/dashboard/UploadFile"
+import DisplayImage from "@/components/dashboard/auto-reply/DisplayImage"
 import TextAreaInput from "@/components/dashboard/chat/TextAreaInput"
 import InputForm from "@/components/form/InputForm"
 import { formatDatetoISO8601 } from "@/utils/helper"
 import { fetchClient } from "@/utils/helper/fetchClient"
 import { getMessageVariables, parseTextInput } from "@/utils/helper/messageUtils"
-import { CampaignForm, ContactData, DeviceSession, Label, MessageTypes } from "@/utils/types"
+import { CampaignData, CampaignForm, ContactData, DeviceSession, Label, MessageTypes } from "@/utils/types"
 import { Button, Tab, Tabs } from "@nextui-org/react"
 import { animated, useTransition } from "@react-spring/web"
 import { useSession } from "next-auth/react"
@@ -18,13 +19,13 @@ import { useForm } from "react-hook-form"
 import { toast } from "react-toastify"
 
 
-const CreateCampaign = () => {
+const CreateCampaign = ({ campaignData }: { campaignData: CampaignData }) => {
     const { push } = useRouter()
     const { data: session } = useSession()
     const [isLoading, setisLoading] = useState(false)
     const [listDevice, setlistDevice] = useState<DeviceSession[]>([])
     const [isDisabled, setisDisabled] = useState(true)
-    const { handleSubmit, register, reset, formState: { errors } } = useForm<CampaignForm>()
+    const { handleSubmit, register, setValue, formState: { errors } } = useForm<CampaignForm>()
     const [receiverList, setreceiverList] = useState<string[]>([])
     const [requestList, setrequestList] = useState<Label[]>([])
     const [registrationMessage, setregistrationMessage] = useState<string>('')
@@ -33,6 +34,8 @@ const CreateCampaign = () => {
     const [messageFailed, setmessageFailed] = useState('')
     const [messageUnregistered, setmessageUnregistered] = useState('')
     const [currentMessage, setcurrentMessage] = useState<MessageTypes>('registrationMessage')
+    const [campaignImage, setcampaignImage] = useState<string | null>(null)
+    const [isLabelLoaded, setisLabelLoaded] = useState(false)
 
     const componentTransition = useTransition(currentMessage, {
         from: {
@@ -121,17 +124,17 @@ const CreateCampaign = () => {
             formData.append('schedule', formatDatetoISO8601(campaignFormData.schedule))
             formData.append('delay', delay.toString())
             const result = await fetchClient({
-                url: '/campaigns',
-                method: 'POST',
+                url: '/campaigns/' + campaignData.id,
+                method: 'PUT',
                 body: formData,
                 isFormData: true,
                 user: session?.user
             })
             if (result?.ok) {
-                toast.success('Berhasil buat campaign')
+                toast.success('Berhasil ubah campaign')
                 push('/dashboard/campaign')
             } else {
-                toast.error('Gagal buat campaign')
+                toast.error('Gagal ubah campaign')
             }
 
         }
@@ -152,7 +155,6 @@ const CreateCampaign = () => {
     useEffect(() => {
         if (session?.user?.device && listDevice.length === 0) {
             setlistDevice(session.user.device)
-            // fetchContactData()
         }
     }, [session?.user?.device])
     useEffect(() => {
@@ -163,11 +165,31 @@ const CreateCampaign = () => {
 
         }
     }, [registrationMessage, receiverList, requestList, messageRegistered, messageFailed, messageUnregistered])
+    useEffect(() => {
+        if (listDevice.length > 0) {
+            setValue('name', campaignData.name)
+            const findDevice = listDevice.find(item => item.name === campaignData.device.name)
+            if (findDevice)
+                setValue('deviceId', findDevice?.id)
+            setreceiverList(campaignData.recipients)
+            setValue('schedule', (new Date(campaignData.schedule).toISOString().slice(0, 16)))
+            console.log(campaignData)
+            if (campaignData.mediaPath)
+                setcampaignImage(campaignData.mediaPath)
+            setregistrationMessage(campaignData.registrationMessage)
+            setmessageRegistered(campaignData.messageRegistered)
+            setmessageFailed(campaignData.messageFailed)
+            setmessageUnregistered(campaignData.messageUnregistered)
+        }
+    }, [listDevice])
+    useEffect(() => {
+        if (receiverList.length > 0 && !isLabelLoaded) setisLabelLoaded(true)
+    }, [receiverList])
     return (
         <form onSubmit={handleSubmit(onSubmit)} className='flex justify-center items-center lg:items-start lg:flex-row flex-col gap-4 mt-4'>
             <div className='max-w-sm w-full items-center flex flex-col gap-4'>
                 <div className='w-full bg-white rounded-md p-4 flex flex-col gap-4'>
-                    <p className="font-lexend font-bold text-2xl">Buat Campaign</p>
+                    <p className="font-lexend font-bold text-2xl">Edit Campaign</p>
                     <div>
                         <p className="mb-2">Nama Campaign</p>
                         <InputForm register={register} config={{
@@ -192,10 +214,12 @@ const CreateCampaign = () => {
                     <div>
                         <p className="mb-2">Penerima</p>
                         {/* <TagsInput /> */}
-                        <InputContactAndLabel
-                            selectedKeys={receiverList}
-                            setselectedKeys={setreceiverList}
-                        />
+                        {isLabelLoaded && (
+                            <InputContactAndLabel
+                                selectedKeys={receiverList}
+                                setselectedKeys={setreceiverList}
+                            />
+                        )}
                     </div>
                     <div>
                         <p className="mb-2">Jadwal Campaign</p>
@@ -280,6 +304,13 @@ const CreateCampaign = () => {
                                 {item === 'registrationMessage' && (
                                     <>
                                         <TextAreaInput text={registrationMessage} settext={setregistrationMessage} limit={255} />
+                                        {campaignImage && (
+                                            <>
+                                                <p className="my-2">Media</p>
+                                                <DisplayImage imageUrl={campaignImage} />
+                                            </>
+                                        )}
+                                        <div className="mt-2" />
                                         <UploadFile
                                             files={files}
                                             setfiles={setfiles}
@@ -302,7 +333,6 @@ const CreateCampaign = () => {
 
                                     </>
                                 )}
-
 
                             </div>
                             <div className="flex gap-2 flex-wrap mt-2">
@@ -346,6 +376,7 @@ const CreateCampaign = () => {
                             )}
                         </animated.div>
                     ))}
+
                     <Button color="primary" className="rounded-md mt-8" fullWidth type="submit" isLoading={isLoading} isDisabled={isDisabled}>
                         Simpan
                     </Button>

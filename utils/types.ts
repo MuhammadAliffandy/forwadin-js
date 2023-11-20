@@ -313,6 +313,7 @@ export interface GetCampaign {
 export interface CampaignData {
     id: string,
     name: string,
+    mediaPath?: string,
     schedule: string,
     recipients: string[],
     registrationMessage: string,
