@@ -20,13 +20,7 @@ const DetailCampaign = ({ campaignId }: { campaignId: string }) => {
     const [isCampaignLoaded, setisCampaignLoaded] = useState(false)
     const [isDetailCampaignLoaded, setisDetailCampaignLoaded] = useState(false)
     const [campaignData, setcampaignData] = useState<CampaignData>()
-    const [receiverList, setreceiverList] = useState<string[]>([])
-    const [requestList, setrequestList] = useState<Label[]>([])
-    // const { handleSubmit, register, reset,setValue, formState: { errors } } = useForm<CampaignForm>()
-    const [registrationMessage, setregistrationMessage] = useState<string>('')
-    const [messageRegistered, setmessageRegistered] = useState('')
-    const [messageFailed, setmessageFailed] = useState('')
-    const [messageUnregistered, setmessageUnregistered] = useState('')
+
 
     const [selectedKeys, setselectedKeys] = useState<Set<string>>(new Set())
     const [campaignDetail, setcampaignDetail] = useState({
@@ -74,31 +68,6 @@ const DetailCampaign = ({ campaignId }: { campaignId: string }) => {
         }
     ]
 
-    const handleTemplateClick = (id: string, text: MessageTypes) => {
-        const findContent = listTemplate.find(item => item.id === id)?.content
-        if (findContent) {
-            if (text === 'registrationMessage')
-                setregistrationMessage(findContent)
-            if (text === 'messageRegistered')
-                setmessageRegistered(findContent)
-            if (text === 'messageFailed')
-                setmessageFailed(findContent)
-            if (text === 'messageUnregistered')
-                setmessageUnregistered(findContent)
-        }
-    }
-    const handleInsertVariable = (text: string, types: MessageTypes) => {
-
-        if (types === 'registrationMessage')
-            setregistrationMessage(prev => prev + '{{$' + text + '}}')
-        if (types === 'messageRegistered')
-            setmessageRegistered(prev => prev + '{{$' + text + '}}')
-        if (types === 'messageFailed')
-            setmessageFailed(prev => prev + '{{$' + text + '}}')
-        if (types === 'messageUnregistered')
-            setmessageUnregistered(prev => prev + '{{$' + text + '}}')
-
-    }
     const fetchDetailCampaign = async () => {
         const fetchSent = await fetchClient({
             url: '/campaigns/' + campaignId + '/outgoing?status=server_ack',
@@ -140,7 +109,7 @@ const DetailCampaign = ({ campaignId }: { campaignId: string }) => {
         <>
             <div className="mt-4 flex items-center justify-between">
                 <p className="font-lexend font-bold text-2xl">Campaign: {campaignData?.name}</p>
-                <Button color='primary' className="rounded-md">
+                <Button as={Link} href={`/dashboard/campaign/${campaignId}/messages`} color='primary' className="rounded-md">
                     Atur Pesan Campaign
                 </Button>
             </div>

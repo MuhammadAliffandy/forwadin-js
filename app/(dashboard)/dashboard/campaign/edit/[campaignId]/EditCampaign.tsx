@@ -180,6 +180,9 @@ const CreateCampaign = ({ campaignData }: { campaignData: CampaignData }) => {
             setmessageRegistered(campaignData.messageRegistered)
             setmessageFailed(campaignData.messageFailed)
             setmessageUnregistered(campaignData.messageUnregistered)
+            setValue('registrationSyntax', campaignData.registrationSyntax)
+            setValue('unregistrationSyntax', campaignData.unregistrationSyntax)
+            console.log(campaignData)
         }
     }, [listDevice])
     useEffect(() => {

@@ -317,6 +317,7 @@ export interface CampaignData {
     schedule: string,
     recipients: string[],
     registrationMessage: string,
+    registrationSyntax: string,
     unregistrationSyntax: string,
     messageRegistered: string,
     messageFailed: string,
@@ -324,6 +325,17 @@ export interface CampaignData {
     device: {
         name: string
     }
+}
+export interface CampaignMessage {
+    pkId: number,
+    id: string,
+    campaignId: number,
+    message: string,
+    delay: number,
+    isSent: boolean,
+    schedule: string,
+    createdAt: string,
+    updatedAt: string
 }
 export type MessageTypes = 'registrationMessage' | 'messageRegistered' | 'messageFailed' | 'messageUnregistered'
 export interface CampaignForm {
