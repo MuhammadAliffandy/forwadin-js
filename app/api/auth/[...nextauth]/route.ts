@@ -11,6 +11,7 @@ interface Subscription {
 declare module "next-auth" {
     interface User {
         id: string | undefined,
+        googleToken?: string,
         token: string | undefined,
         refreshToken: string | undefined,
         device: DeviceSession[],
@@ -60,7 +61,12 @@ export const authConfig: NextAuthOptions = {
     providers: [
         GoogleProvider({
             clientId: process.env.GOOGLE_CLIENT_ID as string,
-            clientSecret: process.env.GOOGLE_CLIENT_SECRET as string
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+            authorization: {
+                params: {
+                    scope: 'profile email https://www.googleapis.com/auth/user.phonenumbers.read https://www.googleapis.com/auth/contacts https://www.googleapis.com/auth/contacts.readonly',
+                }
+            }
         }),
         CredentialsProvider({
             id: 'refresh',
@@ -121,7 +127,6 @@ export const authConfig: NextAuthOptions = {
                         device: device,
                         subscription: subscription
                     }
-
                     return user
                 } else {
                     return null
@@ -213,7 +218,7 @@ export const authConfig: NextAuthOptions = {
         },
         async signIn({ user, account }: any) {
             if (account?.provider === 'google') {
-                // call backend
+                console.log(account)
                 const result = await fetch(process.env.BACKEND_URL + '/auth/google', {
                     method: 'POST',
                     headers: {
@@ -263,6 +268,7 @@ export const authConfig: NextAuthOptions = {
                             status: 0
                         }
                     }
+                    user.googleToken = account.access_token
                     return user
                 } else {
                     return null

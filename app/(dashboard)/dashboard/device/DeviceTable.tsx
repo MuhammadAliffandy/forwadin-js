@@ -8,7 +8,7 @@ import { MultipleCheckboxRef, DeviceData } from '@/utils/types'
 import { useSession } from 'next-auth/react';
 import { fetchClient } from '@/utils/helper/fetchClient';
 import { toast } from 'react-toastify';
-import { Skeleton, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@nextui-org/react';
+import { Button, Skeleton, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@nextui-org/react';
 import DeleteModal from '@/components/dashboard/device/DeleteModal';
 import { useSocket } from '@/app/SocketProvider';
 
@@ -90,7 +90,8 @@ const DeviceTable = ({ setcountDevice }: { setcountDevice: Dispatch<SetStateActi
         }
     }
     useEffect(() => {
-        fetchData()
+        if (session?.user?.token)
+            fetchData()
     }, [session?.user?.token])
 
     useEffect(() => {
@@ -102,7 +103,7 @@ const DeviceTable = ({ setcountDevice }: { setcountDevice: Dispatch<SetStateActi
             {openQrModal && (
                 <QRModal openModal={openQrModal} setopenModal={setopenQrModal} data={qrModalData} session={session} socket={socket} refresh={fetchData} />
             )}
-            <DeleteModal setopenModal={setdeleteModal} openModal={deleteModal} count={selectedKeys.size} deleteDevice={deleteDevice} />
+            <DeleteModal setopenModal={setdeleteModal} openModal={deleteModal} text={`Hapus ${selectedKeys.size} yang terpilih?`} deleteFunction={deleteDevice} />
             <AddDeviceModal openModal={deviceModal} setopenModal={setdeviceModal} fetchData={fetchData} />
             <div className="mt-8 p-4 bg-white rounded-md">
                 <div className="flex sm:flex-row flex-col gap-2 justify-between">
@@ -113,13 +114,13 @@ const DeviceTable = ({ setcountDevice }: { setcountDevice: Dispatch<SetStateActi
                         />
                     </div>
                     {isChecked ? (
-                        <div className="bg-danger rounded-md px-6 text-white text-center items-center flex hover:cursor-pointer justify-center p-2" onClick={() => setdeleteModal(true)}>
+                        <Button color='danger' className='rounded-md' onClick={() => setdeleteModal(true)}>
                             Hapus
-                        </div>
+                        </Button>
                     ) : (
-                        <div onClick={() => setdeviceModal(true)} className="bg-primary rounded-md px-6 text-white text-center items-center flex hover:cursor-pointer justify-center p-2">
+                        <Button color='primary' onClick={() => setdeviceModal(true)} className="rounded-md">
                             Tambah Device
-                        </div>
+                        </Button>
                     )}
                 </div>
             </div>

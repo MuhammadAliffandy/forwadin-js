@@ -1,7 +1,6 @@
 import { Metadata } from "next"
 import Link from "next/link"
-import CampaignMessages from "./CampaignMessages"
-
+import CreateCampaignMessage from "./CreateCampaignMessage"
 type Params = {
     params: { campaignId: string }
 }
@@ -12,7 +11,7 @@ const page = ({ params }: Params) => {
 
     return (
         <>
-            <CampaignMessages campaignId={params.campaignId} />
+            <CreateCampaignMessage campaignId={params.campaignId} />
         </>
     )
 }

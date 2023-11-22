@@ -14,9 +14,14 @@ const CampaignMessages = ({ campaignId }: {
 }) => {
     const router = useRouter()
     const { data: session } = useSession()
-    const [campaignData, setcampaignData] = useState<CampaignMessage[]>([])
+    const [campaignMessages, setcampaignMessages] = useState<CampaignMessage[]>([])
+    const [campaignData, setcampaignData] = useState<CampaignData>()
     const [isLoaded, setisLoaded] = useState(false)
-    const fetchCampaignData = async () => {
+    const [isChecked, setisChecked] = useState(false)
+    const [deleteModal, setdeleteModal] = useState(false)
+    const [selectedMessage, setselectedMessage] = useState<Set<string> | 'all'>(new Set([]))
+    const [searchText, setsearchText] = useState('')
+    const fetchCampaignMessages = async () => {
         const result = await fetchClient({
             url: '/campaigns/' + campaignId + '/messages',
             method: 'GET',
@@ -25,7 +30,7 @@ const CampaignMessages = ({ campaignId }: {
         if (result?.ok) {
             const resultData = await result.json()
             console.log(resultData)
-            setcampaignData(resultData)
+            setcampaignMessages(resultData)
         } else if (result?.status === 404) {
             toast.error('Campaign Message tidak ditemukan')
             router.push('/dashboard/campaign')
@@ -34,14 +39,60 @@ const CampaignMessages = ({ campaignId }: {
         }
         setisLoaded(true)
     }
+    const fetchcampaignMessages = async () => {
+        const result = await fetchClient({
+            url: '/campaigns/' + campaignId,
+            method: 'GET',
+            user: session?.user
+        })
+        if (result?.ok) {
+            const resultData = await result.json()
+            setcampaignData(resultData)
+        } else if (result?.status === 404) {
+            toast.error('Campaign tidak ditemukan')
+            router.push('/dashboard/campaign')
+        }
+    }
+    const handleDeleteMessage = async () => {
+
+    }
     useEffect(() => {
-        if (session?.user?.token)
-            fetchCampaignData()
+        if (session?.user?.token) {
+            fetchcampaignMessages()
+            fetchCampaignMessages()
+        }
     }, [session?.user?.token])
+    useEffect(() => {
+        if ((selectedMessage as Set<string>).size > 0 || selectedMessage === 'all')
+            setisChecked(true)
+        else
+            setisChecked(false)
+
+    }, [selectedMessage])
     return (
         <>
             <div className='flex'>
                 <Link href={'/dashboard/campaign/'} className='rounded-md py-3 px-4 border border-black/50 text-black/50'>Kembali</Link>
+            </div>
+            <p className="font-lexend font-bold text-2xl mt-2">Campaign: {campaignData?.name}</p>
+            <div className="mt-8 p-4 bg-white rounded-md">
+                <div className="flex sm:flex-row flex-col gap-2 justify-between">
+                    <div className="basis-1/2">
+                        <input type="text" className="text-xs rounded-md w-full max-w-md border border-customGray" placeholder="Cari nama / nomor / label"
+                            value={searchText}
+                            onChange={e => setsearchText(e.target.value)}
+                        />
+                    </div>
+                    {isChecked ? (
+                        <Button color='danger' className='rounded-md' onClick={() => setdeleteModal(true)}>
+                            Hapus
+                        </Button>
+                    ) : (
+                        <Button as={Link} href={`/dashboard/campaign/${campaignId}/messages/new`} color='primary' className="rounded-md">
+                            Buat Pesan Baru
+                        </Button>
+                    )}
+                </div>
             </div>
             {isLoaded ? (
 
@@ -60,8 +111,8 @@ const CampaignMessages = ({ campaignId }: {
                             wrapper: 'rounded-md'
                         }}
                         radius='md'
-                    // selectedKeys={selectedCampaign as any}
-                    // onSelectionChange={setselectedCampaign as any}
+                        selectedKeys={selectedMessage as any}
+                        onSelectionChange={setselectedMessage as any}
                     >
                         <TableHeader>
                             <TableColumn
@@ -81,12 +132,12 @@ const CampaignMessages = ({ campaignId }: {
                                 <p className='text-xs text-[#777C88]'>Lorem Ipsum</p>
                             </div>
                         </div>}
-                            items={campaignData}
+                            items={campaignMessages}
                         // className='font-nunito'
                         >
                             {(item: CampaignMessage) => (
                                 <TableRow key={item.id}>
-                                    <TableCell >{item.id}</TableCell>
+                                    <TableCell >{item.name}</TableCell>
                                     <TableCell>
                                         <div className='flex gap-1 items-center'>
                                             <Switch size='sm' isSelected={item.isSent} />
@@ -97,9 +148,6 @@ const CampaignMessages = ({ campaignId }: {
                                             )}
                                         </div>
                                     </TableCell>
-                                    <TableCell>
-                                        <p>{item.message}</p>
-                                    </TableCell>
 
                                     <TableCell>
                                         {formatDate(item.createdAt)}
@@ -108,7 +156,7 @@ const CampaignMessages = ({ campaignId }: {
                                         {formatDate(item.updatedAt)}
                                     </TableCell>
                                     <TableCell>
-                                        <Button as={Link} href={'/dashboard/campaign/' + item.id} variant='bordered' >
+                                        <Button as={Link} href={'/dashboard/campaign/' + campaignId + '/message/' + item.id} variant='bordered' className="rounded-md">
                                             Detail
                                         </Button>
                                     </TableCell>

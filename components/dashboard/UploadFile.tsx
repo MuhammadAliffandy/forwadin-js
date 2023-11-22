@@ -16,10 +16,12 @@ import FilePondPluginFileValidateType from 'filepond-plugin-file-validate-type';
 
 registerPlugin(FilePondPluginImageExifOrientation, FilePondPluginImagePreview, FilePondPluginFileValidateType);
 
-const UploadFile = ({ files, setfiles }: {
+const UploadFile = ({ files, setfiles, customFileTypes }: {
     files: File[] | undefined,
-    setfiles: any
+    setfiles: any,
+    customFileTypes?: string[]
 }) => {
+
     return (
         <>
             <FilePond
@@ -27,7 +29,7 @@ const UploadFile = ({ files, setfiles }: {
                 allowReorder={true}
                 onupdatefiles={setfiles}
                 className=''
-                acceptedFileTypes={['image/png', 'image/jpg', 'image/jpeg']}
+                acceptedFileTypes={(customFileTypes ? customFileTypes : ['image/png', 'image/jpg', 'image/jpeg'])}
                 credits={false}
                 labelIdle='Drag & Drop your files or <span class="filepond--label-action">Browse</span>'
             />

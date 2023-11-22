@@ -81,7 +81,7 @@ const AutoReplyTable = ({ sessionId, settotalAutoReply, totalAutoReply, user }: 
             <div className="mt-8 p-4 bg-white rounded-md">
                 <div className="flex sm:flex-row flex-col gap-2 justify-between">
                     <div className="basis-1/2">
-                        <input type="text" className="text-xs rounded-md w-full max-w-md border border-customGray" placeholder="Cari nama / nomor / label"
+                        <input type="text" className="text-xs rounded-md w-full max-w-md border border-customGray" placeholder="Cari nama auto reply"
                             value={searchText}
                             onChange={(e) => setsearchText(e.target.value)}
                         />
