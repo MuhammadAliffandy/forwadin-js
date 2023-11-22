@@ -7,18 +7,21 @@ import { toast } from "react-toastify"
 interface DeleteModalProps {
     openModal: boolean,
     setopenModal: Dispatch<SetStateAction<boolean>>,
-    count: number,
-    deleteDevice: () => void
+    text: string,
+    deleteFunction: () => void
 }
-const DeleteModal = ({ openModal, setopenModal, count, deleteDevice }: DeleteModalProps) => {
-    const handleYesClick = () => {
-        deleteDevice()
+const DeleteModal = ({ openModal, setopenModal, text, deleteFunction }: DeleteModalProps) => {
+    const [isLoading, setisLoading] = useState(false)
+    const handleYesClick = async () => {
+        setisLoading(true)
+        await deleteFunction()
         setopenModal(false)
+        setisLoading(false)
     }
     return (
         <ModalTemplate openModal={openModal} setopenModal={setopenModal} outsideClose={true}>
-            <p className="font-lexend font-bold text-xl text-center mt-4 mb-8">Hapus {count} device yang terpilih?</p>
-            <YesNoButton yesClick={handleYesClick} noClick={() => setopenModal(false)} />
+            <p className="font-lexend font-bold text-xl text-center mt-4 mb-8">{text}</p>
+            <YesNoButton isLoading={isLoading} yesClick={handleYesClick} noClick={() => setopenModal(false)} />
         </ModalTemplate>
     )
 }

@@ -30,9 +30,9 @@ const CreateCampaign = ({ campaignData }: { campaignData: CampaignData }) => {
     const [requestList, setrequestList] = useState<Label[]>([])
     const [registrationMessage, setregistrationMessage] = useState<string>('')
     const [files, setfiles] = useState<File[]>([])
-    const [messageRegistered, setmessageRegistered] = useState('')
-    const [messageFailed, setmessageFailed] = useState('')
-    const [messageUnregistered, setmessageUnregistered] = useState('')
+    const [successMessage, setsuccessMessage] = useState('')
+    const [failedMessage, setfailedMessage] = useState('')
+    const [unregisteredMessage, setunregisteredMessage] = useState('')
     const [currentMessage, setcurrentMessage] = useState<MessageTypes>('registrationMessage')
     const [campaignImage, setcampaignImage] = useState<string | null>(null)
     const [isLabelLoaded, setisLabelLoaded] = useState(false)
@@ -66,24 +66,24 @@ const CreateCampaign = ({ campaignData }: { campaignData: CampaignData }) => {
         if (findContent) {
             if (text === 'registrationMessage')
                 setregistrationMessage(findContent)
-            if (text === 'messageRegistered')
-                setmessageRegistered(findContent)
-            if (text === 'messageFailed')
-                setmessageFailed(findContent)
-            if (text === 'messageUnregistered')
-                setmessageUnregistered(findContent)
+            if (text === 'successMessage')
+                setsuccessMessage(findContent)
+            if (text === 'failedMessage')
+                setfailedMessage(findContent)
+            if (text === 'unregisteredMessage')
+                setunregisteredMessage(findContent)
         }
     }
     const handleInsertVariable = (text: string, types: MessageTypes) => {
 
         if (types === 'registrationMessage')
             setregistrationMessage(prev => prev + '{{$' + text + '}}')
-        if (types === 'messageRegistered')
-            setmessageRegistered(prev => prev + '{{$' + text + '}}')
-        if (types === 'messageFailed')
-            setmessageFailed(prev => prev + '{{$' + text + '}}')
-        if (types === 'messageUnregistered')
-            setmessageUnregistered(prev => prev + '{{$' + text + '}}')
+        if (types === 'successMessage')
+            setsuccessMessage(prev => prev + '{{$' + text + '}}')
+        if (types === 'failedMessage')
+            setfailedMessage(prev => prev + '{{$' + text + '}}')
+        if (types === 'unregisteredMessage')
+            setunregisteredMessage(prev => prev + '{{$' + text + '}}')
 
     }
     const onSubmit = async (campaignFormData: CampaignForm) => {
@@ -94,7 +94,7 @@ const CreateCampaign = ({ campaignData }: { campaignData: CampaignData }) => {
             toast.error('Penerima masih kosong!')
             mark = false
         }
-        if (registrationMessage.length === 0 || messageRegistered.length === 0 || messageFailed.length === 0 || messageUnregistered.length === 0) {
+        if (registrationMessage.length === 0 || successMessage.length === 0 || failedMessage.length === 0 || unregisteredMessage.length === 0) {
             toast.error('Message masih kosong!')
             mark = false
         }
@@ -116,9 +116,9 @@ const CreateCampaign = ({ campaignData }: { campaignData: CampaignData }) => {
                 formData.append(`recipients[${idx}]`, element)
             })
             formData.append('registrationMessage', registrationMessage)
-            formData.append('messageRegistered', messageRegistered)
-            formData.append('messageFailed', messageFailed)
-            formData.append('messageUnregistered', messageUnregistered)
+            formData.append('successMessage', successMessage)
+            formData.append('failedMessage', failedMessage)
+            formData.append('unregisteredMessage', unregisteredMessage)
             formData.append('registrationSyntax', campaignFormData.registrationSyntax)
             formData.append('unregistrationSyntax', campaignFormData.unregistrationSyntax)
             formData.append('schedule', formatDatetoISO8601(campaignFormData.schedule))
@@ -158,13 +158,13 @@ const CreateCampaign = ({ campaignData }: { campaignData: CampaignData }) => {
         }
     }, [session?.user?.device])
     useEffect(() => {
-        if (registrationMessage && messageRegistered && messageFailed && messageUnregistered && receiverList.length > 0) {
+        if (registrationMessage && successMessage && failedMessage && unregisteredMessage && receiverList.length > 0) {
             setisDisabled(false)
         } else {
             setisDisabled(true)
 
         }
-    }, [registrationMessage, receiverList, requestList, messageRegistered, messageFailed, messageUnregistered])
+    }, [registrationMessage, receiverList, requestList, successMessage, failedMessage, unregisteredMessage])
     useEffect(() => {
         if (listDevice.length > 0) {
             setValue('name', campaignData.name)
@@ -177,9 +177,12 @@ const CreateCampaign = ({ campaignData }: { campaignData: CampaignData }) => {
             if (campaignData.mediaPath)
                 setcampaignImage(campaignData.mediaPath)
             setregistrationMessage(campaignData.registrationMessage)
-            setmessageRegistered(campaignData.messageRegistered)
-            setmessageFailed(campaignData.messageFailed)
-            setmessageUnregistered(campaignData.messageUnregistered)
+            setsuccessMessage(campaignData.successMessage)
+            setfailedMessage(campaignData.failedMessage)
+            setunregisteredMessage(campaignData.unregisteredMessage)
+            setValue('registrationSyntax', campaignData.registrationSyntax)
+            setValue('unregistrationSyntax', campaignData.unregistrationSyntax)
+            console.log(campaignData)
         }
     }, [listDevice])
     useEffect(() => {
@@ -271,22 +274,22 @@ const CreateCampaign = ({ campaignData }: { campaignData: CampaignData }) => {
                         onSelectionChange={setcurrentMessage as any}>
 
                         <Tab key="registrationMessage" title="Subscribe" />
-                        <Tab key="messageRegistered" title="Success" />
-                        <Tab key="messageFailed" title="Failed" />
-                        <Tab key="messageUnregistered" title="Unsubscribe" />
+                        <Tab key="successMessage" title="Success" />
+                        <Tab key="failedMessage" title="Failed" />
+                        <Tab key="unregisteredMessage" title="Unsubscribe" />
                     </Tabs>
                     {componentTransition((style, item) => item && (
                         <animated.div style={style} className={'mt-4'}>
                             {item === 'registrationMessage' && (
                                 <p className="font-bold text-xl font-lexend">Pesan Subscribe</p>
                             )}
-                            {item === 'messageRegistered' && (
+                            {item === 'successMessage' && (
                                 <p className="font-bold text-xl font-lexend">Reply Success</p>
                             )}
-                            {item === 'messageFailed' && (
+                            {item === 'failedMessage' && (
                                 <p className="font-bold text-xl font-lexend">Reply Failed</p>
                             )}
-                            {item === 'messageUnregistered' && (
+                            {item === 'unregisteredMessage' && (
                                 <p className="font-bold text-xl font-lexend">Reply Unsubscribe</p>
                             )}
                             <div className="mt-4">
@@ -317,19 +320,19 @@ const CreateCampaign = ({ campaignData }: { campaignData: CampaignData }) => {
                                         />
                                     </>
                                 )}
-                                {item === 'messageRegistered' && (
+                                {item === 'successMessage' && (
                                     <>
-                                        <TextAreaInput text={messageRegistered} settext={setmessageRegistered} limit={255} />
+                                        <TextAreaInput text={successMessage} settext={setsuccessMessage} limit={255} />
                                     </>
                                 )}
-                                {item === 'messageFailed' && (
+                                {item === 'failedMessage' && (
                                     <>
-                                        <TextAreaInput text={messageFailed} settext={setmessageFailed} limit={255} />
+                                        <TextAreaInput text={failedMessage} settext={setfailedMessage} limit={255} />
                                     </>
                                 )}
-                                {item === 'messageUnregistered' && (
+                                {item === 'unregisteredMessage' && (
                                     <>
-                                        <TextAreaInput text={messageUnregistered} settext={setmessageUnregistered} limit={255} />
+                                        <TextAreaInput text={unregisteredMessage} settext={setunregisteredMessage} limit={255} />
 
                                     </>
                                 )}
@@ -350,27 +353,27 @@ const CreateCampaign = ({ campaignData }: { campaignData: CampaignData }) => {
                                     </div>
                                 </div>
                             )}
-                            {(item === 'messageRegistered' && messageRegistered) && (
+                            {(item === 'successMessage' && successMessage) && (
                                 <div className="mt-4">
                                     <p>Hasil Pesan Campaign</p>
                                     <div className='bg-neutral-75 rounded-md h-full text-[#777C88] p-3 mt-2'>
-                                        {parseTextInput(messageRegistered)}
+                                        {parseTextInput(successMessage)}
                                     </div>
                                 </div>
                             )}
-                            {(item === 'messageFailed' && messageFailed) && (
+                            {(item === 'failedMessage' && failedMessage) && (
                                 <div className="mt-4">
                                     <p>Hasil Pesan Campaign</p>
                                     <div className='bg-neutral-75 rounded-md h-full text-[#777C88] p-3 mt-2'>
-                                        {parseTextInput(messageFailed)}
+                                        {parseTextInput(failedMessage)}
                                     </div>
                                 </div>
                             )}
-                            {(item === 'messageUnregistered' && messageUnregistered) && (
+                            {(item === 'unregisteredMessage' && unregisteredMessage) && (
                                 <div className="mt-4">
                                     <p>Hasil Pesan Campaign</p>
                                     <div className='bg-neutral-75 rounded-md h-full text-[#777C88] p-3 mt-2'>
-                                        {parseTextInput(messageUnregistered)}
+                                        {parseTextInput(unregisteredMessage)}
                                     </div>
                                 </div>
                             )}

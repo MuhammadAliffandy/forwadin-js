@@ -8,9 +8,11 @@ import ContactLabel from "./label/ContactLabel"
 interface InputProps {
     selectedKeys: string[],
     setselectedKeys: Dispatch<SetStateAction<string[]>>,
-    isAutoReply?: boolean
+    isAutoReply?: boolean,
+    isDisabled?: boolean,
+    showDescription?: boolean
 }
-const InputContactAndLabel = ({ selectedKeys, setselectedKeys, isAutoReply = false }: InputProps) => {
+const InputContactAndLabel = ({ selectedKeys, setselectedKeys, isAutoReply = false, isDisabled = false, showDescription = true }: InputProps) => {
     const [isLoaded, setisLoaded] = useState(false)
     const { data: session } = useSession()
     const [isLabelOpen, setisLabelOpen] = useState(false)
@@ -183,31 +185,34 @@ const InputContactAndLabel = ({ selectedKeys, setselectedKeys, isAutoReply = fal
     }, [numberList, groupList, contactLabelList])
     return (
         <>
-            <div className="bg-neutral-75 rounded-md text-xs text-customNeutral px-4 py-3 mb-2">
-                <ul className="list-outside list-disc pl-2">
-                    <li>
-                        Jika ingin memasukkan nomor wa, sertakan dengan kode negara. Contoh: 62812345678
-                    </li>
-                    <li>
-                        Kontak hanya akan menerima satu salinan pesan, meskipun mereka ada dalam beberapa label atau grup yang Anda pilih.
-                    </li>
-                </ul>
+            {showDescription && (
+                <div className="bg-neutral-75 rounded-md text-xs text-customNeutral px-4 py-3 mb-2">
+                    <ul className="list-outside list-disc pl-2">
+                        <li>
+                            Jika ingin memasukkan nomor wa, sertakan dengan kode negara. Contoh: 62812345678
+                        </li>
+                        <li>
+                            Kontak hanya akan menerima satu salinan pesan, meskipun mereka ada dalam beberapa label atau grup yang Anda pilih.
+                        </li>
+                    </ul>
 
-            </div>
-            <div className='rounded-md text-sm w-full border border-customGray relative'>
-                <div className=' flex '>
-                    <div className="basis-5/6 flex flex-wrap gap-2 py-3 pl-4 ">
+                </div>
+            )}
+            {isDisabled ? (
+                <div className='rounded-md text-sm w-full border border-customGray relative hover:cursor-not-allowed bg-[#F0F0F5]'>
+                    <p className="absolute right-4 top-1/2 -translate-y-2   text-customGray">tidak dapat diganti</p>
+                    <div className="w-full flex flex-wrap gap-2 py-3 pl-4 z-10">
                         {contactLabelList.map((item, idx) => item.label.active && (
                             <ContactLabel idx={idx}
                                 label={item}
-                                onClick={() => handleContactLabelClick(item.label.name, false)}
+                                isDisabled={true}
                                 key={idx}
                             />
                         ))}
                         {groupList.map((item, idx) => item.label.active && (
                             <ContactLabel idx={idx}
                                 label={item}
-                                onClick={() => handleGroupLabelList(item.label.name, false)}
+                                isDisabled={true}
                                 radius="md"
                                 color="black"
                                 key={idx}
@@ -217,82 +222,116 @@ const InputContactAndLabel = ({ selectedKeys, setselectedKeys, isAutoReply = fal
                             <ContactLabel
                                 idx={idx}
                                 label={item}
-                                onClick={() => handleNumberList(item.label.name, false)}
+                                isDisabled={true}
                                 isBordered={true}
                                 radius="full"
                                 color="none"
                                 key={idx}
                             />
                         ))}
-                        <input type="text" className="border-none outline-none p-0 bg-transparent focus:outline-none focus:ring-0 text-sm"
-                            value={inputText}
-                            onFocus={() => setisLabelOpen(true)}
-                            onChange={e => setinputText(e.target.value)}
-                            onKeyDown={handleKeyDown}
-                        />
-                    </div>
-                    <div className="basis-1/6 flex justify-end hover:cursor-pointer px-4 py-3" onClick={() => setisLabelOpen(!isLabelOpen)}>
-                        <div className="items-center flex">
-                            <img src={'/assets/icons/caret-down-black.svg'} height={9} width={12} alt="" />
-                        </div>
                     </div>
                 </div>
-                {componentTransition((style, item) => item && (
-                    <animated.div style={style} className="absolute bg-white w-full mt-2 border-customGray border rounded-md z-10 px-4">
-                        <div className="">
-                            <div className="text-xs pt-2 text-customNeutral">
-                                contact label
-                            </div>
-                            <div className="flex flex-wrap items-start gap-2 overflow-x-auto max-h-48 my-5">
-                                {contactLabelList.map((item, idx) => !item.label.active && (
-                                    <ContactLabel idx={idx}
-                                        label={item}
-                                        onClick={() => handleContactLabelClick(item.label.name, true)}
-                                        key={idx}
-                                    />
-                                ))}
+            ) : (
+                <div className='rounded-md text-sm w-full border border-customGray relative'>
+                    <div className='flex'>
+                        <div className="basis-5/6 flex flex-wrap gap-2 py-3 pl-4 ">
+                            {contactLabelList.map((item, idx) => item.label.active && (
+                                <ContactLabel idx={idx}
+                                    label={item}
+                                    onClick={() => handleContactLabelClick(item.label.name, false)}
+                                    key={idx}
+                                />
+                            ))}
+                            {groupList.map((item, idx) => item.label.active && (
+                                <ContactLabel idx={idx}
+                                    label={item}
+                                    onClick={() => handleGroupLabelList(item.label.name, false)}
+                                    radius="md"
+                                    color="black"
+                                    key={idx}
+                                />
+                            ))}
+                            {numberList.map((item, idx) => item.label.active && (
+                                <ContactLabel
+                                    idx={idx}
+                                    label={item}
+                                    onClick={() => handleNumberList(item.label.name, false)}
+                                    isBordered={true}
+                                    radius="full"
+                                    color="none"
+                                    key={idx}
+                                />
+                            ))}
+                            <input type="text" className="border-none outline-none p-0 bg-transparent focus:outline-none focus:ring-0 text-sm"
+                                value={inputText}
+                                onFocus={() => setisLabelOpen(true)}
+                                onChange={e => setinputText(e.target.value)}
+                                onKeyDown={handleKeyDown}
+                            />
+                        </div>
+                        <div className="basis-1/6 flex justify-end hover:cursor-pointer px-4 py-3" onClick={() => setisLabelOpen(!isLabelOpen)}>
+                            <div className="items-center flex">
+                                <img src={'/assets/icons/caret-down-black.svg'} height={9} width={12} alt="" />
                             </div>
                         </div>
-
-                        <div className="">
-                            <div className="text-xs pt-2 text-customNeutral">
-                                Group
+                    </div>
+                    {componentTransition((style, item) => item && (
+                        <animated.div style={style} className="absolute bg-white w-full mt-2 border-customGray border rounded-md z-10 px-4">
+                            <div className="">
+                                <div className="text-xs pt-2 text-customNeutral">
+                                    contact label
+                                </div>
+                                <div className="flex flex-wrap items-start gap-2 overflow-x-auto max-h-48 my-5">
+                                    {contactLabelList.map((item, idx) => !item.label.active && (
+                                        <ContactLabel idx={idx}
+                                            label={item}
+                                            onClick={() => handleContactLabelClick(item.label.name, true)}
+                                            key={idx}
+                                        />
+                                    ))}
+                                </div>
                             </div>
-                            <div className="flex flex-wrap items-start gap-2 overflow-x-auto max-h-48 my-5">
 
-                                {groupList.map((item, idx) => !item.label.active && (
-                                    <ContactLabel idx={idx}
-                                        label={item}
-                                        onClick={() => handleGroupLabelList(item.label.name, true)}
-                                        radius="md"
-                                        color="black"
-                                        key={idx}
-                                    />
-                                ))}
-                            </div>
-                        </div>
-                        <div className="">
-                            <div className="text-xs pt-2 text-customNeutral">
-                                Your Label
-                            </div>
-                            <div className="flex flex-wrap items-start gap-2 overflow-x-auto max-h-48 my-5">
+                            <div className="">
+                                <div className="text-xs pt-2 text-customNeutral">
+                                    Group
+                                </div>
+                                <div className="flex flex-wrap items-start gap-2 overflow-x-auto max-h-48 my-5">
 
-                                {numberList.map((item, idx) => !item.label.active && (
-                                    <ContactLabel idx={idx}
-                                        label={item}
-                                        onClick={() => handleNumberList(item.label.name, true)}
-                                        radius="full"
-                                        color="none"
-                                        isBordered
-                                        key={idx}
-                                    />
-                                ))}
+                                    {groupList.map((item, idx) => !item.label.active && (
+                                        <ContactLabel idx={idx}
+                                            label={item}
+                                            onClick={() => handleGroupLabelList(item.label.name, true)}
+                                            radius="md"
+                                            color="black"
+                                            key={idx}
+                                        />
+                                    ))}
+                                </div>
                             </div>
-                        </div>
+                            <div className="">
+                                <div className="text-xs pt-2 text-customNeutral">
+                                    Your Label
+                                </div>
+                                <div className="flex flex-wrap items-start gap-2 overflow-x-auto max-h-48 my-5">
 
-                    </animated.div>
-                ))}
-            </div>
+                                    {numberList.map((item, idx) => !item.label.active && (
+                                        <ContactLabel idx={idx}
+                                            label={item}
+                                            onClick={() => handleNumberList(item.label.name, true)}
+                                            radius="full"
+                                            color="none"
+                                            isBordered
+                                            key={idx}
+                                        />
+                                    ))}
+                                </div>
+                            </div>
+
+                        </animated.div>
+                    ))}
+                </div>
+            )}
         </>
     )
 }

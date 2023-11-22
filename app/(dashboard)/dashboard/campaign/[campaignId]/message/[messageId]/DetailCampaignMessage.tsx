@@ -2,50 +2,33 @@
 
 import { formatDate, formatDatetoISO8601 } from "@/utils/helper"
 import { fetchClient } from "@/utils/helper/fetchClient"
-import { CampaignData, CampaignForm, GetCampaign, Label, MessageTableStatus, MessageTypes } from "@/utils/types"
+import { CampaignData, CampaignForm, CampaignMessage, GetCampaign, Label, MessageTableStatus, MessageTypes } from "@/utils/types"
 import { Accordion, AccordionItem, Button, Skeleton, Tab, Tabs } from "@nextui-org/react"
 import { animated, useTransition } from "@react-spring/web"
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { toast } from "react-toastify"
-import DetailBroadcastTable from "../../broadcast/[broadcastId]/DetailBroadcastTable"
-import DetailCampaignTable from "./DetailCampaignTable"
 import DisplayImage from "@/components/dashboard/auto-reply/DisplayImage"
 import Link from "next/link"
 import TabTitle from "@/components/tabs/TabTitle"
-import { BreadcrumbItem, Breadcrumbs } from "@nextui-org/breadcrumbs"
+import DetailCampaignTable from "../../DetailCampaignTable"
 
-const DetailCampaign = ({ campaignId }: { campaignId: string }) => {
+const DetailCampaignMessage = ({ campaignId, messageId }: { campaignId: string, messageId: string }) => {
     const { data: session } = useSession()
     const { push } = useRouter()
     const [isCampaignLoaded, setisCampaignLoaded] = useState(false)
-    const [isDetailCampaignLoaded, setisDetailCampaignLoaded] = useState(false)
+    const [isDetailCampaignTableLoaded, setisDetailCampaignTableLoaded] = useState(false)
     const [campaignData, setcampaignData] = useState<CampaignData>()
-
-
+    const [campaignMessage, setcampaignMessage] = useState<CampaignMessage>()
     const [selectedKeys, setselectedKeys] = useState<Set<string>>(new Set())
-    const [campaignDetail, setcampaignDetail] = useState({
+    const [messageDetail, setmessageDetail] = useState({
         Terkirim: [],
         Diterima: [],
         Terbaca: [],
         Balasan: []
     })
     const [currentPage, setcurrentPage] = useState<MessageTableStatus>('Terkirim')
-    const fetchCampaign = async () => {
-        const result = await fetchClient({
-            url: "/campaigns/" + campaignId,
-            method: 'GET',
-            user: session?.user
-        })
-        if (result?.ok) {
-            const resultData: CampaignData = await result.json()
-            setcampaignData(resultData)
-            setisCampaignLoaded(true)
-            console.log(resultData)
-        }
-
-    }
     const componentTransition = useTransition(currentPage, {
         from: {
             transform: "translateX(100px)",
@@ -56,21 +39,37 @@ const DetailCampaign = ({ campaignId }: { campaignId: string }) => {
             opacity: "1",
         },
     })
-
-    const listTemplate = [
-        {
-            id: '1',
-            title: 'template-1',
-            content: "Join us this month for a celebration of art and music! We'll be hosting the Harmony Heights Music Festival, Samantha Knight's solo art exhibition, and an album release party for River Reed's new album 'Echoes in the Wilderness'. Don't miss out on this exciting lineup of events! [website link]"
-        },
-        {
-            id: '2',
-            title: 'template-2',
-            content: "Ini template 2"
+    const fetchCampaignData = async () => {
+        const result = await fetchClient({
+            url: "/campaigns/" + campaignId,
+            method: 'GET',
+            user: session?.user
+        })
+        if (result?.ok) {
+            const resultData: CampaignData = await result.json()
+            setcampaignData(resultData)
         }
-    ]
+    }
+    const fetchCampaignMessage = async () => {
+        const result = await fetchClient({
+            url: "/campaigns/messages/" + messageId,
+            method: 'GET',
+            user: session?.user
+        })
+        if (result?.ok) {
+            const resultData = await result.json()
+            setcampaignMessage(resultData)
+            setisCampaignLoaded(true)
+            console.log(resultData)
+        } if (result?.status === 404) {
+            toast.error('Campaign Message tidak ditemukan')
+            push('/dashboard/campaign/' + campaignId + '/messages')
+        }
 
-    const fetchDetailCampaign = async () => {
+    }
+
+
+    const fetchDetailCampaignTable = async () => {
         const fetchSent = await fetchClient({
             url: '/campaigns/' + campaignId + '/outgoing?status=server_ack',
             method: 'GET',
@@ -92,42 +91,34 @@ const DetailCampaign = ({ campaignId }: { campaignId: string }) => {
             user: session?.user
         })
         if (fetchSent?.ok && fetchRead?.ok && fetchReceived?.ok && fetchReply?.ok) {
-            setcampaignDetail({
+            setmessageDetail({
                 Terkirim: (await fetchSent.json()).outgoingCampaigns,
                 Terbaca: (await fetchRead.json()).outgoingCampaigns,
                 Diterima: (await fetchReceived.json()).outgoingCampaigns,
                 Balasan: (await fetchReply.json()).campaignReplies
             })
         }
-        setisDetailCampaignLoaded(true)
+        setisDetailCampaignTableLoaded(true)
     }
     useEffect(() => {
         if (session?.user?.token) {
-            fetchDetailCampaign()
-            fetchCampaign()
+            fetchCampaignData()
+            fetchDetailCampaignTable()
+            fetchCampaignMessage()
         }
     }, [session?.user?.token])
     return (
         <>
-            <Breadcrumbs>
-                <BreadcrumbItem href="/dashboard/campaign">campaign</BreadcrumbItem>
-                <BreadcrumbItem href={"/dashboard/campaign/" + campaignId}>detail campaign</BreadcrumbItem>
-            </Breadcrumbs>
-            <div className="mt-4 flex flex-col lg:flex-row gap-4 items-center justify-between">
-                <p className="font-lexend font-bold text-2xl">Campaign: {campaignData?.name}</p>
-                <Button as={Link} href={`/dashboard/campaign/${campaignId}/message`} color='primary' className="rounded-md w-full lg:w-auto">
-                    Atur Pesan Campaign
-                </Button>
-            </div>
+            <p className="font-lexend font-bold text-2xl">Campaign/Message: {campaignData?.name}/{campaignMessage?.name}</p>
             {isCampaignLoaded ? (
                 <div className="w-full bg-white rounded-md p-4 lg:p-6 mt-4 flex flex-col lg:flex-row gap-12">
                     <div className="w-full max-w-xs">
-                        <p className="font-lexend text-2xl font-bold">Campaign Detail</p>
+                        <p className="font-lexend text-2xl font-bold">Campaign Message Detail</p>
                         <table className='w-full border-separate border-spacing-y-1 mt-4'>
                             <tbody >
                                 <tr>
-                                    <th className='font-bold whitespace-pre '>Campaign Name</th>
-                                    <td className="break-all">{campaignData?.name}</td>
+                                    <th className='font-bold whitespace-pre '>Message Name</th>
+                                    <td className="break-all">{campaignMessage?.name}</td>
                                 </tr>
                                 <tr>
                                     <th className='font-bold whitespace-pre '>Device</th>
@@ -140,39 +131,28 @@ const DetailCampaign = ({ campaignId }: { campaignId: string }) => {
                                 </tr>
                                 <tr>
                                     <th className='font-bold whitespace-pre '>Schedule</th>
-                                    <td className="break-all">{formatDate(campaignData?.schedule!)}</td>
+                                    <td className="break-all">{formatDate(campaignMessage?.schedule!)}</td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
                     <div className="w-full">
-                        <Accordion variant="light"
-                            isCompact={true}
-                            selectionMode="multiple"
-                            className="rounded-none"
-                            itemClasses={{
-                                base: 'py-0 w-full ',
-                                title: 'font-bold text-md',
-                                trigger: 'py-3 rounded-none '
-                            }}>
-                            <AccordionItem key="1" aria-label="Tampilan Pesan Subscribe" title="Tampilan Pesan Subscribe">
-                                {campaignData?.mediaPath && (
-                                    <DisplayImage imageUrl={campaignData.mediaPath} />
-                                )}
-                                <p className="mt-2">
-                                    {campaignData?.registrationMessage}
-                                </p>
-                            </AccordionItem>
-                            <AccordionItem key="2" aria-label="Tampilan Pesan Reply" title="Tampilan Pesan Reply">
-                                {campaignData?.successMessage}
-                            </AccordionItem>
-                            <AccordionItem key="3" aria-label="Tampilan Pesan Expired" title="Tampilan Pesan Expired">
-                                {campaignData?.failedMessage}
-                            </AccordionItem>
-                            <AccordionItem key="4" aria-label="Tampilan Pesan Unsubscribe" title="Tampilan Pesan Unsubscribe">
-                                {campaignData?.unregisteredMessage}
-                            </AccordionItem>
-                        </Accordion>
+                        <p className="font-lexend text-xl font-bold">Tampilan Pesan</p>
+                        <div className="relative">
+                            <div className="rounded-md border border-customGray px-4 py-3 mt-8">
+
+                                {campaignMessage?.message}
+                            </div>
+                            <div className="absolute bottom-1 right-2 text-customGray text-sm">
+                                <p>now &#10003;</p>
+                            </div>
+                        </div>
+                        {campaignMessage?.mediaPath && (
+                            <>
+                                <p className="my-2">Media</p>
+                                <DisplayImage imageUrl={campaignMessage.mediaPath} />
+                            </>
+                        )}
                         <div className="flex justify-end">
                             <Button as={Link} href={"/dashboard/campaign/edit/" + campaignData?.id} color="primary" className="rounded-md">
                                 Edit
@@ -190,17 +170,17 @@ const DetailCampaign = ({ campaignId }: { campaignId: string }) => {
                     </div>
                 </>
             )}
-            {isDetailCampaignLoaded ? (
+            {isDetailCampaignTableLoaded ? (
                 <>
                     <div className="w-full bg-white rounded-md px-3 py-3 pb-6 mt-2 mb-20">
                         <div className="flex gap-2">
                             <Tabs aria-label="Options" variant="light" color="primary" radius="md" size="lg"
                                 selectedKey={currentPage}
                                 onSelectionChange={setcurrentPage as any}>
-                                <Tab key="Terkirim" title={<TabTitle text="Terkirim" count={campaignDetail.Terkirim.length} />} />
-                                <Tab key="Diterima" title={<TabTitle text="Diterima" count={campaignDetail.Diterima.length} />} />
-                                <Tab key="Terbaca" title={<TabTitle text="Terbaca" count={campaignDetail.Terbaca.length} />} />
-                                <Tab key="Balasan" title={<TabTitle text="Balasan" count={campaignDetail.Balasan.length} />} />
+                                <Tab key="Terkirim" title={<TabTitle text="Terkirim" count={messageDetail.Terkirim.length} />} />
+                                <Tab key="Diterima" title={<TabTitle text="Diterima" count={messageDetail.Diterima.length} />} />
+                                <Tab key="Terbaca" title={<TabTitle text="Terbaca" count={messageDetail.Terbaca.length} />} />
+                                <Tab key="Balasan" title={<TabTitle text="Balasan" count={messageDetail.Balasan.length} />} />
                             </Tabs>
                         </div>
 
@@ -208,10 +188,10 @@ const DetailCampaign = ({ campaignId }: { campaignId: string }) => {
                             {componentTransition((style, item) => item && (
                                 <animated.div style={style}>
                                     <DetailCampaignTable
-                                        selectedKeys={selectedKeys}
-                                        setSelectedKeys={setselectedKeys}
+                                        selectedKeys={selectedKeys as any}
+                                        setSelectedKeys={setselectedKeys as any}
                                         type={item}
-                                        data={campaignDetail[item]}
+                                        data={messageDetail[item]}
                                     />
                                 </animated.div>
                             ))}
@@ -233,4 +213,4 @@ const DetailCampaign = ({ campaignId }: { campaignId: string }) => {
     )
 }
 
-export default DetailCampaign
+export default DetailCampaignMessage

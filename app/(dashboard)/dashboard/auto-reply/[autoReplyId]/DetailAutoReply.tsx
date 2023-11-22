@@ -66,7 +66,7 @@ const DetailAutoReply = ({ autoReplyId }: { autoReplyId: string }) => {
         settextInput(prev => prev + '{{$' + text + '}}')
 
     }
-    const onSubmit = async (formData: any) => {
+    const onSubmit = async (ARData: any) => {
         setisLoading(true)
         let mark = true
         if (receiverList?.length === 0) {
@@ -81,30 +81,37 @@ const DetailAutoReply = ({ autoReplyId }: { autoReplyId: string }) => {
             toast.error('Response masih kosong!')
             mark = false
         }
-        if (!formData.deviceId) {
+        if (!ARData.deviceId) {
             toast.error('Device masih kosong!')
             mark = false
         }
         if (mark) {
-            const autoReplyData = {
-                name: formData.name,
-                deviceId: formData.deviceId,
-                recipients: receiverList,
-                requests: requestList.map(item => item.label.name),
-                response: textInput
+            const formData = new FormData()
+            if (files.length > 0) {
+                // @ts-ignore
+                formData.set('media', files[0].file, files[0].name)
             }
-            console.log(autoReplyData)
+            formData.append('name', ARData.name)
+            formData.append('deviceId', ARData.deviceId)
+            requestList.forEach((element, idx) => {
+                formData.append(`requests[${idx}]`, element.label.name)
+            })
+            receiverList.forEach((element, idx) => {
+                formData.append(`recipients[${idx}]`, element)
+            })
+            formData.append('response', textInput)
             const result = await fetchClient({
                 url: '/auto-replies/' + autoReplyId,
                 method: 'PUT',
-                body: JSON.stringify(autoReplyData),
+                isFormData: true,
+                body: formData,
                 user: session?.user
             })
             if (result?.ok) {
-                toast.success('Berhasil buat auto reply')
+                toast.success('Berhasil ubah auto reply')
                 push('/dashboard/auto-reply')
             } else {
-                toast.error('Gagal buat auto reply')
+                toast.error('Gagal ubah auto reply')
 
             }
         }

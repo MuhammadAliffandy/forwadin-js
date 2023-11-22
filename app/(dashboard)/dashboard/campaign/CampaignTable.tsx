@@ -8,6 +8,7 @@ import { User } from 'next-auth'
 import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 import { Dispatch, SetStateAction, useEffect, useState } from 'react'
+import { toast } from 'react-toastify'
 interface CampaignTableProps {
     settotalCampaign: Dispatch<SetStateAction<number>>,
     // currentDevice: DeviceSession,
@@ -21,6 +22,7 @@ const CampaignTable = ({ settotalCampaign, totalCampaign, user }: CampaignTableP
     const [campaignData, setcampaignData] = useState<GetCampaign[]>([])
     const [searchText, setsearchText] = useState('')
     const [searchedCampaignData, setsearchedcampaignData] = useState<GetCampaign[]>([])
+    const [selectedCampaign, setselectedCampaign] = useState<Set<string> | 'all'>(new Set([]))
     const fetchCampaign = async () => {
         const result = await fetchClient({
             url: '/campaigns',
@@ -35,6 +37,33 @@ const CampaignTable = ({ settotalCampaign, totalCampaign, user }: CampaignTableP
         }
         setisLoaded(true)
     }
+    const handleDeleteCampaign = async () => {
+        // tambah konfirmasi delete
+        let deletedCampaign = null
+        if (selectedCampaign === 'all') {
+            deletedCampaign = campaignData.map(item => item.id)
+        }
+        else if ((selectedCampaign as Set<string>).size > 0) {
+            deletedCampaign = Array.from(selectedCampaign)
+        }
+        const isConfirm = window.confirm('Anda yakin ingin menghapus ' + deletedCampaign?.length + ' campaign?')
+        if (deletedCampaign && isConfirm) {
+            const result = await fetchClient({
+                url: '/campaigns/',
+                body: JSON.stringify({ campaignIds: deletedCampaign }),
+                method: 'DELETE',
+                user: user
+            })
+            if (result?.ok) {
+                toast.success('Berhasil hapus campaign')
+                fetchCampaign()
+                setselectedCampaign(new Set([]))
+            } else {
+                toast.error('Gagal hapus campaign')
+            }
+            deletedCampaign = null
+        }
+    }
     useEffect(() => {
         // console.log('masuk')
         if (user?.token && campaignData.length === 0) {
@@ -42,6 +71,13 @@ const CampaignTable = ({ settotalCampaign, totalCampaign, user }: CampaignTableP
             fetchCampaign()
         }
     }, [user?.token])
+    useEffect(() => {
+        if ((selectedCampaign as Set<string>).size > 0 || selectedCampaign === 'all')
+            setisChecked(true)
+        else
+            setisChecked(false)
+
+    }, [selectedCampaign])
 
     return (
         <>
@@ -55,9 +91,9 @@ const CampaignTable = ({ settotalCampaign, totalCampaign, user }: CampaignTableP
                     </div>
                     <div className='flex lg:justify-end justify-between gap-2 w-full max-w-xs'>
                         {isChecked ? (
-                            <div onClick={() => { }} className="bg-danger rounded-md w-full lg:w-auto px-8 text-white text-center items-center flex hover:cursor-pointer justify-center p-2">
+                            <Button onClick={handleDeleteCampaign} className='rounded-md' color='danger'>
                                 Hapus
-                            </div>
+                            </Button>
                         ) : (
                             <Button className='rounded-md text-sm' color='primary' as={Link} href='/dashboard/campaign/new'>
                                 Buat Campaign Baru
@@ -83,8 +119,8 @@ const CampaignTable = ({ settotalCampaign, totalCampaign, user }: CampaignTableP
                             wrapper: 'rounded-md'
                         }}
                         radius='md'
-                    // selectedKeys={selectedMessage as any}
-                    // onSelectionChange={setselectedMessage as any}
+                        selectedKeys={selectedCampaign as any}
+                        onSelectionChange={setselectedCampaign as any}
                     >
                         <TableHeader>
                             <TableColumn

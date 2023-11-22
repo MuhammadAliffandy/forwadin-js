@@ -2,55 +2,26 @@
 
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { GroupData, MultipleCheckboxRef } from '@/utils/types';
-import GroupList from './GroupList';
+import { DeviceData, GroupData, MultipleCheckboxRef } from '@/utils/types';
 import AddGroupModal from '@/components/dashboard/group/AddGroupModal';
-import { Skeleton } from '@nextui-org/react';
+import { Skeleton, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@nextui-org/react';
 import { fetchClient } from '@/utils/helper/fetchClient';
 import { toast } from 'react-toastify';
 import { useSession } from 'next-auth/react';
+import { formatDate } from '@/utils/helper';
 
 const GroupTable = ({ setcountGroup }: { setcountGroup: Dispatch<SetStateAction<number>> }) => {
     const { data: session } = useSession()
     const { push } = useRouter()
     const [isLoaded, setisLoaded] = useState(false)
-    const mainCheckboxRef = useRef<HTMLInputElement>(null)
-    const groupCheckboxRef = useRef<MultipleCheckboxRef>({})
+
     const [isChecked, setisChecked] = useState(false)
     const [groupData, setgroupData] = useState<GroupData[]>([
     ])
     const [searchText, setsearchText] = useState('')
     const [searchedGroup, setsearchedGroup] = useState<GroupData[]>([])
     const [addGroupModal, setaddGroupModal] = useState(false)
-    const handleCheckBoxClick = (e: React.FormEvent<HTMLInputElement>, id: string) => {
-        const newgroupData = groupData.map(obj => {
-            return (obj.id === id ? { ...obj, checked: e.currentTarget.checked } : obj)
-        })
-        setgroupData(() => newgroupData)
-    }
-
-    const handleIndexCheckbox = (e: React.MouseEvent) => {
-        const currentgroupData = (searchText ? searchedGroup : groupData)
-        if (mainCheckboxRef.current && !mainCheckboxRef.current.checked) {
-            const newArray = currentgroupData.map((obj, idx) => {
-                groupCheckboxRef.current[`checkbox_${obj.id}`].checked = false
-                return { ...obj, checked: false }
-            })
-            if (searchText)
-                setsearchedGroup(newArray)
-            else
-                setgroupData(() => newArray)
-        } else {
-            const newArray = currentgroupData.map((obj, idx) => {
-                groupCheckboxRef.current[`checkbox_${obj.id}`].checked = true
-                return { ...obj, checked: true }
-            })
-            if (searchText)
-                setsearchedGroup(() => newArray)
-            else
-                setgroupData(() => newArray)
-        }
-    }
+    const [selectedGroup, setselectedGroup] = useState<Set<string> | 'all'>(new Set())
     const handleOpenDetailModal = (params: string) => {
         push('/dashboard/group/' + params)
     }
@@ -61,10 +32,32 @@ const GroupTable = ({ setcountGroup }: { setcountGroup: Dispatch<SetStateAction<
     const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
         setsearchText(e.target.value)
     }
-    const handleDeleteGroup = () => {
-        // TODO
-        // const checkedGroups = groupData.filter(item => item.checked === false).map(item => item)
-        // setgroupData(checkedGroups)
+    const handleDeleteGroup = async () => {
+        // tambah konfirmasi delete
+        let deletedGroup = null
+        if (selectedGroup === 'all') {
+            deletedGroup = groupData.map(item => item.id)
+        }
+        else if ((selectedGroup as Set<string>).size > 0) {
+            deletedGroup = Array.from(selectedGroup)
+        }
+        const isConfirm = window.confirm('Anda yakin ingin menghapus ' + deletedGroup?.length + ' grup?')
+        if (deletedGroup && isConfirm) {
+            const result = await fetchClient({
+                url: '/groups/',
+                body: JSON.stringify({ groupIds: deletedGroup }),
+                method: 'DELETE',
+                user: session?.user
+            })
+            if (result?.ok) {
+                toast.success('Berhasil hapus grup')
+                fetchData()
+                setselectedGroup(new Set([]))
+            } else {
+                toast.error('Gagal hapus grup')
+            }
+            deletedGroup = null
+        }
     }
     const fetchData = async () => {
         const result = await fetchClient({
@@ -83,38 +76,18 @@ const GroupTable = ({ setcountGroup }: { setcountGroup: Dispatch<SetStateAction<
     useEffect(() => {
         fetchData()
     }, [session?.user])
-    useEffect(() => {
-        if (mainCheckboxRef.current) {
-            const checkObject = groupData.find(obj => obj.checked === true)
-            if (checkObject) {
-                mainCheckboxRef.current.checked = true
-                setisChecked(true)
-            }
-            else {
-                mainCheckboxRef.current.checked = false
-                setisChecked(false)
-            }
-        }
-    }, [groupData])
-    useEffect(() => {
-        if (mainCheckboxRef.current) {
-            const checkObject = searchedGroup.find(obj => obj.checked === true)
-            if (checkObject) {
-                mainCheckboxRef.current.checked = true
-                setisChecked(true)
-            }
-            else {
-                mainCheckboxRef.current.checked = false
-                setisChecked(false)
-            }
-        }
-    }, [searchedGroup])
 
     useEffect(() => {
         const searchResult = filterDevice(searchText)
         setsearchedGroup(searchResult)
     }, [searchText])
+    useEffect(() => {
+        if ((selectedGroup as Set<string>).size > 0 || selectedGroup === 'all')
+            setisChecked(true)
+        else
+            setisChecked(false)
 
+    }, [selectedGroup])
     return (
         <>
             <AddGroupModal openModal={addGroupModal} setopenModal={setaddGroupModal} fetchData={fetchData} />
@@ -140,57 +113,65 @@ const GroupTable = ({ setcountGroup }: { setcountGroup: Dispatch<SetStateAction<
                 </div>
             </div>
             {isLoaded ? (
-
-                <div className='overflow-x-scroll allowed-scroll'>
-                    <table className="w-full text-center font-nunito text-xs font-bold ">
-                        <thead className='bg-neutral-75'>
-                            <tr className=''>
-                                <th className='py-4 checkbox'>
-                                    <input ref={mainCheckboxRef} type="checkbox" name="main_checkbox" id="main_checkbox" className='rounded-sm focus:ring-transparent' onClick={handleIndexCheckbox} />
-                                </th>
-                                <th className='p-4'>Nama</th>
-                                <th className='p-4'>Campaign</th>
-                                <th className='p-4'>Jumlah Anggota</th>
-                                <th className='p-4'>Detail</th>
-                            </tr>
-                        </thead>
-                        <tbody className='bg-white'>
-                            {searchText ? (
-                                <GroupList
-                                    groupData={searchedGroup}
-                                    multipleCheckboxRef={groupCheckboxRef}
-                                    handleCheckBoxClick={handleCheckBoxClick}
-                                    handleOpenDetailModal={handleOpenDetailModal}
-                                />
-                            ) : (
-                                <GroupList
-                                    groupData={groupData}
-                                    multipleCheckboxRef={groupCheckboxRef}
-                                    handleCheckBoxClick={handleCheckBoxClick}
-                                    handleOpenDetailModal={handleOpenDetailModal}
-                                />
-
-                            )}
-                        </tbody>
-                    </table>
-                    {groupData.length === 0 && (
-                        <div className='w-full bg-white p-12'>
-                            <div className='w-full max-w-md mx-auto flex flex-col gap-4'>
-                                <p className='text-[16px] font-bold'>Group masih kosong</p>
-                                <p className='text-xs text-[#777C88]'>Tambahkan kontak kedalam group ini</p>
-                                <p className='text-xs'>Dengan grup ini, Anda dapat dengan mudah berkomunikasi dengan banyak kontak sekaligus.</p>
-                                <div className='flex'>
-                                    <div onClick={() => setaddGroupModal(true)} className="bg-primary rounded-md px-6 text-white text-center items-center flex hover:cursor-pointer justify-center p-2">
-                                        Buat Group Baru
+                <div className=' mt-4'>
+                    <Table
+                        aria-label="Incoming Chat"
+                        color='default'
+                        selectionMode="multiple"
+                        isHeaderSticky
+                        classNames={{
+                            td: 'text-[11px] font-nunito',
+                            tr: 'text-[11px] font-nunito',
+                            base: "max-h-[55vh] overflow-y-scroll",
+                            table: "",
+                            thead: 'rounded-md',
+                            wrapper: 'rounded-md'
+                        }}
+                        radius='md'
+                        selectedKeys={selectedGroup as any}
+                        onSelectionChange={setselectedGroup as any}
+                    >
+                        <TableHeader>
+                            <TableColumn>Nama</TableColumn>
+                            <TableColumn>Tipe</TableColumn>
+                            <TableColumn>Jumlah Anggota</TableColumn>
+                            <TableColumn>Dibuat pada</TableColumn>
+                            <TableColumn>Terakhir diupdate</TableColumn>
+                            <TableColumn>Detail</TableColumn>
+                        </TableHeader>
+                        <TableBody emptyContent={
+                            <div className='w-full bg-white p-12'>
+                                <div className='w-full max-w-md mx-auto flex flex-col gap-4'>
+                                    <p className='text-[16px] font-bold'>Group masih kosong</p>
+                                    <p className='text-xs text-[#777C88]'>Tambahkan kontak kedalam group ini</p>
+                                    <p className='text-xs'>Dengan grup ini, Anda dapat dengan mudah berkomunikasi dengan banyak kontak sekaligus.</p>
+                                    <div className='flex'>
+                                        <div onClick={() => setaddGroupModal(true)} className="bg-primary rounded-md px-6 text-white text-center items-center flex hover:cursor-pointer justify-center p-2">
+                                            Buat Group Baru
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    )}
+                        } items={searchText ? searchedGroup : groupData}>
+                            {(item: GroupData) => (
+                                <TableRow key={item.id}>
+                                    <TableCell >{item.name}</TableCell>
+                                    <TableCell >{item.type}</TableCell>
+                                    <TableCell >{item.membersCount}</TableCell>
+                                    <TableCell >{formatDate(item.createdAt)}</TableCell>
+                                    <TableCell >{formatDate(item.updatedAt)}</TableCell>
+                                    <TableCell>
+                                        <div className="flex items-center">
+                                            <div className='py-1 px-4 text-center border border-black/20 rounded-md hover:cursor-pointer' onClick={() => handleOpenDetailModal(item.id)}>Detail</div>
+                                        </div>
+                                    </TableCell>
+                                </TableRow>
+                            )}
+                        </TableBody>
+                    </Table>
                 </div >
             ) : (
                 <div className='mt-4 flex flex-col gap-2 p-4 bg-white'>
-
                     <Skeleton className={'w-full h-3 rounded-full'} />
                     <Skeleton className={'w-full h-3 rounded-full'} />
                     <Skeleton className={'w-full h-3 rounded-full'} />

@@ -11,8 +11,10 @@ import { toast } from 'react-toastify';
 import { formatDate, getInitials } from '@/utils/helper';
 import DeleteContactModal from '@/components/dashboard/contact/DeleteContactModal';
 import { useSession } from 'next-auth/react';
-import { Skeleton, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from "@nextui-org/react";
+import { Button, Skeleton, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from "@nextui-org/react";
 import ContactIcon from '@/components/dashboard/ContactIcon';
+import ImportContactModal from '@/components/dashboard/contact/ImportContactModal';
+import SyncModal from '@/components/dashboard/contact/SyncModal';
 const ContactTable = ({ setcontactCount }: { setcontactCount: Dispatch<SetStateAction<number>> }) => {
     const { push } = useRouter()
     const { data: session } = useSession()
@@ -20,12 +22,13 @@ const ContactTable = ({ setcontactCount }: { setcontactCount: Dispatch<SetStateA
     const [isChecked, setisChecked] = useState(false)
     const [contactData, setcontactData] = useState<ContactData[]>([
     ])
-    const [selectedKeys, setSelectedKeys] = useState(new Set())
+    const [selectedKeys, setSelectedKeys] = useState<Set<string> | 'all'>(new Set())
     const [searchText, setsearchText] = useState('')
     const [searchedContact, setsearchedContact] = useState<ContactData[]>([])
     const [addContactModal, setaddContactModal] = useState(false)
     const [deleteContactModal, setdeleteContactModal] = useState(false)
-
+    const [importContactModal, setimportContactModal] = useState(false)
+    const [syncModal, setsyncModal] = useState(false)
     const handleOpenDetailModal = (params: string) => {
         push('/dashboard/contact/' + params)
     }
@@ -42,27 +45,7 @@ const ContactTable = ({ setcontactCount }: { setcontactCount: Dispatch<SetStateA
     const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
         setsearchText(e.target.value)
     }
-    const handleDeleteContact = async () => {
-        const checkedContacts = contactData.filter(item => item.checked === true).map(item => item.id)
-        const result = await fetchClient({
-            method: 'DELETE',
-            url: '/contacts',
-            body: JSON.stringify({ contactIds: checkedContacts }),
-            user: session?.user
-        })
-        if (result) {
-            if (result.status === 200) {
-                toast.success('Berhasil menghapus kontak')
-                setisLoaded(false)
-                fetchData()
-            }
-            else {
-                const body = await result.json()
-                toast.error('Gagal menghapus kontak')
-                console.log(body)
-            }
-        }
-    }
+
     const fetchData = async () => {
         const fetchContactData = await fetchClient({
             method: 'GET',
@@ -89,6 +72,32 @@ const ContactTable = ({ setcontactCount }: { setcontactCount: Dispatch<SetStateA
             }
         }
     }
+    const handleDeleteContact = async () => {
+        // tambah konfirmasi delete
+        let deletedContact = null
+        if (selectedKeys === 'all') {
+            deletedContact = contactData.map(item => item.id)
+        }
+        else if ((selectedKeys as Set<string>).size > 0) {
+            deletedContact = Array.from(selectedKeys)
+        }
+        if (deletedContact) {
+            const result = await fetchClient({
+                url: '/contacts/',
+                body: JSON.stringify({ contactIds: deletedContact }),
+                method: 'DELETE',
+                user: session?.user
+            })
+            if (result?.ok) {
+                toast.success('Berhasil hapus contact')
+                fetchData()
+                setSelectedKeys(new Set([]))
+            } else {
+                toast.error('Gagal hapus broadcast')
+            }
+            deletedContact = null
+        }
+    }
     useEffect(() => {
         if (session?.user?.token)
             fetchData()
@@ -98,10 +107,20 @@ const ContactTable = ({ setcontactCount }: { setcontactCount: Dispatch<SetStateA
         const searchResult = filterDevice(searchText)
         setsearchedContact(searchResult)
     }, [searchText])
-
+    useEffect(() => {
+        if ((selectedKeys as Set<string>).size > 0 || selectedKeys === 'all') {
+            setisChecked(true)
+        } else {
+            setisChecked(false)
+        }
+    }, [selectedKeys])
     return (
         <>
-            <DeleteContactModal openModal={deleteContactModal} setopenModal={setdeleteContactModal} count={contactData.filter(item => item.checked === true).length} deleteContact={handleDeleteContact} />
+            {session?.user?.googleToken && (
+                <SyncModal setopenModal={setsyncModal} openModal={syncModal} user={session?.user} refresh={fetchData} />
+            )}
+            <ImportContactModal openModal={importContactModal} setopenModal={setimportContactModal} user={session?.user} refresh={fetchData} />
+            <DeleteContactModal openModal={deleteContactModal} setopenModal={setdeleteContactModal} count={(selectedKeys === 'all' ? 'semua' : (selectedKeys as Set<string>).size) as string} deleteContact={handleDeleteContact} />
             <AddContactModal openModal={addContactModal} setopenModal={setaddContactModal} fetchData={fetchData} />
             <div className="mt-8 p-4 bg-white rounded-md">
                 <div className="flex sm:flex-row flex-col gap-2 justify-between">
@@ -112,17 +131,20 @@ const ContactTable = ({ setcontactCount }: { setcontactCount: Dispatch<SetStateA
                         />
                     </div>
                     <div className='flex lg:flex-row flex-col lg:justify-end justify-between gap-2 w-full max-w-sm'>
-                        <div className='bg-white rounded-md px-6 text-center items-center border border-[#B0B4C5] flex hover:cursor-pointer w-full justify-center p-2'>
+                        <Button variant='bordered' onClick={() => setsyncModal(true)} className='rounded-md' fullWidth isDisabled={session?.user?.googleToken ? false : true}>
+                            Sync
+                        </Button>
+                        <Button variant='bordered' onClick={() => setimportContactModal(true)} className='rounded-md' fullWidth>
                             Import Kontak
-                        </div>
+                        </Button>
                         {isChecked ? (
                             <div onClick={() => setdeleteContactModal(true)} className="bg-danger rounded-md px-6 text-white text-center w-full items-center flex hover:cursor-pointer justify-center p-2">
                                 Hapus
                             </div>
                         ) : (
-                            <div onClick={() => setaddContactModal(true)} className="bg-primary rounded-md px-6 text-white text-center items-center w-full flex hover:cursor-pointer justify-center p-2">
+                            <Button color='primary' fullWidth onClick={() => setaddContactModal(true)} className="rounded-md">
                                 Tambah Kontak
-                            </div>
+                            </Button>
                         )}
                     </div>
                 </div>

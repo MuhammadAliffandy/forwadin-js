@@ -178,8 +178,10 @@ interface GroupData {
     pkId: number,
     id: string,
     name: string,
-    isCampaign: boolean,
+    type: string,
     membersCount: number,
+    createdAt: string,
+    updatedAt: string,
     contactGroups?: ContactGroup[],
     userId: string,
     checked?: boolean
@@ -317,15 +319,36 @@ export interface CampaignData {
     schedule: string,
     recipients: string[],
     registrationMessage: string,
+    registrationSyntax: string,
     unregistrationSyntax: string,
-    messageRegistered: string,
-    messageFailed: string,
-    messageUnregistered: string,
+    successMessage: string,
+    failedMessage: string,
+    unregisteredMessage: string,
     device: {
         name: string
     }
 }
-export type MessageTypes = 'registrationMessage' | 'messageRegistered' | 'messageFailed' | 'messageUnregistered'
+export interface CampaignMessage {
+    pkId: number,
+    id: string,
+    name: string,
+    campaignId: number,
+    message: string,
+    mediaPath?: string,
+    delay: number,
+    isSent: boolean,
+    schedule: string,
+    createdAt: string,
+    updatedAt: string
+}
+export interface CampaignMessageForm {
+    name: string,
+    campaignId: string,
+    message: string,
+    schedule: string,
+    delay: number
+}
+export type MessageTypes = 'registrationMessage' | 'successMessage' | 'failedMessage' | 'unregisteredMessage'
 export interface CampaignForm {
     name: string,
     deviceId: string,
