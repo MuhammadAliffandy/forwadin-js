@@ -50,15 +50,19 @@ const Messenger = () => {
             }))
         }
     }
-    const fetchChatMessage = async () => {
+    const fetchChatMessage = async (page: number) => {
+        if (!currentDevice && !currentContact) return
+        console.log(`/messages/${currentDevice?.sessionId}/?phoneNumber=${currentContact?.phone}&page=${messageMetadata?.currentPage}&pageSize=${PAGINATION_BATCH}&sort=asc`)
+        console.log('ini fetch chat')
         const result = await fetchClient({
-            url: `/messages/${currentDevice?.sessionId}/?phoneNumber=${currentContact?.phone}&page=${messageMetadata?.currentPage}&pageSize=${PAGINATION_BATCH}`,
+            url: `/messages/${currentDevice?.sessionId}/?phoneNumber=${currentContact?.phone}&page=${page}&pageSize=${PAGINATION_BATCH}&sort=desc`,
             method: 'GET',
             user: session?.user
         })
         if (result && result.ok) {
             const resultData = await result.json()
-            setlistMessage(resultData.data)
+            console.log(resultData)
+            setlistMessage(prev => [...prev, ...resultData.data])
             setmessageMetadata(resultData.metadata)
         }
     }
@@ -134,7 +138,6 @@ const Messenger = () => {
                         status: 'delivery_ack',
                     }
                     const resultData = await result.json()
-                    console.log(resultData)
                     setlistMessage(prev => [...prev, newMessage])
                     settextInput('')
                 }
@@ -153,7 +156,8 @@ const Messenger = () => {
 
     }, [currentContact, currentDevice])
     useEffect(() => {
-        fetchChatMessage()
+        if (currentDevice && listMessage.length === 0)
+            fetchChatMessage(1)
     }, [currentContact])
     useEffect(() => {
         if (session?.user?.device && listDevice.length === 0)
@@ -161,17 +165,14 @@ const Messenger = () => {
     }, [session?.user?.device])
     useEffect(() => {
         const paramsContact = searchParams?.get('contact')
-        console.log(paramsContact)
         if (paramsContact) {
             const findContact = listContact.find(item => item.id === paramsContact)
-            console.log(findContact)
             if (findContact) {
                 setcurrentContact(findContact)
             }
         }
     }, [listContact])
     useEffect(() => {
-        console.log('masuk device')
         if (currentDevice)
             fetchListContact()
     }, [currentDevice])
@@ -188,21 +189,18 @@ const Messenger = () => {
                 </div>
                 <div className={"bg-white p-4 rounded-md w-full max-w-md lg:max-w-full h-full " + (chatDisabled && "opacity-50 pointer-events-none")}>
                     <div className='text-xs w-full flex flex-col h-full'>
-                        <div className="flex flex-col overflow-y-auto allowed-scroll pr-2 h-full gap-6">
-                            <Chat
-                                currentContact={currentContact}
-                                currentDate={currentDate}
-                                listMessage={listMessage}
-                                sessionId={currentDevice?.sessionId}
-                                setlistMessage={setlistMessage}
-                                fetchChatMessage={fetchChatMessage}
-                                metadata={messageMetadata!}
-                            />
-                        </div>
+
+                        <Chat
+                            currentContact={currentContact}
+                            currentDate={currentDate}
+                            listMessage={listMessage}
+                            sessionId={currentDevice?.sessionId}
+                            setlistMessage={setlistMessage}
+                            fetchChatMessage={fetchChatMessage}
+                            metadata={messageMetadata!}
+                        />
+
                         <div className="py-2 flex-none">
-                            {/* {showfile && (
-                                <input type="file" onChange={handleFileChange} />
-                            )} */}
                             {showfile && (
                                 <UploadFile files={inputFile} setfiles={setinputFile} />
                             )}

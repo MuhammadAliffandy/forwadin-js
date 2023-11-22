@@ -16,56 +16,42 @@ interface ChatProps {
     listMessage: ConversationMessage[],
     setlistMessage: Dispatch<SetStateAction<ConversationMessage[]>>,
     metadata: MessageMetadata,
-    fetchChatMessage: () => void
+    fetchChatMessage: (page: number) => void
 }
 const Chat = ({ currentContact, currentDate, sessionId, listMessage, setlistMessage, metadata, fetchChatMessage }: ChatProps) => {
     useEffect(() => {
-        console.log(listMessage)
+        // console.log(listMessage)
     }, [listMessage])
+    useEffect(() => {
+
+    }, [metadata])
+    useEffect(() => {
+        console.log('rerender')
+    }, [])
     return (
         <>
-            {metadata && (
-                <InfiniteScroll
-                    dataLength={metadata.totalMessages}
-                    next={fetchChatMessage}
-                    hasMore={metadata.hasMore}
-                    loader={<p className="text-center">Loading...</p>}
-                    endMessage={<p>End of conversation</p>}
-                    inverse={true}
-                    height={'full'}
-                >
-                    {listMessage.map(message => (
-                        <div className="w-full mt-2">
-                            <ChatDetails message={message} />
-                            <BubbleChat text={message.message} received={message.receivedAt} status={message.status} currentDate={currentDate} isOutgoing={(message.to ? true : false)} mediaPath={message.mediaPath} />
-                        </div>
-                    ))}
-                </InfiniteScroll>
-            )}
-            {/* <div className="w-full mt-4">
-                <div className="flex justify-end gap-2 items-center w-full">
-                    <div className="text-sm">
-                        <p>Anda</p>
-                    </div>
-                    <div className={`flex-none rounded-full text-white w-8 h-8 flex items-center justify-center bg-primary`}>
-                        <img src="/assets/icons/user.svg" alt="" />
-                    </div>
-                </div>
-                <MediaChat media={mediaMessage} />
-                <BubbleChat text={ConversationMessage[0].message} received={ConversationMessage[0].received_at} status={true} isOutgoing={true} currentDate={currentDate} />
+            <div id="scrollableChat" className="flex flex-col-reverse overflow-y-auto allowed-scroll pr-2 h-full gap-6">
+                {metadata && (
+                    <InfiniteScroll
+                        dataLength={listMessage.length}
+                        next={() => fetchChatMessage(metadata.currentPage + 1)}
+                        hasMore={metadata.hasMore}
+                        loader={<p className="text-center">Loading...</p>}
+                        endMessage={<p>End of conversation</p>}
+                        inverse
+                        scrollThreshold={1}
+                        style={{ display: 'flex', flexDirection: 'column-reverse' }}
+                        scrollableTarget="scrollableChat"
+                    >
+                        {listMessage.map(message => (
+                            <div className="w-full mt-2">
+                                <ChatDetails message={message} />
+                                <BubbleChat text={message.message} received={message.receivedAt} status={message.status} currentDate={currentDate} isOutgoing={(message.to ? true : false)} mediaPath={message.mediaPath} />
+                            </div>
+                        ))}
+                    </InfiniteScroll>
+                )}
             </div>
-            <div className="w-full mt-4">
-                <div className="flex justify-end gap-2 items-center w-full">
-                    <div className="text-sm">
-                        <p>Anda</p>
-                    </div>
-                    <div className={`flex-none rounded-full text-white w-8 h-8 flex items-center justify-center bg-primary`}>
-                        <img src="/assets/icons/user.svg" alt="" />
-                    </div>
-                </div>
-                <MediaChat media={mediaMessage} />
-                <BubbleChat text={ConversationMessage[0].message} received={ConversationMessage[0].received_at} status={true} isOutgoing={true} currentDate={currentDate} />
-            </div> */}
         </>
     )
 }

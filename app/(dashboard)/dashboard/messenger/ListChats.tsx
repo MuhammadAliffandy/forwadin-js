@@ -1,6 +1,6 @@
 import { ContactData } from "@/utils/types"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
-import { Dispatch, SetStateAction, useState } from "react"
+import { Dispatch, SetStateAction, useEffect, useState } from "react"
 
 interface ListChatsProps {
     listContact: ContactData[],
@@ -12,12 +12,28 @@ const ListChats = ({ listContact, currentContact, setcurrentContact }: ListChats
     const pathname = usePathname()
     const searchParams = useSearchParams()!
     const [switchButton, setswitchButton] = useState('open')
+    const [inputText, setinputText] = useState('')
+    const [searchedContact, setsearchedContact] = useState<ContactData[]>([])
     const handleClickContact = (contact: ContactData) => {
         setcurrentContact(contact)
         const params = new URLSearchParams(searchParams)
         params.set('contact', contact.id)
         router.push(pathname + '?' + params.toString())
     }
+    const filterDevice = (text: string) => {
+        const regex = new RegExp(text, 'i')
+        return listContact.filter(item => {
+            if (regex.test(item.firstName) || regex.test(item.lastName) || regex.test(item.phone) || regex.test(item.email))
+                return item
+            const findLabel = item.ContactLabel?.find(item => regex.test(item.label.name))
+            if (findLabel)
+                return item
+        })
+    }
+    useEffect(() => {
+        const searchResult = filterDevice(inputText)
+        setsearchedContact(searchResult)
+    }, [inputText])
 
     return (
         <div className="flex flex-col gap-4 mt-4 h-full">
@@ -33,7 +49,7 @@ const ListChats = ({ listContact, currentContact, setcurrentContact }: ListChats
             </div>
             <div className="flex gap-2">
                 <div className="">
-                    <input type="text" className="w-full rounded-md bg-[#E6E8F0] outline-none focus:ring-0 border-none text-customGray" placeholder="search" />
+                    <input type="text" value={inputText} onChange={e => setinputText(e.target.value)} className="w-full rounded-md bg-[#E6E8F0] outline-none focus:ring-0 border-none text-customGray" placeholder="search contact" />
                 </div>
                 <div className="flex-none flex items-center">
                     <img src="/assets/icons/filter_list.svg" alt="" width={24} />
@@ -41,25 +57,47 @@ const ListChats = ({ listContact, currentContact, setcurrentContact }: ListChats
             </div>
             <div className=" flex flex-col gap-2 overflow-y-auto pb-12">
                 {/* Contacts */}
-                {listContact.map(contact => (
-                    <div className={"rounded-md p-3 hover:cursor-pointer " + (currentContact?.id === contact.id ? 'bg-white' : '')} onClick={() => handleClickContact(contact)}>
-                        <div className="flex gap-2 items-center w-full">
-                            <div style={{
-                                backgroundColor: '#' + contact.colorCode
-                            }} className={`flex-none rounded-full text-white w-8 h-8 flex items-center justify-center`}>{contact.initial}</div>
-                            <div className=" w-48">
-                                <p>{contact.firstName} {contact.lastName}</p>
-                                <p className="truncate text-ellipsis overflow-hidden  whitespace-nowrap text-[#777C88] mt-1">
-                                    +{contact.phone}
-                                </p>
+                {inputText ? (
+                    <>
+                        {searchedContact.map(contact => (
+                            <div className={"rounded-md p-3 hover:cursor-pointer " + (currentContact?.id === contact.id ? 'bg-white' : '')} onClick={() => handleClickContact(contact)}>
+                                <div className="flex gap-2 items-center w-full">
+                                    <div style={{
+                                        backgroundColor: '#' + contact.colorCode
+                                    }} className={`flex-none rounded-full text-white w-8 h-8 flex items-center justify-center`}>{contact.initial}</div>
+                                    <div className=" w-48">
+                                        <p>{contact.firstName} {contact.lastName}</p>
+                                        <p className="truncate text-ellipsis overflow-hidden  whitespace-nowrap text-[#777C88] mt-1">
+                                            +{contact.phone}
+                                        </p>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                        {/* <div className="text-end text-[#777C88] mt-2">
+                        ))}
+                    </>
+                ) : (
+                    <>
+                        {listContact.map(contact => (
+                            <div className={"rounded-md p-3 hover:cursor-pointer " + (currentContact?.id === contact.id ? 'bg-white' : '')} onClick={() => handleClickContact(contact)}>
+                                <div className="flex gap-2 items-center w-full">
+                                    <div style={{
+                                        backgroundColor: '#' + contact.colorCode
+                                    }} className={`flex-none rounded-full text-white w-8 h-8 flex items-center justify-center`}>{contact.initial}</div>
+                                    <div className=" w-48">
+                                        <p>{contact.firstName} {contact.lastName}</p>
+                                        <p className="truncate text-ellipsis overflow-hidden  whitespace-nowrap text-[#777C88] mt-1">
+                                            +{contact.phone}
+                                        </p>
+                                    </div>
+                                </div>
+                                {/* <div className="text-end text-[#777C88] mt-2">
                            
                             lorem
                         </div> */}
-                    </div>
-                ))}
+                            </div>
+                        ))}
+                    </>
+                )}
             </div>
         </div>
     )
