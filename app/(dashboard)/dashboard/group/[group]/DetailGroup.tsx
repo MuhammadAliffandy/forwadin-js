@@ -3,14 +3,15 @@
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ContactData, GroupData, MultipleCheckboxRef } from '@/utils/types';
-import ContactList from '../../contact/ContactList';
 import AddContactModal from '@/components/dashboard/group/AddContactModal';
 import DeleteGroupModal from '@/components/dashboard/group/DeleteGroupModal';
 import DeleteContactModal from '@/components/dashboard/group/DeleteContactModal';
 import { useSession } from 'next-auth/react';
 import { fetchClient } from '@/utils/helper/fetchClient';
 import { toast } from 'react-toastify';
-import { Button, Skeleton } from '@nextui-org/react';
+import { Button, Skeleton, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@nextui-org/react';
+import ContactIcon from '@/components/dashboard/ContactIcon';
+import { formatDate } from '@/utils/helper';
 interface DetailGroupProps {
     groupId: string,
     groupName: string,
@@ -33,6 +34,7 @@ const DetailGroup = ({ groupId, groupName, setcountContact, setgroupName }: Deta
     const [addContactModal, setaddContactModal] = useState(false)
     const [deleteGroupModal, setDeleteGroupModal] = useState(false)
     const [deleteContactModal, setdeleteContactModal] = useState(false)
+    const [selectedMember, setselectedMember] = useState<Set<string> | 'all'>(new Set())
     const handleCheckBoxClick = (e: React.FormEvent<HTMLInputElement>, id: string) => {
         const newcontactData = contactData.map(obj => {
             return (obj.id === id ? { ...obj, checked: e.currentTarget.checked } : obj)
@@ -40,32 +42,10 @@ const DetailGroup = ({ groupId, groupName, setcountContact, setgroupName }: Deta
         setcontactData(() => newcontactData)
     }
 
-    const handleIndexCheckbox = (e: React.MouseEvent) => {
-        const currentcontactData = (searchText ? searchedContact : contactData)
-        if (mainCheckboxRef.current && !mainCheckboxRef.current.checked) {
-            const newArray = currentcontactData.map((obj, idx) => {
-                groupCheckboxRef.current[`checkbox_${obj.id}`].checked = false
-                return { ...obj, checked: false }
-            })
-            if (searchText)
-                setsearchedContact(newArray)
-            else
-                setcontactData(() => newArray)
-        } else {
-            const newArray = currentcontactData.map((obj, idx) => {
-                groupCheckboxRef.current[`checkbox_${obj.id}`].checked = true
-                return { ...obj, checked: true }
-            })
-            if (searchText)
-                setsearchedContact(() => newArray)
-            else
-                setcontactData(() => newArray)
-        }
-    }
     const handleOpenDetailModal = (params: string) => {
         push('/dashboard/contact/' + params)
     }
-    const filterDevice = (text: string) => {
+    const filterContact = (text: string) => {
         const regex = new RegExp(text, 'i')
         return contactData.filter(item => {
             if (regex.test(item.firstName) || regex.test(item.lastName) || regex.test(item.phone) || regex.test(item.email))
@@ -78,10 +58,34 @@ const DetailGroup = ({ groupId, groupName, setcountContact, setgroupName }: Deta
     const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
         setsearchText(e.target.value)
     }
-    const handleDeleteGroup = () => {
-        // TODO
-        const checkedGroups = contactData.filter(item => item.checked === false).map(item => item)
-        setcontactData(checkedGroups)
+    const handleDeleteMember = async () => {
+        // tambah konfirmasi delete
+        let deletedContact = null
+        if (selectedMember === 'all') {
+            deletedContact = contactData.map(item => item.id)
+        }
+        else if ((selectedMember as Set<string>).size > 0) {
+            deletedContact = Array.from(selectedMember)
+        }
+        if (deletedContact) {
+            const result = await fetchClient({
+                url: '/groups/remove',
+                body: JSON.stringify({
+                    groupId: groupId,
+                    contactIds: deletedContact
+                }),
+                method: 'DELETE',
+                user: session?.user
+            })
+            if (result?.ok) {
+                toast.success('Berhasil hapus member')
+                fetchGroupData()
+                setselectedMember(new Set([]))
+            } else {
+                toast.error('Gagal hapus member')
+            }
+            deletedContact = null
+        }
     }
     const handleUpdateGroup = async () => {
         setIsLoading(true)
@@ -95,7 +99,6 @@ const DetailGroup = ({ groupId, groupName, setcountContact, setgroupName }: Deta
             user: session?.user
         })
         if (result) {
-            const resultData = await result.json()
             if (result.ok) {
                 toast.success('Berhasil update group')
                 fetchGroupData()
@@ -116,7 +119,9 @@ const DetailGroup = ({ groupId, groupName, setcountContact, setgroupName }: Deta
             if (result.ok) {
                 setgroupData(resultData)
                 setcontactData(resultData.contactGroups!.map(item => item.contact))
+                console.log(resultData.contactGroups)
                 setgroupName(resultData.name)
+                setcurrentGroupName(resultData.name)
                 setcountContact(resultData.contactGroups?.length!)
                 setisLoaded(true)
             } else {
@@ -125,54 +130,36 @@ const DetailGroup = ({ groupId, groupName, setcountContact, setgroupName }: Deta
         }
     }
 
-    useEffect(() => {
-        if (mainCheckboxRef.current) {
-            const checkObject = contactData.find(obj => obj.checked === true)
-            if (checkObject) {
-                mainCheckboxRef.current.checked = true
-                setisChecked(true)
-            }
-            else {
-                mainCheckboxRef.current.checked = false
-                setisChecked(false)
-            }
-        }
-    }, [contactData])
-    useEffect(() => {
-        if (mainCheckboxRef.current) {
-            const checkObject = searchedContact.find(obj => obj.checked === true)
-            if (checkObject) {
-                mainCheckboxRef.current.checked = true
-                setisChecked(true)
-            }
-            else {
-                mainCheckboxRef.current.checked = false
-                setisChecked(false)
-            }
-        }
-    }, [searchedContact])
 
     useEffect(() => {
-        const searchResult = filterDevice(searchText)
+        const searchResult = filterContact(searchText)
         setsearchedContact(searchResult)
     }, [searchText])
     useEffect(() => {
-        fetchGroupData()
+        if (session?.user?.token)
+            fetchGroupData()
     }, [session?.user?.token])
+    useEffect(() => {
+        if ((selectedMember as Set<string>).size > 0 || selectedMember === 'all') {
+            setisChecked(true)
+        } else {
+            setisChecked(false)
+        }
+    }, [selectedMember])
     return (
         <>
             {isLoaded &&
                 <AddContactModal openModal={addContactModal} setopenModal={setaddContactModal} fetchGroupData={fetchGroupData} groupId={groupId} activeContactData={contactData} />
             }
             <DeleteGroupModal openModal={deleteGroupModal} setopenModal={setDeleteGroupModal} group={groupId} />
-            {session?.user && (
+            {selectedMember && (
                 <DeleteContactModal
-                    groupId={groupId}
-                    user={session.user}
                     openModal={deleteContactModal}
                     setopenModal={setdeleteContactModal}
-                    contacts={contactData.filter(contact => contact.checked)}
-                    refresh={fetchGroupData} />
+                    deleteFunction={handleDeleteMember}
+                    selectedKeys={selectedMember}
+
+                />
             )}
             <div className="mt-4 p-4 bg-white rounded-md">
                 <div className='flex sm:flex-row flex-col gap-2 items-center justify-between'>
@@ -183,9 +170,9 @@ const DetailGroup = ({ groupId, groupName, setcountContact, setgroupName }: Deta
                         />
                     </div>
                     <div className='flex lg:flex-row flex-col lg:justify-end justify-between gap-2 w-full max-w-sm'>
-                        <div onClick={() => setDeleteGroupModal(true)} className="bg-white rounded-md px-6 border border-customGray text-center items-center flex hover:cursor-pointer justify-center p-2">
+                        <Button variant='bordered' onClick={() => setDeleteGroupModal(true)} className="rounded-md px-4">
                             Hapus Group
-                        </div>
+                        </Button>
                         <Button color='primary' onClick={handleUpdateGroup} isLoading={isLoading} className='rounded-md px-6 disabled:opacity-50' disabled={(groupData?.name === currentGroupName)}>
                             Simpan
                         </Button>
@@ -202,60 +189,92 @@ const DetailGroup = ({ groupId, groupName, setcountContact, setgroupName }: Deta
                     </div>
                     <div className='flex lg:flex-row flex-col lg:justify-end justify-between gap-2 w-full max-w-sm'>
                         {isChecked ? (
-                            <div onClick={() => setdeleteContactModal(true)} className="bg-danger rounded-md px-6 text-white text-center items-center flex hover:cursor-pointer justify-center p-2">
+                            <Button color='danger' onClick={() => setdeleteContactModal(true)} className="rounded-md px-4">
                                 Hapus Kontak
-                            </div>) : (
-                            <div onClick={() => setaddContactModal(true)} className="bg-primary rounded-md px-6 text-white text-center items-center flex hover:cursor-pointer justify-center p-2">
+                            </Button>) : (
+                            <Button color='primary' onClick={() => setaddContactModal(true)} className="rounded-md">
                                 Tambah Anggota
-                            </div>
+                            </Button>
                         )}
                     </div>
                 </div>
             </div>
             {isLoaded ? (
+                <div className=' mt-4'>
+                    <Table
+                        aria-label="Incoming Chat"
+                        color='default'
+                        selectionMode="multiple"
+                        isHeaderSticky
+                        classNames={{
+                            td: 'text-[11px] font-nunito',
+                            tr: 'text-[11px] font-nunito',
+                            base: "max-h-[55vh] overflow-y-scroll",
+                            table: "",
+                            thead: 'rounded-md',
+                            wrapper: 'rounded-md'
+                        }}
+                        radius='md'
+                        selectedKeys={selectedMember as any}
+                        onSelectionChange={setselectedMember as any}
+                    >
+                        <TableHeader>
+                            <TableColumn>Nama</TableColumn>
+                            <TableColumn>Nomor HP</TableColumn>
+                            <TableColumn>Label Kategori</TableColumn>
+                            <TableColumn>Email</TableColumn>
+                            <TableColumn>Dibuat pada</TableColumn>
+                            <TableColumn>Detail</TableColumn>
+                        </TableHeader>
+                        <TableBody emptyContent={
+                            <div className='w-full bg-white p-12'>
+                                <div className='w-full max-w-md mx-auto flex flex-col gap-4'>
+                                    <p className='text-[16px] font-bold'>Member grup masih kosong</p>
+                                    <p className='text-xs text-[#777C88]'>Tambahkan kontak ke dalam grup anda.</p>
+                                    <div className='flex'>
+                                        <div onClick={() => setaddContactModal(true)} className="bg-primary rounded-md px-6 text-white text-center items-center flex hover:cursor-pointer justify-center p-2">
+                                            Tambah Member
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 
-                <div className='overflow-x-scroll allowed-scroll'>
-                    <table className="w-full text-center font-nunito text-xs font-bold ">
-                        <thead className='bg-neutral-75'>
-                            <tr className=''>
-                                <th className='py-4 checkbox'>
-                                    <input ref={mainCheckboxRef} type="checkbox" name="main_checkbox" id="main_checkbox" className='rounded-sm focus:ring-transparent' onClick={handleIndexCheckbox} />
-                                </th>
-                                <th className='p-4'>Nama</th>
-                                <th className='p-4 whitespace-pre'>Nomor HP</th>
-                                <th className='p-4'>Label Kategori</th>
-                                <th className='p-4'>Email</th>
-                                <th className='p-4'>Dibuat pada</th>
-                                <th className='p-4'>Detail</    th>
-                            </tr>
-                        </thead>
-                        <tbody className='bg-white'>
-                            {searchText ? (
-                                <ContactList
-                                    contactData={searchedContact}
-                                    multipleCheckboxRef={groupCheckboxRef}
-                                    handleCheckBoxClick={handleCheckBoxClick}
-                                    handleOpenDetailModal={handleOpenDetailModal}
-                                />
-                            ) : (
-                                <ContactList
-                                    contactData={contactData}
-                                    multipleCheckboxRef={groupCheckboxRef}
-                                    handleCheckBoxClick={handleCheckBoxClick}
-                                    handleOpenDetailModal={handleOpenDetailModal}
-                                />
-
+                        } items={searchText ? searchedContact : contactData}>
+                            {(item: ContactData) => (
+                                <TableRow key={item.id}>
+                                    <TableCell className='flex gap-2 items-center'>
+                                        <ContactIcon phone={item.phone} contact={item} />
+                                    </TableCell>
+                                    <TableCell >{item.phone}</TableCell>
+                                    <TableCell className='flex flex-wrap justify-center lg:justify-start items-center gap-2'>  {item.ContactLabel?.map((item, idx) => (
+                                        <div key={idx} className='border-2 border-primary px-2 py-1 rounded-full'>
+                                            {item.label.name}
+                                        </div>
+                                    ))}</TableCell>
+                                    <TableCell >{item.email}</TableCell>
+                                    <TableCell >
+                                        {formatDate(item.createdAt)}
+                                    </TableCell>
+                                    <TableCell>
+                                        <div className="flex items-center">
+                                            <div className='py-1 px-4 text-center border border-black/20 rounded-md hover:cursor-pointer' onClick={() => handleOpenDetailModal(item.id)}>Detail</div>
+                                        </div>
+                                    </TableCell>
+                                </TableRow>
                             )}
-                        </tbody>
-                    </table>
-
+                        </TableBody>
+                    </Table>
                 </div >
+
             ) : (
-                <div className='mt-4 flex flex-col gap-2 p-4 bg-white'>
-                    <Skeleton className={'w-full h-3 rounded-full'} />
-                    <Skeleton className={'w-full h-3 rounded-full'} />
-                    <Skeleton className={'w-full h-3 rounded-full'} />
-                </div>
+                <>
+                    <div className='mt-4 flex flex-col gap-2 p-4 bg-white'>
+
+                        <Skeleton className={'w-full h-3 rounded-full'} />
+                        <Skeleton className={'w-full h-3 rounded-full'} />
+                        <Skeleton className={'w-full h-3 rounded-full'} />
+                    </div>
+                </>
             )}
         </>
     )
