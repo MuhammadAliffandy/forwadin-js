@@ -6,7 +6,7 @@ type Params = {
     params: { campaignId: string }
 }
 export const metadata: Metadata = {
-    title: 'Detail Campaign'
+    title: 'Detail Campaign Message'
 }
 const page = ({ params }: Params) => {
 

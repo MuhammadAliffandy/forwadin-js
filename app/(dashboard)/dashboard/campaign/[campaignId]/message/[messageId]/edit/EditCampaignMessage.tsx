@@ -2,12 +2,13 @@
 import DisabledForm from "@/components/DisabledForm"
 import InputContactAndLabel from "@/components/dashboard/InputContactAndLabel"
 import UploadFile from "@/components/dashboard/UploadFile"
+import DisplayImage from "@/components/dashboard/auto-reply/DisplayImage"
 import TextAreaInput from "@/components/dashboard/chat/TextAreaInput"
 import InputForm from "@/components/form/InputForm"
 import { formatDatetoISO8601 } from "@/utils/helper"
 import { fetchClient } from "@/utils/helper/fetchClient"
 import { getMessageVariables, parseTextInput } from "@/utils/helper/messageUtils"
-import { CampaignData, CampaignMessageForm } from "@/utils/types"
+import { CampaignData, CampaignMessage, CampaignMessageForm } from "@/utils/types"
 import { BreadcrumbItem, Breadcrumbs } from "@nextui-org/breadcrumbs"
 import { Button } from "@nextui-org/react"
 import { useSession } from "next-auth/react"
@@ -16,19 +17,19 @@ import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { toast } from "react-toastify"
 
-const CreateCampaignMessage = ({ campaignId }: {
-    campaignId: string
+const EditCampaignMessage = ({ campaignData, messageData }: {
+    campaignData: CampaignData,
+    messageData: CampaignMessage
 }) => {
     const { push } = useRouter()
     const { data: session } = useSession()
     const [isLoading, setisLoading] = useState(false)
     const [isLoaded, setisLoaded] = useState(false)
     const [isDisabled, setisDisabled] = useState(true)
-    const { handleSubmit, register, formState: { errors } } = useForm<CampaignMessageForm>()
+    const { handleSubmit, register, setValue, formState: { errors } } = useForm<CampaignMessageForm>()
     const [files, setfiles] = useState<File[]>([])
     const [inputText, setinputText] = useState('')
     const [receiverList, setreceiverList] = useState<string[]>([])
-    const [campaignData, setcampaignData] = useState<CampaignData>()
     const listTemplate = [
         {
             id: '1',
@@ -69,38 +70,25 @@ const CreateCampaignMessage = ({ campaignId }: {
             }
             formData.append('name', CampaignMessageFormData.name)
             formData.append('message', inputText)
-            formData.append('campaignId', campaignId)
+            formData.append('campaignId', campaignData.id)
             formData.append('schedule', formatDatetoISO8601(CampaignMessageFormData.schedule))
             formData.append('delay', delay.toString())
             const result = await fetchClient({
-                url: '/campaigns/messages',
-                method: 'POST',
+                url: '/campaigns/messages/' + messageData.id,
+                method: 'PUT',
                 body: formData,
                 isFormData: true,
                 user: session?.user
             })
             if (result?.ok) {
-                toast.success('Berhasil buat campaign message!')
-                push('/dashboard/campaign/' + campaignId + '/message')
+                toast.success('Berhasil ubah campaign message!')
+                push('/dashboard/campaign/' + campaignData.id + '/message')
             } else {
-                toast.error('Gagal buat campaign message')
+                toast.error('Gagal ubah campaign message')
             }
 
         }
         setisLoading(false)
-    }
-    const fetchCampaignData = async () => {
-        const result = await fetchClient({
-            url: "/campaigns/" + campaignId,
-            method: 'GET',
-            user: session?.user
-        })
-        if (result?.ok) {
-            const resultData: CampaignData = await result.json()
-            setcampaignData(resultData)
-            console.log(resultData)
-        }
-        setisLoaded(true)
     }
     useEffect(() => {
         if (inputText) {
@@ -110,21 +98,16 @@ const CreateCampaignMessage = ({ campaignId }: {
         }
     }, [inputText])
     useEffect(() => {
-        if (session?.user?.token && !campaignData)
-            fetchCampaignData()
-
-    }, [session?.user?.token])
+        setValue('name', messageData.name)
+        setValue('schedule', (new Date(messageData.schedule).toISOString().slice(0, 16)))
+        setinputText(messageData.message)
+    }, [])
     return (
         <>
-            <Breadcrumbs size="sm">
-                <BreadcrumbItem href="/dashboard/campaign">campaign</BreadcrumbItem>
-                <BreadcrumbItem href={"/dashboard/campaign/" + campaignId}>detail campaign</BreadcrumbItem>
-                <BreadcrumbItem href={"/dashboard/campaign/" + campaignId + '/message'}>campaign message</BreadcrumbItem>
-            </Breadcrumbs>
             <form onSubmit={handleSubmit(onSubmit)} className='flex justify-center items-center lg:items-start lg:flex-row flex-col gap-4 mt-4'>
                 <div className='max-w-sm w-full items-center flex flex-col gap-4'>
                     <div className='w-full bg-white rounded-md p-4 flex flex-col gap-4'>
-                        <p className="font-lexend font-bold text-2xl">Buat Campaign Message</p>
+                        <p className="font-lexend font-bold text-2xl">Edit Campaign Message</p>
                         <div>
                             <p className="mb-2">Nama Campaign</p>
                             <InputForm register={register} config={{
@@ -185,6 +168,13 @@ const CreateCampaignMessage = ({ campaignId }: {
                             <p className="mb-2">Response</p>
 
                             <TextAreaInput text={inputText} settext={setinputText} limit={255} />
+                            {messageData.mediaPath && (
+                                <>
+                                    <p className="my-2">Media</p>
+                                    <DisplayImage imageUrl={messageData.mediaPath} />
+                                </>
+                            )}
+                            <div className="mt-2" />
                             <UploadFile
                                 files={files}
                                 setfiles={setfiles}
@@ -218,4 +208,4 @@ const CreateCampaignMessage = ({ campaignId }: {
     )
 }
 
-export default CreateCampaignMessage
+export default EditCampaignMessage

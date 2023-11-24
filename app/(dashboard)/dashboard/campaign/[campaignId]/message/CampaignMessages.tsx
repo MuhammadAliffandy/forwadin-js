@@ -8,6 +8,7 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { toast } from "react-toastify"
+import { BreadcrumbItem, Breadcrumbs } from "@nextui-org/breadcrumbs"
 
 const CampaignMessages = ({ campaignId }: {
     campaignId: string
@@ -39,7 +40,7 @@ const CampaignMessages = ({ campaignId }: {
         }
         setisLoaded(true)
     }
-    const fetchcampaignMessages = async () => {
+    const fetchcampaignData = async () => {
         const result = await fetchClient({
             url: '/campaigns/' + campaignId,
             method: 'GET',
@@ -54,11 +55,34 @@ const CampaignMessages = ({ campaignId }: {
         }
     }
     const handleDeleteMessage = async () => {
-
+        let deletedMessage = null
+        if (selectedMessage === 'all') {
+            deletedMessage = campaignMessages.map(item => item.id)
+        }
+        else if ((selectedMessage as Set<string>).size > 0) {
+            deletedMessage = Array.from(selectedMessage)
+        }
+        const isConfirm = window.confirm('Anda yakin ingin menghapus ' + deletedMessage?.length + ' campaign message?')
+        if (deletedMessage && isConfirm) {
+            const result = await fetchClient({
+                url: '/campaigns/messages/',
+                body: JSON.stringify({ campaignMessageIds: deletedMessage }),
+                method: 'DELETE',
+                user: session?.user
+            })
+            if (result?.ok) {
+                toast.success('Berhasil hapus campaign message')
+                fetchCampaignMessages()
+                setselectedMessage(new Set([]))
+            } else {
+                toast.error('Gagal hapus campaign message')
+            }
+            deletedMessage = null
+        }
     }
     useEffect(() => {
         if (session?.user?.token) {
-            fetchcampaignMessages()
+            fetchcampaignData()
             fetchCampaignMessages()
         }
     }, [session?.user?.token])
@@ -71,9 +95,11 @@ const CampaignMessages = ({ campaignId }: {
     }, [selectedMessage])
     return (
         <>
-            <div className='flex'>
-                <Link href={'/dashboard/campaign/'} className='rounded-md py-3 px-4 border border-black/50 text-black/50'>Kembali</Link>
-            </div>
+            <Breadcrumbs size="sm">
+                <BreadcrumbItem href="/dashboard/campaign">campaign</BreadcrumbItem>
+                <BreadcrumbItem href={"/dashboard/campaign/" + campaignId}>detail campaign</BreadcrumbItem>
+                <BreadcrumbItem href={"/dashboard/campaign/" + campaignId + '/message'}>campaign message</BreadcrumbItem>
+            </Breadcrumbs>
             <p className="font-lexend font-bold text-2xl mt-2">Campaign: {campaignData?.name}</p>
             <div className="mt-8 p-4 bg-white rounded-md">
                 <div className="flex sm:flex-row flex-col gap-2 justify-between">
@@ -84,11 +110,11 @@ const CampaignMessages = ({ campaignId }: {
                         />
                     </div>
                     {isChecked ? (
-                        <Button color='danger' className='rounded-md' onClick={() => setdeleteModal(true)}>
+                        <Button color='danger' className='rounded-md' onClick={handleDeleteMessage}>
                             Hapus
                         </Button>
                     ) : (
-                        <Button as={Link} href={`/dashboard/campaign/${campaignId}/messages/new`} color='primary' className="rounded-md">
+                        <Button as={Link} href={`/dashboard/campaign/${campaignId}/message/new`} color='primary' className="rounded-md">
                             Buat Pesan Baru
                         </Button>
                     )}
@@ -128,7 +154,7 @@ const CampaignMessages = ({ campaignId }: {
                         </TableHeader>
                         <TableBody emptyContent={<div className='w-full bg-white p-12'>
                             <div className='w-full max-w-md mx-auto flex flex-col gap-4'>
-                                <p className='text-[16px] font-bold'>Campaign masih kosong</p>
+                                <p className='text-[16px] font-bold'>Campaign message masih kosong</p>
                                 <p className='text-xs text-[#777C88]'>Lorem Ipsum</p>
                             </div>
                         </div>}
@@ -139,14 +165,15 @@ const CampaignMessages = ({ campaignId }: {
                                 <TableRow key={item.id}>
                                     <TableCell >{item.name}</TableCell>
                                     <TableCell>
-                                        <div className='flex gap-1 items-center'>
-                                            <Switch size='sm' isSelected={item.isSent} />
+
+                                        <Switch size='sm' isSelected={item.isSent} unselectable="on">
                                             {item.isSent ? (
                                                 <p className='text-primary font-bold'>Live</p>
                                             ) : (
                                                 <p className='text-customGray'>off</p>
                                             )}
-                                        </div>
+                                        </Switch>
+
                                     </TableCell>
 
                                     <TableCell>

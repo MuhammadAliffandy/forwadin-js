@@ -18,6 +18,7 @@ const BubbleChat = ({ text, received, status, isOutgoing = false, currentDate, m
         else
             setreceivedMessage(formatDate(received) as string)
     }, [])
+
     if (isOutgoing)
         return (
             <div className="flex justify-end">
@@ -31,10 +32,13 @@ const BubbleChat = ({ text, received, status, isOutgoing = false, currentDate, m
                     <div className="flex justify-end items-center gap-2 mt-2">
                         <p className="text-customGray">{receivedMessage}</p>
                         {status === 'read' && (
-                            <img src="/assets/icons/dashboard/message_read.svg" alt="" />
+                            <img src="/assets/icons/chat/read.svg" alt="" />
                         )}
                         {status === 'delivery_ack' && (
                             <img src="/assets/icons/dashboard/message_send.svg" alt="" />
+                        )}
+                        {status === "server_ack" && (
+                            <p className="text-white"> check</p>
                         )}
                     </div>
                 </div>
@@ -49,14 +53,8 @@ const BubbleChat = ({ text, received, status, isOutgoing = false, currentDate, m
                     </div>
                 )}
                 <p className="mt-2">{text}</p>
-                <div className="flex items-center gap-2 mt-2">
-                    <p className="text-customGray">{receivedMessage}</p>
-                    {status === 'read' && (
-                        <img src="/assets/icons/dashboard/message_read.svg" alt="" />
-                    )}
-                    {status === 'delivery_ack' && (
-                        <img src="/assets/icons/dashboard/message_send.svg" alt="" />
-                    )}
+                <div className="flex items-center justify-end gap-2 mt-2">
+                    <p className="text-customGray text-right">{receivedMessage}</p>
                 </div>
             </div>
         </div>

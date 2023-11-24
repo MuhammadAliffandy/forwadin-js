@@ -1,13 +1,15 @@
-import { ContactData } from "@/utils/types"
+import { ContactData, ConversationMessage } from "@/utils/types"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { Dispatch, SetStateAction, useEffect, useState } from "react"
 
 interface ListChatsProps {
     listContact: ContactData[],
     currentContact: ContactData | undefined,
-    setcurrentContact: Dispatch<SetStateAction<ContactData | undefined>>
+    setcurrentContact: Dispatch<SetStateAction<ContactData | undefined>>,
+    setlistMessage: Dispatch<SetStateAction<ConversationMessage[]>>,
+    // fetchMessage: (page: number) => void
 }
-const ListChats = ({ listContact, currentContact, setcurrentContact }: ListChatsProps) => {
+const ListChats = ({ listContact, currentContact, setcurrentContact, setlistMessage }: ListChatsProps) => {
     const router = useRouter()
     const pathname = usePathname()
     const searchParams = useSearchParams()!
@@ -15,6 +17,7 @@ const ListChats = ({ listContact, currentContact, setcurrentContact }: ListChats
     const [inputText, setinputText] = useState('')
     const [searchedContact, setsearchedContact] = useState<ContactData[]>([])
     const handleClickContact = (contact: ContactData) => {
+        setlistMessage([])
         setcurrentContact(contact)
         const params = new URLSearchParams(searchParams)
         params.set('contact', contact.id)
@@ -49,7 +52,7 @@ const ListChats = ({ listContact, currentContact, setcurrentContact }: ListChats
             </div>
             <div className="flex gap-2">
                 <div className="">
-                    <input type="text" value={inputText} onChange={e => setinputText(e.target.value)} className="w-full rounded-md bg-[#E6E8F0] outline-none focus:ring-0 border-none text-customGray" placeholder="search contact" />
+                    <input type="text" value={inputText} onChange={e => setinputText(e.target.value)} className="w-full rounded-md bg-[#E6E8F0] outline-none focus:ring-0 border-none" placeholder="search contact" />
                 </div>
                 <div className="flex-none flex items-center">
                     <img src="/assets/icons/filter_list.svg" alt="" width={24} />

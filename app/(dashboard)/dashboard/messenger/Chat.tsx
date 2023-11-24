@@ -1,7 +1,7 @@
 import ProfileAvatar from "@/components/dashboard/ProfileAvatar"
 import BubbleChat from "@/components/dashboard/chat/BubbleChat"
 import MediaChat from "@/components/dashboard/chat/MediaChat"
-import { getInitials } from "@/utils/helper"
+import { formatDate, getInitials } from "@/utils/helper"
 import { fetchClient } from "@/utils/helper/fetchClient"
 import { ContactData, ConversationMessage, MessageMetadata } from "@/utils/types"
 import { User } from "next-auth"
@@ -37,14 +37,14 @@ const Chat = ({ currentContact, currentDate, sessionId, listMessage, setlistMess
                         next={() => fetchChatMessage(metadata.currentPage + 1)}
                         hasMore={metadata.hasMore}
                         loader={<p className="text-center">Loading...</p>}
-                        endMessage={<p>End of conversation</p>}
+                        endMessage={<p className="text-center text-customNeutral">End of conversation</p>}
                         inverse
                         scrollThreshold={1}
                         style={{ display: 'flex', flexDirection: 'column-reverse' }}
                         scrollableTarget="scrollableChat"
                     >
                         {listMessage.map(message => (
-                            <div className="w-full mt-2">
+                            <div className="w-full mt-4">
                                 <ChatDetails message={message} />
                                 <BubbleChat text={message.message} received={message.receivedAt} status={message.status} currentDate={currentDate} isOutgoing={(message.to ? true : false)} mediaPath={message.mediaPath} />
                             </div>
@@ -80,7 +80,7 @@ const ChatDetails = ({ message }: { message: ConversationMessage }) => {
                 }} className={`flex-none rounded-full text-white w-8 h-8 flex items-center justify-center`}>{getInitials(message.contact?.firstName + ' ' + message.contact?.lastName)}</div> */}
                 <div className="">
                     <p>{message.contact?.firstName} {message.contact?.lastName}</p>
-                    <p className="text-[#777C88]">{message.createdAt}</p>
+                    <p className="text-[#777C88]">{formatDate(message.createdAt)}</p>
                 </div>
             </div>
         </>
