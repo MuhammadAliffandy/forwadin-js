@@ -140,18 +140,6 @@ const CreateCampaign = ({ campaignData }: { campaignData: CampaignData }) => {
         }
         setisLoading(false)
     }
-    // const fetchContactData = async () => {
-    //     const result = await fetchClient({
-    //         url: '/contacts',
-    //         method: 'GET',
-    //         user: session?.user
-    //     })
-    //     if (result?.ok) {
-    //         const resultData = await result.json()
-    //         const updatedReceiverList = [...receiverList, ...resultData]
-    //         setreceiverList(updatedReceiverList)
-    //     }
-    // }
     useEffect(() => {
         if (session?.user?.device && listDevice.length === 0) {
             setlistDevice(session.user.device)

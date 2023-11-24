@@ -13,6 +13,7 @@ import DisplayImage from "@/components/dashboard/auto-reply/DisplayImage"
 import Link from "next/link"
 import TabTitle from "@/components/tabs/TabTitle"
 import DetailCampaignTable from "../../DetailCampaignTable"
+import { BreadcrumbItem, Breadcrumbs } from "@nextui-org/breadcrumbs"
 
 const DetailCampaignMessage = ({ campaignId, messageId }: { campaignId: string, messageId: string }) => {
     const { data: session } = useSession()
@@ -109,7 +110,13 @@ const DetailCampaignMessage = ({ campaignId, messageId }: { campaignId: string, 
     }, [session?.user?.token])
     return (
         <>
-            <p className="font-lexend font-bold text-2xl">Campaign/Message: {campaignData?.name}/{campaignMessage?.name}</p>
+            <Breadcrumbs size="sm">
+                <BreadcrumbItem href="/dashboard/campaign">campaign</BreadcrumbItem>
+                <BreadcrumbItem href={"/dashboard/campaign/" + campaignId}>detail campaign</BreadcrumbItem>
+                <BreadcrumbItem href={"/dashboard/campaign/" + campaignId + '/message'}>campaign message</BreadcrumbItem>
+                <BreadcrumbItem href={"/dashboard/campaign/" + campaignId + '/message/' + messageId}>detail campaign message</BreadcrumbItem>
+            </Breadcrumbs>
+            <p className="font-lexend font-bold text-2xl mt-4">Campaign Message: {campaignData?.name}/{campaignMessage?.name}</p>
             {isCampaignLoaded ? (
                 <div className="w-full bg-white rounded-md p-4 lg:p-6 mt-4 flex flex-col lg:flex-row gap-12">
                     <div className="w-full max-w-xs">
@@ -153,8 +160,8 @@ const DetailCampaignMessage = ({ campaignId, messageId }: { campaignId: string, 
                                 <DisplayImage imageUrl={campaignMessage.mediaPath} />
                             </>
                         )}
-                        <div className="flex justify-end">
-                            <Button as={Link} href={"/dashboard/campaign/edit/" + campaignData?.id} color="primary" className="rounded-md">
+                        <div className="flex justify-end mt-2">
+                            <Button as={Link} href={"/dashboard/campaign/" + campaignId + '/message/' + messageId + '/edit'} color="primary" className="rounded-md">
                                 Edit
                             </Button>
                         </div>

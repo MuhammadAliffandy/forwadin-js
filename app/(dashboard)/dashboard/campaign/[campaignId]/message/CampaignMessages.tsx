@@ -8,6 +8,7 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { toast } from "react-toastify"
+import { BreadcrumbItem, Breadcrumbs } from "@nextui-org/breadcrumbs"
 
 const CampaignMessages = ({ campaignId }: {
     campaignId: string
@@ -71,9 +72,11 @@ const CampaignMessages = ({ campaignId }: {
     }, [selectedMessage])
     return (
         <>
-            <div className='flex'>
-                <Link href={'/dashboard/campaign/'} className='rounded-md py-3 px-4 border border-black/50 text-black/50'>Kembali</Link>
-            </div>
+            <Breadcrumbs size="sm">
+                <BreadcrumbItem href="/dashboard/campaign">campaign</BreadcrumbItem>
+                <BreadcrumbItem href={"/dashboard/campaign/" + campaignId}>detail campaign</BreadcrumbItem>
+                <BreadcrumbItem href={"/dashboard/campaign/" + campaignId + '/message'}>campaign message</BreadcrumbItem>
+            </Breadcrumbs>
             <p className="font-lexend font-bold text-2xl mt-2">Campaign: {campaignData?.name}</p>
             <div className="mt-8 p-4 bg-white rounded-md">
                 <div className="flex sm:flex-row flex-col gap-2 justify-between">
@@ -88,7 +91,7 @@ const CampaignMessages = ({ campaignId }: {
                             Hapus
                         </Button>
                     ) : (
-                        <Button as={Link} href={`/dashboard/campaign/${campaignId}/messages/new`} color='primary' className="rounded-md">
+                        <Button as={Link} href={`/dashboard/campaign/${campaignId}/message/new`} color='primary' className="rounded-md">
                             Buat Pesan Baru
                         </Button>
                     )}
@@ -139,14 +142,15 @@ const CampaignMessages = ({ campaignId }: {
                                 <TableRow key={item.id}>
                                     <TableCell >{item.name}</TableCell>
                                     <TableCell>
-                                        <div className='flex gap-1 items-center'>
-                                            <Switch size='sm' isSelected={item.isSent} />
+
+                                        <Switch size='sm' isSelected={item.isSent} unselectable="on">
                                             {item.isSent ? (
                                                 <p className='text-primary font-bold'>Live</p>
                                             ) : (
                                                 <p className='text-customGray'>off</p>
                                             )}
-                                        </div>
+                                        </Switch>
+
                                     </TableCell>
 
                                     <TableCell>

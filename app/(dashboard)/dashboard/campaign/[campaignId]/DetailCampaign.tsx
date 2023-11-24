@@ -109,7 +109,7 @@ const DetailCampaign = ({ campaignId }: { campaignId: string }) => {
     }, [session?.user?.token])
     return (
         <>
-            <Breadcrumbs>
+            <Breadcrumbs size="sm">
                 <BreadcrumbItem href="/dashboard/campaign">campaign</BreadcrumbItem>
                 <BreadcrumbItem href={"/dashboard/campaign/" + campaignId}>detail campaign</BreadcrumbItem>
             </Breadcrumbs>

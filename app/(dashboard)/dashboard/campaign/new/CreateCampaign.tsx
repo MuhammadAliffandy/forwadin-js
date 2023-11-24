@@ -17,6 +17,7 @@ import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { toast } from "react-toastify"
 
+import { BreadcrumbItem, Breadcrumbs } from "@nextui-org/breadcrumbs"
 
 const CreateCampaign = () => {
     const { push } = useRouter()
@@ -164,195 +165,197 @@ const CreateCampaign = () => {
         }
     }, [registrationMessage, receiverList, requestList, successMessage, failedMessage, unregisteredMessage])
     return (
-        <form onSubmit={handleSubmit(onSubmit)} className='flex justify-center items-center lg:items-start lg:flex-row flex-col gap-4 mt-4'>
-            <div className='max-w-sm w-full items-center flex flex-col gap-4'>
-                <div className='w-full bg-white rounded-md p-4 flex flex-col gap-4'>
-                    <p className="font-lexend font-bold text-2xl">Buat Campaign</p>
-                    <div>
-                        <p className="mb-2">Nama Campaign</p>
-                        <InputForm register={register} config={{
-                            name: 'name',
-                            placeholder: 'Nama campaign',
-                            type: 'text',
-                            error: errors.name,
-                            registerConfig: {
-                                required: 'required'
-                            }
-                        }} />
-                    </div>
+        <>
+            <Breadcrumbs size="sm">
+                <BreadcrumbItem href="/dashboard/campaign">campaign</BreadcrumbItem>
+                <BreadcrumbItem href={"/dashboard/campaign/new"}>create campaign</BreadcrumbItem>
+            </Breadcrumbs>
+            <p className='text-lexend font-bold text-2xl mt-4'>Buat Campaign Baru</p>
+            <form onSubmit={handleSubmit(onSubmit)} className='flex justify-center items-center lg:items-start lg:flex-row flex-col gap-4 mt-4'>
+                <div className='max-w-sm w-full items-center flex flex-col gap-4'>
+                    <div className='w-full bg-white rounded-md p-4 flex flex-col gap-4'>
+                        <p className="font-lexend font-bold text-2xl">Buat Campaign</p>
+                        <div>
+                            <p className="mb-2">Nama Campaign</p>
+                            <InputForm register={register} config={{
+                                name: 'name',
+                                placeholder: 'Nama campaign',
+                                type: 'text',
+                                error: errors.name,
+                                registerConfig: {
+                                    required: 'required'
+                                }
+                            }} />
+                        </div>
 
-                    <div>
-                        <p className="mb-2">Device</p>
-                        <select {...register('deviceId')} className="px-4 py-3 focus:outline-none text-sm rounded-md focus:ring-0 w-full border-[#B0B4C5] focus:border-primary">
-                            {listDevice.map(item => (
-                                <option key={item.id} value={item.id} className="">{item.name}</option>
-                            ))}
-                        </select>
-                    </div>
-                    <div>
-                        <p className="mb-2">Penerima</p>
-                        {/* <TagsInput /> */}
-                        <InputContactAndLabel
-                            selectedKeys={receiverList}
-                            setselectedKeys={setreceiverList}
-                        />
-                    </div>
-                    <div>
-                        <p className="mb-2">Jadwal Campaign</p>
-                        <InputForm register={register} config={{
-                            name: 'schedule',
-                            placeholder: 'Nama campaign',
-                            type: 'datetime-local',
-                            error: errors.schedule,
-                            registerConfig: {
-                                required: 'required'
-                            }
-                        }} />
-                    </div>
-                    <div>
-                        <p className="mb-2">Subscription Syntax</p>
-                        <InputForm register={register} config={{
-                            name: 'registrationSyntax',
-                            placeholder: 'Syntax',
-                            type: 'text',
-                            error: errors.registrationSyntax,
-                            registerConfig: {
-                                required: 'required'
-                            }
-                        }} />
-                    </div>
-                    <div>
-                        <p className="mb-2">UnSubscription Syntax</p>
-                        <InputForm register={register} config={{
-                            name: 'unregistrationSyntax',
-                            placeholder: 'Syntax',
-                            type: 'text',
-                            error: errors.unregistrationSyntax,
-                            registerConfig: {
-                                required: 'required'
-                            }
-                        }} />
+                        <div>
+                            <p className="mb-2">Device</p>
+                            <select {...register('deviceId')} className="px-4 py-3 focus:outline-none text-sm rounded-md focus:ring-0 w-full border-[#B0B4C5] focus:border-primary">
+                                {listDevice.map(item => (
+                                    <option key={item.id} value={item.id} className="">{item.name}</option>
+                                ))}
+                            </select>
+                        </div>
+                        <div>
+                            <p className="mb-2">Penerima</p>
+                            {/* <TagsInput /> */}
+                            <InputContactAndLabel
+                                selectedKeys={receiverList}
+                                setselectedKeys={setreceiverList}
+                            />
+                        </div>
+                        <div>
+                            <p className="mb-2">Jadwal Campaign</p>
+                            <InputForm register={register} config={{
+                                name: 'schedule',
+                                placeholder: 'Nama campaign',
+                                type: 'datetime-local',
+                                error: errors.schedule,
+                                registerConfig: {
+                                    required: 'required'
+                                }
+                            }} />
+                        </div>
+                        <div>
+                            <p className="mb-2">Subscription Syntax</p>
+                            <InputForm register={register} config={{
+                                name: 'registrationSyntax',
+                                placeholder: 'Syntax',
+                                type: 'text',
+                                error: errors.registrationSyntax,
+                                registerConfig: {
+                                    required: 'required'
+                                }
+                            }} />
+                        </div>
+                        <div>
+                            <p className="mb-2">UnSubscription Syntax</p>
+                            <InputForm register={register} config={{
+                                name: 'unregistrationSyntax',
+                                placeholder: 'Syntax',
+                                type: 'text',
+                                error: errors.unregistrationSyntax,
+                                registerConfig: {
+                                    required: 'required'
+                                }
+                            }} />
+                        </div>
                     </div>
                 </div>
-                <div className='w-full bg-white rounded-md p-4'>
-                    <p className="font-bold text-xl font-lexend">Trigger</p>
+                <div className='w-full max-w-sm lg:max-w-full'>
+                    <div className='bg-white w-full p-4'>
+                        <Tabs aria-label="Options" variant="light" color="primary" radius="md" size="lg"
+                            selectedKey={currentMessage}
+                            onSelectionChange={setcurrentMessage as any}>
 
-                </div>
+                            <Tab key="registrationMessage" title="Subscribe" />
+                            <Tab key="successMessage" title="Success" />
+                            <Tab key="failedMessage" title="Failed" />
+                            <Tab key="unregisteredMessage" title="Unsubscribe" />
+                        </Tabs>
+                        {componentTransition((style, item) => item && (
+                            <animated.div style={style} className={'mt-4'}>
+                                {item === 'registrationMessage' && (
+                                    <p className="font-bold text-xl font-lexend">Pesan Subscribe</p>
+                                )}
+                                {item === 'successMessage' && (
+                                    <p className="font-bold text-xl font-lexend">Reply Success</p>
+                                )}
+                                {item === 'failedMessage' && (
+                                    <p className="font-bold text-xl font-lexend">Reply Failed</p>
+                                )}
+                                {item === 'unregisteredMessage' && (
+                                    <p className="font-bold text-xl font-lexend">Reply Unsubscribe</p>
+                                )}
+                                <div className="mt-4">
+                                    <p>Template</p>
+                                    <div className="flex gap-2 flex-wrap w-full mt-2">
+                                        {listTemplate.map(list => (
+                                            <div key={list.id} className='rounded-full px-2 py-[2px] border border-customGray hover:cursor-pointer' onClick={() => handleTemplateClick(list.id, item)}>
+                                                {list.title}
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                                <div className="mt-4">
+                                    <p className="mb-2">Response</p>
+                                    {item === 'registrationMessage' && (
+                                        <>
+                                            <TextAreaInput text={registrationMessage} settext={setregistrationMessage} limit={255} />
+                                            <UploadFile
+                                                files={files}
+                                                setfiles={setfiles}
+                                            />
+                                        </>
+                                    )}
+                                    {item === 'successMessage' && (
+                                        <>
+                                            <TextAreaInput text={successMessage} settext={setsuccessMessage} limit={255} />
+                                        </>
+                                    )}
+                                    {item === 'failedMessage' && (
+                                        <>
+                                            <TextAreaInput text={failedMessage} settext={setfailedMessage} limit={255} />
+                                        </>
+                                    )}
+                                    {item === 'unregisteredMessage' && (
+                                        <>
+                                            <TextAreaInput text={unregisteredMessage} settext={setunregisteredMessage} limit={255} />
 
-            </div>
-            <div className='w-full max-w-sm lg:max-w-full'>
-                <div className='bg-white w-full p-4'>
-                    <Tabs aria-label="Options" variant="light" color="primary" radius="md" size="lg"
-                        selectedKey={currentMessage}
-                        onSelectionChange={setcurrentMessage as any}>
+                                        </>
+                                    )}
 
-                        <Tab key="registrationMessage" title="Subscribe" />
-                        <Tab key="successMessage" title="Success" />
-                        <Tab key="failedMessage" title="Failed" />
-                        <Tab key="unregisteredMessage" title="Unsubscribe" />
-                    </Tabs>
-                    {componentTransition((style, item) => item && (
-                        <animated.div style={style} className={'mt-4'}>
-                            {item === 'registrationMessage' && (
-                                <p className="font-bold text-xl font-lexend">Pesan Subscribe</p>
-                            )}
-                            {item === 'successMessage' && (
-                                <p className="font-bold text-xl font-lexend">Reply Success</p>
-                            )}
-                            {item === 'failedMessage' && (
-                                <p className="font-bold text-xl font-lexend">Reply Failed</p>
-                            )}
-                            {item === 'unregisteredMessage' && (
-                                <p className="font-bold text-xl font-lexend">Reply Unsubscribe</p>
-                            )}
-                            <div className="mt-4">
-                                <p>Template</p>
-                                <div className="flex gap-2 flex-wrap w-full mt-2">
-                                    {listTemplate.map(list => (
-                                        <div key={list.id} className='rounded-full px-2 py-[2px] border border-customGray hover:cursor-pointer' onClick={() => handleTemplateClick(list.id, item)}>
-                                            {list.title}
+
+                                </div>
+                                <div className="flex gap-2 flex-wrap mt-2">
+                                    {getMessageVariables().map(list => (
+                                        <div key={list} className='rounded-full px-2 py-[2px] border border-customGray hover:cursor-pointer' onClick={() => handleInsertVariable(list, item)}>
+                                            {list}
                                         </div>
                                     ))}
                                 </div>
-                            </div>
-                            <div className="mt-4">
-                                <p className="mb-2">Response</p>
-                                {item === 'registrationMessage' && (
-                                    <>
-                                        <TextAreaInput text={registrationMessage} settext={setregistrationMessage} limit={255} />
-                                        <UploadFile
-                                            files={files}
-                                            setfiles={setfiles}
-                                        />
-                                    </>
+                                {(item === 'registrationMessage' && registrationMessage) && (
+                                    <div className="mt-4">
+                                        <p>Hasil Pesan Campaign</p>
+                                        <div className='bg-neutral-75 rounded-md h-full text-[#777C88] p-3 mt-2'>
+                                            {parseTextInput(registrationMessage)}
+                                        </div>
+                                    </div>
                                 )}
-                                {item === 'successMessage' && (
-                                    <>
-                                        <TextAreaInput text={successMessage} settext={setsuccessMessage} limit={255} />
-                                    </>
+                                {(item === 'successMessage' && successMessage) && (
+                                    <div className="mt-4">
+                                        <p>Hasil Pesan Campaign</p>
+                                        <div className='bg-neutral-75 rounded-md h-full text-[#777C88] p-3 mt-2'>
+                                            {parseTextInput(successMessage)}
+                                        </div>
+                                    </div>
                                 )}
-                                {item === 'failedMessage' && (
-                                    <>
-                                        <TextAreaInput text={failedMessage} settext={setfailedMessage} limit={255} />
-                                    </>
+                                {(item === 'failedMessage' && failedMessage) && (
+                                    <div className="mt-4">
+                                        <p>Hasil Pesan Campaign</p>
+                                        <div className='bg-neutral-75 rounded-md h-full text-[#777C88] p-3 mt-2'>
+                                            {parseTextInput(failedMessage)}
+                                        </div>
+                                    </div>
                                 )}
-                                {item === 'unregisteredMessage' && (
-                                    <>
-                                        <TextAreaInput text={unregisteredMessage} settext={setunregisteredMessage} limit={255} />
+                                {(item === 'unregisteredMessage' && unregisteredMessage) && (
+                                    <div className="mt-4">
+                                        <p>Hasil Pesan Campaign</p>
+                                        <div className='bg-neutral-75 rounded-md h-full text-[#777C88] p-3 mt-2'>
+                                            {parseTextInput(unregisteredMessage)}
+                                        </div>
+                                    </div>
+                                )}
+                            </animated.div>
+                        ))}
+                        <Button color="primary" className="rounded-md mt-8" fullWidth type="submit" isLoading={isLoading} isDisabled={isDisabled}>
+                            Simpan
+                        </Button>
+                    </div>
 
-                                    </>
-                                )}
-
-
-                            </div>
-                            <div className="flex gap-2 flex-wrap mt-2">
-                                {getMessageVariables().map(list => (
-                                    <div key={list} className='rounded-full px-2 py-[2px] border border-customGray hover:cursor-pointer' onClick={() => handleInsertVariable(list, item)}>
-                                        {list}
-                                    </div>
-                                ))}
-                            </div>
-                            {(item === 'registrationMessage' && registrationMessage) && (
-                                <div className="mt-4">
-                                    <p>Hasil Pesan Campaign</p>
-                                    <div className='bg-neutral-75 rounded-md h-full text-[#777C88] p-3 mt-2'>
-                                        {parseTextInput(registrationMessage)}
-                                    </div>
-                                </div>
-                            )}
-                            {(item === 'successMessage' && successMessage) && (
-                                <div className="mt-4">
-                                    <p>Hasil Pesan Campaign</p>
-                                    <div className='bg-neutral-75 rounded-md h-full text-[#777C88] p-3 mt-2'>
-                                        {parseTextInput(successMessage)}
-                                    </div>
-                                </div>
-                            )}
-                            {(item === 'failedMessage' && failedMessage) && (
-                                <div className="mt-4">
-                                    <p>Hasil Pesan Campaign</p>
-                                    <div className='bg-neutral-75 rounded-md h-full text-[#777C88] p-3 mt-2'>
-                                        {parseTextInput(failedMessage)}
-                                    </div>
-                                </div>
-                            )}
-                            {(item === 'unregisteredMessage' && unregisteredMessage) && (
-                                <div className="mt-4">
-                                    <p>Hasil Pesan Campaign</p>
-                                    <div className='bg-neutral-75 rounded-md h-full text-[#777C88] p-3 mt-2'>
-                                        {parseTextInput(unregisteredMessage)}
-                                    </div>
-                                </div>
-                            )}
-                        </animated.div>
-                    ))}
-                    <Button color="primary" className="rounded-md mt-8" fullWidth type="submit" isLoading={isLoading} isDisabled={isDisabled}>
-                        Simpan
-                    </Button>
                 </div>
-
-            </div>
-        </form>
+            </form>
+        </>
     )
 }
 

@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 import EditCampaign from './EditCampaign'
+import { BreadcrumbItem, Breadcrumbs } from "@nextui-org/breadcrumbs"
 
 const EditCampaignPage = ({ campaignId }: { campaignId: string }) => {
     const router = useRouter()
@@ -36,9 +37,11 @@ const EditCampaignPage = ({ campaignId }: { campaignId: string }) => {
     }, [session?.user?.token])
     return (
         <>
-            <div className='flex'>
-                <p onClick={() => router.back()} className='rounded-md py-3 px-4 border border-black/50 text-black/50'>Kembali</p>
-            </div>
+            <Breadcrumbs size="sm">
+                <BreadcrumbItem href="/dashboard/campaign">campaign</BreadcrumbItem>
+                <BreadcrumbItem href={"/dashboard/campaign/" + campaignId}>detail campaign</BreadcrumbItem>
+                <BreadcrumbItem href={"/dashboard/campaign/" + campaignId + '/edit'}>edit campaign</BreadcrumbItem>
+            </Breadcrumbs>
             <p className='text-lexend font-bold text-2xl mt-4'>Campaign: {campaignData?.name}</p>
             {campaignData &&
                 <EditCampaign campaignData={campaignData} />

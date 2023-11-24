@@ -55,7 +55,7 @@ const Messenger = () => {
         console.log(`/messages/${currentDevice?.sessionId}/?phoneNumber=${currentContact?.phone}&page=${messageMetadata?.currentPage}&pageSize=${PAGINATION_BATCH}&sort=asc`)
         console.log('ini fetch chat')
         const result = await fetchClient({
-            url: `/messages/${currentDevice?.sessionId}/?phoneNumber=${currentContact?.phone}&page=${page}&pageSize=${PAGINATION_BATCH}&sort=desc`,
+            url: `/messages/${currentDevice?.sessionId}/?phoneNumber=${currentContact?.phone}&page=${page}&pageSize=${PAGINATION_BATCH}&sort=asc`,
             method: 'GET',
             user: session?.user
         })
@@ -185,7 +185,7 @@ const Messenger = () => {
                         listDevice={listDevice}
                         setcurrentDevice={setcurrentDevice}
                     />
-                    <ListChats listContact={listContact} currentContact={currentContact} setcurrentContact={setcurrentContact} />
+                    <ListChats setlistMessage={setlistMessage} listContact={listContact} currentContact={currentContact} setcurrentContact={setcurrentContact} />
                 </div>
                 <div className={"bg-white p-4 rounded-md w-full max-w-md lg:max-w-full h-full " + (chatDisabled && "opacity-50 pointer-events-none")}>
                     <div className='text-xs w-full flex flex-col h-full'>
