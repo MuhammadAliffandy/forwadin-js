@@ -9,21 +9,7 @@ const MultipleInputContact = (
     const contactInputRef = useRef<HTMLInputElement>(null)
     const [isContactOpen, setisContactOpen] = useState(false)
     const [searchContactList, setsearchContactList] = useState<ContactData[]>([])
-    const componentTransition = useTransition(isContactOpen, {
-        from: {
-            transform: "translateY(-50px)",
-            opacity: "0",
-        },
-        enter: {
-            transform: "translateY(0px)",
-            opacity: "1",
-        },
-        leave: {
-            transform: "translateY(50px)",
-            opacity: "0",
-        }
 
-    })
     const [inputText, setinputText] = useState('')
     const handleContactDataClick = (contactId: string, status: boolean) => {
         const newContactDataList: ContactData[] = contactList.map((list => list.id === contactId ? { ...list, active: status } : list))
@@ -33,7 +19,7 @@ const MultipleInputContact = (
     useEffect(() => {
         const newSearchContactData = contactList.filter(item =>
             item.firstName.toLowerCase().includes(inputText.toLowerCase())
-            || item.lastName.toLowerCase().includes(inputText.toLowerCase())
+            || item.lastName?.toLowerCase().includes(inputText.toLowerCase())
         )
         setsearchContactList(newSearchContactData)
     }, [inputText])
@@ -79,7 +65,7 @@ const MultipleInputContact = (
                                             backgroundColor: '#' + contact.colorCode
                                         }} className={`flex-none rounded-full text-white w-8 h-8 flex items-center justify-center`}>{contact.initial}</div>
                                     </div>
-                                    <p>{contact.firstName + ' ' + contact.lastName}</p>
+                                    <p>{contact.firstName + ' ' + (contact.lastName ? contact.lastName : '')}</p>
                                 </div>
                             </div>
                         ))}
@@ -94,7 +80,7 @@ const MultipleInputContact = (
                                                 backgroundColor: '#' + contact.colorCode
                                             }} className={`flex-none rounded-full text-white w-8 h-8 flex items-center justify-center`}>{contact.initial}</div>
                                         </div>
-                                        <p>{contact.firstName + ' ' + contact.lastName}</p>
+                                        <p>{contact.firstName + ' ' + (contact.lastName ? contact.lastName : '')}</p>
                                     </div></div>
                             ))}
                         </>)

@@ -2,8 +2,7 @@
 
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ContactData, MultipleCheckboxRef } from '@/utils/types';
-import ContactList from './ContactList';
+import { ContactData } from '@/utils/types'
 import dynamic from 'next/dynamic';
 const AddContactModal = dynamic(() => import('@/components/dashboard/contact/AddContactModal'), { ssr: false, })
 import { fetchClient } from '@/utils/helper/fetchClient';
@@ -15,9 +14,17 @@ import { Button, Skeleton, Table, TableBody, TableCell, TableColumn, TableHeader
 import ContactIcon from '@/components/dashboard/ContactIcon';
 import ImportContactModal from '@/components/dashboard/contact/ImportContactModal';
 import SyncModal from '@/components/dashboard/contact/SyncModal';
-const ContactTable = ({ setcontactCount }: { setcontactCount: Dispatch<SetStateAction<number>> }) => {
+import { User } from 'next-auth';
+const ContactTable = ({ setcontactCount, currentDevice, user }: {
+    setcontactCount: Dispatch<SetStateAction<number>>,
+    currentDevice: {
+        name: string,
+        phone?: string,
+        id: string,
+    },
+    user: User | undefined
+}) => {
     const { push } = useRouter()
-    const { data: session } = useSession()
     const [isLoaded, setisLoaded] = useState(false)
     const [isChecked, setisChecked] = useState(false)
     const [contactData, setcontactData] = useState<ContactData[]>([
@@ -32,7 +39,7 @@ const ContactTable = ({ setcontactCount }: { setcontactCount: Dispatch<SetStateA
     const handleOpenDetailModal = (params: string) => {
         push('/dashboard/contact/' + params)
     }
-    const filterDevice = (text: string) => {
+    const filterContact = (text: string) => {
         const regex = new RegExp(text, 'i')
         return contactData.filter(item => {
             if (regex.test(item.firstName) || regex.test(item.lastName) || regex.test(item.phone) || regex.test(item.email))
@@ -47,10 +54,16 @@ const ContactTable = ({ setcontactCount }: { setcontactCount: Dispatch<SetStateA
     }
 
     const fetchData = async () => {
+        let url
+        if (currentDevice.id === '*')
+            url = '/contacts'
+        else
+            url = '/contacts?deviceId=' + currentDevice.id
+        console.log(url)
         const fetchContactData = await fetchClient({
             method: 'GET',
-            url: '/contacts',
-            user: session?.user
+            url: url,
+            user: user
         })
         if (fetchContactData) {
             const data: ContactData[] = await fetchContactData.json()
@@ -86,25 +99,25 @@ const ContactTable = ({ setcontactCount }: { setcontactCount: Dispatch<SetStateA
                 url: '/contacts/',
                 body: JSON.stringify({ contactIds: deletedContact }),
                 method: 'DELETE',
-                user: session?.user
+                user: user
             })
             if (result?.ok) {
                 toast.success('Berhasil hapus contact')
                 fetchData()
                 setSelectedKeys(new Set([]))
             } else {
-                toast.error('Gagal hapus broadcast')
+                toast.error('Gagal hapus contact')
             }
             deletedContact = null
         }
     }
     useEffect(() => {
-        if (session?.user?.token)
+        if (user?.token)
             fetchData()
-    }, [session?.user?.token])
+    }, [user?.token, currentDevice])
 
     useEffect(() => {
-        const searchResult = filterDevice(searchText)
+        const searchResult = filterContact(searchText)
         setsearchedContact(searchResult)
     }, [searchText])
     useEffect(() => {
@@ -116,10 +129,10 @@ const ContactTable = ({ setcontactCount }: { setcontactCount: Dispatch<SetStateA
     }, [selectedKeys])
     return (
         <>
-            {session?.user?.googleToken && (
-                <SyncModal setopenModal={setsyncModal} openModal={syncModal} user={session?.user} refresh={fetchData} />
+            {user?.googleToken && (
+                <SyncModal setopenModal={setsyncModal} openModal={syncModal} user={user} refresh={fetchData} />
             )}
-            <ImportContactModal openModal={importContactModal} setopenModal={setimportContactModal} user={session?.user} refresh={fetchData} />
+            <ImportContactModal openModal={importContactModal} setopenModal={setimportContactModal} user={user} refresh={fetchData} />
             <DeleteContactModal openModal={deleteContactModal} setopenModal={setdeleteContactModal} count={(selectedKeys === 'all' ? 'semua' : (selectedKeys as Set<string>).size) as string} deleteContact={handleDeleteContact} />
             <AddContactModal openModal={addContactModal} setopenModal={setaddContactModal} fetchData={fetchData} />
             <div className="mt-8 p-4 bg-white rounded-md">
@@ -131,7 +144,7 @@ const ContactTable = ({ setcontactCount }: { setcontactCount: Dispatch<SetStateA
                         />
                     </div>
                     <div className='flex lg:flex-row flex-col lg:justify-end justify-between gap-2 w-full max-w-sm'>
-                        <Button variant='bordered' onClick={() => setsyncModal(true)} className='rounded-md' fullWidth isDisabled={session?.user?.googleToken ? false : true}>
+                        <Button variant='bordered' onClick={() => setsyncModal(true)} className='rounded-md' fullWidth isDisabled={user?.googleToken ? false : true}>
                             Sync
                         </Button>
                         <Button variant='bordered' onClick={() => setimportContactModal(true)} className='rounded-md' fullWidth>
