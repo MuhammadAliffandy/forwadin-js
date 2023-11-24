@@ -40,7 +40,7 @@ const CampaignMessages = ({ campaignId }: {
         }
         setisLoaded(true)
     }
-    const fetchcampaignMessages = async () => {
+    const fetchcampaignData = async () => {
         const result = await fetchClient({
             url: '/campaigns/' + campaignId,
             method: 'GET',
@@ -55,11 +55,34 @@ const CampaignMessages = ({ campaignId }: {
         }
     }
     const handleDeleteMessage = async () => {
-
+        let deletedMessage = null
+        if (selectedMessage === 'all') {
+            deletedMessage = campaignMessages.map(item => item.id)
+        }
+        else if ((selectedMessage as Set<string>).size > 0) {
+            deletedMessage = Array.from(selectedMessage)
+        }
+        const isConfirm = window.confirm('Anda yakin ingin menghapus ' + deletedMessage?.length + ' campaign message?')
+        if (deletedMessage && isConfirm) {
+            const result = await fetchClient({
+                url: '/campaigns/messages/',
+                body: JSON.stringify({ campaignMessageIds: deletedMessage }),
+                method: 'DELETE',
+                user: session?.user
+            })
+            if (result?.ok) {
+                toast.success('Berhasil hapus campaign message')
+                fetchCampaignMessages()
+                setselectedMessage(new Set([]))
+            } else {
+                toast.error('Gagal hapus campaign message')
+            }
+            deletedMessage = null
+        }
     }
     useEffect(() => {
         if (session?.user?.token) {
-            fetchcampaignMessages()
+            fetchcampaignData()
             fetchCampaignMessages()
         }
     }, [session?.user?.token])
@@ -87,7 +110,7 @@ const CampaignMessages = ({ campaignId }: {
                         />
                     </div>
                     {isChecked ? (
-                        <Button color='danger' className='rounded-md' onClick={() => setdeleteModal(true)}>
+                        <Button color='danger' className='rounded-md' onClick={handleDeleteMessage}>
                             Hapus
                         </Button>
                     ) : (
@@ -131,7 +154,7 @@ const CampaignMessages = ({ campaignId }: {
                         </TableHeader>
                         <TableBody emptyContent={<div className='w-full bg-white p-12'>
                             <div className='w-full max-w-md mx-auto flex flex-col gap-4'>
-                                <p className='text-[16px] font-bold'>Campaign masih kosong</p>
+                                <p className='text-[16px] font-bold'>Campaign message masih kosong</p>
                                 <p className='text-xs text-[#777C88]'>Lorem Ipsum</p>
                             </div>
                         </div>}
