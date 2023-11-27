@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import CustomerServiceTable from './CustomerServiceTable'
 
 export const metadata: Metadata = {
     title: 'Customer Service',
@@ -7,7 +8,7 @@ export const metadata: Metadata = {
 export default function Page() {
     return (
         <>
-            <p>ini CS</p>
+            <CustomerServiceTable />
         </>
     )
 }

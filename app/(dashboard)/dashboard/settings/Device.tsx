@@ -20,7 +20,6 @@ const Device = ({ user }: DevicePageProps) => {
         Intl.DateTimeFormat().resolvedOptions().timeZone
     )
     const [text, settext] = useState('')
-    const [businessHours, setbusinessHours] = useState<BusinessHours>()
     const [hoursMonday, sethoursMonday] = useState<SliderValue>([0, 1440])
     const [hoursTuesday, sethoursTuesday] = useState<SliderValue>([0, 1440])
     const [hoursThursday, sethoursThursday] = useState<SliderValue>([0, 1440])
@@ -48,9 +47,8 @@ const Device = ({ user }: DevicePageProps) => {
         if (result?.ok) {
             const resultData = await result.json()
             if (resultData.length === 0) return
-            const bhData: BusinessHours = resultData[0]
+            const bhData: BusinessHours = resultData
             console.log(resultData)
-            setbusinessHours(resultData[0])
             settimezone(bhData.timeZone)
             sethoursMonday([bhData.monStart, bhData.monEnd])
             sethoursTuesday([bhData.tueStart, bhData.tueEnd])

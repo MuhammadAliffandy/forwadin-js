@@ -383,6 +383,9 @@ export interface CustomerService {
     updatedAt: string,
     userId: number,
     deviceId: number,
+    device: {
+        id: string,
+    },
     privilegeId: 222
 }
 
