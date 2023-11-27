@@ -371,3 +371,39 @@ export interface BroadcastForm {
     schedule: string
 }
 export type MessageTableStatus = 'Terkirim' | 'Diterima' | 'Terbaca' | 'Balasan'
+export interface CustomerService {
+    pkId: number,
+    id: string,
+    username: string,
+    email: string,
+    password: string,
+    refreshToken: string,
+    deletedAt: string | null,
+    createdAt: string,
+    updatedAt: string,
+    userId: number,
+    deviceId: number,
+    privilegeId: 222
+}
+
+export interface BusinessHours {
+    pkId: number,
+    id: string,
+    message: string,
+    monStart: number,
+    monEnd: number,
+    tueStart: number,
+    tueEnd: number,
+    wedStart: number,
+    wedEnd: number,
+    thuStart: number,
+    thuEnd: number,
+    friStart: number,
+    friEnd: number,
+    satStart: number,
+    satEnd: number,
+    sunStart: number,
+    sunEnd: number,
+    timeZone: string,
+    deviceId: number
+}

@@ -11,6 +11,7 @@ import { toast } from 'react-toastify';
 import { Button, Skeleton, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@nextui-org/react';
 import DeleteModal from '@/components/dashboard/device/DeleteModal';
 import { useSocket } from '@/app/SocketProvider';
+import { getArrayFromSet } from '@/utils/helper';
 
 const DeviceTable = ({ setcountDevice }: { setcountDevice: Dispatch<SetStateAction<number>> }) => {
     const { data: session, update } = useSession()
@@ -20,7 +21,7 @@ const DeviceTable = ({ setcountDevice }: { setcountDevice: Dispatch<SetStateActi
     const [isChecked, setisChecked] = useState(false)
     const [deviceData, setdeviceData] = useState<DeviceData[]>([
     ])
-    const [selectedKeys, setSelectedKeys] = useState(new Set())
+    const [selectedKeys, setSelectedKeys] = useState<Set<string> | 'all'>(new Set([]))
 
     const [searchText, setsearchText] = useState('')
     const [searchedDevice, setsearchedDevice] = useState<DeviceData[]>([])
@@ -69,23 +70,20 @@ const DeviceTable = ({ setcountDevice }: { setcountDevice: Dispatch<SetStateActi
         }
     }
     const deleteDevice = async () => {
-        const result = await fetchClient({
-            method: 'DELETE',
-            body: JSON.stringify({
-                deviceIds: deviceData.filter(obj => obj.checked === true).map(obj => obj.id)
-            }),
-            url: '/devices',
-            user: session?.user
-        })
-        if (result) {
-            if (result.status === 200) {
-                toast.success('Berhasil menghapus device')
-                setisLoaded(false)
+        const deletedDevice = getArrayFromSet(selectedKeys, deviceData)
+        if (deletedDevice) {
+            const result = await fetchClient({
+                url: '/devices/',
+                body: JSON.stringify({ deviceIds: deletedDevice }),
+                method: 'DELETE',
+                user: session?.user
+            })
+            if (result?.ok) {
+                toast.success('Berhasil hapus device')
                 fetchData()
+                setSelectedKeys(new Set([]))
             } else {
-                const error = await result.json()
-                console.log(error)
-                toast.error('Gagal menghapus device')
+                toast.error('Gagal hapus device')
             }
         }
     }
@@ -98,12 +96,18 @@ const DeviceTable = ({ setcountDevice }: { setcountDevice: Dispatch<SetStateActi
         const searchResult = filterDevice(searchText)
         setsearchedDevice(searchResult)
     }, [searchText])
+    useEffect(() => {
+        if ((selectedKeys as Set<string>).size > 0 || selectedKeys === 'all')
+            setisChecked(true)
+        else
+            setisChecked(false)
+    }, [selectedKeys])
     return (
         <>
             {openQrModal && (
                 <QRModal openModal={openQrModal} setopenModal={setopenQrModal} data={qrModalData} session={session} socket={socket} refresh={fetchData} />
             )}
-            <DeleteModal setopenModal={setdeleteModal} openModal={deleteModal} text={`Hapus ${selectedKeys.size} yang terpilih?`} deleteFunction={deleteDevice} />
+            <DeleteModal setopenModal={setdeleteModal} openModal={deleteModal} count={(selectedKeys === 'all' ? 'semua' : (selectedKeys as Set<string>).size) as string} type='device' deleteFunction={deleteDevice} />
             <AddDeviceModal openModal={deviceModal} setopenModal={setdeviceModal} fetchData={fetchData} />
             <div className="mt-8 p-4 bg-white rounded-md">
                 <div className="flex sm:flex-row flex-col gap-2 justify-between">

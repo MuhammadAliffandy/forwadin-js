@@ -4,7 +4,7 @@ import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { DeviceData, GroupData, MultipleCheckboxRef } from '@/utils/types';
 import AddGroupModal from '@/components/dashboard/group/AddGroupModal';
-import { Skeleton, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@nextui-org/react';
+import { Button, Skeleton, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@nextui-org/react';
 import { fetchClient } from '@/utils/helper/fetchClient';
 import { toast } from 'react-toastify';
 import { useSession } from 'next-auth/react';
@@ -161,9 +161,10 @@ const GroupTable = ({ setcountGroup }: { setcountGroup: Dispatch<SetStateAction<
                                     <TableCell >{formatDate(item.createdAt)}</TableCell>
                                     <TableCell >{formatDate(item.updatedAt)}</TableCell>
                                     <TableCell>
-                                        <div className="flex items-center">
-                                            <div className='py-1 px-4 text-center border border-black/20 rounded-md hover:cursor-pointer' onClick={() => handleOpenDetailModal(item.id)}>Detail</div>
-                                        </div>
+                                        <Button variant='bordered' onClick={() => handleOpenDetailModal(item.id)}
+                                            className='rounded-md' size='sm'>
+                                            Detail
+                                        </Button>
                                     </TableCell>
                                 </TableRow>
                             )}

@@ -28,6 +28,10 @@ const Template = ({ children }: { children: React.ReactNode }) => {
             setCurrentPage('Settings')
         else if (pathName.includes('/dashboard/messenger'))
             setCurrentPage('Messenger')
+        else if (pathName.includes('/dashboard/customer-service'))
+            setCurrentPage('Customer Service')
+        else if (pathName.includes('/dashboard/api-reference'))
+            setCurrentPage('Forwardin API')
         else if (pathName.includes('/dashboard'))
             setCurrentPage('Dashboard')
 

@@ -146,3 +146,29 @@ export const getYearMonthDate = (date: string) => {
 
     return formattedDate;
 }
+
+export const formatHoursMinutes = (minutes: number) => {
+    if (isNaN(minutes) || minutes < 0 || minutes > 1440) {
+        return "Invalid input";
+    }
+
+    var hours = Math.floor(minutes / 60);
+    var remainingMinutes = minutes % 60;
+
+    // Add leading zero if needed
+    var hoursStr = (hours < 10) ? "0" + hours : hours.toString();
+    var minutesStr = (remainingMinutes < 10) ? "0" + remainingMinutes : remainingMinutes.toString();
+
+    return hoursStr + ":" + minutesStr;
+}
+
+export const getArrayFromSet = (currentSet: Set<string> | 'all', itemList: any) => {
+    let deletedList = null
+    if (currentSet === 'all') {
+        deletedList = itemList.map((item: any) => item.id)
+    }
+    else if ((currentSet as Set<string>).size > 0) {
+        deletedList = Array.from(currentSet)
+    }
+    return deletedList
+}

@@ -1,16 +1,20 @@
 import { Label } from "@/utils/types"
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react"
 import { animated, useTransition } from "@react-spring/web";
+import { useSession } from "next-auth/react";
+import { fetchClient } from "@/utils/helper/fetchClient";
 
 const MultipleInputLabel = (
-    { labelList, setlabelList, placeholder, maxChar }:
+    { labelList, setlabelList, placeholder, maxChar, type = 'contact' }:
         {
             labelList: Label[],
             setlabelList: Dispatch<SetStateAction<Label[]>>,
             placeholder?: string,
-            maxChar?: number
+            maxChar?: number,
+            type?: 'device' | 'contact',
         }
 ) => {
+    const { data: session } = useSession()
     const labelInputRef = useRef<HTMLInputElement>(null)
     const [isLabelOpen, setisLabelOpen] = useState(false)
     const [searchLabelList, setsearchLabelList] = useState<Label[]>([])
@@ -48,6 +52,35 @@ const MultipleInputLabel = (
         const newLabelList: Label[] = labelList.map((item => item.label.name === labelName ? { label: { name: item.label.name, active: status } } : item))
         setlabelList(newLabelList)
     }
+    const fetchLabel = async () => {
+        let result
+        if (type === 'device') {
+            result = await fetchClient({
+                url: '/devices/labels',
+                method: 'GET',
+                user: session?.user
+            })
+        } else {
+            result = await fetchClient({
+                url: '/contacts/labels',
+                method: 'GET',
+                user: session?.user
+            })
+        }
+        if (result?.ok) {
+            const resultData: string[] = await result.json()
+            console.log('fetch label')
+            console.log(resultData)
+            setlabelList(resultData.map(item => {
+                return {
+                    label: {
+                        name: item,
+                        active: false
+                    }
+                }
+            }))
+        }
+    }
     useEffect(() => {
         const newSearchLabel = labelList.filter(item => item.label.name.toLowerCase().includes(inputText.toLowerCase()))
         setsearchLabelList(newSearchLabel)
@@ -55,6 +88,10 @@ const MultipleInputLabel = (
     useEffect(() => {
 
     }, [inputText])
+    useEffect(() => {
+        if (session?.user?.token)
+            fetchLabel()
+    }, [session?.user?.token])
 
     return (
         <>

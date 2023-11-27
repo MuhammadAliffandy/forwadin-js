@@ -11,6 +11,7 @@ interface Subscription {
 declare module "next-auth" {
     interface User {
         id: string | undefined,
+        role: 111 | 222 | 999, // 111 admin, 222 cs, 999 su
         googleToken?: string,
         token: string | undefined,
         refreshToken: string | undefined,
@@ -123,6 +124,7 @@ export const authConfig: NextAuthOptions = {
                     const user = {
                         ...userData,
                         id: resultData.id,
+                        role: resultData.role,
                         token: resultData.accessToken,
                         device: device,
                         subscription: subscription
@@ -152,6 +154,7 @@ export const authConfig: NextAuthOptions = {
                     const resultData = await result.json()
                     const user = {
                         id: resultData.id,
+                        role: resultData.role,
                         token: resultData.accessToken,
                         refreshToken: resultData.refreshToken,
                         subscription: {},
@@ -208,17 +211,20 @@ export const authConfig: NextAuthOptions = {
             return session;
         },
         async jwt({ token, user, trigger, session }) {
+
             if (trigger === 'update') {
                 token.user = session.user
             }
             if (user) {
                 token.user = user;
             }
+            // console.log(token)
             return token;
         },
         async signIn({ user, account }: any) {
+            // console.log(user)
             if (account?.provider === 'google') {
-                console.log(account)
+                // console.log(account.access_token)
                 const result = await fetch(process.env.BACKEND_URL + '/auth/google', {
                     method: 'POST',
                     headers: {
@@ -230,6 +236,7 @@ export const authConfig: NextAuthOptions = {
                 })
                 const resultData = await result.json()
                 if (result.ok) {
+                    user.role = resultData.role
                     user.id = resultData.id
                     user.token = resultData.accessToken
                     user.refreshToken = resultData.refreshToken
