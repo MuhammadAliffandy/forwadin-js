@@ -60,7 +60,7 @@ const AddDeviceModal = (
                     </div>
                     <div>
                         <p className='mb-2'>Labels</p>
-                        <MultipleInputLabel labelList={labelList} setlabelList={setlabelList} />
+                        <MultipleInputLabel labelList={labelList} setlabelList={setlabelList} type='device' />
                     </div>
                     <div>
                         <button className='bg-primary rounded-md w-full p-4 text-center text-white hover:cursor-pointer mt-4' onClick={handleSubmit} disabled={isLoading}>

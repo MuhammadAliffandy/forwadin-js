@@ -83,7 +83,7 @@ const Settings = () => {
                             ))}
                             {componentTransition((style, item) => item === 'device' && (
                                 <animated.div style={style}>
-                                    <Device />
+                                    <Device user={session?.user} />
                                 </animated.div>
                             ))}
                             {componentTransition((style, item) => item === 'account' && (

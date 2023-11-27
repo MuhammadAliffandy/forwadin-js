@@ -15,6 +15,7 @@ import ContactIcon from '@/components/dashboard/ContactIcon';
 import ImportContactModal from '@/components/dashboard/contact/ImportContactModal';
 import SyncModal from '@/components/dashboard/contact/SyncModal';
 import { User } from 'next-auth';
+import DeleteModal from '@/components/dashboard/device/DeleteModal';
 const ContactTable = ({ setcontactCount, currentDevice, user }: {
     setcontactCount: Dispatch<SetStateAction<number>>,
     currentDevice: {
@@ -133,7 +134,7 @@ const ContactTable = ({ setcontactCount, currentDevice, user }: {
                 <SyncModal setopenModal={setsyncModal} openModal={syncModal} user={user} refresh={fetchData} />
             )}
             <ImportContactModal openModal={importContactModal} setopenModal={setimportContactModal} user={user} refresh={fetchData} />
-            <DeleteContactModal openModal={deleteContactModal} setopenModal={setdeleteContactModal} count={(selectedKeys === 'all' ? 'semua' : (selectedKeys as Set<string>).size) as string} deleteContact={handleDeleteContact} />
+            <DeleteModal openModal={deleteContactModal} setopenModal={setdeleteContactModal} count={(selectedKeys === 'all' ? 'semua' : (selectedKeys as Set<string>).size) as string} deleteFunction={handleDeleteContact} type='Kontak' />
             <AddContactModal openModal={addContactModal} setopenModal={setaddContactModal} fetchData={fetchData} />
             <div className="mt-8 p-4 bg-white rounded-md">
                 <div className="flex sm:flex-row flex-col gap-2 justify-between">

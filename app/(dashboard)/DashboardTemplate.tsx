@@ -12,7 +12,7 @@ const DashboardTemplate = ({ currentPage, children }: { currentPage: string, chi
     const { data: session } = useSession()
     const router = useRouter()
     const [sideNavDropdown, setsideNavDropdown] = useState(false)
-    const [profileDropdown, setprofileDropdown] = useState(false)
+    const [isDisabled, setisDisabled] = useState(true)
     const [user, setuser] = useState<UserProfile>()
     const handleClick = (event: React.MouseEvent) => {
         setsideNavDropdown(true)
@@ -36,23 +36,34 @@ const DashboardTemplate = ({ currentPage, children }: { currentPage: string, chi
         }
     }
     useEffect(() => {
-        fetchUserProfile()
+        if (session?.user?.token) {
+            fetchUserProfile()
+            console.log(session.user.id)
+            console.log(session.user.token)
+        }
 
     }, [session?.user?.token])
     const handleDelete = async () => {
+        console.log("/users/" + session?.user?.id + "/delete")
         if (window.confirm('Delete User?')) {
             const deleteUser = await fetchClient({
                 url: "/users/" + session?.user?.id + "/delete",
                 method: 'DELETE',
                 user: session?.user
             })
-            if (deleteUser && deleteUser.ok) {
+            if (deleteUser?.ok) {
                 signOut({
                     callbackUrl: '/signup'
                 })
             }
         }
     }
+    useEffect(() => {
+        if (session?.user?.device && session.user.device.length > 0)
+            setisDisabled(false)
+        else
+            setisDisabled(true)
+    }, [session?.user?.device])
 
     return (
         <>
@@ -75,9 +86,11 @@ const DashboardTemplate = ({ currentPage, children }: { currentPage: string, chi
                         {/* Message List */}
                         <MessageList currentPage={currentPage} user={session?.user} />
                         <p className='text-sm mt-2'>Tools</p>
-                        <NavButton text='Broadcast' href='/dashboard/broadcast' currentPage={currentPage} isDisabled={session?.user?.device?.length === 0} />
-                        <NavButton text='Campaign' href='/dashboard/campaign' currentPage={currentPage} isDisabled={session?.user?.device?.length === 0} />
-                        <NavButton text='Auto Reply' href='/dashboard/auto-reply' currentPage={currentPage} isDisabled={session?.user?.device?.length === 0} />
+                        <NavButton text='Broadcast' href='/dashboard/broadcast' currentPage={currentPage} isDisabled={isDisabled} />
+                        <NavButton text='Campaign' href='/dashboard/campaign' currentPage={currentPage} isDisabled={isDisabled} />
+                        <NavButton text='Auto Reply' href='/dashboard/auto-reply' currentPage={currentPage} isDisabled={isDisabled} />
+                        <NavButton text="Customer Service" href="/dashboard/customer-service" currentPage={currentPage} isDisabled={isDisabled} />
+                        <NavButton text="Forwardin API" href="/dashboard/api-reference/" currentPage={currentPage} isDisabled={isDisabled} />
                         <p className='text-sm mt-2'>Others</p>
                         <NavButton text='Settings' href='/dashboard/settings' currentPage={currentPage} />
                     </div>
