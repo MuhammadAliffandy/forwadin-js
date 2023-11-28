@@ -410,3 +410,12 @@ export interface BusinessHours {
     timeZone: string,
     deviceId: number
 }
+export interface MessageTemplate {
+    pkId: number,
+    id: string,
+    name: string,
+    message: string,
+    userId: number,
+    createdAt: string,
+    updatedAt: string
+}

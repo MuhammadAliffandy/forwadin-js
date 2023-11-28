@@ -55,6 +55,7 @@ const ContactTable = ({ setcontactCount, currentDevice, user }: {
     }
 
     const fetchData = async () => {
+        setisLoaded(false)
         let url
         if (currentDevice.id === '*')
             url = '/contacts'

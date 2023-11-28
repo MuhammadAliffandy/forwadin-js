@@ -5,13 +5,13 @@ import { useSession } from "next-auth/react";
 import { fetchClient } from "@/utils/helper/fetchClient";
 
 const MultipleInputLabel = (
-    { labelList, setlabelList, placeholder, maxChar, type = 'contact' }:
+    { labelList, setlabelList, placeholder, maxChar, type = null }:
         {
             labelList: Label[],
             setlabelList: Dispatch<SetStateAction<Label[]>>,
             placeholder?: string,
             maxChar?: number,
-            type?: 'device' | 'contact',
+            type?: 'device' | 'contact' | null,
         }
 ) => {
     const { data: session } = useSession()
@@ -54,6 +54,7 @@ const MultipleInputLabel = (
     }
     const fetchLabel = async () => {
         let result
+
         if (type === 'device') {
             result = await fetchClient({
                 url: '/devices/labels',
@@ -89,7 +90,7 @@ const MultipleInputLabel = (
 
     }, [inputText])
     useEffect(() => {
-        if (session?.user?.token)
+        if (session?.user?.token && type)
             fetchLabel()
     }, [session?.user?.token])
 

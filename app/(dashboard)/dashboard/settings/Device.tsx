@@ -201,6 +201,7 @@ const BarSlider = ({ selectedHours, setselectedHours }: BarSliderProps) => {
             <Slider
                 label="Active Hours"
                 step={10}
+                size="sm"
                 minValue={0}
                 maxValue={1440}
                 value={selectedHours}

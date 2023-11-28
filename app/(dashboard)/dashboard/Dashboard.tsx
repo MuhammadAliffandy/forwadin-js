@@ -4,7 +4,7 @@ import CustomButton from '@/components/landing/Button'
 import Link from 'next/link'
 import dynamic from 'next/dynamic';
 import { useEffect, useState } from 'react';
-import { SubscriptionTypes, UserProfile } from '@/utils/types';
+import { DeviceSession, IncomingMessage, SubscriptionTypes, UserProfile } from '@/utils/types';
 import { fetchClient } from '@/utils/helper/fetchClient';
 import { toast } from 'react-toastify';
 import { formatDateBahasa, getTodayDateBahasa } from '@/utils/helper';
@@ -15,6 +15,8 @@ const DynamicAnalytic = dynamic(() => import('@/components/dashboard/Analytic'),
 const Dashboard = () => {
     const { data: session } = useSession()
     const [isLoaded, setisLoaded] = useState(false)
+    const [currentDevice, setcurrentDevice] = useState<DeviceSession>()
+    const [latestMessage, setlatestMessage] = useState<IncomingMessage[]>([])
     const [userProfile, setuserProfile] = useState<UserProfile>({
         firstName: '',
         lastName: '',
@@ -97,6 +99,18 @@ const Dashboard = () => {
     //     })
     //     console.log(refresh?.error)
     // }
+    const fetchLatestMessage = async () => {
+        const result = await fetchClient({
+            url: '/messages/' + currentDevice?.sessionId + '/incoming?pageSize=3',
+            method: 'GET',
+            user: session?.user
+        })
+        if (result?.ok) {
+            const resultData = await result.json()
+            setlatestMessage(resultData.data)
+            console.log(resultData)
+        }
+    }
     useEffect(() => {
         if (session?.user?.token) {
             fetchProfile()
@@ -104,6 +118,10 @@ const Dashboard = () => {
             // testRefresh()
         }
     }, [session?.user?.token])
+    useEffect(() => {
+        if (currentDevice)
+            fetchLatestMessage()
+    }, [currentDevice])
     return (
         <>
             {session?.user?.subscription.status === 0 && <ActivatePlanModal user={session.user} />}
@@ -203,17 +221,17 @@ const Dashboard = () => {
                 </div>
                 <div className='bg-white rounded-md px-4 pt-4 pb-2 grow-0 w-full xl:max-w-sm flex flex-col justify-between'>
                     <p className='font-nunito font-bold text-[16px]'>Pesan terakhir</p>
-                    <div className='flex flex-col gap-2 mt-2'>
-                        <Message />
-                        <Message />
-                        <Message />
+                    <div className='flex flex-col gap-2 mt-2 h-full'>
+                        {latestMessage.map(message => (
+                            <Message message={message} />
+                        ))}
                     </div>
                     <div className=' flex items-end justify-center mt-2'>
-                        <Link href={'/dashboard'} className=" text-primary">Tampilkan lainnya</Link>
+                        <Link href={'/dashboard/incoming'} className=" text-primary">Tampilkan lainnya</Link>
                     </div>
                 </div>
             </div>
-            <DynamicAnalytic user={session?.user} />
+            <DynamicAnalytic user={session?.user} currentDevice={currentDevice} setcurrentDevice={setcurrentDevice} />
         </>
     )
 }
