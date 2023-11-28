@@ -18,10 +18,12 @@ import { useForm } from "react-hook-form"
 import { toast } from "react-toastify"
 
 import { BreadcrumbItem, Breadcrumbs } from "@nextui-org/breadcrumbs"
+import useTemplate from "@/components/hooks/useTemplate"
 
 const CreateCampaign = () => {
     const { push } = useRouter()
     const { data: session } = useSession()
+    const { templateList, loading } = useTemplate(session?.user)
     const [isLoading, setisLoading] = useState(false)
     const [listDevice, setlistDevice] = useState<DeviceSession[]>([])
     const [isDisabled, setisDisabled] = useState(true)
@@ -46,21 +48,8 @@ const CreateCampaign = () => {
         },
     })
 
-    const listTemplate = [
-        {
-            id: '1',
-            title: 'template-1',
-            content: "Join us this month for a celebration of art and music! We'll be hosting the Harmony Heights Music Festival, Samantha Knight's solo art exhibition, and an album release party for River Reed's new album 'Echoes in the Wilderness'. Don't miss out on this exciting lineup of events! [website link]"
-        },
-        {
-            id: '2',
-            title: 'template-2',
-            content: "Ini template 2"
-        }
-    ]
-
     const handleTemplateClick = (id: string, text: MessageTypes) => {
-        const findContent = listTemplate.find(item => item.id === id)?.content
+        const findContent = templateList.find(item => item.id === id)?.message
         if (findContent) {
             if (text === 'registrationMessage')
                 setregistrationMessage(findContent)
@@ -138,22 +127,9 @@ const CreateCampaign = () => {
         }
         setisLoading(false)
     }
-    // const fetchContactData = async () => {
-    //     const result = await fetchClient({
-    //         url: '/contacts',
-    //         method: 'GET',
-    //         user: session?.user
-    //     })
-    //     if (result?.ok) {
-    //         const resultData = await result.json()
-    //         const updatedReceiverList = [...receiverList, ...resultData]
-    //         setreceiverList(updatedReceiverList)
-    //     }
-    // }
     useEffect(() => {
         if (session?.user?.device && listDevice.length === 0) {
             setlistDevice(session.user.device)
-            // fetchContactData()
         }
     }, [session?.user?.device])
     useEffect(() => {
@@ -267,16 +243,20 @@ const CreateCampaign = () => {
                                 {item === 'unregisteredMessage' && (
                                     <p className="font-bold text-xl font-lexend">Reply Unsubscribe</p>
                                 )}
-                                <div className="mt-4">
-                                    <p>Template</p>
-                                    <div className="flex gap-2 flex-wrap w-full mt-2">
-                                        {listTemplate.map(list => (
-                                            <div key={list.id} className='rounded-full px-2 py-[2px] border border-customGray hover:cursor-pointer' onClick={() => handleTemplateClick(list.id, item)}>
-                                                {list.title}
+                                {templateList.length > 0 && (
+                                    <>
+                                        <div className="mt-4">
+                                            <p>Template</p>
+                                            <div className="flex gap-2 flex-wrap w-full mt-2">
+                                                {templateList.map(list => (
+                                                    <div key={list.id} className='rounded-full px-2 py-[2px] border border-customGray hover:cursor-pointer' onClick={() => handleTemplateClick(list.id, item)}>
+                                                        {list.name}
+                                                    </div>
+                                                ))}
                                             </div>
-                                        ))}
-                                    </div>
-                                </div>
+                                        </div>
+                                    </>
+                                )}
                                 <div className="mt-4">
                                     <p className="mb-2">Response</p>
                                     {item === 'registrationMessage' && (

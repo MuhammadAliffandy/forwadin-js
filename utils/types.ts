@@ -419,3 +419,18 @@ export interface MessageTemplate {
     createdAt: string,
     updatedAt: string
 }
+export interface SessionProfile {
+    device: {
+        name: string,
+        phone: string,
+        sessions: [
+            {
+                sessionId: string
+            }
+        ]
+    },
+    profileName: string,
+    presence: string,
+    status: string,
+    address: string
+}

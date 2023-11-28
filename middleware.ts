@@ -6,7 +6,7 @@ import { NextResponse } from 'next/server'
 import { NextRequest } from 'next/server'
 
 const requireDevice = ['/contact', '/group', '/incoming', '/messenger', '/outgoing', '/auto-reply', '/broadcast', '/campaign']
-const signUrl = ['/signin', '/signup']
+const signUrl = ['/signin', '/signup', '/customer-service/signin']
 const adminProtectedUrl = ["/dashboard/:path*", "/subscription", '/dashboard']
 const subscriptionUrl = ['/subscription', '/dashboard']
 export default withAuth(
@@ -15,6 +15,7 @@ export default withAuth(
         const pathName = req.nextUrl.pathname
         console.log('run middleware ' + pathName)
         const isAuthenticated = !!token;
+        console.log('isAuthenticated')
         console.log(isAuthenticated)
         if (isAuthenticated) {
             if (signUrl.some(path => pathName.startsWith(path))) {
@@ -38,7 +39,7 @@ export default withAuth(
         },
     }
 )
-export const config = { matcher: ['/signin', '/signup', '/dashboard/:path*', '/subscription', '/dashboard'] }
+export const config = { matcher: ['/signin', '/signup', '/dashboard/:path*', '/subscription', '/dashboard', '/customer-service/:path*'] }
 
 
 // export default async function middleware(req: NextRequest) {

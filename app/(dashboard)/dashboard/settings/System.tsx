@@ -1,3 +1,5 @@
+
+import CreateTemplateModal from "@/components/dashboard/settings/CreateTemplateModal"
 import { fetchClient } from "@/utils/helper/fetchClient"
 import { DeviceData, MessageTemplate } from "@/utils/types"
 import { Button, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from "@nextui-org/react"
@@ -11,6 +13,7 @@ interface SystemPageProps {
 const System = ({ user }: SystemPageProps) => {
     const [deviceLabel, setdeviceLabel] = useState<string[]>([])
     const [contactLabel, setcontactLabel] = useState<string[]>([])
+    const [templateModal, settemplateModal] = useState(false)
     const [templateList, settemplateList] = useState<MessageTemplate[]>([])
     const fetchDeviceLabel = async () => {
         const result = await fetchClient({
@@ -34,14 +37,30 @@ const System = ({ user }: SystemPageProps) => {
             setcontactLabel(resultData)
         }
     }
+    const fetchTemplate = async () => {
+        const result = await fetchClient({
+            url: '/templates',
+            method: 'GET',
+            user: user
+        })
+        if (result?.ok) {
+            const resultData = await result.json()
+            console.log('ini template')
+            console.log(resultData)
+            settemplateList(resultData)
+        }
+    }
+
     useEffect(() => {
         if (user?.token) {
             fetchDeviceLabel()
             fetchContactLabel()
+            fetchTemplate()
         }
     }, [user?.token])
     return (
         <>
+            <CreateTemplateModal refresh={fetchTemplate} openModal={templateModal} setopenModal={settemplateModal} user={user} />
             <p className="font-lexend text-lg font-bold">Labels</p>
             <div className="flex flex-col gap-4 mt-4">
                 <p className="">Device Labels</p>
@@ -72,7 +91,7 @@ const System = ({ user }: SystemPageProps) => {
             <div className="flex flex-col gap-4 mt-6">
                 <div className="flex justify-between items-center ">
                     <p className="font-lexend text-lg font-bold">Templates</p>
-                    <Button className="rounded-md text-sm" color="primary" size="sm">
+                    <Button className="rounded-md text-sm" color="primary" size="sm" onClick={() => settemplateModal(true)}>
                         Buat Template
                     </Button>
                 </div>
@@ -105,13 +124,12 @@ const System = ({ user }: SystemPageProps) => {
                             <TableRow key={item.id}>
                                 <TableCell >{item.name}</TableCell>
                                 <TableCell >{item.message}</TableCell>
-
                             </TableRow>
                         )}
                     </TableBody>
                 </Table>
             </div>
-            <div className="h-[400px]" />
+            <div className="h-[200px]" />
         </>
     )
 }
