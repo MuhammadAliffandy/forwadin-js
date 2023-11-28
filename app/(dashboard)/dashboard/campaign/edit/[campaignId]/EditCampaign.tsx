@@ -6,6 +6,7 @@ import UploadFile from "@/components/dashboard/UploadFile"
 import DisplayImage from "@/components/dashboard/auto-reply/DisplayImage"
 import TextAreaInput from "@/components/dashboard/chat/TextAreaInput"
 import InputForm from "@/components/form/InputForm"
+import useTemplate from "@/components/hooks/useTemplate"
 import { formatDatetoISO8601 } from "@/utils/helper"
 import { fetchClient } from "@/utils/helper/fetchClient"
 import { getMessageVariables, parseTextInput } from "@/utils/helper/messageUtils"
@@ -22,6 +23,7 @@ import { toast } from "react-toastify"
 const CreateCampaign = ({ campaignData }: { campaignData: CampaignData }) => {
     const { push } = useRouter()
     const { data: session } = useSession()
+    const { loading, templateList } = useTemplate(session?.user)
     const [isLoading, setisLoading] = useState(false)
     const [listDevice, setlistDevice] = useState<DeviceSession[]>([])
     const [isDisabled, setisDisabled] = useState(true)
@@ -48,21 +50,8 @@ const CreateCampaign = ({ campaignData }: { campaignData: CampaignData }) => {
         },
     })
 
-    const listTemplate = [
-        {
-            id: '1',
-            title: 'template-1',
-            content: "Join us this month for a celebration of art and music! We'll be hosting the Harmony Heights Music Festival, Samantha Knight's solo art exhibition, and an album release party for River Reed's new album 'Echoes in the Wilderness'. Don't miss out on this exciting lineup of events! [website link]"
-        },
-        {
-            id: '2',
-            title: 'template-2',
-            content: "Ini template 2"
-        }
-    ]
-
     const handleTemplateClick = (id: string, text: MessageTypes) => {
-        const findContent = listTemplate.find(item => item.id === id)?.content
+        const findContent = templateList.find(item => item.id === id)?.message
         if (findContent) {
             if (text === 'registrationMessage')
                 setregistrationMessage(findContent)
@@ -280,16 +269,18 @@ const CreateCampaign = ({ campaignData }: { campaignData: CampaignData }) => {
                             {item === 'unregisteredMessage' && (
                                 <p className="font-bold text-xl font-lexend">Reply Unsubscribe</p>
                             )}
-                            <div className="mt-4">
-                                <p>Template</p>
-                                <div className="flex gap-2 flex-wrap w-full mt-2">
-                                    {listTemplate.map(list => (
-                                        <div key={list.id} className='rounded-full px-2 py-[2px] border border-customGray hover:cursor-pointer' onClick={() => handleTemplateClick(list.id, item)}>
-                                            {list.title}
-                                        </div>
-                                    ))}
+                            {templateList.length > 0 && (<>
+                                <div className="mt-4">
+                                    <p>Template</p>
+                                    <div className="flex gap-2 flex-wrap w-full mt-2">
+                                        {templateList.map(list => (
+                                            <div key={list.id} className='rounded-full px-2 py-[2px] border border-customGray hover:cursor-pointer' onClick={() => handleTemplateClick(list.id, item)}>
+                                                {list.name}
+                                            </div>
+                                        ))}
+                                    </div>
                                 </div>
-                            </div>
+                            </>)}
                             <div className="mt-4">
                                 <p className="mb-2">Response</p>
                                 {item === 'registrationMessage' && (

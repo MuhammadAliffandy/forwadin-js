@@ -410,3 +410,27 @@ export interface BusinessHours {
     timeZone: string,
     deviceId: number
 }
+export interface MessageTemplate {
+    pkId: number,
+    id: string,
+    name: string,
+    message: string,
+    userId: number,
+    createdAt: string,
+    updatedAt: string
+}
+export interface SessionProfile {
+    device: {
+        name: string,
+        phone: string,
+        sessions: [
+            {
+                sessionId: string
+            }
+        ]
+    },
+    profileName: string,
+    presence: string,
+    status: string,
+    address: string
+}

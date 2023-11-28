@@ -1,5 +1,5 @@
 'use client'
-import { useEffect, useState } from "react"
+import { Dispatch, SetStateAction, useEffect, useState } from "react"
 import MessageReceivedChart from "./chart/MessageReceivedChart"
 import MessageHourChart from "./chart/MessageHourChart"
 import zoomPlugin from 'chartjs-plugin-zoom';
@@ -35,13 +35,13 @@ Chart.register(
 );
 interface AnalyticProps {
     user: User | undefined,
-
+    currentDevice: DeviceSession | undefined,
+    setcurrentDevice: Dispatch<SetStateAction<DeviceSession | undefined>>
 }
-const Analytic = ({ user }: AnalyticProps) => {
+const Analytic = ({ user, currentDevice, setcurrentDevice }: AnalyticProps) => {
     const [isDeviceLoaded, setisDeviceLoaded] = useState(false)
     const [deviceDropdown, setdeviceDropdown] = useState(false)
     const [deviceList, setdeviceList] = useState<DeviceSession[]>([])
-    const [currentDevice, setcurrentDevice] = useState<DeviceSession>()
     const [currentDeviceDetail, setcurrentDeviceDetail] = useState<DeviceData>()
     const fetchDetailDevice = async () => {
         const result = await fetchClient({

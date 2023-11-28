@@ -93,7 +93,7 @@ const Settings = () => {
                             ))}
                             {componentTransition((style, item) => item === 'system' && (
                                 <animated.div style={style}>
-                                    <System />
+                                    <System user={session?.user} />
                                 </animated.div>
                             ))}
                         </>

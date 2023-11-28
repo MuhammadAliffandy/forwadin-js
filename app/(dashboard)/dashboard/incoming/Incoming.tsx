@@ -2,9 +2,7 @@
 
 import { useEffect, useState } from "react"
 import IncomingTable from "./IncomingTable"
-import { Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@nextui-org/react"
-import { DeviceData, DeviceSession } from "@/utils/types"
-import { fetchClient } from "@/utils/helper/fetchClient"
+import { DeviceSession } from "@/utils/types"
 import { useSession } from "next-auth/react"
 import DropdownDevice from "@/components/dashboard/DropdownDevice"
 

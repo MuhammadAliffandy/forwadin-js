@@ -42,13 +42,13 @@ const getDeviceSession = async (data: GetSession[], token: string) => {
 
             if (fetchDeviceDetails.ok) {
                 const body: DeviceData = await fetchDeviceDetails.json()
-                const asd = {
+                const device = {
                     id: ses.device.id,
                     sessionId: ses.sessionId,
                     name: body.name,
                     phone: body.phone
                 }
-                return asd
+                return device
             }
         })
     )
@@ -199,6 +199,34 @@ export const authConfig: NextAuthOptions = {
                 } else {
                     return null
                 }
+            }
+        }),
+        CredentialsProvider({
+            id: 'customerService',
+            name: 'CustomerService',
+            credentials: {
+                username: {},
+                password: {}
+            },
+            authorize: async (credentials) => {
+                const result = await fetch(process.env.BACKEND_URL + '/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ identifier: credentials?.username, password: credentials?.password })
+                })
+                if (!result.ok) return null
+                const resultData = await result.json()
+                const user = {
+                    id: resultData.id,
+                    role: resultData.role,
+                    token: resultData.accessToken,
+                    refreshToken: resultData.refreshToken,
+                    device: null
+                }
+                return user as any
+
             }
         })
     ],

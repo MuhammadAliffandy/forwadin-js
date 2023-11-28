@@ -4,6 +4,7 @@ import UploadFile from "@/components/dashboard/UploadFile"
 import DisplayImage from "@/components/dashboard/auto-reply/DisplayImage"
 import TextAreaInput from "@/components/dashboard/chat/TextAreaInput"
 import InputForm from "@/components/form/InputForm"
+import useTemplate from "@/components/hooks/useTemplate"
 import { formatDatetoISO8601 } from "@/utils/helper"
 import { fetchClient } from "@/utils/helper/fetchClient"
 import { getMessageVariables, parseTextInput } from "@/utils/helper/messageUtils"
@@ -21,6 +22,7 @@ const EditBroadcast = ({ broadcastData }: {
 }) => {
     const router = useRouter()
     const { data: session } = useSession()
+    const { loading, templateList } = useTemplate(session?.user)
     const [isLoading, setisLoading] = useState(false)
     const [listDevice, setlistDevice] = useState<DeviceSession[]>([])
     const [isDisabled, setisDisabled] = useState(true)
@@ -30,22 +32,8 @@ const EditBroadcast = ({ broadcastData }: {
     const [broadcastImage, setbroadcastImage] = useState<string | null>(null)
     const [textInput, settextInput] = useState<string>('')
     const [isLabelLoaded, setisLabelLoaded] = useState(false)
-
-    const listTemplate = [
-        {
-            id: '1',
-            title: 'template-1',
-            content: "Join us this month for a celebration of art and music! We'll be hosting the Harmony Heights Music Festival, Samantha Knight's solo art exhibition, and an album release party for River Reed's new album 'Echoes in the Wilderness'. Don't miss out on this exciting lineup of events! [website link]"
-        },
-        {
-            id: '2',
-            title: 'template-2',
-            content: "Ini template 2"
-        }
-    ]
-
     const handleTemplateClick = (id: string) => {
-        const findContent = listTemplate.find(item => item.id === id)?.content
+        const findContent = templateList.find(item => item.id === id)?.message
         if (findContent)
             settextInput(findContent)
 
@@ -199,16 +187,18 @@ const EditBroadcast = ({ broadcastData }: {
             <div className='w-full max-w-sm lg:max-w-full'>
                 <div className='bg-white w-full p-4'>
                     <p className="font-bold text-xl font-lexend">Pesan Broadcast</p>
-                    <div className="mt-4">
-                        <p>Template</p>
-                        <div className="flex gap-2 flex-wrap w-full mt-2">
-                            {listTemplate.map(item => (
-                                <div key={item.id} className='rounded-full px-2 py-[2px] border border-customGray hover:cursor-pointer' onClick={() => handleTemplateClick(item.id)}>
-                                    {item.title}
-                                </div>
-                            ))}
+                    {templateList.length > 0 && (
+                        <div className="mt-4">
+                            <p>Template</p>
+                            <div className="flex gap-2 flex-wrap w-full mt-2">
+                                {templateList.map(item => (
+                                    <div key={item.id} className='rounded-full px-2 py-[2px] border border-customGray hover:cursor-pointer' onClick={() => handleTemplateClick(item.id)}>
+                                        {item.name}
+                                    </div>
+                                ))}
+                            </div>
                         </div>
-                    </div>
+                    )}
                     <div className="mt-4">
                         <p className="mb-2">Response</p>
                         <TextAreaInput text={textInput} settext={settextInput} limit={255} />

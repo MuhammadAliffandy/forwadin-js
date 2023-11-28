@@ -45,11 +45,6 @@ const IncomingTable = ({ settotalMessage, totalMessage, sessionId, user }: Incom
     const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
         setsearchText(e.target.value)
     }
-    const handleDeleteMessage = () => {
-        // TODO
-        const checkedContacts = messageData.filter(item => item.checked === false).map(item => item)
-        setmessageData(checkedContacts)
-    }
 
     useEffect(() => {
         const searchResult = filterMessage(searchText)
@@ -116,28 +111,20 @@ const IncomingTable = ({ settotalMessage, totalMessage, sessionId, user }: Incom
             }
             <div className="mt-8 p-4 bg-white rounded-md">
                 <div className="flex sm:flex-row flex-col gap-2 justify-between">
-                    <div className="basis-1/2">
+                    <div className="w-full lg:w-1/2">
                         <input type="text" className="text-xs rounded-md w-full max-w-md border border-customGray" placeholder="Cari nama / nomor / label"
                             value={searchText}
                             onChange={handleSearch}
                         />
                     </div>
-                    <div className='flex lg:justify-end justify-between gap-2 w-full max-w-xs'>
-                        {isChecked && (
-                            <div onClick={handleDeleteMessage} className="bg-danger rounded-md w-full lg:w-auto px-8 text-white text-center items-center flex hover:cursor-pointer justify-center p-2">
-                                Hapus
-                            </div>
-                        )}
-                    </div>
                 </div>
             </div>
             {isLoaded ? (
-
                 <div className=' mt-4'>
                     <Table
                         aria-label="Incoming Chat"
                         color='default'
-                        selectionMode="multiple"
+                        selectionMode="none"
                         isHeaderSticky
                         classNames={{
                             td: 'text-[11px] font-nunito',
