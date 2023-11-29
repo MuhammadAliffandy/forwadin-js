@@ -27,7 +27,7 @@ export default function Home() {
   const subscriptionContent = [
     {
       title: 'Starter',
-      body: 'Start your 14-day trial and experience efficient message forwarding, simplified contact management, and a glimpse of campaign scheduling. Unleash the potential of streamlined communication and explore how FowardIt can elevate your messaging game.',
+      body: 'Start your 14-day trial and experience efficient message forwarding, simplified contact management, and a glimpse of campaign scheduling. Unleash the potential of streamlined communication and explore how FowardIn can elevate your messaging game.',
       price: 'Rp. 300.000',
       buttonText: 'Start for Free',
       features: [
@@ -45,7 +45,7 @@ export default function Home() {
     },
     {
       title: 'Basic',
-      body: 'Start your 14-day trial and experience efficient message forwarding, simplified contact management, and a glimpse of campaign scheduling. Unleash the potential of streamlined communication and explore how FowardIt can elevate your messaging game.',
+      body: 'Start your 14-day trial and experience efficient message forwarding, simplified contact management, and a glimpse of campaign scheduling. Unleash the potential of streamlined communication and explore how FowardIn can elevate your messaging game.',
       price: 'Rp. 300.000',
       buttonText: 'Get Started',
       features: [
@@ -63,7 +63,7 @@ export default function Home() {
     },
     {
       title: 'Starter',
-      body: 'Start your 14-day trial and experience efficient message forwarding, simplified contact management, and a glimpse of campaign scheduling. Unleash the potential of streamlined communication and explore how FowardIt can elevate your messaging game.',
+      body: 'Start your 14-day trial and experience efficient message forwarding, simplified contact management, and a glimpse of campaign scheduling. Unleash the potential of streamlined communication and explore how FowardIn can elevate your messaging game.',
       price: 'Rp. 300.000',
       buttonText: 'Start for Free',
       features: [
@@ -81,7 +81,7 @@ export default function Home() {
     },
     {
       title: 'Starter',
-      body: 'Start your 14-day trial and experience efficient message forwarding, simplified contact management, and a glimpse of campaign scheduling. Unleash the potential of streamlined communication and explore how FowardIt can elevate your messaging game.',
+      body: 'Start your 14-day trial and experience efficient message forwarding, simplified contact management, and a glimpse of campaign scheduling. Unleash the potential of streamlined communication and explore how FowardIn can elevate your messaging game.',
       price: 'Rp. 300.000',
       buttonText: 'Start for Free',
       features: [
@@ -187,7 +187,7 @@ export default function Home() {
               </div>
               <div className='flex flex-col gap-8'>
                 <p className={titleTextStyle}>Elevate Your Messaging Efficiency with Our Innovative Admin Tools</p>
-                <p className={contentTextStyle}>Selamat datang di Fowardit! Pengelolaan pesan Anda menjadi lebih mudah dengan Admin Tools kami. Penerusan pesan jadi lebih lancar melalui fitur otomatis, sehingga Anda dapat lebih fokus pada interaksi dengan pelanggan. Dapatkan kendali penuh atas pesan dan informasi dengan manajemen konten dan kontak yang praktis.</p>
+                <p className={contentTextStyle}>Selamat datang di Fowardin! Pengelolaan pesan Anda menjadi lebih mudah dengan Admin Tools kami. Penerusan pesan jadi lebih lancar melalui fitur otomatis, sehingga Anda dapat lebih fokus pada interaksi dengan pelanggan. Dapatkan kendali penuh atas pesan dan informasi dengan manajemen konten dan kontak yang praktis.</p>
                 <div className='flex w-full '>
                   <Link href={'/signup'} className='flex justify-between items-center bg-black rounded-md text-white px-2 hover:cursor-pointer'>
                     <p className='px-4 py-2'>Daftar Sekarang</p>

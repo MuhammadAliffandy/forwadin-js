@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import { Dispatch, SetStateAction } from "react";
 import NavButton from "./NavButton";
 import { User } from "next-auth";
-const MessageList = ({ currentPage, user }: { currentPage: string, user: User | undefined }) => {
+const MessageList = ({ currentPage, isDisabled }: { currentPage: string, isDisabled: boolean }) => {
     const [isDropdown, setIsDropdown] = useState(false)
     const [isActive, setisActive] = useState(false)
     const listActivePages = [
@@ -26,9 +26,9 @@ const MessageList = ({ currentPage, user }: { currentPage: string, user: User | 
             </div>
             {isDropdown && (
                 <div className="pl-4 flex flex-col gap-2">
-                    <NavButton text='Messenger' href='/dashboard/messenger' currentPage={currentPage} isDisabled={user?.device.length === 0} />
-                    <NavButton text='Incoming Chat' href='/dashboard/incoming' currentPage={currentPage} isDisabled={user?.device.length === 0} />
-                    <NavButton text='Outgoing Chat' href='/dashboard/outgoing' currentPage={currentPage} isDisabled={user?.device.length === 0} />
+                    <NavButton text='Messenger' href='/dashboard/messenger' currentPage={currentPage} isDisabled={isDisabled} />
+                    <NavButton text='Incoming Chat' href='/dashboard/incoming' currentPage={currentPage} isDisabled={isDisabled} />
+                    <NavButton text='Outgoing Chat' href='/dashboard/outgoing' currentPage={currentPage} isDisabled={isDisabled} />
                 </div>
             )}
 

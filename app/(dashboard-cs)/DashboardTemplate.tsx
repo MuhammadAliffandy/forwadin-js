@@ -43,27 +43,12 @@ const DashboardTemplate = ({ currentPage, children }: { currentPage: string, chi
         }
 
     }, [session?.user?.token])
-    const handleDelete = async () => {
-        console.log("/users/" + session?.user?.id + "/delete")
-        if (window.confirm('Delete User?')) {
-            const deleteUser = await fetchClient({
-                url: "/users/" + session?.user?.id + "/delete",
-                method: 'DELETE',
-                user: session?.user
-            })
-            if (deleteUser?.ok) {
-                signOut({
-                    callbackUrl: '/signup'
-                })
-            }
-        }
-    }
     useEffect(() => {
-        if (session?.user?.device && session.user.device.length > 0)
+        if (session?.customerService?.sessionId)
             setisDisabled(false)
         else
             setisDisabled(true)
-    }, [session?.user?.device])
+    }, [session?.customerService?.sessionId])
 
     return (
         <>
@@ -80,19 +65,13 @@ const DashboardTemplate = ({ currentPage, children }: { currentPage: string, chi
                         </div>
                     </div>
                     <div className='flex flex-col mt-12 gap-2'>
-                        <NavButton text='Dashboard' href='/dashboard' currentPage={currentPage} />
-                        <NavButton text='Devices' href='/dashboard/device' currentPage={currentPage} />
-                        <ContactList currentPage={currentPage} isDisabled={isDisabled} />
+                        <NavButton text='Dashboard' href='/customer-service/dashboard' currentPage={currentPage} />
                         {/* Message List */}
-                        <MessageList currentPage={currentPage} isDisabled={isDisabled} />
+                        <NavButton text='Messenger' href='/dashboard/customer-service/messenger' currentPage={currentPage} isDisabled={isDisabled} />
                         <p className='text-sm mt-2'>Tools</p>
-                        <NavButton text='Broadcast' href='/dashboard/broadcast' currentPage={currentPage} isDisabled={isDisabled} />
-                        <NavButton text='Campaign' href='/dashboard/campaign' currentPage={currentPage} isDisabled={isDisabled} />
-                        <NavButton text='Auto Reply' href='/dashboard/auto-reply' currentPage={currentPage} isDisabled={isDisabled} />
-                        <NavButton text="Customer Service" href="/dashboard/customer-service" currentPage={currentPage} isDisabled={isDisabled} />
-                        <NavButton text="Forwardin API" href="/dashboard/api-reference/" currentPage={currentPage} isDisabled={isDisabled} />
+                        <NavButton text='Auto Reply' href='/customer-service/dashboard/auto-reply' currentPage={currentPage} isDisabled={isDisabled} />
                         <p className='text-sm mt-2'>Others</p>
-                        <NavButton text='Settings' href='/dashboard/settings' currentPage={currentPage} />
+                        <NavButton text='Settings' href='/customer-service/dashboard/settings' currentPage={currentPage} />
                     </div>
                 </nav>
             </div>
@@ -145,10 +124,7 @@ const DashboardTemplate = ({ currentPage, children }: { currentPage: string, chi
                             </DropdownSection>
                             <DropdownItem key={'forwardin profile'}>Forwardin Profile</DropdownItem>
                             <DropdownItem key={'subscription'}>Subscription</DropdownItem>
-                            <DropdownItem key='sign out' className="text-danger" onClick={() => signOut({ callbackUrl: '/signin' })}>Sign Out</DropdownItem>
-                            <DropdownItem onClick={handleDelete}>
-                                Delete User (Dev)
-                            </DropdownItem>
+                            <DropdownItem key='sign out' className="text-danger" onClick={() => signOut({ callbackUrl: '/customer-service/signin' })}>Sign Out</DropdownItem>
                         </DropdownMenu>
                     </Dropdown>
                 </div>
@@ -203,10 +179,7 @@ const DashboardTemplate = ({ currentPage, children }: { currentPage: string, chi
                                 </DropdownSection>
                                 <DropdownItem key={'forwardin profile'}>Forwardin Profile</DropdownItem>
                                 <DropdownItem key={'subscription'}>Subscription</DropdownItem>
-                                <DropdownItem key='sign out' className="text-danger" onClick={() => signOut({ callbackUrl: '/signin' })}>Sign Out</DropdownItem>
-                                <DropdownItem onClick={handleDelete}>
-                                    Delete User (Dev)
-                                </DropdownItem>
+                                <DropdownItem key='sign out' className="text-danger" onClick={() => signOut({ callbackUrl: '/customer-service/signin' })}>Sign Out</DropdownItem>
                             </DropdownMenu>
                         </Dropdown>
                         <div className='flex-none bg-white rounded-full p-2 hover:cursor-pointer'>

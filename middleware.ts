@@ -1,14 +1,20 @@
 
-import { User } from "next-auth"
+import { CustomerService, User } from "next-auth"
 import middleware, { withAuth } from 'next-auth/middleware'
 import { getToken } from "next-auth/jwt"
 import { NextResponse } from 'next/server'
 import { NextRequest } from 'next/server'
-
-const requireDevice = ['/contact', '/group', '/incoming', '/messenger', '/outgoing', '/auto-reply', '/broadcast', '/campaign']
 const signUrl = ['/signin', '/signup', '/customer-service/signin']
-const adminProtectedUrl = ["/dashboard/:path*", "/subscription", '/dashboard']
-const subscriptionUrl = ['/subscription', '/dashboard']
+
+const adminPath = {
+    requireDevice: ['/contact', '/group', '/incoming', '/messenger', '/outgoing', '/auto-reply', '/broadcast', '/campaign'],
+    protectedUrl: ["/dashboard/:path*", "/subscription", '/dashboard'],
+    subscriptionUrl: ['/subscription', '/dashboard']
+}
+const csPath = {
+    requiredDevice: ['/messenger', '/auto-reply'],
+    protectedUrl: ['/customer-service/dashboard', '/customer-service/dashboard/:path*'],
+}
 export default withAuth(
     async function middleware(req) {
         const token = req.nextauth.token
@@ -18,18 +24,39 @@ export default withAuth(
         console.log('isAuthenticated')
         console.log(isAuthenticated)
         if (isAuthenticated) {
-            if (signUrl.some(path => pathName.startsWith(path))) {
-                return NextResponse.redirect(new URL("/dashboard", req.url))
-            }
             const user = token.user as any as User
-            if (!subscriptionUrl.some(path => pathName.startsWith(path)) && user.subscription.status === 0) return NextResponse.redirect(new URL('/dashboard', req.url))
-            if (requireDevice.some(path => pathName.startsWith('/dashboard' + path))
-                && user.device.length === 0)
-                return NextResponse.redirect(new URL('/dashboard/device', req.url))
-            return NextResponse.next()
+            const customerService = token.customerService as any as CustomerService
+            if (adminPath.protectedUrl.some(path => pathName.startsWith(path)) && !user) {
+                if (customerService)
+                    return NextResponse.redirect(new URL('/customer-service/dashboard', req.url))
+                return NextResponse.redirect(new URL('/', req.url))
+            }
+            if (csPath.protectedUrl.some(path => pathName.startsWith(path)) && !customerService) {
+                if (user)
+                    return NextResponse.redirect(new URL('/dashboard', req.url))
+                return NextResponse.redirect(new URL('/', req.url))
+            }
+            if (user) {
+                if (signUrl.some(path => pathName.startsWith(path))) {
+                    return NextResponse.redirect(new URL("/dashboard", req.url))
+                }
+                if (!adminPath.subscriptionUrl.some(path => pathName.startsWith(path)) && user.subscription.status === 0) return NextResponse.redirect(new URL('/dashboard', req.url))
+                if (adminPath.requireDevice.some(path => pathName.startsWith('/dashboard' + path))
+                    && user.device.length === 0)
+                    return NextResponse.redirect(new URL('/dashboard/device', req.url))
+                return NextResponse.next()
+            }
+            if (customerService) {
+                if (csPath.requiredDevice.some(path => pathName.startsWith('/customer-service/dashboard' + path))
+                    && !customerService.sessionId)
+                    return NextResponse.redirect(new URL('/dashboard/device', req.url))
+                return NextResponse.next()
+            }
         } else {
-            if (adminProtectedUrl.some(path => pathName.startsWith(path)))
-                return NextResponse.redirect(new URL('/signin', req.url))
+            if (adminPath.protectedUrl.some(path => pathName.startsWith(path)))
+                return NextResponse.redirect(new URL('/signin?callbackUrl=' + encodeURIComponent(req.url), req.url))
+            if (csPath.protectedUrl.some(path => pathName.startsWith(path)))
+                return NextResponse.redirect(new URL('/customer-service/signin?callbackUrl=' + encodeURIComponent(req.url), req.url))
             return NextResponse.next()
         }
     },

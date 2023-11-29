@@ -1,7 +1,7 @@
 import NextAuth, { DefaultSession } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
-import type { NextAuthOptions, User } from 'next-auth'
+import type { CustomerService, NextAuthOptions, User } from 'next-auth'
 import { DeviceData, DeviceSession, SubscriptionTypes } from "@/utils/types";
 
 interface Subscription {
@@ -18,9 +18,17 @@ declare module "next-auth" {
         device: DeviceSession[],
         subscription: Subscription
     }
-
+    interface CustomerService {
+        id: string | undefined,
+        role: 222,
+        token: string | undefined,
+        refreshToken: string | undefined,
+        sessionId: string | undefined,
+        deviceId: string | undefined,
+    }
     interface Session extends DefaultSession {
         user?: User;
+        customerService?: CustomerService
     }
 }
 interface GetSession {
@@ -81,7 +89,8 @@ export const authConfig: NextAuthOptions = {
                     status: 0
                 }
 
-                const userData: User = JSON.parse(credentials?.user!)
+                const userData: User | CustomerService = JSON.parse(credentials?.user!)
+                // todo
                 const result = await fetch(process.env.BACKEND_URL + '/auth/refresh-token', {
                     method: 'POST',
                     headers: {
@@ -91,9 +100,17 @@ export const authConfig: NextAuthOptions = {
                 })
 
                 if (result.ok) {
-
+                    console.log('refresh')
+                    console.log(userData)
                     const resultData = await result.json()
-
+                    if (userData.role === 111) {
+                        console.log('refresh CS')
+                        return {
+                            ...userData,
+                            id: resultData.id,
+                            token: resultData.accessToken
+                        }
+                    }
                     const userSubscription = await fetch(process.env.BACKEND_URL + '/users/' + userData.id + '/subscription/', {
                         method: 'GET',
                         headers: {
@@ -208,25 +225,33 @@ export const authConfig: NextAuthOptions = {
                 username: {},
                 password: {}
             },
-            authorize: async (credentials) => {
-                const result = await fetch(process.env.BACKEND_URL + '/auth/login', {
+            authorize: async (credentials: any) => {
+                console.log('masuk cs 1')
+                console.log(credentials)
+                const result = await fetch(process.env.BACKEND_URL + '/customer-services/login', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ identifier: credentials?.username, password: credentials?.password })
+                    body: JSON.stringify({ identifier: credentials?.identifier, password: credentials?.password })
                 })
+                console.log('masuk cs 2')
+                console.log(result.status)
                 if (!result.ok) return null
                 const resultData = await result.json()
-                const user = {
+                console.log('ini resultData')
+                console.log(resultData)
+                const customerService: CustomerService = {
                     id: resultData.id,
                     role: resultData.role,
                     token: resultData.accessToken,
                     refreshToken: resultData.refreshToken,
-                    device: null
+                    deviceId: resultData.deviceId,
+                    sessionId: resultData.sessionId
                 }
-                return user as any
-
+                console.log('masuk CS 3')
+                console.log(customerService)
+                return customerService as any
             }
         })
     ],
@@ -235,7 +260,11 @@ export const authConfig: NextAuthOptions = {
     },
     callbacks: {
         async session({ session, token }: any) {
-            session.user = token.user;
+            console.log(token)
+            if (token.user)
+                session.user = token.user
+            if (token.customerService)
+                session.customerService = token.customerService
             return session;
         },
         async jwt({ token, user, trigger, session }) {
@@ -243,14 +272,22 @@ export const authConfig: NextAuthOptions = {
             if (trigger === 'update') {
                 token.user = session.user
             }
+            console.log('jwt user')
+            console.log(user)
             if (user) {
-                token.user = user;
+                if (user.role === 222) {
+                    token.customerService = user
+                }
+                else if (user.role === 111) {
+                    token.user = user;
+                }
             }
-            // console.log(token)
+            console.log(token)
             return token;
         },
         async signIn({ user, account }: any) {
-            // console.log(user)
+            console.log('signIn user')
+            console.log(user)
             if (account?.provider === 'google') {
                 // console.log(account.access_token)
                 const result = await fetch(process.env.BACKEND_URL + '/auth/google', {
