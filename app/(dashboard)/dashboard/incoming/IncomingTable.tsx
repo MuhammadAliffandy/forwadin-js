@@ -2,7 +2,7 @@
 
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { GetMessage, IncomingMessage } from '@/utils/types';
+import { GetMessage, IncomingMessage, MultipleCheckboxRef } from '@/utils/types';
 import { Button, Pagination, Popover, PopoverContent, PopoverTrigger, Skeleton, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@nextui-org/react';
 import { User } from 'next-auth';
 import { fetchClient } from '@/utils/helper/fetchClient';
@@ -96,9 +96,6 @@ const IncomingTable = ({ settotalMessage, totalMessage, sessionId, user }: Incom
             setisChecked(false)
         }
     }, [selectedMessage])
-    useEffect(() => {
-
-    }, [messageData])
     return (
         <>
             {addContactModal &&
@@ -164,9 +161,12 @@ const IncomingTable = ({ settotalMessage, totalMessage, sessionId, user }: Incom
                                         {formatDate(item.receivedAt)}
                                     </TableCell>
                                     <TableCell>
-                                        {/* <PrintMessage message={item.message} /> */}
-                                        <Popover placement="left-end"
-                                            className='font-inter'
+                                        <Popover
+                                            style={{
+                                                zIndex: 10,
+                                            }}
+                                            placement="left-end"
+                                            className='font-inter z-0'
                                             radius='sm'
                                             showArrow={true}
                                         >
@@ -176,7 +176,7 @@ const IncomingTable = ({ settotalMessage, totalMessage, sessionId, user }: Incom
                                                     size='sm'
                                                 >Lihat Chat</Button>
                                             </PopoverTrigger>
-                                            <PopoverContent>
+                                            <PopoverContent >
                                                 <div className="px-1 py-2">
                                                     <div className='flex gap-2 items-center'>
                                                         <ProfileAvatar profile={item.contact} />
@@ -199,7 +199,9 @@ const IncomingTable = ({ settotalMessage, totalMessage, sessionId, user }: Incom
                                                             </p>
                                                             <div className='flex justify-end '>
 
-                                                                <Button onClick={() => handleAddContactClick(item)}
+                                                                <Button onClick={() => {
+                                                                    handleAddContactClick(item)
+                                                                }}
                                                                     color='primary'
                                                                     radius='md'
                                                                 >

@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react"
 import { Dispatch, SetStateAction } from "react";
-import NavButton from "./NavButton";
-import { User } from "next-auth";
-const ContactList = ({ currentPage, user }: { currentPage: string, user: User | undefined }) => {
+import NavButton from "./NavButton"
+const ContactList = ({ currentPage, isDisabled }: { currentPage: string, isDisabled: boolean }) => {
     const [isDropdown, setIsDropdown] = useState(false)
     const [isActive, setisActive] = useState(false)
     useEffect(() => {
@@ -21,8 +20,8 @@ const ContactList = ({ currentPage, user }: { currentPage: string, user: User | 
             </div>
             {isDropdown && (
                 <div className="pl-4 flex flex-col gap-2">
-                    <NavButton text='Contacts' href='/dashboard/contact' currentPage={currentPage} isDisabled={user?.device.length === 0} />
-                    <NavButton text='Groups' href='/dashboard/group' currentPage={currentPage} isDisabled={user?.device.length === 0} />
+                    <NavButton text='Contacts' href='/dashboard/contact' currentPage={currentPage} isDisabled={isDisabled} />
+                    <NavButton text='Groups' href='/dashboard/group' currentPage={currentPage} isDisabled={isDisabled} />
                 </div>
             )}
 

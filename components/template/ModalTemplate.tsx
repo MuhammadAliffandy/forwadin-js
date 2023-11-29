@@ -44,7 +44,7 @@ const ModalTemplate = ({ children, openModal, setopenModal, outsideClose = true 
         <>
             <Modal isOpen={openModal} onOpenChange={setopenModal} isDismissable={outsideClose}>
                 <ModalContent>
-                    <ModalBody >
+                    <ModalBody className="rounded-md">
                         <>
                             {children}
                             <div className="pb-[1px]" />

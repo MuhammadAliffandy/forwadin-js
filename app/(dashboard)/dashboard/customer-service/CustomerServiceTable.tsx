@@ -42,7 +42,7 @@ const CustomerServiceTable = () => {
     }
     const fetchCSData = async () => {
         const result = await fetchClient({
-            url: '/customer-services/' + session?.user?.id,
+            url: '/users/customer-services/' + session?.user?.id,
             method: 'GET',
             user: session?.user
         })
