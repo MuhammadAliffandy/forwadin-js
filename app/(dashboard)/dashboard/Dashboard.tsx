@@ -92,13 +92,7 @@ const Dashboard = () => {
             }
         }
     }
-    // const testRefresh = async () => {
-    //     const refresh = await signIn('refresh', {
-    //         redirect: false,
-    //         user: JSON.stringify(session?.user)
-    //     })
-    //     console.log(refresh?.error)
-    // }
+
     const fetchLatestMessage = async () => {
         const result = await fetchClient({
             url: '/messages/' + currentDevice?.sessionId + '/incoming?pageSize=3',

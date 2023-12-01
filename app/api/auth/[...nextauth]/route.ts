@@ -171,6 +171,8 @@ export const authConfig: NextAuthOptions = {
                 })
                 if (result.ok) {
                     const resultData = await result.json()
+                    console.log('masuk credentials')
+                    console.log(resultData)
                     const user = {
                         id: resultData.id,
                         role: resultData.role,
@@ -271,7 +273,7 @@ export const authConfig: NextAuthOptions = {
                 if (user.role === 222) {
                     token.customerService = user
                 }
-                else if (user.role === 111) {
+                else if (user.role === 111 || user.role === 999) {
                     token.user = user;
                 }
             }

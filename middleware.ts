@@ -23,7 +23,7 @@ export default withAuth(
         const isAuthenticated = !!token;
         console.log('isAuthenticated')
         console.log(isAuthenticated)
-        // console.log(token)
+        console.log(token)
         if (isAuthenticated) {
             const user = token.user as any as User
             const customerService = token.customerService as any as CustomerService

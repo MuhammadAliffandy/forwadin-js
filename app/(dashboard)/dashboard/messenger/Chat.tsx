@@ -46,7 +46,7 @@ const Chat = ({ currentContact, currentDate, sessionId, listMessage, setlistMess
                         {listMessage.map(message => (
                             <div className="w-full mt-4">
                                 <ChatDetails message={message} />
-                                <BubbleChat text={message.message} received={message.receivedAt} status={message.status} currentDate={currentDate} isOutgoing={(message.to ? true : false)} mediaPath={message.mediaPath} />
+                                <BubbleChat text={message.message} received={message.createdAt} status={message.status} currentDate={currentDate} isOutgoing={(message.to ? true : false)} mediaPath={message.mediaPath} />
                             </div>
                         ))}
                     </InfiniteScroll>

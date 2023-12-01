@@ -110,7 +110,7 @@ interface IncomingMessage {
     createdAt: string,
     updatedAt: string,
     sessionId: string,
-    contact: {
+    contact?: {
         firstName: string,
         lastName: string,
         colorCode: string,
@@ -133,14 +133,15 @@ export interface ConversationMessage {
     id: string,
     message: string,
     mediaPath?: string,
-    receivedAt: string,
     createdAt: string,
     updatedAt: string,
     sessionId: string,
-    status: string,
+    status?: string,
+    schedule?: string,
     from?: string,
     to?: string,
-    contact: {
+    contactId?: number,
+    contact?: {
         firstName: string,
         lastName: string,
         colorCode: string,

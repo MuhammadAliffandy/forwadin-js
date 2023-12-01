@@ -4,8 +4,8 @@ import NavButton from '../../components/dashboard/NavButton'
 import MessageList from '../../components/dashboard/MessageList'
 import ContactList from '@/components/dashboard/ContactList'
 import { signIn, signOut, useSession } from "next-auth/react";
-import { Dropdown, DropdownItem, DropdownMenu, DropdownSection, DropdownTrigger } from "@nextui-org/react";
-import { IncomingMessage, UserProfile } from "@/utils/types";
+import { Badge, Button, Dropdown, DropdownItem, DropdownMenu, DropdownSection, DropdownTrigger, Popover, PopoverContent, PopoverTrigger } from "@nextui-org/react";
+import { ConversationMessage, IncomingMessage, OutgoingMessage, UserProfile } from "@/utils/types";
 import { fetchClient } from "@/utils/helper/fetchClient";
 import { useRouter } from "next/navigation";
 import Notification from "./dashboard/Notification";
@@ -14,6 +14,9 @@ const DashboardTemplate = ({ currentPage, children }: { currentPage: string, chi
     const { data: session } = useSession()
     const { socket, isConnected } = useSocket()
     const router = useRouter()
+    const [isPopover, setisPopover] = useState(false)
+    const [notification, setnotification] = useState<ConversationMessage[]>([])
+
     const [sideNavDropdown, setsideNavDropdown] = useState(false)
     const [isDisabled, setisDisabled] = useState(true)
     const [user, setuser] = useState<UserProfile>()
@@ -73,9 +76,10 @@ const DashboardTemplate = ({ currentPage, children }: { currentPage: string, chi
                 channels.add(`message:${device.sessionId}`)
             })
             channels.forEach(channel => {
-                socket.on(channel, (message: IncomingMessage) => {
+                socket.on(channel, (message: ConversationMessage) => {
                     console.log('ini message dari channel ' + channel)
                     console.log(message)
+                    setnotification(prev => [...prev, message])
                 })
             })
         }
@@ -175,18 +179,26 @@ const DashboardTemplate = ({ currentPage, children }: { currentPage: string, chi
                 <div className='bg-neutral-75 h-[95vh] overflow-y-scroll rounded-2xl text-sm p-2 lg:pt-6 lg:px-6 relative'>
                     {/* Desktop Dashboard nav */}
                     <div className='lg:flex w-full justify-end gap-2 hidden'>
-                        <Dropdown>
-                            <DropdownTrigger>
-                                <div className='flex-none bg-white rounded-full p-2 hover:cursor-pointer'>
-                                    <img src="/assets/icons/dashboard/bell.svg" alt="" />
+                        <Popover placement="bottom" isOpen={isPopover} onOpenChange={(open) => setisPopover(open)}>
+                            <PopoverTrigger onClick={() => setisPopover(true)}>
+                                <div>
+
+                                    <Badge content={notification.length} color="primary"
+                                        isInvisible={notification.length === 0} size="sm" shape="circle"
+
+                                    >
+                                        <div className='flex-none bg-white rounded-full p-2 hover:cursor-pointer'>
+                                            <img src="/assets/icons/dashboard/bell.svg" alt="" />
+                                        </div>
+                                    </Badge>
+
                                 </div>
-                            </DropdownTrigger>
-                            <DropdownMenu>
-                                <DropdownItem>
-                                    <Notification />
-                                </DropdownItem>
-                            </DropdownMenu>
-                        </Dropdown>
+                            </PopoverTrigger>
+                            <PopoverContent className="">
+                                <Notification notification={notification} />
+                            </PopoverContent>
+                        </Popover>
+
                         <Dropdown>
                             <DropdownTrigger>
                                 <div className='flex-none bg-white rounded-full hover:cursor-pointer flex w-[180px]'>
