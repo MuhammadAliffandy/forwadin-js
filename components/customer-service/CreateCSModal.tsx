@@ -75,6 +75,7 @@ const CreateCSModal = ({ openModal, refresh, setopenModal, user }: CreateCSModal
             refresh()
             setopenModal(false)
         } else {
+            console.log(await result?.json())
             toast.error('Gagal tambah CS')
         }
         setisLoading(false)
