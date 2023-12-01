@@ -46,6 +46,7 @@ const QRModal = ({ openModal, setopenModal, data, session, socket, refresh }: QR
 
         const refreshSession = async () => {
             if (session?.user) {
+                console.log('masuk refresh')
                 const refresh = await signIn('refresh', {
                     redirect: false,
                     user: JSON.stringify(session?.user)
@@ -53,10 +54,14 @@ const QRModal = ({ openModal, setopenModal, data, session, socket, refresh }: QR
                 if (refresh?.error) {
                     toast.error('gagal update session')
                     console.log(refresh.error)
+                } else {
+                    console.log('sukses refresh')
+
                 }
             }
         }
         return () => {
+            console.log('close modal')
             refreshSession()
             refresh()
         }

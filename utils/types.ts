@@ -434,3 +434,17 @@ export interface SessionProfile {
     status: string,
     address: string
 }
+export interface CSProfile {
+    pkId: number,
+    id: string,
+    username: string,
+    email: string,
+    password: string,
+    refreshToken: string,
+    deletedAt: string,
+    createdAt: string,
+    updatedAt: string,
+    userId: number,
+    deviceId: number,
+    privilegeId: 222
+}

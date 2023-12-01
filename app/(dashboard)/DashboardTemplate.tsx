@@ -5,11 +5,14 @@ import MessageList from '../../components/dashboard/MessageList'
 import ContactList from '@/components/dashboard/ContactList'
 import { signIn, signOut, useSession } from "next-auth/react";
 import { Dropdown, DropdownItem, DropdownMenu, DropdownSection, DropdownTrigger } from "@nextui-org/react";
-import { UserProfile } from "@/utils/types";
+import { IncomingMessage, UserProfile } from "@/utils/types";
 import { fetchClient } from "@/utils/helper/fetchClient";
 import { useRouter } from "next/navigation";
+import Notification from "./dashboard/Notification";
+import { useSocket } from "../SocketProvider";
 const DashboardTemplate = ({ currentPage, children }: { currentPage: string, children: React.ReactNode }) => {
     const { data: session } = useSession()
+    const { socket, isConnected } = useSocket()
     const router = useRouter()
     const [sideNavDropdown, setsideNavDropdown] = useState(false)
     const [isDisabled, setisDisabled] = useState(true)
@@ -59,12 +62,29 @@ const DashboardTemplate = ({ currentPage, children }: { currentPage: string, chi
         }
     }
     useEffect(() => {
+        const channels: Set<string> = new Set()
         if (session?.user?.device && session.user.device.length > 0)
             setisDisabled(false)
         else
             setisDisabled(true)
-    }, [session?.user?.device])
 
+        if (socket && session?.user?.device) {
+            session.user.device.forEach(device => {
+                channels.add(`message:${device.sessionId}`)
+            })
+            channels.forEach(channel => {
+                socket.on(channel, (message: IncomingMessage) => {
+                    console.log('ini message dari channel ' + channel)
+                    console.log(message)
+                })
+            })
+        }
+        return () => {
+            channels.forEach(channel => {
+                socket.off(channel)
+            })
+        }
+    }, [session?.user?.device])
     return (
         <>
             <div className={(sideNavDropdown ? 'block' : 'hidden') + " h-full w-[200px] lg:w-[250px] z-10 top-0 left-0 overflow-y-auto bg-white fixed lg:block pb-12"} id="side_nav">
@@ -155,12 +175,18 @@ const DashboardTemplate = ({ currentPage, children }: { currentPage: string, chi
                 <div className='bg-neutral-75 h-[95vh] overflow-y-scroll rounded-2xl text-sm p-2 lg:pt-6 lg:px-6 relative'>
                     {/* Desktop Dashboard nav */}
                     <div className='lg:flex w-full justify-end gap-2 hidden'>
-                        {/* <div className='flex-none bg-white rounded-full p-2 hover:cursor-pointer'>
-                            <img src="/assets/icons/dashboard/comments.svg" alt="" />
-                        </div> */}
-                        <div className='flex-none bg-white rounded-full p-2 hover:cursor-pointer'>
-                            <img src="/assets/icons/dashboard/bell.svg" alt="" />
-                        </div>
+                        <Dropdown>
+                            <DropdownTrigger>
+                                <div className='flex-none bg-white rounded-full p-2 hover:cursor-pointer'>
+                                    <img src="/assets/icons/dashboard/bell.svg" alt="" />
+                                </div>
+                            </DropdownTrigger>
+                            <DropdownMenu>
+                                <DropdownItem>
+                                    <Notification />
+                                </DropdownItem>
+                            </DropdownMenu>
+                        </Dropdown>
                         <Dropdown>
                             <DropdownTrigger>
                                 <div className='flex-none bg-white rounded-full hover:cursor-pointer flex w-[180px]'>

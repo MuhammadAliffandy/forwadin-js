@@ -49,7 +49,9 @@ const getDeviceSession = async (data: GetSession[], token: string) => {
             })
 
             if (fetchDeviceDetails.ok) {
+                // console.log('ini get device session ' + ses.device.id)
                 const body: DeviceData = await fetchDeviceDetails.json()
+                // console.log(body)
                 const device = {
                     id: ses.device.id,
                     sessionId: ses.sessionId,
@@ -101,15 +103,14 @@ export const authConfig: NextAuthOptions = {
 
                 if (result.ok) {
                     console.log('refresh')
-                    console.log(userData)
                     const resultData = await result.json()
-                    if (userData.role === 111) {
+                    if (userData.role === 222) {
                         console.log('refresh CS')
                         return {
                             ...userData,
                             id: resultData.id,
                             token: resultData.accessToken
-                        }
+                        } as any
                     }
                     const userSubscription = await fetch(process.env.BACKEND_URL + '/users/' + userData.id + '/subscription/', {
                         method: 'GET',
@@ -141,11 +142,12 @@ export const authConfig: NextAuthOptions = {
                     const user = {
                         ...userData,
                         id: resultData.id,
-                        role: resultData.role,
                         token: resultData.accessToken,
                         device: device,
                         subscription: subscription
                     }
+                    console.log('refresh admin')
+                    // console.log(user)
                     return user
                 } else {
                     return null
@@ -227,7 +229,6 @@ export const authConfig: NextAuthOptions = {
             },
             authorize: async (credentials: any) => {
                 console.log('masuk cs 1')
-                console.log(credentials)
                 const result = await fetch(process.env.BACKEND_URL + '/customer-services/login', {
                     method: 'POST',
                     headers: {
@@ -235,12 +236,9 @@ export const authConfig: NextAuthOptions = {
                     },
                     body: JSON.stringify({ identifier: credentials?.identifier, password: credentials?.password })
                 })
-                console.log('masuk cs 2')
-                console.log(result.status)
                 if (!result.ok) return null
                 const resultData = await result.json()
-                console.log('ini resultData')
-                console.log(resultData)
+
                 const customerService: CustomerService = {
                     id: resultData.id,
                     role: resultData.role,
@@ -249,8 +247,6 @@ export const authConfig: NextAuthOptions = {
                     deviceId: resultData.deviceId,
                     sessionId: resultData.sessionId
                 }
-                console.log('masuk CS 3')
-                console.log(customerService)
                 return customerService as any
             }
         })
@@ -260,7 +256,6 @@ export const authConfig: NextAuthOptions = {
     },
     callbacks: {
         async session({ session, token }: any) {
-            console.log(token)
             if (token.user)
                 session.user = token.user
             if (token.customerService)
@@ -272,8 +267,6 @@ export const authConfig: NextAuthOptions = {
             if (trigger === 'update') {
                 token.user = session.user
             }
-            console.log('jwt user')
-            console.log(user)
             if (user) {
                 if (user.role === 222) {
                     token.customerService = user
@@ -282,12 +275,9 @@ export const authConfig: NextAuthOptions = {
                     token.user = user;
                 }
             }
-            console.log(token)
             return token;
         },
         async signIn({ user, account }: any) {
-            console.log('signIn user')
-            console.log(user)
             if (account?.provider === 'google') {
                 // console.log(account.access_token)
                 const result = await fetch(process.env.BACKEND_URL + '/auth/google', {

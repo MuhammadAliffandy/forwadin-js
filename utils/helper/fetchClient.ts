@@ -1,5 +1,5 @@
 
-import { Session, User } from "next-auth"
+import { CustomerService, Session, User } from "next-auth"
 import { getSession, signIn, signOut, useSession } from "next-auth/react"
 import { toast } from "react-toastify"
 let isRefreshing = false
@@ -7,7 +7,7 @@ interface FetchClientParams {
     method: 'GET' | 'POST' | 'PUT' | 'DELETE',
     body?: string | FormData | null,
     url: string,
-    user: User | undefined,
+    user: User | CustomerService | undefined,
     isFormData?: boolean
 }
 const fetchClient = async ({ method, body = null, url, user, isFormData = false }: FetchClientParams): Promise<Response | null> => {

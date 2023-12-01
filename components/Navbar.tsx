@@ -17,6 +17,12 @@ const Navbar = () => {
             setIsDropdown(false)
         }
     }
+    const handleClickDashboard = () => {
+        if (session?.user)
+            router.push('/dashboard')
+        if (session?.customerService)
+            router.push('/customer-service/dashboard')
+    }
     const featureTransition = useTransition(featureDropdown, {
         from: {
             opacity: '0'
@@ -100,8 +106,8 @@ const Navbar = () => {
                     ))}
                 </div>
                 <div className="flex-items center relative">
-                    {session?.user ? (<>
-                        <div className="bg-primary px-8 py-2 text-white rounded-md hover:cursor-pointer whitespace-pre" onClick={() => router.push('/dashboard')}>Dashboard</div>
+                    {(session?.user || session?.customerService) ? (<>
+                        <div className="bg-primary px-8 py-2 text-white rounded-md hover:cursor-pointer whitespace-pre" onClick={handleClickDashboard}>Dashboard</div>
                     </>) : (<>
                         {/* <div className="bg-primary px-8 py-2 text-white rounded-md hover:cursor-pointer whitespace-pre" onClick={ }>Sign In</div> */}
                         <Button
@@ -111,7 +117,7 @@ const Navbar = () => {
                         {buttonTransition((style, item) => item && (
                             <animated.div style={style} className="absolute bg-white px-8 py-4 -left-10 top-16 flex flex-col text-center gap-4 rounded-md shadow-xl">
                                 <Link href={'/signin'} className=" hover:text-primary">Admin</Link >
-                                <Link href={'/signin'} className=" hover:text-primary whitespace-pre">Customer Service</Link >
+                                <Link href={'/customer-service/signin'} className=" hover:text-primary whitespace-pre">Customer Service</Link >
                             </animated.div>
                         ))}
                     </>)}
@@ -139,9 +145,9 @@ const Navbar = () => {
                     </Link>
                     <div className="flex flex-col gap-4">
 
-                        {session?.user ? (<>
+                        {(session?.user || session?.customerService) ? (<>
                             <div className='border border-primary rounded-full px-6 py-2 text-center whitespace-nowrap bg-primary text-white flex gap-2 justify-center'
-                                onClick={() => router.push('/dashboard')}>Dashboard</div>
+                                onClick={handleClickDashboard}>Dashboard</div>
                         </>) : (<>
                             <ButtonCustom text={'Sign Up'} href={'/signup'} isPrimary={false} />
                             <div className='border border-primary rounded-full px-6 py-2 text-center whitespace-nowrap bg-primary text-white flex gap-2 justify-center'
@@ -163,7 +169,7 @@ const Navbar = () => {
                             <Link href={'/signin'} className={'opacity-60'}>
                                 Sign In as Admin
                             </Link>
-                            <Link href={''} className={'opacity-60'}>
+                            <Link href={'/customer-service/signin'} className={'opacity-60'}>
                                 Sign In as Customer Service
                             </Link>
                         </>

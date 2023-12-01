@@ -88,6 +88,7 @@ const DeviceTable = ({ setcountDevice }: { setcountDevice: Dispatch<SetStateActi
         }
     }
     useEffect(() => {
+        console.log(session?.user)
         if (session?.user?.token)
             fetchData()
     }, [session?.user?.token])
