@@ -127,7 +127,6 @@ const Messenger = () => {
                         message: textInput,
                         createdAt: currDate.toISOString(),
                         updatedAt: currDate.toISOString(),
-                        receivedAt: currDate.toISOString(),
                         to: currentContact.phone,
                         contact: {
                             firstName: currentContact.firstName,

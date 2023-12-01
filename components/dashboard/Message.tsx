@@ -1,17 +1,43 @@
-import { IncomingMessage } from "@/utils/types"
+import { ConversationMessage, IncomingMessage, OutgoingMessage } from "@/utils/types"
 import { Button, Link } from "@nextui-org/react"
 import { useRouter } from "next/navigation"
-import ContactIcon from "./ContactIcon"
+
 import { getInitials, getNumberFromString } from "@/utils/helper"
 
-const Message = ({ message }: { message: IncomingMessage }) => {
-    const { push } = useRouter()
+const Message = ({ message }: { message: ConversationMessage }) => {
+
+    if (message.to)
+        return (
+            <Button as={Link} href="/dashboard/outgoing" variant="light" fullWidth className="rounded-md flex justify-between gap-4 text-[10px]">
+                <div className={`flex-none rounded-full text-white w-7 h-7 flex items-center justify-center bg-primary`}>
+                    <img src="/assets/icons/user.svg" alt="" />
+                </div>
+                <div className="w-full">
+                    <p className="font-bold">{message.contact ? message.contact.firstName + ' ' + message.contact.lastName : getNumberFromString(message.to)}</p>
+                    <div className="flex items-center gap-1 -mt-1">
+                        {message.mediaPath && (
+                            <div>
+                                <img src="/assets/icons/chat/image_media.svg" alt="" />
+                            </div>
+                        )}
+                        <p className="w-full" style={{ WebkitLineClamp: 2, overflow: 'hidden', WebkitBoxOrient: 'vertical', display: '-webkit-box' }}>{message.message}</p>
+                    </div>
+                </div>
+            </Button>
+        )
     return (
-        <Button as={Link} href="/dashboard/incoming" variant="ghost" fullWidth className="rounded-md flex justify-between gap-4 text-[10px]">
-            <PrintIcon contact={message.contact} phone={message.from} />
+        <Button as={Link} href="/dashboard/incoming" variant="light" fullWidth className="rounded-md flex justify-between gap-4 text-[10px]">
+            <PrintIcon contact={message.contact} phone={message.from!} />
             <div className="w-full">
-                <p className="font-bold">{message.contact ? message.contact.firstName + ' ' + message.contact.lastName : getNumberFromString(message.from)}</p>
-                <p className="-mt-1" style={{ WebkitLineClamp: 2, overflow: 'hidden', WebkitBoxOrient: 'vertical', display: '-webkit-box' }}>{message.message}</p>
+                <p className="font-bold">{message.contact ? message.contact.firstName + ' ' + message.contact.lastName : getNumberFromString(message.from!)}</p>
+                <div className="flex items-center gap-1 -mt-1">
+                    {message.mediaPath && (
+                        <div>
+                            <img src="/assets/icons/chat/image_media.svg" alt="" />
+                        </div>
+                    )}
+                    <p className="w-full" style={{ WebkitLineClamp: 2, overflow: 'hidden', WebkitBoxOrient: 'vertical', display: '-webkit-box' }}>{message.message}</p>
+                </div>
             </div>
         </Button>
     )
@@ -49,7 +75,7 @@ const PrintIcon = ({ contact, phone }: {
     return (
         <>
             <div className="text-sm">
-                <div className={`flex-none rounded-full text-white w-8 h-8 bg-primary flex items-center justify-center`}>{phone.slice(0, 2)}</div>
+                <div className={`flex-none rounded-full text-white w-7 h-7 bg-primary flex items-center justify-center`}>{phone.slice(0, 2)}</div>
             </div>
         </>
     )
