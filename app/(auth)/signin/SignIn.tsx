@@ -124,6 +124,7 @@ const SignIn = () => {
                 </div>
                 <div className='text-center text-sm'>
                     <p>Butuh buat akun? <Link href={'/signup'} className='text-primary'>Daftar di sini</Link> </p>
+                    <p className='mt-2'>Login sebagai Customer Service? <Link href={'/customer-service/signin'} className='text-primary'>Klik di sini</Link> </p>
                 </div>
             </form >
         </animated.div>

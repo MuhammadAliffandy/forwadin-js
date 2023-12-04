@@ -24,7 +24,8 @@ const Settings = () => {
         phone: '',
         email: '',
         accountApiKey: '',
-        affiliationCode: ''
+        affiliationCode: '',
+        emailVerifiedAt: ''
     })
     const [currentPage, setcurrentPage] = useState('profile')
     const componentTransition = useTransition(currentPage, {
@@ -88,7 +89,7 @@ const Settings = () => {
                             ))}
                             {componentTransition((style, item) => item === 'account' && (
                                 <animated.div style={style}>
-                                    <Account />
+                                    <Account user={session?.user} userProfile={userData} />
                                 </animated.div>
                             ))}
                             {componentTransition((style, item) => item === 'system' && (

@@ -1,8 +1,14 @@
+import type { Metadata } from 'next'
+import Messenger from './Messenger'
 
-const page = () => {
-    return (
-        <div>page</div>
-    )
+export const metadata: Metadata = {
+    title: 'Messenger',
 }
 
-export default page
+export default function Home() {
+    return (
+        <>
+            <Messenger />
+        </>
+    )
+}

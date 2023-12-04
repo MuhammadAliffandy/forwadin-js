@@ -44,8 +44,7 @@ const DashboardTemplate = ({ currentPage, children }: { currentPage: string, chi
     useEffect(() => {
         if (session?.user?.token) {
             fetchUserProfile()
-            console.log(session.user.id)
-            console.log(session.user.token)
+            console.log(session.user)
         }
 
     }, [session?.user?.token])
@@ -65,7 +64,10 @@ const DashboardTemplate = ({ currentPage, children }: { currentPage: string, chi
         }
     }
     useEffect(() => {
-        const channels: Set<string> = new Set()
+        const channels = {
+            session: new Set(),
+            device: new Set()
+        }
         if (session?.user?.device && session.user.device.length > 0)
             setisDisabled(false)
         else
@@ -73,18 +75,39 @@ const DashboardTemplate = ({ currentPage, children }: { currentPage: string, chi
 
         if (socket && session?.user?.device) {
             session.user.device.forEach(device => {
-                channels.add(`message:${device.sessionId}`)
+                channels.session.add(`message:${device.sessionId}`)
+                channels.device.add(`device:${device.id}:status`)
             })
-            channels.forEach(channel => {
-                socket.on(channel, (message: ConversationMessage) => {
-                    console.log('ini message dari channel ' + channel)
+            channels.session.forEach(session => {
+                socket.on(session, (message: ConversationMessage) => {
+                    console.log('ini message dari session ' + session)
                     console.log(message)
                     setnotification(prev => [...prev, message])
                 })
             })
+            channels.device.forEach(device => {
+                socket.on(device, async (message: string) => {
+                    console.log('ini message dari session ' + device)
+                    console.log(message)
+                    if (message === 'closed') {
+                        const result = await signIn('refresh', {
+                            redirect: false,
+                            user: JSON.stringify(session.customerService)
+                        })
+                        if (result?.error) {
+                            signOut()
+                        } else {
+                            router.refresh()
+                        }
+                    }
+                })
+            })
         }
         return () => {
-            channels.forEach(channel => {
+            channels.session.forEach(channel => {
+                socket.off(channel)
+            })
+            channels.device.forEach(channel => {
                 socket.off(channel)
             })
         }
@@ -143,7 +166,8 @@ const DashboardTemplate = ({ currentPage, children }: { currentPage: string, chi
                             </div>
                         </DropdownTrigger>
                         <DropdownMenu
-                            disabledKeys={["profile"]}>
+                            disabledKeys={["profile"]}
+                            aria-label="mobile_profile">
                             <DropdownSection showDivider={true}>
                                 <DropdownItem
                                     isReadOnly
@@ -215,7 +239,9 @@ const DashboardTemplate = ({ currentPage, children }: { currentPage: string, chi
                                 </div>
                             </DropdownTrigger>
                             <DropdownMenu
-                                disabledKeys={["profile"]}>
+                                disabledKeys={["profile"]}
+                                aria-label="desktop_profile"
+                            >
                                 <DropdownSection showDivider={true}>
                                     <DropdownItem
                                         isReadOnly

@@ -1,7 +1,6 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { usePathname } from 'next/navigation'
-import { useSession } from 'next-auth/react'
 import DashboardTemplate from './DashboardTemplate'
 const Template = ({ children }: { children: React.ReactNode }) => {
 
@@ -12,6 +11,8 @@ const Template = ({ children }: { children: React.ReactNode }) => {
             setCurrentPage('Settings')
         else if (pathName.includes('/dashboard/messenger'))
             setCurrentPage('Messenger')
+        else if (pathName.includes('/dashboard/order'))
+            setCurrentPage('Order')
         else if (pathName.includes('/dashboard'))
             setCurrentPage('Dashboard')
 

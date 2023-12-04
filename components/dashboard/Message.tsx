@@ -8,12 +8,12 @@ const Message = ({ message }: { message: ConversationMessage }) => {
 
     if (message.to)
         return (
-            <Button as={Link} href="/dashboard/outgoing" variant="light" fullWidth className="rounded-md flex justify-between gap-4 text-[10px]">
+            <Button as={Link} href={"/dashboard/outgoing?sessionId" + message.sessionId} variant="light" fullWidth className="rounded-md flex justify-between gap-4 text-[10px]">
                 <div className={`flex-none rounded-full text-white w-7 h-7 flex items-center justify-center bg-primary`}>
                     <img src="/assets/icons/user.svg" alt="" />
                 </div>
                 <div className="w-full">
-                    <p className="font-bold">{message.contact ? message.contact.firstName + ' ' + message.contact.lastName : getNumberFromString(message.to)}</p>
+                    <p className="font-bold">{message.contact ? message.contact.firstName + ' ' + (message.contact.lastName || '') : getNumberFromString(message.to)}</p>
                     <div className="flex items-center gap-1 -mt-1">
                         {message.mediaPath && (
                             <div>
@@ -29,7 +29,7 @@ const Message = ({ message }: { message: ConversationMessage }) => {
         <Button as={Link} href="/dashboard/incoming" variant="light" fullWidth className="rounded-md flex justify-between gap-4 text-[10px]">
             <PrintIcon contact={message.contact} phone={message.from!} />
             <div className="w-full">
-                <p className="font-bold">{message.contact ? message.contact.firstName + ' ' + message.contact.lastName : getNumberFromString(message.from!)}</p>
+                <p className="font-bold">{message.contact ? message.contact.firstName + ' ' + (message.contact.lastName || '') : getNumberFromString(message.from!)}</p>
                 <div className="flex items-center gap-1 -mt-1">
                     {message.mediaPath && (
                         <div>

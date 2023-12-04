@@ -5,19 +5,24 @@ import IncomingTable from "./IncomingTable"
 import { DeviceSession } from "@/utils/types"
 import { useSession } from "next-auth/react"
 import DropdownDevice from "@/components/dashboard/DropdownDevice"
+import { useSearchParams } from "next/navigation"
 
 const Incoming = () => {
     const { data: session } = useSession()
+    const searchParams = useSearchParams()
     const [totalMessage, settotalMessage] = useState(0)
     const [listDevice, setlistDevice] = useState<DeviceSession[]>([])
     const [currentDevice, setcurrentDevice] = useState<DeviceSession>()
-
-
     useEffect(() => {
         if (session?.user?.device)
             setlistDevice(session.user.device)
     }, [session?.user?.device])
     useEffect(() => {
+        if (searchParams?.has('sessionId')) {
+            const sessionId = searchParams.get('sessionId')
+            const findDevice = listDevice.find(item => item.sessionId === sessionId)
+            setcurrentDevice(findDevice ? findDevice : listDevice[0])
+        }
         setcurrentDevice(listDevice[0])
     }, [listDevice])
 
