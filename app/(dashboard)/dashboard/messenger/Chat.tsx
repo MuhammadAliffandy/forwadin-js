@@ -28,6 +28,9 @@ const Chat = ({ currentContact, currentDate, sessionId, listMessage, setlistMess
     useEffect(() => {
         console.log('rerender')
     }, [])
+    useEffect(() => {
+        console.log(currentContact)
+    }, [currentContact])
     return (
         <>
             <div id="scrollableChat" className="flex flex-col-reverse overflow-y-auto allowed-scroll pr-2 h-full gap-6">

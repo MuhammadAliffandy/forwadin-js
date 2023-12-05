@@ -1,7 +1,7 @@
 'use client'
 import { ChangeEvent, useEffect, useState } from "react"
 
-import { ContactData, DeviceData, ConversationMessage, DeviceSession, MessageMetadata, OutgoingMessage } from "@/utils/types"
+import { ContactData, DeviceData, ConversationMessage, DeviceSession, MessageMetadata, OutgoingMessage, ContactLatestMessage, GetMessage } from "@/utils/types"
 import TextAreaInput from "@/components/dashboard/chat/TextAreaInput"
 import { useSession } from "next-auth/react"
 import { fetchClient } from "@/utils/helper/fetchClient"
@@ -26,28 +26,68 @@ const Messenger = () => {
     const [showfile, setshowfile] = useState(false)
     const [sendMessageLoading, setsendMessageLoading] = useState(false)
     const [mobileDropdown, setmobileDropdown] = useState(false)
-    const [listContact, setlistContact] = useState<ContactData[]>([])
+    const [listContact, setlistContact] = useState<ContactLatestMessage[]>([])
     const [currentContact, setcurrentContact] = useState<ContactData>()
     const [chatDisabled, setchatDisabled] = useState(true)
     const [messageMetadata, setmessageMetadata] = useState<MessageMetadata>()
     const [listMessage, setlistMessage] = useState<ConversationMessage[]>([])
     const fetchListContact = async () => {
         const result = await fetchClient({
-            url: '/contacts?deviceId=' + session?.customerService?.deviceId,
+            url: '/contacts',
             method: 'GET',
             user: session?.customerService
         })
-        console.log('ini fetch contact')
         if (result && result.ok) {
             const resultData: ContactData[] = await result.json()
-            console.log(resultData)
-            setlistContact(resultData.map(contact => {
-                return {
-                    ...contact,
-                    initial: getInitials(contact.firstName + " " + contact.lastName),
-                    dob: formatBirthDate(contact.dob!)
+            const newArray: ContactLatestMessage[] = []
+            const fetchPromises: (() => Promise<void>)[] = [];
+            const fetchMessage = async (element: ContactData) => {
+                const response = await fetchClient({
+                    url: `/messages/${session?.customerService?.sessionId}/?phoneNumber=${element.phone}&pageSize=1&sort=asc`,
+                    method: 'GET',
+                    user: session?.user
+                })
+                if (response?.ok) {
+                    const data = await response.json();
+                    return data;
                 }
-            }))
+                throw new Error(`Failed to fetch data for element ${element}`);
+            }
+            resultData.forEach(async (element) => {
+                if (element.phone)
+                    fetchPromises.push(async () => {
+                        try {
+                            const message: GetMessage<ConversationMessage> = await fetchMessage(element);
+                            console.log(`Fetched message for contact ${element.firstName} ${element.lastName || ''}:`, message);
+                            if (message.data.length > 0) {
+                                const withMessage: ContactLatestMessage = {
+                                    contact: element,
+                                    latestMessage: message.data[0]
+                                }
+                                newArray.push(withMessage)
+                                return
+                            }
+                            const withoutMessage: ContactLatestMessage = {
+                                contact: element,
+                                latestMessage: null
+                            }
+                            newArray.push(withoutMessage)
+                            return
+                        } catch (error: any) {
+                            console.error(error);
+                        }
+                    })
+            })
+            await Promise.all(fetchPromises.map(callback => callback()))
+            console.log('ini new array')
+            console.log(newArray)
+            newArray.sort((a, b) => {
+                const timestampA = a.latestMessage ? new Date(a.latestMessage.createdAt).getTime() : 0;
+                const timestampB = b.latestMessage ? new Date(b.latestMessage.createdAt).getTime() : 0;
+
+                return timestampB - timestampA;
+            });
+            setlistContact(newArray)
         }
     }
     const fetchChatMessage = async (page: number) => {
@@ -161,9 +201,9 @@ const Messenger = () => {
     useEffect(() => {
         const paramsContact = searchParams?.get('contact')
         if (paramsContact) {
-            const findContact = listContact.find(item => item.id === paramsContact)
+            const findContact = listContact.find(item => item.contact.id === paramsContact)
             if (findContact) {
-                setcurrentContact(findContact)
+                setcurrentContact(findContact.contact)
             }
         }
     }, [listContact])

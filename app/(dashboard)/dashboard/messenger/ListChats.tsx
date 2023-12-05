@@ -1,9 +1,9 @@
-import { ContactData, ConversationMessage } from "@/utils/types"
+import { ContactData, ContactLatestMessage, ConversationMessage } from "@/utils/types"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { Dispatch, SetStateAction, useEffect, useState } from "react"
 
 interface ListChatsProps {
-    listContact: ContactData[],
+    listContact: ContactLatestMessage[],
     currentContact: ContactData | undefined,
     setcurrentContact: Dispatch<SetStateAction<ContactData | undefined>>,
     setlistMessage: Dispatch<SetStateAction<ConversationMessage[]>>,
@@ -15,26 +15,28 @@ const ListChats = ({ listContact, currentContact, setcurrentContact, setlistMess
     const searchParams = useSearchParams()!
     const [switchButton, setswitchButton] = useState('open')
     const [inputText, setinputText] = useState('')
-    const [searchedContact, setsearchedContact] = useState<ContactData[]>([])
+    const [searchedContact, setsearchedContact] = useState<ContactLatestMessage[]>([])
     const handleClickContact = (contact: ContactData) => {
+        if (currentContact?.id === contact.id) return
         setlistMessage([])
         setcurrentContact(contact)
         const params = new URLSearchParams(searchParams)
         params.set('contact', contact.id)
         router.push(pathname + '?' + params.toString())
     }
-    const filterDevice = (text: string) => {
+    const filterContact = (text: string) => {
         const regex = new RegExp(text, 'i')
         return listContact.filter(item => {
-            if (regex.test(item.firstName) || regex.test(item.lastName) || regex.test(item.phone) || regex.test(item.email))
+            const contact = item.contact
+            if (regex.test(contact.firstName) || regex.test(contact.lastName) || regex.test(contact.phone) || regex.test(contact.email))
                 return item
-            const findLabel = item.ContactLabel?.find(item => regex.test(item.label.name))
+            const findLabel = contact.ContactLabel?.find(contact => regex.test(contact.label.name))
             if (findLabel)
                 return item
         })
     }
     useEffect(() => {
-        const searchResult = filterDevice(inputText)
+        const searchResult = filterContact(inputText)
         setsearchedContact(searchResult)
     }, [inputText])
 
@@ -63,15 +65,15 @@ const ListChats = ({ listContact, currentContact, setcurrentContact, setlistMess
                 {inputText ? (
                     <>
                         {searchedContact.map(contact => (
-                            <div className={"rounded-md p-3 hover:cursor-pointer " + (currentContact?.id === contact.id ? 'bg-white' : '')} onClick={() => handleClickContact(contact)}>
+                            <div className={"rounded-md p-3 " + (currentContact?.id === contact.contact.id ? 'bg-white' : 'hover:cursor-pointer ')} onClick={() => handleClickContact(contact.contact)}>
                                 <div className="flex gap-2 items-center w-full">
                                     <div style={{
-                                        backgroundColor: '#' + contact.colorCode
-                                    }} className={`flex-none rounded-full text-white w-8 h-8 flex items-center justify-center`}>{contact.initial}</div>
+                                        backgroundColor: '#' + contact.contact.colorCode
+                                    }} className={`flex-none rounded-full text-white w-8 h-8 flex items-center justify-center`}>{contact.contact.initial}</div>
                                     <div className=" w-48">
-                                        <p>{contact.firstName} {contact.lastName}</p>
+                                        <p>{contact.contact.firstName} {contact.contact.lastName}</p>
                                         <p className="truncate text-ellipsis overflow-hidden  whitespace-nowrap text-[#777C88] mt-1">
-                                            +{contact.phone}
+                                            {contact.latestMessage?.message || ''}
                                         </p>
                                     </div>
                                 </div>
@@ -81,15 +83,15 @@ const ListChats = ({ listContact, currentContact, setcurrentContact, setlistMess
                 ) : (
                     <>
                         {listContact.map(contact => (
-                            <div className={"rounded-md p-3 hover:cursor-pointer " + (currentContact?.id === contact.id ? 'bg-white' : '')} onClick={() => handleClickContact(contact)}>
+                            <div className={"rounded-md p-3 " + (currentContact?.id === contact.contact.id ? 'bg-white' : 'hover:cursor-pointer ')} onClick={() => handleClickContact(contact.contact)}>
                                 <div className="flex gap-2 items-center w-full">
                                     <div style={{
-                                        backgroundColor: '#' + contact.colorCode
-                                    }} className={`flex-none rounded-full text-white w-8 h-8 flex items-center justify-center`}>{contact.initial}</div>
+                                        backgroundColor: '#' + contact.contact.colorCode
+                                    }} className={`flex-none rounded-full text-white w-8 h-8 flex items-center justify-center`}>{contact.contact.initial}</div>
                                     <div className=" w-48">
-                                        <p>{contact.firstName} {contact.lastName}</p>
+                                        <p>{contact.contact.firstName} {contact.contact.lastName}</p>
                                         <p className="truncate text-ellipsis overflow-hidden  whitespace-nowrap text-[#777C88] mt-1">
-                                            +{contact.phone}
+                                            {contact.latestMessage?.message || ''}
                                         </p>
                                     </div>
                                 </div>

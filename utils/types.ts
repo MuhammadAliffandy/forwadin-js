@@ -168,6 +168,11 @@ interface OutgoingMessage {
         colorCode: string
     }
 }
+export interface ContactLatestMessage {
+    contact: ContactData,
+    latestMessage: ConversationMessage | null
+}
+
 export interface MessageMetadata {
     totalMessages: number,
     currentPage: number,
