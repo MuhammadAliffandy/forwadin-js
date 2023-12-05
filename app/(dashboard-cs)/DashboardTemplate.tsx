@@ -5,7 +5,7 @@ import MessageList from '../../components/dashboard/MessageList'
 import ContactList from '@/components/dashboard/ContactList'
 import { signIn, signOut, useSession } from "next-auth/react";
 import { Dropdown, DropdownItem, DropdownMenu, DropdownSection, DropdownTrigger } from "@nextui-org/react";
-import { UserProfile } from "@/utils/types";
+import { CustomerService, UserProfile } from "@/utils/types";
 import { fetchClient } from "@/utils/helper/fetchClient";
 import { useRouter } from "next/navigation";
 const DashboardTemplate = ({ currentPage, children }: { currentPage: string, children: React.ReactNode }) => {
@@ -13,7 +13,6 @@ const DashboardTemplate = ({ currentPage, children }: { currentPage: string, chi
     const router = useRouter()
     const [sideNavDropdown, setsideNavDropdown] = useState(false)
     const [isDisabled, setisDisabled] = useState(true)
-    const [user, setuser] = useState<UserProfile>()
     const handleClick = (event: React.MouseEvent) => {
         setsideNavDropdown(true)
     }
@@ -23,26 +22,6 @@ const DashboardTemplate = ({ currentPage, children }: { currentPage: string, chi
             if (mainContent?.contains(e.target as Node))
                 setsideNavDropdown(false)
     }
-    const fetchUserProfile = async () => {
-
-        const result = await fetchClient({
-            url: '/users/' + session?.user?.id,
-            method: 'GET',
-            user: session?.user
-        })
-        if (result && result.ok) {
-            const body: UserProfile = await result.json()
-            setuser(body)
-        }
-    }
-    useEffect(() => {
-        if (session?.user?.token) {
-            fetchUserProfile()
-            console.log(session.user.id)
-            console.log(session.user.token)
-        }
-
-    }, [session?.user?.token])
     useEffect(() => {
         if (session?.customerService?.sessionId)
             setisDisabled(false)
@@ -67,7 +46,7 @@ const DashboardTemplate = ({ currentPage, children }: { currentPage: string, chi
                     <div className='flex flex-col mt-12 gap-2'>
                         <NavButton text='Dashboard' href='/customer-service/dashboard' currentPage={currentPage} />
                         {/* Message List */}
-                        <NavButton text='Messenger' href='/dashboard/customer-service/messenger' currentPage={currentPage} isDisabled={isDisabled} />
+                        <NavButton text='Messenger' href='/customer-service/dashboard/messenger' currentPage={currentPage} isDisabled={isDisabled} />
                         <p className='text-sm mt-2'>Tools</p>
                         <NavButton text='Auto Reply' href='/customer-service/dashboard/auto-reply' currentPage={currentPage} isDisabled={isDisabled} />
                         <p className='text-sm mt-2'>Others</p>
@@ -86,15 +65,11 @@ const DashboardTemplate = ({ currentPage, children }: { currentPage: string, chi
                         <DropdownTrigger>
                             <div className='flex-none bg-neutral-75 rounded-full hover:cursor-pointer flex w-[180px]'>
                                 <div className='flex-1 flex justify-center items-center'>
-                                    <p>{user?.username}</p>
+                                    <p>{session?.customerService?.username}</p>
                                 </div>
-                                {session?.user?.image ? (
-                                    <img src={session.user.image} alt="" className="rounded-full" width={33} />
-                                ) : (
-                                    <div className='flex-none bg-primary rounded-full p-2 hover:cursor-pointer flex items-center justify-center'>
-                                        <img src="/assets/icons/dashboard/user.svg" alt="" />
-                                    </div>
-                                )}
+                                <div className='flex-none bg-primary rounded-full p-2 hover:cursor-pointer flex items-center justify-center'>
+                                    <img src="/assets/icons/dashboard/user.svg" alt="" />
+                                </div>
                             </div>
                         </DropdownTrigger>
                         <DropdownMenu
@@ -106,20 +81,12 @@ const DashboardTemplate = ({ currentPage, children }: { currentPage: string, chi
                                     className="opacity-100"
                                 >
                                     <div className="flex justify-center">
-                                        {session?.user?.image ? (
-                                            <img
-                                                src={session.user.image} alt="profile"
-                                                width={54}
-                                                height={54}
-                                                className="rounded-full" />
-                                        ) : (
-                                            <div className='flex-none bg-primary rounded-full w-[54px] h-[54px] p-4 hover:cursor-pointer flex items-center justify-center'>
-                                                <img src="/assets/icons/dashboard/user.svg" alt="" className="w-full" />
-                                            </div>
-                                        )}
+                                        <div className='flex-none bg-primary rounded-full w-[54px] h-[54px] p-4 hover:cursor-pointer flex items-center justify-center'>
+                                            <img src="/assets/icons/dashboard/user.svg" alt="" className="w-full" />
+                                        </div>
                                     </div>
-                                    <p className="font-bold text-sm text-center mt-2">{user?.firstName} {user?.lastName}</p>
-                                    <p className="text-[10px] text-center">{user?.email}</p>
+                                    <p className="font-bold text-sm text-center mt-2">{session?.customerService?.username}</p>
+                                    <p className="text-[10px] text-center">{session?.customerService?.email}</p>
                                 </DropdownItem>
                             </DropdownSection>
                             <DropdownItem key={'forwardin profile'}>Forwardin Profile</DropdownItem>
@@ -141,15 +108,11 @@ const DashboardTemplate = ({ currentPage, children }: { currentPage: string, chi
                             <DropdownTrigger>
                                 <div className='flex-none bg-white rounded-full hover:cursor-pointer flex w-[180px]'>
                                     <div className='flex-1 flex justify-center items-center'>
-                                        <p>{user?.username}</p>
+                                        <p>{session?.customerService?.username}</p>
                                     </div>
-                                    {session?.user?.image ? (
-                                        <img src={session.user.image} alt="" className="rounded-full" width={33} />
-                                    ) : (
-                                        <div className='flex-none bg-primary rounded-full p-2 hover:cursor-pointer flex items-center justify-center'>
-                                            <img src="/assets/icons/dashboard/user.svg" alt="" />
-                                        </div>
-                                    )}
+                                    <div className='flex-none bg-primary rounded-full p-2 hover:cursor-pointer flex items-center justify-center'>
+                                        <img src="/assets/icons/dashboard/user.svg" alt="" />
+                                    </div>
                                 </div>
                             </DropdownTrigger>
                             <DropdownMenu
@@ -161,20 +124,12 @@ const DashboardTemplate = ({ currentPage, children }: { currentPage: string, chi
                                         className="opacity-100"
                                     >
                                         <div className="flex justify-center">
-                                            {session?.user?.image ? (
-                                                <img
-                                                    src={session.user.image} alt="profile"
-                                                    width={54}
-                                                    height={54}
-                                                    className="rounded-full" />
-                                            ) : (
-                                                <div className='flex-none bg-primary rounded-full w-[54px] h-[54px] p-4 hover:cursor-pointer flex items-center justify-center'>
-                                                    <img src="/assets/icons/dashboard/user.svg" alt="" className="w-full" />
-                                                </div>
-                                            )}
+                                            <div className='flex-none bg-primary rounded-full w-[54px] h-[54px] p-4 hover:cursor-pointer flex items-center justify-center'>
+                                                <img src="/assets/icons/dashboard/user.svg" alt="" className="w-full" />
+                                            </div>
                                         </div>
-                                        <p className="font-bold text-sm text-center mt-2">{user?.firstName} {user?.lastName}</p>
-                                        <p className="text-[10px] text-center">{user?.email}</p>
+                                        <p className="font-bold text-sm text-center mt-2">{session?.customerService?.username}</p>
+                                        <p className="text-[10px] text-center">{session?.customerService?.email}</p>
                                     </DropdownItem>
                                 </DropdownSection>
                                 <DropdownItem key={'forwardin profile'}>Forwardin Profile</DropdownItem>

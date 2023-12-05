@@ -24,7 +24,8 @@ const Dashboard = () => {
         accountApiKey: '',
         affiliationCode: '',
         email: '',
-        phone: ''
+        phone: '',
+        emailVerifiedAt: ''
     })
     const [userSubscription, setuserSubscription] = useState<SubscriptionTypes>()
     const [progressDevice, setprogressDevice] = useState({

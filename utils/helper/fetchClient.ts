@@ -44,23 +44,6 @@ const fetchClient = async ({ method, body = null, url, user, isFormData = false 
                     } else {
                         window.location = window.location
                     }
-
-                    // else {
-                    //     console.log('sukses refresh token')
-                    //     const newSession = await getSession()
-                    //     headers['Authorization'] = newSession?.user?.token
-                    //     const newResult = await fetch(process.env.NEXT_PUBLIC_BACKEND_URL + url, {
-                    //         method: method,
-                    //         headers: headers,
-                    //         body: body,
-                    //     })
-                    //     if (newResult.status === 200) {
-                    //         return newResult
-                    //     } else {
-                    //         signOut()
-                    //         window.location.replace('/signin')
-                    //     }
-                    // }
                 } else {
                     signOut()
                     window.location.replace('/signin')

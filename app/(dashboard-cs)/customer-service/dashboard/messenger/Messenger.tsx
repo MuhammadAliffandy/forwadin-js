@@ -1,8 +1,6 @@
 'use client'
 import { ChangeEvent, useEffect, useState } from "react"
-import ProfileDetail from "./ProfileDetail"
-import Chat from "./Chat"
-import ListChats from "./ListChats"
+
 import { ContactData, DeviceData, ConversationMessage, DeviceSession, MessageMetadata, OutgoingMessage, ContactLatestMessage, GetMessage } from "@/utils/types"
 import TextAreaInput from "@/components/dashboard/chat/TextAreaInput"
 import { useSession } from "next-auth/react"
@@ -14,6 +12,10 @@ import DropdownDevice from "@/components/dashboard/DropdownDevice"
 import UploadFile from "@/components/dashboard/UploadFile"
 import { useSearchParams } from 'next/navigation'
 import { PAGINATION_BATCH } from "@/utils/constant"
+import { randomInt } from "crypto"
+import ListChats from "@/app/(dashboard)/dashboard/messenger/ListChats"
+import Chat from "@/app/(dashboard)/dashboard/messenger/Chat"
+import ProfileDetail from "@/app/(dashboard)/dashboard/messenger/ProfileDetail"
 const Messenger = () => {
     const searchParams = useSearchParams()
     const { data: session } = useSession()
@@ -24,19 +26,16 @@ const Messenger = () => {
     const [showfile, setshowfile] = useState(false)
     const [sendMessageLoading, setsendMessageLoading] = useState(false)
     const [mobileDropdown, setmobileDropdown] = useState(false)
-    const [listDevice, setlistDevice] = useState<DeviceSession[]>([])
-    const [currentDevice, setcurrentDevice] = useState<DeviceSession>()
     const [listContact, setlistContact] = useState<ContactLatestMessage[]>([])
     const [currentContact, setcurrentContact] = useState<ContactData>()
     const [chatDisabled, setchatDisabled] = useState(true)
     const [messageMetadata, setmessageMetadata] = useState<MessageMetadata>()
     const [listMessage, setlistMessage] = useState<ConversationMessage[]>([])
-
     const fetchListContact = async () => {
         const result = await fetchClient({
             url: '/contacts',
             method: 'GET',
-            user: session?.user
+            user: session?.customerService
         })
         if (result && result.ok) {
             const resultData: ContactData[] = await result.json()
@@ -44,7 +43,7 @@ const Messenger = () => {
             const fetchPromises: (() => Promise<void>)[] = [];
             const fetchMessage = async (element: ContactData) => {
                 const response = await fetchClient({
-                    url: `/messages/${currentDevice?.sessionId}/?phoneNumber=${element.phone}&pageSize=1&sort=asc`,
+                    url: `/messages/${session?.customerService?.sessionId}/?phoneNumber=${element.phone}&pageSize=1&sort=asc`,
                     method: 'GET',
                     user: session?.user
                 })
@@ -92,13 +91,13 @@ const Messenger = () => {
         }
     }
     const fetchChatMessage = async (page: number) => {
-        if (!currentDevice && !currentContact) return
-        console.log(`/messages/${currentDevice?.sessionId}/?phoneNumber=${currentContact?.phone}&page=${messageMetadata?.currentPage}&pageSize=${PAGINATION_BATCH}&sort=asc`)
+        if (!session?.customerService?.sessionId && !currentContact) return
+        console.log(`/messages/${session?.customerService?.sessionId}/?phoneNumber=${currentContact?.phone}&page=${messageMetadata?.currentPage}&pageSize=${PAGINATION_BATCH}&sort=asc`)
         console.log('ini fetch chat')
         const result = await fetchClient({
-            url: `/messages/${currentDevice?.sessionId}/?phoneNumber=${currentContact?.phone}&page=${page}&pageSize=${PAGINATION_BATCH}&sort=asc`,
+            url: `/messages/${session?.customerService?.sessionId}/?phoneNumber=${currentContact?.phone}&page=${page}&pageSize=${PAGINATION_BATCH}&sort=asc`,
             method: 'GET',
-            user: session?.user
+            user: session?.customerService
         })
         if (result && result.ok) {
             const resultData = await result.json()
@@ -111,13 +110,13 @@ const Messenger = () => {
     const sendMessage = async () => {
         setsendMessageLoading(true)
         if (inputFile.length > 0) {
-            if (currentDevice && currentContact && inputFile) {
+            if (session?.customerService?.sessionId && currentContact && inputFile) {
                 const formdata = new FormData()
                 formdata.append("caption", textInput)
                 // @ts-ignore
                 formdata.set('image', inputFile[0].file, inputFile[0].name)
                 formdata.append("recipients[0]", currentContact.phone)
-                formdata.append("sessionId", currentDevice.sessionId)
+                formdata.append("sessionId", session?.customerService?.sessionId)
                 try {
                     const result = await fetch('/api/message/media', {
                         method: 'POST',
@@ -145,9 +144,9 @@ const Messenger = () => {
         }
 
         else {
-            if (currentDevice && currentContact && textInput.length > 0) {
+            if (session?.customerService?.sessionId && currentContact && textInput.length > 0) {
                 const result = await fetchClient({
-                    url: '/messages/' + currentDevice.sessionId + '/send',
+                    url: '/messages/' + session?.customerService?.sessionId + '/send',
                     method: 'POST',
                     body: JSON.stringify([
                         {
@@ -157,14 +156,14 @@ const Messenger = () => {
                             }
                         }
                     ]),
-                    user: session?.user
+                    user: session?.customerService
                 })
                 if (result && result.ok) {
                     toast.success('Berhasil kirim pesan')
                     const currDate = new Date()
                     const newMessage: ConversationMessage = {
                         id: 'lorem',
-                        sessionId: currentDevice.sessionId,
+                        sessionId: session?.customerService?.sessionId,
                         message: textInput,
                         createdAt: currDate.toISOString(),
                         updatedAt: currDate.toISOString(),
@@ -187,22 +186,18 @@ const Messenger = () => {
     }
 
     useEffect(() => {
-        if (currentContact && currentDevice) {
+        if (currentContact && session?.customerService?.sessionId) {
             setchatDisabled(false)
         }
         else {
             setchatDisabled(true)
         }
 
-    }, [currentContact, currentDevice])
+    }, [currentContact, session?.customerService?.sessionId])
     useEffect(() => {
-        if (currentDevice && listMessage.length === 0)
+        if (session?.customerService?.sessionId && listMessage.length === 0)
             fetchChatMessage(1)
     }, [currentContact])
-    useEffect(() => {
-        if (session?.user?.device && listDevice.length === 0)
-            setlistDevice(session.user.device)
-    }, [session?.user?.device])
     useEffect(() => {
         const paramsContact = searchParams?.get('contact')
         if (paramsContact) {
@@ -213,28 +208,22 @@ const Messenger = () => {
         }
     }, [listContact])
     useEffect(() => {
-        if (currentDevice)
+        if (session?.customerService?.sessionId)
             fetchListContact()
-    }, [currentDevice])
+    }, [session?.customerService?.sessionId])
     return (
         <div className=" overflow-y-auto lg:overflow-y-hidden">
             <div className='flex lg:flex-row flex-col items-center justify-between gap-4 mb-12 lg:mb-0 lg:h-[82vh]'>
                 <div className='max-w-md lg:max-w-[250px] w-full lg:h-[78vh] bg-white lg:bg-neutral-75 p-4 lg:p-0 text-xs'>
-                    <DropdownDevice
-                        currentDevice={currentDevice}
-                        listDevice={listDevice}
-                        setcurrentDevice={setcurrentDevice}
-                    />
                     <ListChats setlistMessage={setlistMessage} listContact={listContact} currentContact={currentContact} setcurrentContact={setcurrentContact} />
                 </div>
                 <div className={"bg-white p-4 rounded-md w-full max-w-md lg:max-w-full h-full " + (chatDisabled && "opacity-50 pointer-events-none")}>
                     <div className='text-xs w-full flex flex-col h-full'>
-
                         <Chat
                             currentContact={currentContact}
                             currentDate={currentDate}
                             listMessage={listMessage}
-                            sessionId={currentDevice?.sessionId}
+                            sessionId={session?.customerService?.sessionId}
                             setlistMessage={setlistMessage}
                             fetchChatMessage={fetchChatMessage}
                             metadata={messageMetadata!}

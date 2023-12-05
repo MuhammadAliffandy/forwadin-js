@@ -168,6 +168,11 @@ interface OutgoingMessage {
         colorCode: string
     }
 }
+export interface ContactLatestMessage {
+    contact: ContactData,
+    latestMessage: ConversationMessage | null
+}
+
 export interface MessageMetadata {
     totalMessages: number,
     currentPage: number,
@@ -249,7 +254,8 @@ export interface UserProfile {
     phone: string,
     email: string,
     accountApiKey: string,
-    affiliationCode: string
+    affiliationCode: string,
+    emailVerifiedAt: string,
 }
 
 export interface SubscriptionTypes {
@@ -387,7 +393,12 @@ export interface CustomerService {
     device: {
         id: string,
     },
-    privilegeId: 222
+    privilegeId: 222,
+    user: {
+        id: string,
+        firstName: string,
+        lastName: string
+    }
 }
 
 export interface BusinessHours {

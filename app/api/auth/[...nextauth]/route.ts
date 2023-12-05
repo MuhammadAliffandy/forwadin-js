@@ -20,11 +20,20 @@ declare module "next-auth" {
     }
     interface CustomerService {
         id: string | undefined,
+        username: string,
+        email: string,
         role: 222,
         token: string | undefined,
         refreshToken: string | undefined,
         sessionId: string | undefined,
         deviceId: string | undefined,
+        user: {
+            id: string,
+            firstName: string,
+            lastName: string
+        },
+        createdAt: string,
+        updatedAt: string
     }
     interface Session extends DefaultSession {
         user?: User;
@@ -230,27 +239,51 @@ export const authConfig: NextAuthOptions = {
                 password: {}
             },
             authorize: async (credentials: any) => {
-                console.log('masuk cs 1')
-                const result = await fetch(process.env.BACKEND_URL + '/customer-services/login', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ identifier: credentials?.identifier, password: credentials?.password })
-                })
-                if (!result.ok) return null
-                const resultData = await result.json()
+                try {
 
-                const customerService: CustomerService = {
-                    id: resultData.id,
-                    role: resultData.role,
-                    token: resultData.accessToken,
-                    refreshToken: resultData.refreshToken,
-                    deviceId: resultData.deviceId,
-                    sessionId: resultData.sessionId
+                    console.log('masuk cs 1')
+                    const result = await fetch(process.env.BACKEND_URL + '/customer-services/login', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ identifier: credentials?.identifier, password: credentials?.password })
+                    })
+                    console.log(credentials)
+                    if (!result.ok) return null
+                    const resultData = await result.json()
+                    console.log('masuk cs 3')
+                    const csProfile = await fetch(process.env.BACKEND_URL + '/customer-services/' + resultData.id, {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json', 'Authorization': 'Bearer ' + resultData.accessToken
+                        }
+                    })
+                    if (!result.ok) {
+                        return null
+                    }
+                    const csProfileData = await csProfile.json()
+                    const customerService: CustomerService = {
+                        id: resultData.id,
+                        user: csProfileData.user,
+                        email: csProfileData.email,
+                        username: csProfileData.username,
+                        role: resultData.role,
+                        token: resultData.accessToken,
+                        refreshToken: resultData.refreshToken,
+                        deviceId: resultData.deviceId,
+                        sessionId: resultData.sessionId,
+                        createdAt: csProfileData.createdAt,
+                        updatedAt: csProfileData.updatedAt
+                    }
+                    return customerService as any
+
+                } catch (error) {
+                    console.log(error)
+                    return null
                 }
-                return customerService as any
             }
+
         })
     ],
     pages: {

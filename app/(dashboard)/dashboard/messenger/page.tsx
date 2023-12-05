@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import Messenger from './Messenger'
 
 export const metadata: Metadata = {
-    title: 'Dashboard',
+    title: 'Messenger',
 }
 
 export default function Home() {

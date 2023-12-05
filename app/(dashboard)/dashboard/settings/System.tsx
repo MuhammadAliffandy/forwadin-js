@@ -1,11 +1,14 @@
 
+import DeleteModal from "@/components/dashboard/device/DeleteModal"
 import CreateTemplateModal from "@/components/dashboard/settings/CreateTemplateModal"
+import { getArrayFromSet } from "@/utils/helper"
 import { fetchClient } from "@/utils/helper/fetchClient"
 import { DeviceData, MessageTemplate } from "@/utils/types"
 import { Button, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from "@nextui-org/react"
 import { User } from "next-auth"
 import { Message } from "postcss"
 import { useEffect, useState } from "react"
+import { toast } from "react-toastify"
 
 interface SystemPageProps {
     user: User | undefined,
@@ -15,6 +18,9 @@ const System = ({ user }: SystemPageProps) => {
     const [contactLabel, setcontactLabel] = useState<string[]>([])
     const [templateModal, settemplateModal] = useState(false)
     const [templateList, settemplateList] = useState<MessageTemplate[]>([])
+    const [deleteTemplateModal, setdeleteTemplateModal] = useState(false)
+    const [selectedTemplate, setselectedTemplate] = useState<Set<string> | 'all'>(new Set([]))
+    const [isChecked, setisChecked] = useState(false)
     const fetchDeviceLabel = async () => {
         const result = await fetchClient({
             url: '/devices/labels',
@@ -35,6 +41,24 @@ const System = ({ user }: SystemPageProps) => {
         if (result?.ok) {
             const resultData = await result.json()
             setcontactLabel(resultData)
+        }
+    }
+    const deleteTemplate = async () => {
+        const deletedTemplate = getArrayFromSet(selectedTemplate, templateList)
+        if (deletedTemplate) {
+            const result = await fetchClient({
+                url: '/templates/',
+                body: JSON.stringify({ templateIds: deletedTemplate }),
+                method: 'DELETE',
+                user: user
+            })
+            if (result?.ok) {
+                toast.success('Berhasil hapus template')
+                fetchTemplate()
+                setselectedTemplate(new Set([]))
+            } else {
+                toast.error('Gagal hapus template')
+            }
         }
     }
     const fetchTemplate = async () => {
@@ -58,9 +82,16 @@ const System = ({ user }: SystemPageProps) => {
             fetchTemplate()
         }
     }, [user?.token])
+    useEffect(() => {
+        if ((selectedTemplate as Set<string>).size > 0 || selectedTemplate === 'all')
+            setisChecked(true)
+        else
+            setisChecked(false)
+    }, [selectedTemplate])
     return (
         <>
             <CreateTemplateModal refresh={fetchTemplate} openModal={templateModal} setopenModal={settemplateModal} user={user} />
+            <DeleteModal deleteFunction={deleteTemplate} openModal={deleteTemplateModal} setopenModal={setdeleteTemplateModal} count={(selectedTemplate === 'all' ? 'semua' : (selectedTemplate as Set<string>).size) as string} type="Template" />
             <p className="font-lexend text-lg font-bold">Labels</p>
             <div className="flex flex-col gap-4 mt-4">
                 <p className="">Device Labels</p>
@@ -91,9 +122,15 @@ const System = ({ user }: SystemPageProps) => {
             <div className="flex flex-col gap-4 mt-6">
                 <div className="flex justify-between items-center ">
                     <p className="font-lexend text-lg font-bold">Templates</p>
-                    <Button className="rounded-md text-sm" color="primary" size="sm" onClick={() => settemplateModal(true)}>
-                        Buat Template
-                    </Button>
+                    {isChecked ? (
+                        <Button className="rounded-md text-sm" color="danger" size="sm" onClick={() => setdeleteTemplateModal(true)}>
+                            Hapus
+                        </Button>
+                    ) : (
+                        <Button className="rounded-md text-sm" color="primary" size="sm" onClick={() => settemplateModal(true)}>
+                            Buat Template
+                        </Button>
+                    )}
                 </div>
                 <div className="bg-neutral-75 text-customNeutral py-3 px-4 text-xs">
                     Atur template sesuai dengan kebutuhan Anda untuk lebih efisien dalam mengirim pesan.
@@ -112,8 +149,8 @@ const System = ({ user }: SystemPageProps) => {
                         wrapper: 'rounded-md'
                     }}
                     radius='md'
-                // selectedKeys={selectedKeys as any}
-                // onSelectionChange={setSelectedKeys as any}
+                    selectedKeys={selectedTemplate as any}
+                    onSelectionChange={setselectedTemplate as any}
                 >
                     <TableHeader>
                         <TableColumn>Nama</TableColumn>

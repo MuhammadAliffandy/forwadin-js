@@ -102,6 +102,7 @@ const SignIn = () => {
                 <div>
                     <Link href={'/auth/forgot-password'} className='text-primary'>
                         Lupa Password?</Link>
+                    <p className='text-center text-sm mt-2'>Login sebagai Admin? <Link href={'/signin'} className='text-primary'>Klik di sini</Link> </p>
                 </div>
                 <ButtonSubmit isLoading={isLoading} text='Sign In' />
             </form >
