@@ -3,6 +3,7 @@ import { UserProfile } from "@/utils/types"
 import { useForm } from "react-hook-form"
 
 const Profile = ({ profileData }: { profileData: UserProfile }) => {
+    const { handleSubmit, register, setValue, watch, setError, formState: { errors } } = useForm<UserProfile>()
     return (
         <form>
             <div className="mx-auto w-[120px] h-[120px] rounded-full bg-primary flex items-center justify-center relative">
@@ -16,7 +17,7 @@ const Profile = ({ profileData }: { profileData: UserProfile }) => {
                         <input type="text" value={profileData.firstName} disabled={true} className={'px-4 py-3 focus:outline-none text-sm rounded-md focus:ring-0 w-full bg-neutral-75 border-[#B0B4C5]'} />
                     </div>
                     <div className="w-full">
-                        <p className="mb-2">First Name</p>
+                        <p className="mb-2">Last Name</p>
                         <input type="text" value={profileData.lastName} disabled={true} className={'px-4 py-3 focus:outline-none text-sm rounded-md focus:ring-0 w-full bg-neutral-75 border-[#B0B4C5]'} />
                     </div>
                 </div>
@@ -32,8 +33,8 @@ const Profile = ({ profileData }: { profileData: UserProfile }) => {
                     </div>
                 </div>
                 <div>
-                    <p className="mb-2">API Key</p>
-                    <input type="text" value={profileData.accountApiKey} disabled={true} className={'px-4 py-3 focus:outline-none text-sm rounded-md focus:ring-0 w-full bg-neutral-75 border-[#B0B4C5]'} />
+                    <p className="mb-2">Phone Number</p>
+                    <input type="text" value={(profileData.phone || '-')} disabled={true} className={'px-4 py-3 focus:outline-none text-sm rounded-md focus:ring-0 w-full bg-neutral-75 border-[#B0B4C5]'} />
                 </div>
             </div>
         </form >

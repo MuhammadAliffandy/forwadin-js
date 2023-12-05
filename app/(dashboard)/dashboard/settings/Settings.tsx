@@ -3,7 +3,6 @@
 import { fetchClient } from "@/utils/helper/fetchClient"
 import { useEffect, useState } from "react"
 import { toast } from "react-toastify"
-import Account from "./Account"
 import { animated, useTransition } from "@react-spring/web"
 import Profile from "./Profile"
 import Device from "./Device"
@@ -11,7 +10,8 @@ import System from "./System"
 import { UserProfile } from "@/utils/types"
 import { Tab, Tabs } from "@nextui-org/react"
 import { useSession } from "next-auth/react"
-
+import dynamic from "next/dynamic"
+const Account = dynamic(() => import('./Account'), { ssr: false, })
 const Settings = () => {
     const { data: session } = useSession()
     const [isLoaded, setisLoaded] = useState(false)

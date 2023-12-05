@@ -48,21 +48,6 @@ const DashboardTemplate = ({ currentPage, children }: { currentPage: string, chi
         }
 
     }, [session?.user?.token])
-    const handleDelete = async () => {
-        console.log("/users/" + session?.user?.id + "/delete")
-        if (window.confirm('Delete User?')) {
-            const deleteUser = await fetchClient({
-                url: "/users/" + session?.user?.id + "/delete",
-                method: 'DELETE',
-                user: session?.user
-            })
-            if (deleteUser?.ok) {
-                signOut({
-                    callbackUrl: '/signup'
-                })
-            }
-        }
-    }
     useEffect(() => {
         const channels = {
             session: new Set(),
@@ -194,9 +179,6 @@ const DashboardTemplate = ({ currentPage, children }: { currentPage: string, chi
                             <DropdownItem key={'forwardin profile'}>Forwardin Profile</DropdownItem>
                             <DropdownItem key={'subscription'}>Subscription</DropdownItem>
                             <DropdownItem key='sign out' className="text-danger" onClick={() => signOut({ callbackUrl: '/signin' })}>Sign Out</DropdownItem>
-                            <DropdownItem onClick={handleDelete}>
-                                Delete User (Dev)
-                            </DropdownItem>
                         </DropdownMenu>
                     </Dropdown>
                 </div>
@@ -268,9 +250,6 @@ const DashboardTemplate = ({ currentPage, children }: { currentPage: string, chi
                                 <DropdownItem key={'forwardin profile'}>Forwardin Profile</DropdownItem>
                                 <DropdownItem key={'subscription'}>Subscription</DropdownItem>
                                 <DropdownItem key='sign out' className="text-danger" onClick={() => signOut({ callbackUrl: '/signin' })}>Sign Out</DropdownItem>
-                                <DropdownItem onClick={handleDelete}>
-                                    Delete User (Dev)
-                                </DropdownItem>
                             </DropdownMenu>
                         </Dropdown>
                         <div className='flex-none bg-white rounded-full p-2 hover:cursor-pointer'>
