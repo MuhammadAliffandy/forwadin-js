@@ -42,9 +42,12 @@ const ModalTemplate = ({ children, openModal, setopenModal, outsideClose = true 
     })
     return (
         <>
-            <Modal isOpen={openModal} onOpenChange={setopenModal} isDismissable={outsideClose}>
+            <Modal isOpen={openModal}
+                onOpenChange={setopenModal}
+                isDismissable={outsideClose}
+                scrollBehavior="inside">
                 <ModalContent>
-                    <ModalBody className="rounded-md">
+                    <ModalBody className="rounded-md max-h-[90vh] overflow-y-auto">
                         <>
                             {children}
                             <div className="pb-[1px]" />

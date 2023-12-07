@@ -47,6 +47,7 @@ interface GetSession {
     }
 }
 const getDeviceSession = async (data: GetSession[], token: string) => {
+
     const newArray = await Promise.all(
         data.map(async (ses) => {
             const fetchDeviceDetails = await fetch(process.env.BACKEND_URL + '/devices/' + ses.device.id, {
@@ -156,6 +157,7 @@ export const authConfig: NextAuthOptions = {
                         subscription: subscription
                     }
                     console.log('refresh admin')
+
                     // console.log(user)
                     return user
                 } else {

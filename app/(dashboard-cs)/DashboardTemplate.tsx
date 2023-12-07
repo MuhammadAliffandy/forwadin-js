@@ -23,6 +23,7 @@ const DashboardTemplate = ({ currentPage, children }: { currentPage: string, chi
                 setsideNavDropdown(false)
     }
     useEffect(() => {
+        console.log(session?.customerService)
         if (session?.customerService?.sessionId)
             setisDisabled(false)
         else
@@ -49,6 +50,7 @@ const DashboardTemplate = ({ currentPage, children }: { currentPage: string, chi
                         <NavButton text='Messenger' href='/customer-service/dashboard/messenger' currentPage={currentPage} isDisabled={isDisabled} />
                         <p className='text-sm mt-2'>Tools</p>
                         <NavButton text='Auto Reply' href='/customer-service/dashboard/auto-reply' currentPage={currentPage} isDisabled={isDisabled} />
+                        <NavButton text='Order' href='/customer-service/dashboard/order' currentPage={currentPage} isDisabled={isDisabled} />
                         <p className='text-sm mt-2'>Others</p>
                         <NavButton text='Settings' href='/customer-service/dashboard/settings' currentPage={currentPage} />
                     </div>
@@ -73,7 +75,7 @@ const DashboardTemplate = ({ currentPage, children }: { currentPage: string, chi
                             </div>
                         </DropdownTrigger>
                         <DropdownMenu
-                            disabledKeys={["profile"]}>
+                            disabledKeys={["profile"]} aria-label="mobile_profile">
                             <DropdownSection showDivider={true}>
                                 <DropdownItem
                                     isReadOnly
@@ -116,7 +118,8 @@ const DashboardTemplate = ({ currentPage, children }: { currentPage: string, chi
                                 </div>
                             </DropdownTrigger>
                             <DropdownMenu
-                                disabledKeys={["profile"]}>
+                                disabledKeys={["profile"]}
+                                aria-label="desktop_profile">
                                 <DropdownSection showDivider={true}>
                                     <DropdownItem
                                         isReadOnly

@@ -5,7 +5,7 @@ export const getInitials = (name: string) => {
     const initials = words.map((word) => word[0]);
     const result = initials.join('').slice(0, 2);
 
-    return result;
+    return result.toUpperCase();
 }
 export const formatDate = (inputDate: string) => {
 
@@ -125,6 +125,9 @@ export const formatCurrencyIDR = (number: number) => {
         return formattedIDR
     }
     return '-'
+}
+export const getFirst2Digits = (text: string) => {
+    return text.slice(0, 2)
 }
 export const getNumberFromString = (text: string) => {
     const parts = text.split('@');

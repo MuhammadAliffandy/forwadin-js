@@ -3,14 +3,14 @@ import BubbleChat from "@/components/dashboard/chat/BubbleChat"
 import MediaChat from "@/components/dashboard/chat/MediaChat"
 import { formatDate, getInitials } from "@/utils/helper"
 import { fetchClient } from "@/utils/helper/fetchClient"
-import { ContactData, ConversationMessage, MessageMetadata } from "@/utils/types"
+import { MessengerList, ConversationMessage, MessageMetadata } from "@/utils/types"
 import { User } from "next-auth"
 import { useSession } from "next-auth/react"
 import { Dispatch, SetStateAction, useEffect, useState } from "react"
 import InfiniteScroll from "react-infinite-scroll-component"
 
 interface ChatProps {
-    currentContact: ContactData | undefined,
+    currentMessenger: MessengerList | undefined,
     currentDate: Date,
     sessionId: string | undefined,
     listMessage: ConversationMessage[],
@@ -18,7 +18,7 @@ interface ChatProps {
     metadata: MessageMetadata,
     fetchChatMessage: (page: number) => void
 }
-const Chat = ({ currentContact, currentDate, sessionId, listMessage, setlistMessage, metadata, fetchChatMessage }: ChatProps) => {
+const Chat = ({ currentMessenger, currentDate, sessionId, listMessage, setlistMessage, metadata, fetchChatMessage }: ChatProps) => {
     useEffect(() => {
         // console.log(listMessage)
     }, [listMessage])
@@ -28,9 +28,6 @@ const Chat = ({ currentContact, currentDate, sessionId, listMessage, setlistMess
     useEffect(() => {
         console.log('rerender')
     }, [])
-    useEffect(() => {
-        console.log(currentContact)
-    }, [currentContact])
     return (
         <>
             <div id="scrollableChat" className="flex flex-col-reverse overflow-y-auto allowed-scroll pr-2 h-full gap-6">

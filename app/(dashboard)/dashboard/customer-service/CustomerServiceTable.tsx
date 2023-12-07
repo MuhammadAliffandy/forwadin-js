@@ -37,7 +37,20 @@ const CustomerServiceTable = () => {
     const deleteCS = async () => {
         const deletedCS = getArrayFromSet(selectedCS, CSData)
         if (deletedCS) {
-            toast.success('delete CS TODO')
+            console.log(deletedCS)
+            const result = await fetchClient({
+                url: '/customer-services',
+                method: 'DELETE',
+                body: JSON.stringify({ csIds: deletedCS }),
+                user: session?.user
+            })
+            if (result?.ok) {
+                toast.success('Berhasil hapus Customer Service')
+                fetchCSData()
+                setselectedCS(new Set([]))
+            } else {
+                toast.error('Gagal hapus Customer Service')
+            }
         }
     }
     const fetchCSData = async () => {

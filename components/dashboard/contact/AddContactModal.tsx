@@ -133,7 +133,7 @@ const AddContactModal = ({ openModal, setopenModal, fetchData }: AddContactModal
             {isLoaded ? (
                 <>
                     <p className="font-bold text-2xl">Tambah Kontak</p>
-                    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4 text-sm w-full mt-8 max-h-[80vh] overflow-y-auto">
+                    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4 text-sm w-full mt-8">
                         <div>
                             <p className="font-bold mb-2">First Name</p>
                             <InputForm register={register} config={{

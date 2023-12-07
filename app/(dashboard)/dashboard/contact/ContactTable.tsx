@@ -43,7 +43,7 @@ const ContactTable = ({ setcontactCount, currentDevice, user }: {
     const filterContact = (text: string) => {
         const regex = new RegExp(text, 'i')
         return contactData.filter(item => {
-            if (regex.test(item.firstName) || regex.test(item.lastName) || regex.test(item.phone) || regex.test(item.email))
+            if (regex.test(item.firstName + ' ' + (item.lastName || '')) || regex.test(item.lastName) || regex.test(item.phone) || regex.test(item.email))
                 return item
             const findLabel = item.ContactLabel?.find(item => regex.test(item.label.name))
             if (findLabel)

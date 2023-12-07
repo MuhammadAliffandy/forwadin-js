@@ -1,43 +1,47 @@
-import { ContactData, ContactLatestMessage, ConversationMessage } from "@/utils/types"
+import { getFirst2Digits, getInitials, getNumberFromString } from "@/utils/helper"
+import { MessengerList, ContactLatestMessage, ConversationMessage } from "@/utils/types"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { Dispatch, SetStateAction, useEffect, useState } from "react"
 
 interface ListChatsProps {
-    listContact: ContactLatestMessage[],
-    currentContact: ContactData | undefined,
-    setcurrentContact: Dispatch<SetStateAction<ContactData | undefined>>,
+    listMessenger: ContactLatestMessage[],
+    currentMessenger: MessengerList | undefined,
+    setcurrentMessenger: Dispatch<SetStateAction<MessengerList | undefined>>,
     setlistMessage: Dispatch<SetStateAction<ConversationMessage[]>>,
     // fetchMessage: (page: number) => void
 }
-const ListChats = ({ listContact, currentContact, setcurrentContact, setlistMessage }: ListChatsProps) => {
+const ListChats = ({ listMessenger, currentMessenger, setcurrentMessenger, setlistMessage }: ListChatsProps) => {
     const router = useRouter()
     const pathname = usePathname()
     const searchParams = useSearchParams()!
     const [switchButton, setswitchButton] = useState('open')
     const [inputText, setinputText] = useState('')
-    const [searchedContact, setsearchedContact] = useState<ContactLatestMessage[]>([])
-    const handleClickContact = (contact: ContactData) => {
-        if (currentContact?.id === contact.id) return
+    const [searchedMessenger, setsearchedMessenger] = useState<ContactLatestMessage[]>([])
+    const handleClickMessenger = (messenger: MessengerList) => {
+        if (currentMessenger?.phone === messenger.phone) return
         setlistMessage([])
-        setcurrentContact(contact)
+        setcurrentMessenger(messenger)
         const params = new URLSearchParams(searchParams)
-        params.set('contact', contact.id)
+        params.set('phone', messenger.phone)
         router.push(pathname + '?' + params.toString())
     }
-    const filterContact = (text: string) => {
+    const filterMessenger = (text: string) => {
         const regex = new RegExp(text, 'i')
-        return listContact.filter(item => {
-            const contact = item.contact
-            if (regex.test(contact.firstName) || regex.test(contact.lastName) || regex.test(contact.phone) || regex.test(contact.email))
-                return item
-            const findLabel = contact.ContactLabel?.find(contact => regex.test(contact.label.name))
-            if (findLabel)
-                return item
+        return listMessenger.filter(item => {
+            const contact = item.messenger.contact
+            if (regex.test(item.messenger.phone)) return item
+            if (contact) {
+                if (regex.test(contact.firstName) || regex.test(contact.lastName) || regex.test(contact.phone) || regex.test(contact.email))
+                    return item
+                const findLabel = contact.ContactLabel?.find(contact => regex.test(contact.label.name))
+                if (findLabel)
+                    return item
+            }
         })
     }
     useEffect(() => {
-        const searchResult = filterContact(inputText)
-        setsearchedContact(searchResult)
+        const searchResult = filterMessenger(inputText)
+        setsearchedMessenger(searchResult)
     }, [inputText])
 
     return (
@@ -64,42 +68,22 @@ const ListChats = ({ listContact, currentContact, setcurrentContact, setlistMess
                 {/* Contacts */}
                 {inputText ? (
                     <>
-                        {searchedContact.map(contact => (
-                            <div className={"rounded-md p-3 " + (currentContact?.id === contact.contact.id ? 'bg-white' : 'hover:cursor-pointer ')} onClick={() => handleClickContact(contact.contact)}>
-                                <div className="flex gap-2 items-center w-full">
-                                    <div style={{
-                                        backgroundColor: '#' + contact.contact.colorCode
-                                    }} className={`flex-none rounded-full text-white w-8 h-8 flex items-center justify-center`}>{contact.contact.initial}</div>
-                                    <div className=" w-48">
-                                        <p>{contact.contact.firstName} {contact.contact.lastName}</p>
-                                        <p className="truncate text-ellipsis overflow-hidden  whitespace-nowrap text-[#777C88] mt-1">
-                                            {contact.latestMessage?.message || ''}
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
+                        {searchedMessenger.map(item => (
+                            <MessengerCard
+                                currentMessenger={currentMessenger}
+                                handleClick={handleClickMessenger}
+                                item={item}
+                                key={item.messenger.phone} />
                         ))}
                     </>
                 ) : (
                     <>
-                        {listContact.map(contact => (
-                            <div className={"rounded-md p-3 " + (currentContact?.id === contact.contact.id ? 'bg-white' : 'hover:cursor-pointer ')} onClick={() => handleClickContact(contact.contact)}>
-                                <div className="flex gap-2 items-center w-full">
-                                    <div style={{
-                                        backgroundColor: '#' + contact.contact.colorCode
-                                    }} className={`flex-none rounded-full text-white w-8 h-8 flex items-center justify-center`}>{contact.contact.initial}</div>
-                                    <div className=" w-48">
-                                        <p>{contact.contact.firstName} {contact.contact.lastName}</p>
-                                        <p className="truncate text-ellipsis overflow-hidden  whitespace-nowrap text-[#777C88] mt-1">
-                                            {contact.latestMessage?.message || ''}
-                                        </p>
-                                    </div>
-                                </div>
-                                {/* <div className="text-end text-[#777C88] mt-2">
-                           
-                            lorem
-                        </div> */}
-                            </div>
+                        {listMessenger.map(item => (
+                            <MessengerCard
+                                currentMessenger={currentMessenger}
+                                handleClick={handleClickMessenger}
+                                item={item}
+                                key={item.messenger.phone} />
                         ))}
                     </>
                 )}
@@ -109,3 +93,42 @@ const ListChats = ({ listContact, currentContact, setcurrentContact, setlistMess
 }
 
 export default ListChats
+
+
+const MessengerCard = ({ item, handleClick, currentMessenger }: {
+    item: ContactLatestMessage,
+    currentMessenger: MessengerList | undefined,
+    handleClick: (item: MessengerList) => void
+}) => {
+    return (
+        <div key={item.messenger.phone} className={"rounded-md p-3 " + (currentMessenger?.phone === item.messenger.phone ? 'bg-white' : 'hover:cursor-pointer ')} onClick={() => handleClick(item.messenger)}>
+            <div className="flex gap-2 items-center w-full">
+                {item.messenger.contact ? (
+                    <>
+                        <div style={{
+                            backgroundColor: '#' + item.messenger.contact.colorCode
+                        }} className={`flex-none rounded-full text-white w-8 h-8 flex items-center justify-center`}>{getInitials(item.messenger.contact.firstName + ' ' + item.messenger.contact.lastName)}</div>
+                        <div className=" w-48">
+                            <p>{item.messenger.contact.firstName} {item.messenger.contact.lastName || ''}</p>
+                            <p className="truncate text-ellipsis overflow-hidden  whitespace-nowrap text-[#777C88] mt-1">
+                                {item.latestMessage?.message || ''}
+                            </p>
+                        </div>
+                    </>
+                ) : (
+                    <>
+                        <div className={`flex-none rounded-full text-white w-8 h-8 flex items-center justify-center bg-primary`}>{getNumberFromString(getFirst2Digits(item.messenger.phone))}</div>
+                        <div className=" w-48">
+                            <p>{item.messenger.phone}</p>
+                            <p className="truncate text-ellipsis overflow-hidden  whitespace-nowrap text-[#777C88] mt-1">
+                                {item.latestMessage?.message || ''}
+                            </p>
+                        </div>
+                    </>
+                )}
+
+            </div>
+        </div>
+
+    )
+}
