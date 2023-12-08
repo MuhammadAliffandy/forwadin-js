@@ -146,6 +146,7 @@ const Messenger = () => {
                         console.log(resultData)
                         setinputFile([])
                         settextInput('')
+                        fetchChatMessage(1)
                         toast.success('Berhasil kirim image')
 
                     } else {

@@ -3,7 +3,10 @@ import { MessengerList } from "@/utils/types"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 
-const ProfileDetail = ({ currentMessenger }: { currentMessenger: MessengerList | undefined }) => {
+const ProfileDetail = ({ currentMessenger }: {
+    currentMessenger: MessengerList | undefined,
+
+}) => {
     const { push } = useRouter()
     if (!currentMessenger)
         return (
@@ -16,14 +19,14 @@ const ProfileDetail = ({ currentMessenger }: { currentMessenger: MessengerList |
                     <div style={{
                         backgroundColor: '#' + '4FBEAB'
                     }} className={`flex-none rounded-full text-white w-20 h-20 text-[32px] flex items-center justify-center`}>IA</div>
-                    <p className='font-lexend text-2xl font-bold mt-4'>{currentMessenger.contact.firstName} {currentMessenger.contact.lastName || ''}</p>
+                    <p className='font-lexend text-center text-2xl font-bold mt-4'>{currentMessenger.contact.firstName} {currentMessenger.contact.lastName || ''}</p>
                     <p className='mt-2 text-[#777C88]'>+{currentMessenger.phone}</p>
                 </div>
                 <div className="border border-customGray text-center py-2 rounded-md my-4 hover:cursor-pointer"
                     onClick={() => push('/dashboard/contact/' + currentMessenger.contact?.id)}>
                     Detail
                 </div>
-                <div className="flex gap-2 ">
+                {/* <div className="flex gap-2 ">
                     <div className="w-full rounded-md bg-primary p-2 text-white flex items-center">
                         <div className="w-full flex justify-center items-center">
                             <img src="/assets/icons/history.svg" alt="" />
@@ -42,7 +45,7 @@ const ProfileDetail = ({ currentMessenger }: { currentMessenger: MessengerList |
                             <p className="text-2xl font-bold">3</p>
                         </div>
                     </div>
-                </div>
+                </div> */}
                 <table className='w-full border-spacing-y-2 border-spacing-x-2 -mx-2 border-separate mt-4'>
                     <tbody >
                         <tr>
@@ -51,11 +54,11 @@ const ProfileDetail = ({ currentMessenger }: { currentMessenger: MessengerList |
                         </tr>
                         <tr>
                             <th className='font-medium whitespace-pre'>Last Name</th>
-                            <td className="break-all">{currentMessenger.contact.lastName}</td>
+                            <td className="break-all">{currentMessenger.contact.lastName || '-'}</td>
                         </tr>
                         <tr>
                             <th className='font-medium whitespace-pre'>Email</th>
-                            <td className="break-all">{currentMessenger.contact.email}</td>
+                            <td className="break-all">{currentMessenger.contact.email || '-'}</td>
                         </tr>
                         <tr>
                             <th className='font-medium whitespace-pre'>Phone Number</th>
@@ -96,7 +99,6 @@ const ProfileDetail = ({ currentMessenger }: { currentMessenger: MessengerList |
         <div className='flex flex-col items-center'>
             <div className={`flex-none rounded-full text-white w-20 h-20 text-[32px] flex items-center justify-center bg-primary`}>{getFirst2Digits(currentMessenger.phone)}</div>
             <p className='font-lexend text-2xl font-bold mt-4 break-all'>+{currentMessenger.phone}</p>
-
         </div>
     </>)
 

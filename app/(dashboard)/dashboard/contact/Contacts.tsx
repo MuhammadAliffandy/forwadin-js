@@ -43,6 +43,7 @@ const Contacts = () => {
             setlistDevice(prev => [...prev, ...newArrDevice])
         }
     }
+
     useEffect(() => {
         if (session?.user?.token) fetchDevice()
 

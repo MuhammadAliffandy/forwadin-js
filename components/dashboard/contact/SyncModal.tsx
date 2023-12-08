@@ -29,6 +29,7 @@ const SyncModal = ({ openModal, setopenModal, user, refresh }: SyncModalProps) =
         } else {
             const body = { accessToken: user?.googleToken, deviceId: data.deviceId }
             console.log(JSON.stringify(body))
+            console.log(user)
             const result = await fetchClient({
                 url: '/contacts/sync-google',
                 method: 'POST',

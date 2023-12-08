@@ -35,12 +35,12 @@ const Messenger = () => {
         const result = await fetchClient({
             url: `/messages/${session?.customerService?.sessionId}/messenger-list`,
             method: 'GET',
-            user: session?.user
+            user: session?.customerService
         })
         const result2 = await fetchClient({
             url: '/contacts?deviceId=' + session?.customerService?.deviceId,
             method: 'GET',
-            user: session?.user
+            user: session?.customerService
         })
         if (result?.ok && result2?.ok) {
             const resultData: GetMessage<MessengerList> = await result.json()
@@ -51,7 +51,7 @@ const Messenger = () => {
                 const response = await fetchClient({
                     url: `/messages/${session?.customerService?.sessionId}/?phoneNumber=${element}&pageSize=1&sort=asc`,
                     method: 'GET',
-                    user: session?.user
+                    user: session?.customerService
                 })
                 if (response?.ok) {
                     const data = await response.json();
