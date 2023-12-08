@@ -5,7 +5,6 @@ import 'react-toastify/dist/ReactToastify.css';
 import Provider from '@/components/Provider';
 import { NextUIProviders } from './NextUIProvider';
 import { SocketProvider } from './SocketProvider';
-
 export const metadata: Metadata = {
   title: 'ForwardIn | Home',
   description: 'Lorem Ipsum'
@@ -37,6 +36,7 @@ export default function RootLayout({
               pauseOnHover
               theme="light" />
             <NextUIProviders>
+
               {children}
             </NextUIProviders>
           </SocketProvider>

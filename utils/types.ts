@@ -169,10 +169,14 @@ interface OutgoingMessage {
     }
 }
 export interface ContactLatestMessage {
-    contact: ContactData,
+    messenger: MessengerList,
     latestMessage: ConversationMessage | null
 }
-
+export interface MessengerList {
+    phone: string,
+    createdAt: string,
+    contact?: ContactData
+}
 export interface MessageMetadata {
     totalMessages: number,
     currentPage: number,
@@ -459,4 +463,16 @@ export interface CSProfile {
     userId: number,
     deviceId: number,
     privilegeId: 222
+}
+
+export interface OrderData {
+    pkId: number,
+    id: string,
+    name: string,
+    phone: string,
+    orderData: string,
+    status: string,
+    csId: number,
+    createdAt: string,
+    updatedAt: string
 }

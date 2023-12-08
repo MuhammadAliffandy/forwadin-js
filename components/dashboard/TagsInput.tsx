@@ -14,8 +14,7 @@ const TagsInput = ({ listTags, selectedTags, setselectedTags }: TagsInputProps) 
     const [isFocused, setisFocused] = useState(false)
     const [inputText, setinputText] = useState('')
     const handleKeyDown = (e: any) => {
-        // e.preventDefault()
-        // console.log(e.key)
+
         if (e.key !== 'Enter' || !inputText.trim()) return
         const findTags = tags.find(tag => tag.title === inputText)
         if (findTags) {

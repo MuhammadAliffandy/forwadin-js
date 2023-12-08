@@ -3,98 +3,35 @@ import dynamic from 'next/dynamic'
 const EditContactModal = dynamic(() => import('@/components/dashboard/contact/detail/EditContactModal'), { ssr: false })
 import { formatBirthDate, formatDate, getInitials } from '@/utils/helper'
 import { fetchClient } from '@/utils/helper/fetchClient'
-import { ContactData, GetMessage, IncomingMessage, MediaMessageData, MessageData, MultipleCheckboxRef } from '@/utils/types'
+import { ContactData, DeviceSession, GetMessage, IncomingMessage, MediaMessageData, MessageData, MultipleCheckboxRef } from '@/utils/types'
 import Link from 'next/link'
-import { Skeleton } from '@nextui-org/react'
+import { Button, ButtonGroup, Popover, PopoverContent, PopoverTrigger, Skeleton } from '@nextui-org/react'
 import { useEffect, useRef, useState } from 'react'
 import { toast } from 'react-toastify'
 import { useSession } from 'next-auth/react'
 import BubbleChat from '@/components/dashboard/chat/BubbleChat'
+import TextAreaInput from '@/components/dashboard/chat/TextAreaInput'
+import UploadFile from '@/components/dashboard/UploadFile'
+import { useRouter } from 'next/navigation'
 
 const DetailContact = ({ contactId }: { contactId: string }) => {
+    const router = useRouter()
     const { data: session } = useSession()
     const currentDate = new Date()
     const [openModal, setopenModal] = useState(false)
     const [isLoaded, setisLoaded] = useState(false)
     const [contactData, setcontactData] = useState<ContactData>()
-    const [switchButton, setswitchButton] = useState('history')
     const [messageCount, setmessageCount] = useState(0)
     const [message, setmessage] = useState<IncomingMessage[]>([
     ])
-    const mainCheckboxRef = useRef<HTMLInputElement>(null)
-    const mediaMessageCheckboxRef = useRef<MultipleCheckboxRef>({})
+    const [textInput, settextInput] = useState('')
+    const [inputFile, setinputFile] = useState<File[]>([]);
+    const [showfile, setshowfile] = useState(false)
+    const [sendMessageLoading, setsendMessageLoading] = useState(false)
     const [isChecked, setisChecked] = useState(false)
-    const [mediaMessage, setmediaMessage] = useState<MediaMessageData[]>([
-        {
-            id: '1',
-            fileTitle: 'forwardin_deafult_logo_banner.jpeg',
-            path: '',
-            from: 'Ihsanul Afkar',
-            size: '10 MB',
-            created_at: '11.9.2023, 2:43 PM',
-            type: 'image',
-            checked: false
-        },
-        {
-            id: '2',
-            fileTitle: 'forwardin_deafult_logo_banner.jpeg',
-            from: 'Ihsanul Afkar',
-            size: '10 MB',
-            path: '',
-            created_at: '11.9.2023, 2:43 PM',
-            type: 'image',
-            checked: false
-        },
-        {
-            id: '3',
-            fileTitle: 'forwardin_deafult_logo_banner.jpeg',
-            from: 'Ihsanul Afkar',
-            path: '',
-            size: '10 MB',
-            created_at: '11.9.2023, 2:43 PM',
-            type: 'image',
-            checked: false
-        }
-    ])
+    const [currentDevice, setcurrentDevice] = useState<DeviceSession>()
     const [mobileDropdown, setmobileDropdown] = useState(false)
-    const handleIndexCheckbox = (e: React.MouseEvent) => {
-        if (mainCheckboxRef.current && !mainCheckboxRef.current.checked) {
-            const newArray = mediaMessage.map(obj => {
-                mediaMessageCheckboxRef.current[`checkbox_${obj.id}`].checked = false
-                return { ...obj, checked: false }
-            })
-            setmediaMessage(() => newArray)
-        } else {
-            const newArray = mediaMessage.map(obj => {
-                mediaMessageCheckboxRef.current[`checkbox_${obj.id}`].checked = true
-                return { ...obj, checked: true }
-            })
-            setmediaMessage(() => newArray)
-        }
-    }
-    const handleCheckBoxClick = (e: React.FormEvent<HTMLInputElement>, id: string) => {
-        const newMediaMessage = mediaMessage.map(obj => {
-            return (obj.id === id ? { ...obj, checked: e.currentTarget.checked } : obj)
-        })
-        setmediaMessage(() => newMediaMessage)
-    }
-    const handleRefChange = (element: HTMLInputElement | null, item: MediaMessageData) => {
-        if (mediaMessageCheckboxRef.current && element)
-            mediaMessageCheckboxRef.current[`checkbox_${item.id}`] = element
-    }
-    useEffect(() => {
-        if (mainCheckboxRef.current) {
-            const checkObject = mediaMessage.find(obj => obj.checked === true)
-            if (checkObject) {
-                mainCheckboxRef.current.checked = true
-                setisChecked(true)
-            }
-            else {
-                mainCheckboxRef.current.checked = false
-                setisChecked(false)
-            }
-        }
-    }, [mediaMessage])
+
     const fetchDetailContact = async () => {
         const result = await fetchClient({
             method: 'GET',
@@ -106,6 +43,12 @@ const DetailContact = ({ contactId }: { contactId: string }) => {
             if (result.status === 200) {
                 data.dob = formatBirthDate(data.dob!)
                 setcontactData(data)
+                if (session?.user?.device && session?.user?.device.length > 0) {
+                    const findDevice = session.user.device.find(item => item.id === data.contactDevices[0].device.id)
+                    if (findDevice)
+                        setcurrentDevice(findDevice)
+                    else setcurrentDevice(undefined)
+                }
                 setisLoaded(true)
             } else {
                 console.log(data)
@@ -132,8 +75,69 @@ const DetailContact = ({ contactId }: { contactId: string }) => {
             }
         }
     }
+    const sendMessage = async () => {
+        setsendMessageLoading(true)
+        if (!contactData) return
+        if (inputFile.length > 0) {
+            if (currentDevice && inputFile) {
+                const formdata = new FormData()
+                formdata.append("caption", textInput)
+                // @ts-ignore
+                formdata.set('image', inputFile[0].file, inputFile[0].name)
+                formdata.append("recipients[0]", contactData.phone)
+                formdata.append("sessionId", currentDevice.sessionId)
+                try {
+                    const result = await fetch('/api/message/media', {
+                        method: 'POST',
+                        body: formdata
+                    })
+                    if (result?.ok) {
+                        const resultData = await result.json()
+                        console.log(resultData)
+                        setinputFile([])
+                        settextInput('')
+                        toast.success('Berhasil kirim image')
+                        router.push('/dashboard/messenger?phone=' + contactData.phone)
+                    } else {
+                        const resultData = await result.text()
+                        console.log(resultData)
+                        toast.error('gagal kirim media')
+                    }
+                } catch (error) {
+                    console.log(error)
+                }
+
+            }
+
+        }
+
+        else {
+            if (currentDevice && textInput.length > 0) {
+                const result = await fetchClient({
+                    url: '/messages/' + currentDevice.sessionId + '/send',
+                    method: 'POST',
+                    body: JSON.stringify([
+                        {
+                            recipient: contactData.phone,
+                            message: {
+                                text: textInput
+                            }
+                        }
+                    ]),
+                    user: session?.user
+                })
+                if (result && result.ok) {
+                    toast.success('Berhasil kirim pesan')
+                    settextInput('')
+                    router.push('/dashboard/messenger?phone=' + contactData.phone)
+                }
+            }
+        }
+        setsendMessageLoading(false)
+    }
     useEffect(() => {
-        fetchDetailContact()
+        if (session?.user?.token)
+            fetchDetailContact()
     }, [session?.user?.token])
     useEffect(() => {
         if (contactData)
@@ -156,7 +160,7 @@ const DetailContact = ({ contactId }: { contactId: string }) => {
                                     <div>
                                         <div style={{
                                             backgroundColor: '#' + '4FBEAB'
-                                        }} className={`flex-none rounded-full text-white w-20 h-20 text-[32px] flex items-center justify-center`}>IA</div>
+                                        }} className={`flex-none rounded-full text-white w-20 h-20 text-[32px] flex items-center justify-center`}>{getInitials(contactData?.firstName + ' ' + contactData?.lastName!)}</div>
 
                                         <p className='font-lexend text-2xl font-bold mt-8'>{contactData?.firstName} {contactData?.lastName}</p>
                                         <p className='mt-4'>+{contactData?.phone}</p>
@@ -264,9 +268,39 @@ const DetailContact = ({ contactId }: { contactId: string }) => {
                                         </tbody>
                                     </table>
                                 )}
-                                <div className='border border-customGray rounded-md text-primary text-center mt-4 py-2 hover:bg-primary hover:text-white hover:cursor-pointer'>
-                                    Chat
-                                </div>
+                                <Popover
+                                    placement="top"
+                                    showArrow={true}
+                                    className='font-inter'
+                                    radius='sm'>
+                                    <PopoverTrigger>
+                                        <Button className='rounded-md mt-4'
+                                            fullWidth
+                                            color='primary'>
+                                            Chat
+                                        </Button>
+                                    </PopoverTrigger>
+                                    <PopoverContent className='' >
+                                        <div className="py-2 flex-none w-[20rem]">
+                                            {showfile && (
+                                                <UploadFile files={inputFile} setfiles={setinputFile} />
+                                            )}
+                                            <TextAreaInput text={textInput} settext={settextInput} />
+
+                                            <div className="flex justify-end mt-2">
+                                                <ButtonGroup color="primary" className="rounded-md">
+                                                    <Button isIconOnly onClick={() => setshowfile(!showfile)}>
+                                                        <img src="/assets/icons/attach_file.svg" alt="" />
+                                                    </Button>
+                                                    <Button onClick={sendMessage} isLoading={sendMessageLoading} >
+                                                        Kirim
+                                                    </Button>
+                                                </ButtonGroup>
+                                            </div>
+                                        </div>
+                                    </PopoverContent>
+                                </Popover>
+
                             </>
                         ) : (
                             <div className='mt-4 flex flex-col gap-2'>
@@ -306,13 +340,9 @@ const DetailContact = ({ contactId }: { contactId: string }) => {
                             <>
                                 <div className='flex justify-between'>
                                     <div className='flex gap-2'>
-                                        <div className={'flex gap-2 px-4 py-2 items-center rounded-md group hover:bg-primary hover:cursor-pointer ' + (switchButton === 'history' ? 'bg-primary' : 'bg-white')} onClick={() => setswitchButton('history')}>
-                                            <div className={'group-hover:text-white ' + (switchButton === 'history' ? 'text-white' : 'text-black')}>History</div>
-                                            <div className={'rounded-md group-hover:text-black group-hover:bg-white flex items-center justify-center h-5 w-5 text-xs ' + (switchButton === 'history' ? 'bg-white text-black' : 'bg-black text-white')} >{messageCount}</div>
-                                        </div>
-                                        <div className={'flex gap-2 px-4 py-2 items-center rounded-md group hover:bg-primary hover:cursor-pointer ' + (switchButton === 'media' ? 'bg-primary' : 'bg-white')} onClick={() => setswitchButton('media')}>
-                                            <div className={'group-hover:text-white ' + (switchButton === 'media' ? 'text-white' : 'text-black')}>Media</div>
-                                            <div className={'rounded-md group-hover:text-black group-hover:bg-white flex items-center justify-center h-5 w-5 text-xs ' + (switchButton === 'media' ? 'bg-white text-black' : 'bg-black text-white')}>3</div>
+                                        <div className={'flex gap-2 px-4 py-2 items-center rounded-md group hover:bg-primary hover:cursor-pointer bg-primary'}>
+                                            <div className={'text-white'}>History</div>
+                                            <div className={'rounded-md group-hover:text-black group-hover:bg-white flex items-center justify-center h-5 w-5 text-xs bg-white text-black'} >{messageCount}</div>
                                         </div>
                                     </div>
                                     {isChecked && (
@@ -323,63 +353,29 @@ const DetailContact = ({ contactId }: { contactId: string }) => {
 
                                 </div>
                                 <div className='mt-4 max-h-[550px] overflow-y-auto flex flex-col gap-8 allowed-scroll pr-4'>
-                                    {switchButton === 'history' ? (
+
+                                    {message.length > 0 ? (
                                         <>
-                                            {message ? (
-                                                <>
-                                                    {message.map(msg => (
-                                                        <div className="w-full">
-                                                            <div className="flex gap-2 items-center w-full">
-                                                                <div style={{
-                                                                    backgroundColor: '#' + msg.contact?.colorCode
-                                                                }} className={`flex-none rounded-full text-white w-8 h-8 flex items-center justify-center`}>{getInitials(msg.contact?.firstName + ' ' + msg.contact?.lastName)}</div>
-                                                                <div className="">
-                                                                    <p>{msg.contact?.firstName} {msg.contact?.lastName}</p>
-                                                                </div>
-                                                            </div>
-                                                            <BubbleChat text={msg.message} received={msg.receivedAt} currentDate={currentDate} />
+                                            {message.map(msg => (
+                                                <div className="w-full">
+                                                    <div className="flex gap-2 items-center w-full">
+                                                        <div style={{
+                                                            backgroundColor: '#' + msg.contact?.colorCode
+                                                        }} className={`flex-none rounded-full text-white w-8 h-8 flex items-center justify-center`}>{getInitials(msg.contact?.firstName + ' ' + msg.contact?.lastName)}</div>
+                                                        <div className="">
+                                                            <p>{msg.contact?.firstName} {msg.contact?.lastName}</p>
                                                         </div>
-                                                    ))}
-                                                </>
-                                            ) : (
-                                                <>
-                                                    <p>Belum ada pesan dari {contactData?.firstName}</p>
-                                                </>
-                                            )}
+                                                    </div>
+                                                    <BubbleChat text={msg.message} received={msg.receivedAt} currentDate={currentDate} />
+                                                </div>
+                                            ))}
                                         </>
                                     ) : (
                                         <>
-                                            <table className="w-full text-center font-nunito text-xs font-bold">
-                                                <thead className='bg-neutral-75'>
-                                                    <tr className=''>
-                                                        <th className='py-4 checkbox'>
-                                                            <input ref={mainCheckboxRef} type="checkbox" name="main_checkbox" id="main_checkbox" className='rounded-sm focus:ring-transparent' onClick={handleIndexCheckbox} />
-                                                        </th>
-                                                        <th className='p-4'>Nama</th>
-                                                        <th className='p-4'>Pengirim</th>
-                                                        <th className='p-4'>Ukuran</th>
-                                                        <th className='p-4 whitespace-pre'>Tanggal Dikirimkan</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody className='bg-white'>
-                                                    {mediaMessage.map((item, index) => (
-                                                        <tr key={index}>
-                                                            <td className='p-4 checkbox'>
-                                                                <input type="checkbox" name={'checkbox_' + item.id} id={'checkbox_' + item.id} className='rounded-sm focus:ring-transparent' onClick={(e) => handleCheckBoxClick(e, item.id)} ref={element => handleRefChange(element, item)} />
-                                                            </td >
-                                                            <td className='p-4 '>
-                                                                <Link href={item.path} target={'_blank'}>
-                                                                    {item.fileTitle}
-                                                                </Link>
-                                                            </td>
-                                                            <td className='p-4'>{item.from}</td>
-                                                            <td className='p-4'>{item.size}</td>
-                                                            <td className='p-4'>{item.created_at}</td>
-                                                        </tr>
-                                                    ))}
-                                                </tbody>
-                                            </table>
-                                        </>)}
+                                            <p className='text-customGray text-xs text-center'>Belum ada pesan dari {contactData?.firstName}</p>
+                                        </>
+                                    )}
+
                                 </div>
                             </>
                         ) : (

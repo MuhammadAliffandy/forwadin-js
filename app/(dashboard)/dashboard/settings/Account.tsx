@@ -9,10 +9,11 @@ import { useTransition, animated } from "@react-spring/web"
 import CountryFlagSvg from "country-list-with-dial-code-and-flag/dist/flag-svg"
 import errors from "formidable/FormidableError"
 import { User } from "next-auth"
-import { useSession } from "next-auth/react"
+import { signOut, useSession } from "next-auth/react"
 import Link from "next/link"
 import { useEffect, useRef, useState } from "react"
 import { useForm } from "react-hook-form"
+import { toast } from "react-toastify"
 
 interface AccountPageProps {
     user: User | undefined,
@@ -24,6 +25,7 @@ interface ChangePasswordType {
     confirmPassword: string
 }
 const Account = ({ user, userProfile }: AccountPageProps) => {
+    const [isPasswordLoading, setisPasswordLoading] = useState(false)
     const [deleteAccountModal, setdeleteAccountModal] = useState(false)
     const [showPasswordCriteria, setshowPasswordCriteria] = useState(false)
     const [countryCodeDropdown, setcountryCodeDropdown] = useState(false)
@@ -95,7 +97,21 @@ const Account = ({ user, userProfile }: AccountPageProps) => {
 
     }
     const onSubmitPassword = async (data: ChangePasswordType) => {
-
+        setisPasswordLoading(true)
+        const result = await fetchClient({
+            url: '/auth/change-password',
+            method: 'PUT',
+            body: JSON.stringify(data),
+            user: user
+        })
+        console.log(await result?.json())
+        if (result?.ok) {
+            toast.success('password berhasil diubah')
+            signOut()
+        } else {
+            toast.error('Gagal ubah password')
+        }
+        setisPasswordLoading(false)
     }
     const handleCountryCodeClick = (countryCode: CountryCode) => {
         setcurrentCountryCode(countryCode)
@@ -288,9 +304,9 @@ const Account = ({ user, userProfile }: AccountPageProps) => {
                     )}
                     <div className="mt-4 flex gap-4 justify-start items-center">
                         <div className="">
-                            <ButtonSubmit isLoading={false} size="md" text="Update Password" />
+                            <ButtonSubmit isLoading={isPasswordLoading} size="md" text="Update Password" />
                         </div>
-                        <Link href={'/dashboard/settings'} className="text-primary">I forgot my password</Link>
+                        <Link href={'/auth/forgot-password'} className="text-primary">I forgot my password</Link>
                     </div>
                 </form>
                 <p className="font-lexend font-bold text-2xl">Delete Account</p>

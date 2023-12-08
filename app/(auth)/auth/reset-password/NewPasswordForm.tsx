@@ -1,5 +1,6 @@
 import ButtonSubmit from "@/components/form/ButtonSubmit"
 import InputForm from "@/components/form/InputForm"
+import { signOut } from "next-auth/react"
 import { Dispatch, SetStateAction, useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { toast } from "react-toastify"
@@ -41,6 +42,7 @@ const NewPasswordForm = ({ setCurrentStep, token }: { setCurrentStep: Dispatch<S
             })
             if (result.status === 200) {
                 setisLoading(false)
+                await signOut()
                 setCurrentStep('success')
             } else {
                 const body = await result.json()

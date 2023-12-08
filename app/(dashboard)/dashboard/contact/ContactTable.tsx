@@ -1,7 +1,7 @@
 'use client';
 
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { ContactData } from '@/utils/types'
 import dynamic from 'next/dynamic';
 const AddContactModal = dynamic(() => import('@/components/dashboard/contact/AddContactModal'), { ssr: false, })
@@ -9,13 +9,14 @@ import { fetchClient } from '@/utils/helper/fetchClient';
 import { toast } from 'react-toastify';
 import { formatDate, getInitials } from '@/utils/helper';
 import DeleteContactModal from '@/components/dashboard/contact/DeleteContactModal';
-import { useSession } from 'next-auth/react';
-import { Button, Skeleton, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from "@nextui-org/react";
+import { signIn, useSession } from 'next-auth/react';
+import { Button, Skeleton, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, Tooltip } from "@nextui-org/react";
 import ContactIcon from '@/components/dashboard/ContactIcon';
 import ImportContactModal from '@/components/dashboard/contact/ImportContactModal';
 import SyncModal from '@/components/dashboard/contact/SyncModal';
 import { User } from 'next-auth';
 import DeleteModal from '@/components/dashboard/device/DeleteModal';
+import { Router } from 'next/router'
 const ContactTable = ({ setcontactCount, currentDevice, user }: {
     setcontactCount: Dispatch<SetStateAction<number>>,
     currentDevice: {
@@ -26,6 +27,7 @@ const ContactTable = ({ setcontactCount, currentDevice, user }: {
     user: User | undefined
 }) => {
     const { push } = useRouter()
+    const pathName = usePathname()!
     const [isLoaded, setisLoaded] = useState(false)
     const [isChecked, setisChecked] = useState(false)
     const [contactData, setcontactData] = useState<ContactData[]>([
@@ -43,7 +45,7 @@ const ContactTable = ({ setcontactCount, currentDevice, user }: {
     const filterContact = (text: string) => {
         const regex = new RegExp(text, 'i')
         return contactData.filter(item => {
-            if (regex.test(item.firstName) || regex.test(item.lastName) || regex.test(item.phone) || regex.test(item.email))
+            if (regex.test(item.firstName + ' ' + (item.lastName || '')) || regex.test(item.lastName) || regex.test(item.phone) || regex.test(item.email))
                 return item
             const findLabel = item.ContactLabel?.find(item => regex.test(item.label.name))
             if (findLabel)
@@ -87,6 +89,7 @@ const ContactTable = ({ setcontactCount, currentDevice, user }: {
             }
         }
     }
+
     const handleDeleteContact = async () => {
         // tambah konfirmasi delete
         let deletedContact = null
@@ -116,6 +119,8 @@ const ContactTable = ({ setcontactCount, currentDevice, user }: {
     useEffect(() => {
         if (user?.token)
             fetchData()
+
+        console.log(user)
     }, [user?.token, currentDevice])
 
     useEffect(() => {
@@ -131,7 +136,7 @@ const ContactTable = ({ setcontactCount, currentDevice, user }: {
     }, [selectedKeys])
     return (
         <>
-            {user?.googleToken && (
+            {(user?.googleToken && user.subscription.name !== 'starter') && (
                 <SyncModal setopenModal={setsyncModal} openModal={syncModal} user={user} refresh={fetchData} />
             )}
             <ImportContactModal openModal={importContactModal} setopenModal={setimportContactModal} user={user} refresh={fetchData} />
@@ -146,9 +151,22 @@ const ContactTable = ({ setcontactCount, currentDevice, user }: {
                         />
                     </div>
                     <div className='flex lg:flex-row flex-col lg:justify-end justify-between gap-2 w-full max-w-sm'>
-                        <Button variant='bordered' onClick={() => setsyncModal(true)} className='rounded-md' fullWidth isDisabled={user?.googleToken ? false : true}>
-                            Sync
-                        </Button>
+                        {(user?.googleToken && user.subscription.name !== 'starter') ? (
+                            <Button variant='bordered' onClick={() => setsyncModal(true)} className='rounded-md' fullWidth >
+                                Sync
+                            </Button>
+                        ) : (
+                            <Tooltip content={
+                                <p className='text-xs font-medium'>{user?.subscription.name === 'starter' ? 'starter tidak dapat melakukan google sync' : 'login dengan google'}</p>
+                            } showArrow
+                                radius='md'>
+                                <div className='hover:cursor-not-allowed'>
+                                    <Button isDisabled variant='bordered' className='rounded-md ' fullWidth >
+                                        Sync
+                                    </Button>
+                                </div>
+                            </Tooltip>
+                        )}
                         <Button variant='bordered' onClick={() => setimportContactModal(true)} className='rounded-md' fullWidth>
                             Import Kontak
                         </Button>

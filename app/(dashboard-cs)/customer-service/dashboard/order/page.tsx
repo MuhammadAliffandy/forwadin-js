@@ -1,16 +1,14 @@
 import type { Metadata } from 'next'
-import Contacts from './Contacts'
+import Order from './Order'
 
 export const metadata: Metadata = {
-    title: 'Contacts',
+    title: 'Order',
 }
 
-export default function Page() {
+export default function Home() {
     return (
         <>
-
-            <Contacts />
-
+            <Order />
         </>
     )
 }

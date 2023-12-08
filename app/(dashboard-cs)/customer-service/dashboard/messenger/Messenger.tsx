@@ -1,7 +1,7 @@
 'use client'
 import { ChangeEvent, useEffect, useState } from "react"
 
-import { ContactData, DeviceData, ConversationMessage, DeviceSession, MessageMetadata, OutgoingMessage, ContactLatestMessage, GetMessage } from "@/utils/types"
+import { ContactData, DeviceData, ConversationMessage, DeviceSession, MessageMetadata, OutgoingMessage, ContactLatestMessage, GetMessage, MessengerList } from "@/utils/types"
 import TextAreaInput from "@/components/dashboard/chat/TextAreaInput"
 import { useSession } from "next-auth/react"
 import { fetchClient } from "@/utils/helper/fetchClient"
@@ -26,26 +26,32 @@ const Messenger = () => {
     const [showfile, setshowfile] = useState(false)
     const [sendMessageLoading, setsendMessageLoading] = useState(false)
     const [mobileDropdown, setmobileDropdown] = useState(false)
-    const [listContact, setlistContact] = useState<ContactLatestMessage[]>([])
-    const [currentContact, setcurrentContact] = useState<ContactData>()
+    const [listMessenger, setlistMessenger] = useState<ContactLatestMessage[]>([])
+    const [currentMessenger, setcurrentMessenger] = useState<MessengerList>()
     const [chatDisabled, setchatDisabled] = useState(true)
     const [messageMetadata, setmessageMetadata] = useState<MessageMetadata>()
     const [listMessage, setlistMessage] = useState<ConversationMessage[]>([])
-    const fetchListContact = async () => {
+    const fetchlistMessenger = async () => {
         const result = await fetchClient({
-            url: '/contacts',
+            url: `/messages/${session?.customerService?.sessionId}/messenger-list`,
             method: 'GET',
             user: session?.customerService
         })
-        if (result && result.ok) {
-            const resultData: ContactData[] = await result.json()
+        const result2 = await fetchClient({
+            url: '/contacts?deviceId=' + session?.customerService?.deviceId,
+            method: 'GET',
+            user: session?.customerService
+        })
+        if (result?.ok && result2?.ok) {
+            const resultData: GetMessage<MessengerList> = await result.json()
+            const result2Data: ContactData[] = await result2.json()
             const newArray: ContactLatestMessage[] = []
             const fetchPromises: (() => Promise<void>)[] = [];
-            const fetchMessage = async (element: ContactData) => {
+            const fetchMessage = async (element: string) => {
                 const response = await fetchClient({
-                    url: `/messages/${session?.customerService?.sessionId}/?phoneNumber=${element.phone}&pageSize=1&sort=asc`,
+                    url: `/messages/${session?.customerService?.sessionId}/?phoneNumber=${element}&pageSize=1&sort=asc`,
                     method: 'GET',
-                    user: session?.user
+                    user: session?.customerService
                 })
                 if (response?.ok) {
                     const data = await response.json();
@@ -53,22 +59,22 @@ const Messenger = () => {
                 }
                 throw new Error(`Failed to fetch data for element ${element}`);
             }
-            resultData.forEach(async (element) => {
+            resultData.data.forEach(async (element) => {
                 if (element.phone)
                     fetchPromises.push(async () => {
                         try {
-                            const message: GetMessage<ConversationMessage> = await fetchMessage(element);
-                            console.log(`Fetched message for contact ${element.firstName} ${element.lastName || ''}:`, message);
+                            const message: GetMessage<ConversationMessage> = await fetchMessage(element.phone);
+                            console.log(`Fetched message for phone ${element.phone}`, message);
                             if (message.data.length > 0) {
                                 const withMessage: ContactLatestMessage = {
-                                    contact: element,
+                                    messenger: element,
                                     latestMessage: message.data[0]
                                 }
                                 newArray.push(withMessage)
                                 return
                             }
                             const withoutMessage: ContactLatestMessage = {
-                                contact: element,
+                                messenger: element,
                                 latestMessage: null
                             }
                             newArray.push(withoutMessage)
@@ -87,15 +93,25 @@ const Messenger = () => {
 
                 return timestampB - timestampA;
             });
-            setlistContact(newArray)
+            const newContactArray: ContactLatestMessage[] = result2Data.filter(contact => !newArray.some(element => element.messenger.phone === contact.phone)).map(contact => {
+                return {
+                    latestMessage: null,
+                    messenger: {
+                        contact: contact,
+                        phone: contact.phone,
+                        createdAt: contact.createdAt
+                    }
+                }
+            })
+            setlistMessenger([...newArray, ...newContactArray])
         }
     }
     const fetchChatMessage = async (page: number) => {
-        if (!session?.customerService?.sessionId && !currentContact) return
-        console.log(`/messages/${session?.customerService?.sessionId}/?phoneNumber=${currentContact?.phone}&page=${messageMetadata?.currentPage}&pageSize=${PAGINATION_BATCH}&sort=asc`)
+        if (!session?.customerService?.sessionId && !currentMessenger) return
+        console.log(`/messages/${session?.customerService?.sessionId}/?phoneNumber=${currentMessenger?.phone}&page=${messageMetadata?.currentPage}&pageSize=${PAGINATION_BATCH}&sort=asc`)
         console.log('ini fetch chat')
         const result = await fetchClient({
-            url: `/messages/${session?.customerService?.sessionId}/?phoneNumber=${currentContact?.phone}&page=${page}&pageSize=${PAGINATION_BATCH}&sort=asc`,
+            url: `/messages/${session?.customerService?.sessionId}/?phoneNumber=${currentMessenger?.phone}&page=${page}&pageSize=${PAGINATION_BATCH}&sort=asc`,
             method: 'GET',
             user: session?.customerService
         })
@@ -110,12 +126,12 @@ const Messenger = () => {
     const sendMessage = async () => {
         setsendMessageLoading(true)
         if (inputFile.length > 0) {
-            if (session?.customerService?.sessionId && currentContact && inputFile) {
+            if (session?.customerService?.sessionId && currentMessenger && inputFile) {
                 const formdata = new FormData()
                 formdata.append("caption", textInput)
                 // @ts-ignore
                 formdata.set('image', inputFile[0].file, inputFile[0].name)
-                formdata.append("recipients[0]", currentContact.phone)
+                formdata.append("recipients[0]", currentMessenger.phone)
                 formdata.append("sessionId", session?.customerService?.sessionId)
                 try {
                     const result = await fetch('/api/message/media', {
@@ -128,6 +144,7 @@ const Messenger = () => {
                         console.log(resultData)
                         setinputFile([])
                         settextInput('')
+                        fetchChatMessage(1)
                         toast.success('Berhasil kirim image')
 
                     } else {
@@ -144,13 +161,13 @@ const Messenger = () => {
         }
 
         else {
-            if (session?.customerService?.sessionId && currentContact && textInput.length > 0) {
+            if (session?.customerService?.sessionId && currentMessenger && textInput.length > 0) {
                 const result = await fetchClient({
                     url: '/messages/' + session?.customerService?.sessionId + '/send',
                     method: 'POST',
                     body: JSON.stringify([
                         {
-                            recipient: currentContact.phone,
+                            recipient: currentMessenger.phone,
                             message: {
                                 text: textInput
                             }
@@ -160,24 +177,7 @@ const Messenger = () => {
                 })
                 if (result && result.ok) {
                     toast.success('Berhasil kirim pesan')
-                    const currDate = new Date()
-                    const newMessage: ConversationMessage = {
-                        id: 'lorem',
-                        sessionId: session?.customerService?.sessionId,
-                        message: textInput,
-                        createdAt: currDate.toISOString(),
-                        updatedAt: currDate.toISOString(),
-                        to: currentContact.phone,
-                        contact: {
-                            firstName: currentContact.firstName,
-                            lastName: currentContact.lastName,
-                            colorCode: currentContact.colorCode,
-                        },
-                        pkId: 99,
-                        status: 'delivery_ack',
-                    }
-                    const resultData = await result.json()
-                    setlistMessage(prev => [...prev, newMessage])
+                    fetchChatMessage(1)
                     settextInput('')
                 }
             }
@@ -186,41 +186,41 @@ const Messenger = () => {
     }
 
     useEffect(() => {
-        if (currentContact && session?.customerService?.sessionId) {
+        if (currentMessenger && session?.customerService?.sessionId) {
             setchatDisabled(false)
         }
         else {
             setchatDisabled(true)
         }
 
-    }, [currentContact, session?.customerService?.sessionId])
+    }, [currentMessenger, session?.customerService?.sessionId])
     useEffect(() => {
         if (session?.customerService?.sessionId && listMessage.length === 0)
             fetchChatMessage(1)
-    }, [currentContact])
+    }, [currentMessenger])
     useEffect(() => {
-        const paramsContact = searchParams?.get('contact')
-        if (paramsContact) {
-            const findContact = listContact.find(item => item.contact.id === paramsContact)
-            if (findContact) {
-                setcurrentContact(findContact.contact)
+        const paramsPhone = searchParams?.get('phone')
+        if (paramsPhone) {
+            const findMessenger = listMessenger.find(item => item.messenger.phone === paramsPhone)
+            if (findMessenger) {
+                setcurrentMessenger(findMessenger.messenger)
             }
         }
-    }, [listContact])
+    }, [listMessenger])
     useEffect(() => {
         if (session?.customerService?.sessionId)
-            fetchListContact()
+            fetchlistMessenger()
     }, [session?.customerService?.sessionId])
     return (
         <div className=" overflow-y-auto lg:overflow-y-hidden">
             <div className='flex lg:flex-row flex-col items-center justify-between gap-4 mb-12 lg:mb-0 lg:h-[82vh]'>
                 <div className='max-w-md lg:max-w-[250px] w-full lg:h-[78vh] bg-white lg:bg-neutral-75 p-4 lg:p-0 text-xs'>
-                    <ListChats setlistMessage={setlistMessage} listContact={listContact} currentContact={currentContact} setcurrentContact={setcurrentContact} />
+                    <ListChats setlistMessage={setlistMessage} listMessenger={listMessenger} currentMessenger={currentMessenger} setcurrentMessenger={setcurrentMessenger} />
                 </div>
                 <div className={"bg-white p-4 rounded-md w-full max-w-md lg:max-w-full h-full " + (chatDisabled && "opacity-50 pointer-events-none")}>
                     <div className='text-xs w-full flex flex-col h-full'>
                         <Chat
-                            currentContact={currentContact}
+                            currentMessenger={currentMessenger}
                             currentDate={currentDate}
                             listMessage={listMessage}
                             sessionId={session?.customerService?.sessionId}
@@ -250,7 +250,7 @@ const Messenger = () => {
                 </div>
                 <div className="bg-white p-4 rounded-md max-w-md lg:max-w-[250px] w-full h-full">
                     <div className='w-full lg:max-h-[78vh] overflow-y-scroll h-full '>
-                        <ProfileDetail currentContact={currentContact} />
+                        <ProfileDetail currentMessenger={currentMessenger} />
                     </div>
                 </div>
             </div>

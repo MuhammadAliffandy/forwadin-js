@@ -47,6 +47,7 @@ interface GetSession {
     }
 }
 const getDeviceSession = async (data: GetSession[], token: string) => {
+
     const newArray = await Promise.all(
         data.map(async (ses) => {
             const fetchDeviceDetails = await fetch(process.env.BACKEND_URL + '/devices/' + ses.device.id, {
@@ -83,10 +84,12 @@ export const authConfig: NextAuthOptions = {
             clientId: process.env.GOOGLE_CLIENT_ID as string,
             clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
             authorization: {
+
                 params: {
                     scope: 'profile email https://www.googleapis.com/auth/user.phonenumbers.read https://www.googleapis.com/auth/contacts https://www.googleapis.com/auth/contacts.readonly',
                 }
-            }
+            },
+
         }),
         CredentialsProvider({
             id: 'refresh',
@@ -156,6 +159,7 @@ export const authConfig: NextAuthOptions = {
                         subscription: subscription
                     }
                     console.log('refresh admin')
+
                     // console.log(user)
                     return user
                 } else {
@@ -314,7 +318,7 @@ export const authConfig: NextAuthOptions = {
         },
         async signIn({ user, account }: any) {
             if (account?.provider === 'google') {
-                // console.log(account.access_token)
+                // return null
                 const result = await fetch(process.env.BACKEND_URL + '/auth/google', {
                     method: 'POST',
                     headers: {
