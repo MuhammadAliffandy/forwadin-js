@@ -9,6 +9,7 @@ import InputForm from "@/components/form/InputForm"
 import useTemplate from "@/components/hooks/useTemplate"
 import { formatDatetoISO8601 } from "@/utils/helper"
 import { fetchClient } from "@/utils/helper/fetchClient"
+import { getFileFromUrl } from "@/utils/helper/fileHelper"
 import { getMessageVariables, parseTextInput } from "@/utils/helper/messageUtils"
 import { CampaignData, CampaignForm, ContactData, DeviceSession, Label, MessageTypes } from "@/utils/types"
 import { Button, Tab, Tabs } from "@nextui-org/react"
@@ -130,8 +131,14 @@ const CreateCampaign = ({ campaignData }: { campaignData: CampaignData }) => {
         setisLoading(false)
     }
     useEffect(() => {
+        if (campaignData.mediaPath) {
+            getFileFromUrl(campaignData.mediaPath, setfiles)
+        }
+    }, [])
+    useEffect(() => {
         if (session?.user?.device && listDevice.length === 0) {
             setlistDevice(session.user.device)
+            setValue('deviceId', session.user.device[0].id)
         }
     }, [session?.user?.device])
     useEffect(() => {
@@ -198,6 +205,7 @@ const CreateCampaign = ({ campaignData }: { campaignData: CampaignData }) => {
                             <InputContactAndLabel
                                 selectedKeys={receiverList}
                                 setselectedKeys={setreceiverList}
+                                user={session?.user}
                             />
                         )}
                     </div>
@@ -318,7 +326,7 @@ const CreateCampaign = ({ campaignData }: { campaignData: CampaignData }) => {
 
                             </div>
                             <div className="flex gap-2 flex-wrap mt-2">
-                                {getMessageVariables().map(list => (
+                                {getMessageVariables(true).map(list => (
                                     <div key={list} className='rounded-full px-2 py-[2px] border border-customGray hover:cursor-pointer' onClick={() => handleInsertVariable(list, item)}>
                                         {list}
                                     </div>
@@ -328,7 +336,7 @@ const CreateCampaign = ({ campaignData }: { campaignData: CampaignData }) => {
                                 <div className="mt-4">
                                     <p>Hasil Pesan Campaign</p>
                                     <div className='bg-neutral-75 rounded-md h-full text-[#777C88] p-3 mt-2'>
-                                        {parseTextInput(registrationMessage)}
+                                        {parseTextInput(registrationMessage, true)}
                                     </div>
                                 </div>
                             )}
@@ -336,7 +344,7 @@ const CreateCampaign = ({ campaignData }: { campaignData: CampaignData }) => {
                                 <div className="mt-4">
                                     <p>Hasil Pesan Campaign</p>
                                     <div className='bg-neutral-75 rounded-md h-full text-[#777C88] p-3 mt-2'>
-                                        {parseTextInput(successMessage)}
+                                        {parseTextInput(successMessage, true)}
                                     </div>
                                 </div>
                             )}
@@ -344,7 +352,7 @@ const CreateCampaign = ({ campaignData }: { campaignData: CampaignData }) => {
                                 <div className="mt-4">
                                     <p>Hasil Pesan Campaign</p>
                                     <div className='bg-neutral-75 rounded-md h-full text-[#777C88] p-3 mt-2'>
-                                        {parseTextInput(failedMessage)}
+                                        {parseTextInput(failedMessage, true)}
                                     </div>
                                 </div>
                             )}
@@ -352,7 +360,7 @@ const CreateCampaign = ({ campaignData }: { campaignData: CampaignData }) => {
                                 <div className="mt-4">
                                     <p>Hasil Pesan Campaign</p>
                                     <div className='bg-neutral-75 rounded-md h-full text-[#777C88] p-3 mt-2'>
-                                        {parseTextInput(unregisteredMessage)}
+                                        {parseTextInput(unregisteredMessage, true)}
                                     </div>
                                 </div>
                             )}

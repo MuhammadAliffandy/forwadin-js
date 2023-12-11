@@ -8,6 +8,7 @@ import InputForm from "@/components/form/InputForm"
 import useTemplate from "@/components/hooks/useTemplate"
 import { formatDatetoISO8601 } from "@/utils/helper"
 import { fetchClient } from "@/utils/helper/fetchClient"
+import { getFileFromUrl } from "@/utils/helper/fileHelper"
 import { getMessageVariables, parseTextInput } from "@/utils/helper/messageUtils"
 import { CampaignData, CampaignMessage, CampaignMessageForm } from "@/utils/types"
 import { Button } from "@nextui-org/react"
@@ -89,6 +90,9 @@ const EditCampaignMessage = ({ campaignData, messageData }: {
         setValue('name', messageData.name)
         setValue('schedule', (new Date(messageData.schedule).toISOString().slice(0, 16)))
         setinputText(messageData.message)
+        if (campaignData.mediaPath) {
+            getFileFromUrl(campaignData.mediaPath, setfiles)
+        }
     }, [])
     return (
         <>
@@ -122,6 +126,7 @@ const EditCampaignMessage = ({ campaignData, messageData }: {
                                     setselectedKeys={setreceiverList}
                                     isDisabled={true}
                                     showDescription={false}
+                                    user={session?.user}
                                 />
                             )}
                         </div>

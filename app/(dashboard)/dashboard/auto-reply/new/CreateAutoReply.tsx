@@ -1,17 +1,14 @@
 'use client'
-import DropdownDevice from "@/components/dashboard/DropdownDevice"
 import InputContactAndLabel from "@/components/dashboard/InputContactAndLabel"
-import MultipleInputContact from "@/components/dashboard/MultipleInputContact"
 import MultipleInputLabel from "@/components/dashboard/MultipleInputLabel"
-import TagsInput from "@/components/dashboard/TagsInput"
 import UploadFile from "@/components/dashboard/UploadFile"
 import TextAreaInput from "@/components/dashboard/chat/TextAreaInput"
 import InputForm from "@/components/form/InputForm"
 import useTemplate from "@/components/hooks/useTemplate"
 import { fetchClient } from "@/utils/helper/fetchClient"
 import { getMessageVariables, parseTextInput } from "@/utils/helper/messageUtils"
-import { ContactData, DeviceData, DeviceSession, Label } from "@/utils/types"
-import { Button, Select, SelectItem } from "@nextui-org/react"
+import { DeviceSession, Label } from "@/utils/types"
+import { Button } from "@nextui-org/react"
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
@@ -32,7 +29,7 @@ const CreateAutoReply = () => {
     const [listDevice, setlistDevice] = useState<DeviceSession[]>([])
     const [currentDevice, setcurrentDevice] = useState<DeviceSession>()
     const [isDisabled, setisDisabled] = useState(true)
-    const { handleSubmit, register, reset, formState: { errors } } = useForm<AutoReplyForm>()
+    const { handleSubmit, register, reset, setValue, formState: { errors } } = useForm<AutoReplyForm>()
     const [files, setfiles] = useState<File[]>([])
     const [receiverList, setreceiverList] = useState<string[]>([])
     const [requestList, setrequestList] = useState<Label[]>([])
@@ -113,6 +110,7 @@ const CreateAutoReply = () => {
     useEffect(() => {
         if (session?.user?.device && listDevice.length === 0) {
             setlistDevice(session.user.device)
+            setValue('deviceId', session.user.device[0].id)
             fetchContactData()
         }
     }, [session?.user?.device])
@@ -157,6 +155,7 @@ const CreateAutoReply = () => {
                             selectedKeys={receiverList}
                             setselectedKeys={setreceiverList}
                             isAutoReply={true}
+                            user={session?.user}
                         />
 
                     </div>

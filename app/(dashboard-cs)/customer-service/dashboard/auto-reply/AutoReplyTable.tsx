@@ -4,27 +4,26 @@ import { fetchClient } from '@/utils/helper/fetchClient'
 import { AutoReply } from '@/utils/types'
 import { Button, Pagination, Skeleton, Switch, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@nextui-org/react'
 import { IncomingMessage } from 'http'
-import { User } from 'next-auth'
+import { CustomerService } from 'next-auth'
 import Link from 'next/link'
 import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 interface AutoReplyTableProps {
     settotalAutoReply: Dispatch<SetStateAction<number>>,
-    user: User | undefined
+    customerService: CustomerService | undefined
 }
-const AutoReplyTable = ({ settotalAutoReply, user }: AutoReplyTableProps) => {
+const AutoReplyTable = ({ settotalAutoReply, customerService }: AutoReplyTableProps) => {
     const [isChecked, setisChecked] = useState(false)
     const [isLoaded, setisLoaded] = useState(false)
     const [autoReplyData, setautoReplyData] = useState<AutoReply[]>([])
     const [searchText, setsearchText] = useState('')
     const [searchedAutoReplyData, setsearchedAutoReplyData] = useState<AutoReply[]>([])
     const [selectedAutoReply, setselectedAutoReply] = useState<Set<string> | 'all'>(new Set([]))
-
     const fetchAutoReply = async () => {
         const result = await fetchClient({
             url: '/auto-replies',
             method: 'GET',
-            user: user
+            user: customerService
         })
         if (result?.ok) {
             const resultData: AutoReply[] = await result.json()
@@ -33,27 +32,8 @@ const AutoReplyTable = ({ settotalAutoReply, user }: AutoReplyTableProps) => {
         }
         setisLoaded(true)
     }
-    const handleToggleAutoReply = async (id: string, status: boolean) => {
-        console.log('Toggle')
-        console.log(id, status)
-        const result = await fetchClient({
-            url: `/auto-replies/${id}/status`,
-            method: 'PATCH',
-            body: JSON.stringify({ status: status }),
-            user: user
-        })
-        if (result?.ok) {
-            console.log('sukses')
-            const newArr = autoReplyData.map(item => {
-                if (item.id === id)
-                    return {
-                        ...item,
-                        status: status
-                    }
-                return item
-            })
-            setautoReplyData(newArr)
-        }
+    const handleToggleAutoReply = async () => {
+
     }
     const handleDeleteAutoReply = async () => {
         // tambah konfirmasi delete
@@ -70,7 +50,7 @@ const AutoReplyTable = ({ settotalAutoReply, user }: AutoReplyTableProps) => {
                 url: '/auto-replies',
                 body: JSON.stringify({ autoReplyIds: deletedAR }),
                 method: 'DELETE',
-                user: user
+                user: customerService
             })
             if (result?.ok) {
                 toast.success('Berhasil hapus auto reply')
@@ -83,10 +63,10 @@ const AutoReplyTable = ({ settotalAutoReply, user }: AutoReplyTableProps) => {
         }
     }
     useEffect(() => {
-        if (user?.token) {
+        if (customerService?.token) {
             fetchAutoReply()
         }
-    }, [user?.token])
+    }, [customerService?.token])
     useEffect(() => {
         if ((selectedAutoReply as Set<string>).size > 0 || selectedAutoReply === 'all')
             setisChecked(true)
@@ -108,7 +88,7 @@ const AutoReplyTable = ({ settotalAutoReply, user }: AutoReplyTableProps) => {
                         {isChecked ? (
                             <Button onClick={handleDeleteAutoReply} className='rounded-md text-sm' color='danger' >Hapus</Button>
                         ) : (
-                            <Button className='rounded-md text-sm' color='primary' as={Link} href='/dashboard/auto-reply/new'>
+                            <Button className='rounded-md text-sm' color='primary' as={Link} href='/customer-service/dashboard/auto-reply/new'>
                                 Buat Auto Reply Baru
                             </Button>
                         )}
@@ -155,12 +135,9 @@ const AutoReplyTable = ({ settotalAutoReply, user }: AutoReplyTableProps) => {
                         >
                             {(item: AutoReply) => (
                                 <TableRow key={item.id}>
-                                    <TableCell key={'name_' + item.id}>{item.name}</TableCell>
-                                    <TableCell key={'switch_' + item.id}>
-                                        <div className='hover:cursor-pointer'>
-                                            <Switch size='sm'
-                                                isSelected={item.status} onClick={() => handleToggleAutoReply(item.id, !item.status)} onValueChange={() => { }} />
-                                        </div>
+                                    <TableCell >{item.name}</TableCell>
+                                    <TableCell>
+                                        <Switch size='sm' isSelected={item.status} />
                                     </TableCell>
                                     <TableCell>
                                         {item.recipients.length}

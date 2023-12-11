@@ -4,8 +4,6 @@ import MediaChat from "@/components/dashboard/chat/MediaChat"
 import { formatDate, getInitials } from "@/utils/helper"
 import { fetchClient } from "@/utils/helper/fetchClient"
 import { MessengerList, ConversationMessage, MessageMetadata } from "@/utils/types"
-import { User } from "next-auth"
-import { useSession } from "next-auth/react"
 import { Dispatch, SetStateAction, useEffect, useState } from "react"
 import InfiniteScroll from "react-infinite-scroll-component"
 

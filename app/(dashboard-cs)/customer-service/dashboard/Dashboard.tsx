@@ -60,6 +60,21 @@ const Dashboard = () => {
                     </div>
                 </div>
             </div>
+            {!session?.customerService?.sessionId && (
+                <div className='border-2 border-danger rounded-md px-4 py-3 flex justify-between mt-4'>
+                    <div className='flex gap-4 items-center'>
+                        <div className='flex-none'>
+                            <img src="/assets/icons/dashboard/assignment_late.svg" alt="" />
+                        </div>
+                        <p className='font-bold text-md'>Hubungkan device Anda terlebih dahulu dan mulai jelajahi fitur-fitur unggulan Forwardin</p>
+                    </div>
+                    <div className='flex-none'>
+                        <Button as={Link} href='/dashboard/device' color='primary' className='rounded-md'>
+                            Device
+                        </Button>
+                    </div>
+                </div>
+            )}
             <div className='flex gap-4 mt-8 flex-col xl:flex-row '>
                 <div className='bg-white rounded-md px-4 lg:px-8 py-8 grow flex flex-col justify-between gap-4'>
                     <div className='flex lg:flex-row flex-col justify-between w-full basis-1/3 items-end lg:items-center'>

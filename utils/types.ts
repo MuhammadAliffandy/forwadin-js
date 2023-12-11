@@ -476,3 +476,15 @@ export interface OrderData {
     createdAt: string,
     updatedAt: string
 }
+export interface OrderMessage {
+    pkId: number,
+    id: string,
+    orderTemplate: string,
+    welcomeMessage: string,
+    processMessage: string,
+    completeMessage: string,
+    csId: number,
+    createdAt: string,
+    updatedAt: string
+
+}

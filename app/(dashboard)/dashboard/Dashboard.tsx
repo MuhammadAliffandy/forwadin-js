@@ -214,19 +214,28 @@ const Dashboard = () => {
                         </div>
                     </div>
                 </div>
-                <div className='bg-white rounded-md px-4 pt-4 pb-2 grow-0 w-full xl:max-w-sm flex flex-col justify-between'>
+                <div className={'bg-white rounded-md px-4 pt-4 pb-2 grow-0 w-full xl:max-w-sm flex flex-col justify-between ' + (session?.user?.device.length === 0 && "opacity-50 pointer-events-none")}>
                     <p className='font-nunito font-bold text-[16px]'>Pesan terakhir</p>
+
                     <div className='flex flex-col gap-2 mt-2 h-full'>
                         {latestMessage.map(message => (
                             <Message message={message} />
                         ))}
+                        {latestMessage.length === 0 && (
+                            <p className='text-customGray text-xs text-center'> Belum ada pesan</p>
+                        )}
                     </div>
                     <div className=' flex items-end justify-center mt-2'>
                         <Link href={'/dashboard/incoming'} className=" text-primary">Tampilkan lainnya</Link>
                     </div>
                 </div>
             </div>
-            <DynamicAnalytic user={session?.user} currentDevice={currentDevice} setcurrentDevice={setcurrentDevice} />
+            <div className={'mt-4 bg-white w-full rounded-md p-4 lg:p-8 ' + (session?.user?.device.length === 0 && "opacity-50 pointer-events-none")}>
+                <p className='font-lexend text-2xl font-bold'>Analitik</p>
+                {(session?.user?.device && session?.user?.device.length > 0) && (
+                    <DynamicAnalytic user={session?.user} currentDevice={currentDevice} setcurrentDevice={setcurrentDevice} />
+                )}
+            </div>
         </>
     )
 }

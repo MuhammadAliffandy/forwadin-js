@@ -140,6 +140,7 @@ const CreateCampaignMessage = ({ campaignId }: {
                                     setselectedKeys={setreceiverList}
                                     isDisabled={true}
                                     showDescription={false}
+                                    user={session?.user}
                                 />
                             )}
                         </div>
@@ -183,7 +184,7 @@ const CreateCampaignMessage = ({ campaignId }: {
 
                         </div>
                         <div className="flex gap-2 flex-wrap mt-2">
-                            {getMessageVariables().map(list => (
+                            {getMessageVariables(true).map(list => (
                                 <div key={list} className='rounded-full px-2 py-[2px] border border-customGray hover:cursor-pointer' onClick={() => handleInsertVariable(list)}>
                                     {list}
                                 </div>
@@ -193,7 +194,7 @@ const CreateCampaignMessage = ({ campaignId }: {
                             <div className="mt-4">
                                 <p>Hasil Pesan</p>
                                 <div className='bg-neutral-75 rounded-md h-full text-[#777C88] p-3 mt-2'>
-                                    {parseTextInput(inputText)}
+                                    {parseTextInput(inputText, true)}
                                 </div>
                             </div>
                         )}

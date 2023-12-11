@@ -102,8 +102,9 @@ export const authConfig: NextAuthOptions = {
                 let subscription: Subscription = {
                     status: 0
                 }
-
+                console.log('refresh session 1')
                 const userData: User | CustomerService = JSON.parse(credentials?.user!)
+                console.log('refresh session 2')
                 // todo
                 const result = await fetch(process.env.BACKEND_URL + '/auth/refresh-token', {
                     method: 'POST',
@@ -113,6 +114,7 @@ export const authConfig: NextAuthOptions = {
                     body: JSON.stringify({ refreshToken: userData.refreshToken })
                 })
 
+                console.log('refresh session 3')
                 if (result.ok) {
                     console.log('refresh')
                     const resultData = await result.json()
