@@ -28,6 +28,7 @@ const OrderModal = ({ data, openModal, session, setopenModal }: OrderModalProps)
             user: session?.customerService
         })
         if (result?.ok) {
+            console.log('ini get order message')
             setorderMessage(await result.json())
         }
     }
@@ -40,6 +41,19 @@ const OrderModal = ({ data, openModal, session, setopenModal }: OrderModalProps)
             completeMessage: completeMessage
         }
         if (orderMessage) {
+            // Update
+            const result = await fetchClient({
+                url: '/orders/messages/' + orderMessage.id,
+                method: 'PUT',
+                body: JSON.stringify(body),
+                user: session?.customerService
+            })
+            if (result?.ok) {
+                toast.success('Berhasil ubah template order')
+                setopenModal(false)
+            } else {
+                toast.error('Gagal ubah order message')
+            }
             return
         }
         const result = await fetchClient({

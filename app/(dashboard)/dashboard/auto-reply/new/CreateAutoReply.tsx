@@ -128,7 +128,7 @@ const CreateAutoReply = () => {
                 <div className='w-full bg-white rounded-md p-4 flex flex-col gap-4'>
                     <p className="font-lexend font-bold text-2xl">Buat Auto Reply</p>
                     <div>
-                        <p className="mb-2">Nama Broadcast</p>
+                        <p className="mb-2">Nama Auto Reply</p>
                         <InputForm register={register} config={{
                             name: 'name',
                             placeholder: 'Nama Auto Reply',

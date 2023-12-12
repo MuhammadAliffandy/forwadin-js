@@ -109,6 +109,7 @@ const CreateCampaignMessage = ({ campaignId }: {
                 <BreadcrumbItem href="/dashboard/campaign">campaign</BreadcrumbItem>
                 <BreadcrumbItem href={"/dashboard/campaign/" + campaignId}>detail campaign</BreadcrumbItem>
                 <BreadcrumbItem href={"/dashboard/campaign/" + campaignId + '/message'}>campaign message</BreadcrumbItem>
+                <BreadcrumbItem href={"/dashboard/campaign/" + campaignId + '/message/new'}>create campaign message</BreadcrumbItem>
             </Breadcrumbs>
             <form onSubmit={handleSubmit(onSubmit)} className='flex justify-center items-center lg:items-start lg:flex-row flex-col gap-4 mt-4'>
                 <div className='max-w-sm w-full items-center flex flex-col gap-4'>
@@ -145,7 +146,7 @@ const CreateCampaignMessage = ({ campaignId }: {
                             )}
                         </div>
                         <div>
-                            <p className="mb-2">Jadwal Campaign</p>
+                            <p className="mb-2">Jadwal Campaign Message</p>
                             <InputForm register={register} config={{
                                 name: 'schedule',
                                 placeholder: 'Nama campaign',

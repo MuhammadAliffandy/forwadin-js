@@ -1,5 +1,5 @@
 import ContactIcon from '@/components/dashboard/ContactIcon'
-import { getNumberFromString, formatDate } from '@/utils/helper'
+import { getNumberFromString, formatDate, getArrayFromSet } from '@/utils/helper'
 import { fetchClient } from '@/utils/helper/fetchClient'
 import { AutoReply } from '@/utils/types'
 import { Button, Pagination, Skeleton, Switch, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@nextui-org/react'
@@ -32,18 +32,32 @@ const AutoReplyTable = ({ settotalAutoReply, customerService }: AutoReplyTablePr
         }
         setisLoaded(true)
     }
-    const handleToggleAutoReply = async () => {
-
+    const handleToggleAutoReply = async (id: string, status: boolean) => {
+        console.log('Toggle')
+        console.log(id, status)
+        const result = await fetchClient({
+            url: `/auto-replies/${id}/status`,
+            method: 'PATCH',
+            body: JSON.stringify({ status: status }),
+            user: customerService
+        })
+        if (result?.ok) {
+            console.log('sukses')
+            const newArr = autoReplyData.map(item => {
+                if (item.id === id)
+                    return {
+                        ...item,
+                        status: status
+                    }
+                return item
+            })
+            setautoReplyData(newArr)
+        }
     }
     const handleDeleteAutoReply = async () => {
         // tambah konfirmasi delete
         let deletedAR = null
-        if (selectedAutoReply === 'all') {
-            deletedAR = autoReplyData.map(item => item.id)
-        }
-        else if ((selectedAutoReply as Set<string>).size > 0) {
-            deletedAR = Array.from(selectedAutoReply)
-        }
+        deletedAR = getArrayFromSet(selectedAutoReply, autoReplyData)
         const isConfirm = window.confirm('Anda yakin ingin menghapus ' + deletedAR?.length + ' auto reply?')
         if (deletedAR && isConfirm) {
             const result = await fetchClient({
@@ -137,7 +151,7 @@ const AutoReplyTable = ({ settotalAutoReply, customerService }: AutoReplyTablePr
                                 <TableRow key={item.id}>
                                     <TableCell >{item.name}</TableCell>
                                     <TableCell>
-                                        <Switch size='sm' isSelected={item.status} />
+                                        <Switch size='sm' isSelected={item.status} onClick={() => handleToggleAutoReply(item.id, !item.status)} onValueChange={() => { }} />
                                     </TableCell>
                                     <TableCell>
                                         {item.recipients.length}

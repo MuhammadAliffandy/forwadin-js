@@ -62,18 +62,14 @@ const CreateAutoReply = () => {
             toast.error('Response masih kosong!')
             mark = false
         }
-        if (!ARData.deviceId) {
-            toast.error('Device masih kosong!')
-            mark = false
-        }
-        if (mark) {
+        if (mark && session?.customerService?.deviceId) {
             const formData = new FormData()
             if (files.length > 0) {
                 // @ts-ignore
                 formData.set('media', files[0].file, files[0].name)
             }
             formData.append('name', ARData.name)
-            formData.append('deviceId', ARData.deviceId)
+            formData.append('deviceId', session?.customerService?.deviceId)
             requestList.forEach((element, idx) => {
                 formData.append(`requests[${idx}]`, element.label.name)
             })
@@ -90,10 +86,10 @@ const CreateAutoReply = () => {
             })
             if (result?.ok) {
                 toast.success('Berhasil buat auto reply')
-                push('/dashboard/auto-reply')
+                push('/customer-service/dashboard/auto-reply')
             } else {
                 toast.error('Gagal buat auto reply')
-
+                console.log(await result?.json())
             }
         }
         setisLoading(false)
@@ -113,7 +109,7 @@ const CreateAutoReply = () => {
                 <div className='w-full bg-white rounded-md p-4 flex flex-col gap-4'>
                     <p className="font-lexend font-bold text-2xl">Buat Auto Reply</p>
                     <div>
-                        <p className="mb-2">Nama Broadcast</p>
+                        <p className="mb-2">Nama Auto Reply</p>
                         <InputForm register={register} config={{
                             name: 'name',
                             placeholder: 'Nama Auto Reply',
@@ -125,17 +121,7 @@ const CreateAutoReply = () => {
                         }} />
                     </div>
                     <div>
-                        <p className="mb-2">Device</p>
-                        <select {...register('deviceId')} className="px-4 py-3 focus:outline-none text-sm rounded-md focus:ring-0 w-full border-[#B0B4C5] focus:border-primary">
-                            {listDevice.map(item => (
-                                <option key={item.id} value={item.id} className="">{item.name}</option>
-                            ))}
-                        </select>
-                    </div>
-                    <div>
                         <p className="mb-2">Penerima</p>
-                        {/* <TagsInput /> */}
-                        {/* <MultipleInputContact contactList={receiverList} setcontactList={setreceiverList} /> */}
                         <InputContactAndLabel
                             selectedKeys={receiverList}
                             setselectedKeys={setreceiverList}

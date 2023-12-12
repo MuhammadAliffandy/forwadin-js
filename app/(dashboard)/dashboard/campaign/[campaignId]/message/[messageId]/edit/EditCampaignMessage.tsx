@@ -90,8 +90,8 @@ const EditCampaignMessage = ({ campaignData, messageData }: {
         setValue('name', messageData.name)
         setValue('schedule', (new Date(messageData.schedule).toISOString().slice(0, 16)))
         setinputText(messageData.message)
-        if (campaignData.mediaPath) {
-            getFileFromUrl(campaignData.mediaPath, setfiles)
+        if (messageData.mediaPath) {
+            getFileFromUrl(messageData.mediaPath, setfiles)
         }
     }, [])
     return (
@@ -115,7 +115,7 @@ const EditCampaignMessage = ({ campaignData, messageData }: {
 
                         <div>
                             <p className="mb-2">Device</p>
-                            <DisabledForm text={(campaignData?.device.name ? campaignData.device.name : '')} type="text" />
+                            <DisabledForm text={(campaignData?.device.name || '')} type="text" />
                         </div>
                         <div>
                             <p className="mb-2">Penerima</p>

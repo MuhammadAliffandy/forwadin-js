@@ -1,6 +1,6 @@
 
 import { CustomerService, Session, User } from "next-auth"
-import { getSession, signIn, signOut, useSession } from "next-auth/react"
+import { signIn, signOut } from "next-auth/react"
 import { toast } from "react-toastify"
 let isRefreshing = false
 interface FetchClientParams {

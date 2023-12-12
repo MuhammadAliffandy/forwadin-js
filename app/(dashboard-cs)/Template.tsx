@@ -13,6 +13,8 @@ const Template = ({ children }: { children: React.ReactNode }) => {
             setCurrentPage('Messenger')
         else if (pathName.includes('/dashboard/order'))
             setCurrentPage('Order')
+        else if (pathName.includes('/dashboard/auto-reply'))
+            setCurrentPage('Auto Reply')
         else if (pathName.includes('/dashboard'))
             setCurrentPage('Dashboard')
 

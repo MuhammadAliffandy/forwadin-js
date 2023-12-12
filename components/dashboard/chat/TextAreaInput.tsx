@@ -7,7 +7,8 @@ const TextAreaInput = ({ text, settext, limit = 1500 }: {
 }) => {
     const [counter, setcounter] = useState(0)
     useEffect(() => {
-        setcounter(text.length)
+        if (text)
+            setcounter(text.length)
     }, [text])
     return (
         <div className="relative">

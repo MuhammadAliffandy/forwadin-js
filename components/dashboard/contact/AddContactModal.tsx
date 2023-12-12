@@ -85,7 +85,7 @@ const AddContactModal = ({ openModal, setopenModal, fetchData }: AddContactModal
             url: '/contacts/create',
             user: session?.user
         })
-
+        const response = await result?.json()
         if (result && result.ok) {
             toast.success('Kontak berhasil ditambahkan')
             fetchData()
@@ -101,7 +101,7 @@ const AddContactModal = ({ openModal, setopenModal, fetchData }: AddContactModal
                 }
             }))
         } else {
-            toast.error('Gagal menyimpan kontak')
+            toast.error(response.message)
             setisLoading(false)
         }
     }

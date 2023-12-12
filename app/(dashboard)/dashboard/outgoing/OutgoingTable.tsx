@@ -174,7 +174,7 @@ const OutgoingTable = ({ settotalMessage, totalMessage, sessionId, user }: {
                                                     <div className='flex gap-2 items-center'>
                                                         <ProfileAvatar profile={item.contact} />
                                                         <div className='text-xs'>
-                                                            {item.contact ? item.contact.firstName + ' ' + item.contact.lastName : getNumberFromString(item.to)}
+                                                            {item.contact ? item.contact.firstName + ' ' + (item.contact.lastName || '') : getNumberFromString(item.to)}
                                                         </div>
                                                     </div>
                                                     <BubbleChat
