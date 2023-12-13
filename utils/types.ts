@@ -486,5 +486,4 @@ export interface OrderMessage {
     csId: number,
     createdAt: string,
     updatedAt: string
-
 }

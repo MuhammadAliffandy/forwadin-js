@@ -18,7 +18,7 @@ interface ChatProps {
 }
 const Chat = ({ currentMessenger, currentDate, sessionId, listMessage, setlistMessage, metadata, fetchChatMessage }: ChatProps) => {
     useEffect(() => {
-        // console.log(listMessage)
+        console.log(listMessage)
     }, [listMessage])
     useEffect(() => {
 

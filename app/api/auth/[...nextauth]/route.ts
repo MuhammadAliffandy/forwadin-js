@@ -120,8 +120,21 @@ export const authConfig: NextAuthOptions = {
                     const resultData = await result.json()
                     if (userData.role === 222) {
                         console.log('refresh CS')
+                        console.log(resultData)
+                        const fetchSessionCS = await fetch(process.env.BACKEND_URL + "/customer-services/" + (userData as CustomerService).id, {
+                            method: 'GET',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': 'Bearer ' + resultData.accessToken
+                            },
+                        })
+                        if (!fetchSessionCS.ok) return null
+                        const sessionCSData: CustomerService = await fetchSessionCS.json()
+                        console.log('ini session cs')
+                        console.log(sessionCSData)
                         return {
                             ...userData,
+                            sessionId: sessionCSData.sessionId || null,
                             id: resultData.id,
                             token: resultData.accessToken
                         } as any
@@ -332,6 +345,7 @@ export const authConfig: NextAuthOptions = {
                 })
                 const resultData = await result.json()
                 if (result.ok) {
+                    user.device = []
                     user.role = resultData.role
                     user.id = resultData.id
                     user.token = resultData.accessToken

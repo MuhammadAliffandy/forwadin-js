@@ -1,5 +1,5 @@
 import { formatDate } from "@/utils/helper"
-import { useEffect, useState } from "react"
+import React, { useEffect, useState } from "react"
 
 interface BubbleChatProps {
     text: string,
@@ -11,24 +11,30 @@ interface BubbleChatProps {
 }
 const BubbleChat = ({ text, received, status, isOutgoing = false, currentDate, mediaPath }: BubbleChatProps) => {
     const messageDate = new Date(Date.parse(received))
-    const [receivedMessage, setreceivedMessage] = useState(received)
+    const [receivedMessage, setreceivedMessage] = useState('')
     useEffect(() => {
         if (Math.abs(currentDate.getTime() - messageDate.getTime()) <= 300000)
             setreceivedMessage('now')
-        else
-            setreceivedMessage(formatDate(received) as string)
+        // else
+        //     setreceivedMessage(formatDate(received) as string)
+
     }, [])
 
     if (isOutgoing)
         return (
             <div className="flex justify-end">
-                <div className="border-primary  border pt-4 px-4 pb-2 text-sm mt-2 rounded-l-2xl rounded-br-2xl bg-primary text-white">
+                <div className="border-primary  border pt-4 px-4 pb-2 text-sm mt-2 rounded-l-2xl rounded-br-2xl bg-primary text-white" onContextMenu={() => alert('ini right click')}>
                     {mediaPath && (
                         <div className="max-w-xs max-h-[250px] overflow-scroll">
                             <img src={process.env.NEXT_PUBLIC_BACKEND_URL + '/' + mediaPath} alt="photos" className="object-cover w-full h-full hover:bg-neutral-75" onClick={() => { }} />
                         </div>
                     )}
-                    <p className="mt-2">{text}</p>
+                    {text.split('\n').map((line, index) => (
+                        <React.Fragment key={index}>
+                            {line}
+                            {index < text.length - 1 && <br />}
+                        </React.Fragment>
+                    ))}
                     <div className="flex justify-end items-center gap-2 mt-2">
                         <p className="text-customGray">{receivedMessage}</p>
                         {status === 'read' && (

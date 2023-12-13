@@ -1,7 +1,7 @@
 'use client'
 import { ChangeEvent, useEffect, useState } from "react"
 
-import { ContactData, DeviceData, ConversationMessage, DeviceSession, MessageMetadata, OutgoingMessage, ContactLatestMessage, GetMessage, MessengerList } from "@/utils/types"
+import { ContactData, DeviceData, ConversationMessage, DeviceSession, MessageMetadata, OutgoingMessage, ContactLatestMessage, GetMessage, MessengerList, OrderMessage } from "@/utils/types"
 import TextAreaInput from "@/components/dashboard/chat/TextAreaInput"
 import { useSession } from "next-auth/react"
 import { fetchClient } from "@/utils/helper/fetchClient"
@@ -19,7 +19,24 @@ import ProfileDetail from "@/app/(dashboard)/dashboard/messenger/ProfileDetail"
 const Messenger = () => {
     const searchParams = useSearchParams()
     const { data: session } = useSession()
-
+    const orderTools = [
+        {
+            title: 'orderTemplate',
+            content: 'orderTemplate'
+        },
+        {
+            title: 'welcome',
+            content: 'welcomeMessage'
+        },
+        {
+            title: 'followup',
+            content: 'processMessage'
+        },
+        {
+            title: 'complete',
+            content: 'completeMessage'
+        }
+    ]
     const currentDate = new Date()
     const [textInput, settextInput] = useState('')
     const [inputFile, setinputFile] = useState<File[]>([]);
@@ -31,6 +48,7 @@ const Messenger = () => {
     const [chatDisabled, setchatDisabled] = useState(true)
     const [messageMetadata, setmessageMetadata] = useState<MessageMetadata>()
     const [listMessage, setlistMessage] = useState<ConversationMessage[]>([])
+    const [orderMessage, setorderMessage] = useState<OrderMessage>()
     const fetchlistMessenger = async () => {
         const result = await fetchClient({
             url: `/messages/${session?.customerService?.sessionId}/messenger-list`,
@@ -104,6 +122,25 @@ const Messenger = () => {
                 }
             })
             setlistMessenger([...newArray, ...newContactArray])
+        }
+    }
+    const insertTemplate = (text: string) => {
+        if (!orderMessage) return
+        if (Object.keys(orderMessage).includes(text)) {
+            // @ts-ignore
+            const orderText: string = orderMessage[text]
+            settextInput(orderText)
+        }
+
+    }
+    const fetchTemplate = async () => {
+        const result = await fetchClient({
+            url: '/orders/messages',
+            method: 'GET',
+            user: session?.customerService
+        })
+        if (result?.ok) {
+            setorderMessage(await result.json())
         }
     }
     const fetchChatMessage = async (page: number) => {
@@ -208,8 +245,10 @@ const Messenger = () => {
         }
     }, [listMessenger])
     useEffect(() => {
-        if (session?.customerService?.sessionId)
+        if (session?.customerService?.sessionId) {
             fetchlistMessenger()
+            fetchTemplate()
+        }
     }, [session?.customerService?.sessionId])
     return (
         <div className=" overflow-y-auto lg:overflow-y-hidden">
@@ -232,6 +271,15 @@ const Messenger = () => {
                         <div className="py-2 flex-none">
                             {showfile && (
                                 <UploadFile files={inputFile} setfiles={setinputFile} />
+                            )}
+                            {orderMessage && (
+                                <div className="flex gap-2 justify-start text-sm my-2">
+                                    {orderTools.map(tool => (
+                                        <div key={tool.title} className='rounded-full px-2 py-[2px] border border-customGray hover:cursor-pointer' onClick={() => insertTemplate(tool.content)}>
+                                            + {tool.title}
+                                        </div>
+                                    ))}
+                                </div>
                             )}
                             <TextAreaInput text={textInput} settext={settextInput} />
 

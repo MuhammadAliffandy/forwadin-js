@@ -11,9 +11,16 @@ import { formatDate, formatDateBahasa, getTodayDateBahasa } from '@/utils/helper
 import { Button, Progress, Link as UILink } from '@nextui-org/react';
 import { signIn, useSession } from 'next-auth/react';
 import ActivatePlanModal from '@/components/dashboard/ActivatePlanModal';
+import QRModal from './QRModal';
+import { useSocket } from '@/app/SocketProvider';
+import { useRouter } from 'next/navigation';
 // const DynamicAnalytic = dynamic(() => import('./Analytic'), { ssr: false })
 const Dashboard = () => {
+    const router = useRouter()
+
     const { data: session } = useSession()
+    const { isConnected, socket } = useSocket()
+    const [openQrModal, setopenQrModal] = useState(false)
     const [isLoaded, setisLoaded] = useState(false)
     const [latestMessage, setlatestMessage] = useState<IncomingMessage[]>([])
     const [csProfile, setcsProfile] = useState<CSProfile>()
@@ -41,9 +48,17 @@ const Dashboard = () => {
             fetchLatestMessage()
             console.log(session.customerService)
         }
+        // if (!session?.customerService?.sessionId) {
+        //     console.log('setopenQR')
+        //     setopenQrModal(true)
+        // }
     }, [session?.customerService?.token])
     return (
         <>
+            {openQrModal && (
+                <QRModal session={session} openModal={openQrModal} setopenModal={setopenQrModal} socket={socket} refresh={() => router.refresh()} />
+            )}
+
             <div className='flex flex-col-reverse lg:flex-row lg:justify-between items-center '>
                 <div>
                     <p className='font-lexend text-2xl font-bold'>Selamat Siang, {session?.customerService?.username}</p>
@@ -69,8 +84,8 @@ const Dashboard = () => {
                         <p className='font-bold text-md'>Hubungkan device Anda terlebih dahulu dan mulai jelajahi fitur-fitur unggulan Forwardin</p>
                     </div>
                     <div className='flex-none'>
-                        <Button as={Link} href='/dashboard/device' color='primary' className='rounded-md'>
-                            Device
+                        <Button onClick={() => setopenQrModal(true)} color='primary' className='rounded-md'>
+                            Hubungkan Device
                         </Button>
                     </div>
                 </div>
