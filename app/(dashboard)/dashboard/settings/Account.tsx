@@ -11,6 +11,7 @@ import errors from "formidable/FormidableError"
 import { User } from "next-auth"
 import { signOut, useSession } from "next-auth/react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { useEffect, useRef, useState } from "react"
 import { useForm } from "react-hook-form"
 import { toast } from "react-toastify"
@@ -25,6 +26,7 @@ interface ChangePasswordType {
     confirmPassword: string
 }
 const Account = ({ user, userProfile }: AccountPageProps) => {
+    const router = useRouter()
     const [isPasswordLoading, setisPasswordLoading] = useState(false)
     const [deleteAccountModal, setdeleteAccountModal] = useState(false)
     const [showPasswordCriteria, setshowPasswordCriteria] = useState(false)
@@ -88,7 +90,17 @@ const Account = ({ user, userProfile }: AccountPageProps) => {
         // specialChar: new RegExp("^(?=.*[!@#$%^&*])")
     }
     const handleDeleteAccount = async () => {
-        alert('TODO')
+        const result = await fetchClient({
+            url: '/users/' + user?.id + '/delete',
+            method: 'DELETE',
+            user: user
+        })
+        if (result?.ok) {
+            await signOut()
+            router.push('/')
+        } else {
+            toast.error('Gagal hapus akun')
+        }
     }
     const onSubmitEmail = async (data: { email: string }) => {
 

@@ -43,7 +43,7 @@ export default withAuth(
                 if (!adminPath.subscriptionUrl.some(path => pathName.startsWith(path)) && user.subscription.status === 0) return NextResponse.redirect(new URL('/dashboard', req.url))
                 if (adminPath.requireDevice.some(path => pathName.startsWith('/dashboard' + path))
                     && user.device.length === 0)
-                    return NextResponse.redirect(new URL('/dashboard/device', req.url))
+                    return NextResponse.redirect(new URL('/customer-service/dashboard', req.url))
                 return NextResponse.next()
             }
             if (customerService) {

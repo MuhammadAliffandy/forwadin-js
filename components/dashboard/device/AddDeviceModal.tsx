@@ -33,13 +33,13 @@ const AddDeviceModal = (
                 user: session?.user
             })
             setisLoading(false)
+            const body = await result?.json()
             if (result && result.ok) {
-                const body = await result.json()
                 toast.success('Device berhasil ditambahkan')
                 setopenModal(false)
                 fetchData()
             } else {
-                toast.error('Device gagal ditambahkan')
+                toast.error('Device gagal ditambahkan \n' + body.message)
                 setinputError({ error: true, message: 'Gagal menambahkan device' })
             }
         }

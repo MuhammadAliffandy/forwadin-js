@@ -12,7 +12,7 @@ const ProfileAvatar = ({ profile }: ProfileAvatarProps) => {
         return (
             <div style={{
                 backgroundColor: '#' + profile.colorCode
-            }} className={`flex-none rounded-full text-white w-8 h-8 flex items-center justify-center`}>{getInitials(profile.firstName + ' ' + profile.lastName)}</div>
+            }} className={`flex-none rounded-full text-white w-8 h-8 flex items-center justify-center`}>{getInitials(profile.firstName + ' ' + (profile.lastName || ''))}</div>
         )
     return (
         <div className={`flex-none rounded-full text-white w-8 h-8 flex items-center justify-center bg-primary`}></div>

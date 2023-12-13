@@ -178,6 +178,7 @@ const CreateCampaign = () => {
                             <InputContactAndLabel
                                 selectedKeys={receiverList}
                                 setselectedKeys={setreceiverList}
+                                user={session?.user}
                             />
                         </div>
                         <div>
@@ -288,7 +289,7 @@ const CreateCampaign = () => {
 
                                 </div>
                                 <div className="flex gap-2 flex-wrap mt-2">
-                                    {getMessageVariables().map(list => (
+                                    {getMessageVariables(true).map(list => (
                                         <div key={list} className='rounded-full px-2 py-[2px] border border-customGray hover:cursor-pointer' onClick={() => handleInsertVariable(list, item)}>
                                             {list}
                                         </div>
@@ -298,7 +299,7 @@ const CreateCampaign = () => {
                                     <div className="mt-4">
                                         <p>Hasil Pesan Campaign</p>
                                         <div className='bg-neutral-75 rounded-md h-full text-[#777C88] p-3 mt-2'>
-                                            {parseTextInput(registrationMessage)}
+                                            {parseTextInput(registrationMessage, true)}
                                         </div>
                                     </div>
                                 )}
@@ -306,7 +307,7 @@ const CreateCampaign = () => {
                                     <div className="mt-4">
                                         <p>Hasil Pesan Campaign</p>
                                         <div className='bg-neutral-75 rounded-md h-full text-[#777C88] p-3 mt-2'>
-                                            {parseTextInput(successMessage)}
+                                            {parseTextInput(successMessage, true)}
                                         </div>
                                     </div>
                                 )}
@@ -314,7 +315,7 @@ const CreateCampaign = () => {
                                     <div className="mt-4">
                                         <p>Hasil Pesan Campaign</p>
                                         <div className='bg-neutral-75 rounded-md h-full text-[#777C88] p-3 mt-2'>
-                                            {parseTextInput(failedMessage)}
+                                            {parseTextInput(failedMessage, true)}
                                         </div>
                                     </div>
                                 )}
@@ -322,7 +323,7 @@ const CreateCampaign = () => {
                                     <div className="mt-4">
                                         <p>Hasil Pesan Campaign</p>
                                         <div className='bg-neutral-75 rounded-md h-full text-[#777C88] p-3 mt-2'>
-                                            {parseTextInput(unregisteredMessage)}
+                                            {parseTextInput(unregisteredMessage, true)}
                                         </div>
                                     </div>
                                 )}

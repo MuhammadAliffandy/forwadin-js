@@ -155,6 +155,7 @@ const EditBroadcast = ({ broadcastData }: {
                             <InputContactAndLabel
                                 selectedKeys={receiverList}
                                 setselectedKeys={setreceiverList}
+                                user={session?.user}
                             />
                         )}
                         {/* <MultipleInputContact contactList={receiverList} setcontactList={setreceiverList} /> */}

@@ -10,21 +10,6 @@ import TagsInput from "@/components/dashboard/TagsInput"
 const AutoReply = () => {
     const { data: session } = useSession()
     const [totalAutoReply, settotalAutoReply] = useState(0)
-    const [listDevice, setlistDevice] = useState<DeviceSession[]>([])
-    const [currentDevice, setcurrentDevice] = useState<DeviceSession>()
-
-
-    useEffect(() => {
-        console.log('session user device')
-        if (session?.user?.device && listDevice.length === 0)
-            setlistDevice(session.user.device)
-    }, [session?.user?.device])
-    useEffect(() => {
-
-        console.log('list device')
-        if (listDevice)
-            setcurrentDevice(listDevice[0])
-    }, [listDevice])
     return (
         <>
             <div className="flex justify-between items-center">
@@ -36,10 +21,8 @@ const AutoReply = () => {
                         </div>
                     </div>
                 </div>
-                <DropdownDevice currentDevice={currentDevice} setcurrentDevice={setcurrentDevice} listDevice={session?.user?.device} />
-
             </div>
-            <AutoReplyTable settotalAutoReply={settotalAutoReply} user={session?.user} />
+            <AutoReplyTable settotalAutoReply={settotalAutoReply} customerService={session?.customerService} />
         </>
     )
 }

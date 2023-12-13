@@ -4,17 +4,18 @@ import { animated, useTransition } from "@react-spring/web"
 import { useSession } from "next-auth/react"
 import React, { Dispatch, SetStateAction, useEffect, useRef, useState } from "react"
 import ContactLabel from "./label/ContactLabel"
+import { CustomerService, User } from "next-auth"
 
 interface InputProps {
     selectedKeys: string[],
     setselectedKeys: Dispatch<SetStateAction<string[]>>,
     isAutoReply?: boolean,
     isDisabled?: boolean,
-    showDescription?: boolean
+    showDescription?: boolean,
+    user: User | CustomerService | undefined
 }
-const InputContactAndLabel = ({ selectedKeys, setselectedKeys, isAutoReply = false, isDisabled = false, showDescription = true }: InputProps) => {
+const InputContactAndLabel = ({ selectedKeys, setselectedKeys, isAutoReply = false, isDisabled = false, showDescription = true, user }: InputProps) => {
     const [isLoaded, setisLoaded] = useState(false)
-    const { data: session } = useSession()
     const [isLabelOpen, setisLabelOpen] = useState(false)
     const [contactLabelList, setcontactLabelList] = useState<Label[]>([])
     const [groupList, setgroupList] = useState<Label[]>([])
@@ -75,7 +76,7 @@ const InputContactAndLabel = ({ selectedKeys, setselectedKeys, isAutoReply = fal
         const result = await fetchClient({
             url: '/contacts/labels',
             method: 'GET',
-            user: session?.user
+            user: user
         })
         if (result?.ok) {
             const resultData: string[] = await result.json()
@@ -96,7 +97,7 @@ const InputContactAndLabel = ({ selectedKeys, setselectedKeys, isAutoReply = fal
         const result = await fetchClient({
             url: '/groups',
             method: 'GET',
-            user: session?.user
+            user: user
         })
         if (result?.ok) {
             const resultData: GroupData[] = await result.json()
@@ -167,11 +168,11 @@ const InputContactAndLabel = ({ selectedKeys, setselectedKeys, isAutoReply = fal
     }, [])
     useEffect(() => {
 
-        if (session?.user?.token && isLoaded) {
+        if (user?.token && isLoaded) {
             fetchContactLabelList()
             fetchGroupList()
         }
-    }, [session?.user?.token, isLoaded])
+    }, [user?.token, isLoaded])
 
     useEffect(() => {
         //label_contactlabel, group_namaGroup

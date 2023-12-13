@@ -40,7 +40,6 @@ interface AnalyticProps {
 }
 const Analytic = ({ user, currentDevice, setcurrentDevice }: AnalyticProps) => {
     const [isDeviceLoaded, setisDeviceLoaded] = useState(false)
-    const [deviceDropdown, setdeviceDropdown] = useState(false)
     const [deviceList, setdeviceList] = useState<DeviceSession[]>([])
     const [currentDeviceDetail, setcurrentDeviceDetail] = useState<DeviceData>()
     const fetchDetailDevice = async () => {
@@ -72,8 +71,7 @@ const Analytic = ({ user, currentDevice, setcurrentDevice }: AnalyticProps) => {
             fetchDetailDevice()
     }, [currentDevice])
     return (
-        <div className='mt-4 bg-white w-full rounded-md p-4 lg:p-8'>
-            <p className='font-lexend text-2xl font-bold'>Analitik</p>
+        <>
             <div className='flex flex-col lg:flex-row gap-4 justify-between mt-4'>
                 <div className='border border-black/20 rounded-md w-full lg:max-w-sm p-4'>
                     <p className='font-bold '>Ringkasan hari ini</p>
@@ -180,7 +178,8 @@ const Analytic = ({ user, currentDevice, setcurrentDevice }: AnalyticProps) => {
                     <MessageHourChart />
                 </div>
             </div>
-        </div>
+
+        </>
     )
 }
 

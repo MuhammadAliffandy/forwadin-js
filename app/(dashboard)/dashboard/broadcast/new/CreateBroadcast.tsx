@@ -134,6 +134,7 @@ const CreateBroadcast = () => {
                         <InputContactAndLabel
                             selectedKeys={receiverList}
                             setselectedKeys={setreceiverList}
+                            user={session?.user}
                         />
                         {/* <MultipleInputContact contactList={receiverList} setcontactList={setreceiverList} /> */}
                     </div>

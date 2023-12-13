@@ -109,6 +109,7 @@ const CreateCampaignMessage = ({ campaignId }: {
                 <BreadcrumbItem href="/dashboard/campaign">campaign</BreadcrumbItem>
                 <BreadcrumbItem href={"/dashboard/campaign/" + campaignId}>detail campaign</BreadcrumbItem>
                 <BreadcrumbItem href={"/dashboard/campaign/" + campaignId + '/message'}>campaign message</BreadcrumbItem>
+                <BreadcrumbItem href={"/dashboard/campaign/" + campaignId + '/message/new'}>create campaign message</BreadcrumbItem>
             </Breadcrumbs>
             <form onSubmit={handleSubmit(onSubmit)} className='flex justify-center items-center lg:items-start lg:flex-row flex-col gap-4 mt-4'>
                 <div className='max-w-sm w-full items-center flex flex-col gap-4'>
@@ -140,11 +141,12 @@ const CreateCampaignMessage = ({ campaignId }: {
                                     setselectedKeys={setreceiverList}
                                     isDisabled={true}
                                     showDescription={false}
+                                    user={session?.user}
                                 />
                             )}
                         </div>
                         <div>
-                            <p className="mb-2">Jadwal Campaign</p>
+                            <p className="mb-2">Jadwal Campaign Message</p>
                             <InputForm register={register} config={{
                                 name: 'schedule',
                                 placeholder: 'Nama campaign',
@@ -183,7 +185,7 @@ const CreateCampaignMessage = ({ campaignId }: {
 
                         </div>
                         <div className="flex gap-2 flex-wrap mt-2">
-                            {getMessageVariables().map(list => (
+                            {getMessageVariables(true).map(list => (
                                 <div key={list} className='rounded-full px-2 py-[2px] border border-customGray hover:cursor-pointer' onClick={() => handleInsertVariable(list)}>
                                     {list}
                                 </div>
@@ -193,7 +195,7 @@ const CreateCampaignMessage = ({ campaignId }: {
                             <div className="mt-4">
                                 <p>Hasil Pesan</p>
                                 <div className='bg-neutral-75 rounded-md h-full text-[#777C88] p-3 mt-2'>
-                                    {parseTextInput(inputText)}
+                                    {parseTextInput(inputText, true)}
                                 </div>
                             </div>
                         )}

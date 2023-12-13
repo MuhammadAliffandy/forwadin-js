@@ -42,7 +42,7 @@ const NewPasswordForm = ({ setCurrentStep, token }: { setCurrentStep: Dispatch<S
             })
             if (result.status === 200) {
                 setisLoading(false)
-                await signOut()
+                // await signOut()
                 setCurrentStep('success')
             } else {
                 const body = await result.json()

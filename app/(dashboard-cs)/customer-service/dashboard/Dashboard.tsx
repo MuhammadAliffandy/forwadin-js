@@ -11,9 +11,16 @@ import { formatDate, formatDateBahasa, getTodayDateBahasa } from '@/utils/helper
 import { Button, Progress, Link as UILink } from '@nextui-org/react';
 import { signIn, useSession } from 'next-auth/react';
 import ActivatePlanModal from '@/components/dashboard/ActivatePlanModal';
+import QRModal from './QRModal';
+import { useSocket } from '@/app/SocketProvider';
+import { useRouter } from 'next/navigation';
 // const DynamicAnalytic = dynamic(() => import('./Analytic'), { ssr: false })
 const Dashboard = () => {
+    const router = useRouter()
+
     const { data: session } = useSession()
+    const { isConnected, socket } = useSocket()
+    const [openQrModal, setopenQrModal] = useState(false)
     const [isLoaded, setisLoaded] = useState(false)
     const [latestMessage, setlatestMessage] = useState<IncomingMessage[]>([])
     const [csProfile, setcsProfile] = useState<CSProfile>()
@@ -41,9 +48,17 @@ const Dashboard = () => {
             fetchLatestMessage()
             console.log(session.customerService)
         }
+        // if (!session?.customerService?.sessionId) {
+        //     console.log('setopenQR')
+        //     setopenQrModal(true)
+        // }
     }, [session?.customerService?.token])
     return (
         <>
+            {openQrModal && (
+                <QRModal session={session} openModal={openQrModal} setopenModal={setopenQrModal} socket={socket} refresh={() => router.refresh()} />
+            )}
+
             <div className='flex flex-col-reverse lg:flex-row lg:justify-between items-center '>
                 <div>
                     <p className='font-lexend text-2xl font-bold'>Selamat Siang, {session?.customerService?.username}</p>
@@ -60,6 +75,21 @@ const Dashboard = () => {
                     </div>
                 </div>
             </div>
+            {!session?.customerService?.sessionId && (
+                <div className='border-2 border-danger rounded-md px-4 py-3 flex justify-between mt-4'>
+                    <div className='flex gap-4 items-center'>
+                        <div className='flex-none'>
+                            <img src="/assets/icons/dashboard/assignment_late.svg" alt="" />
+                        </div>
+                        <p className='font-bold text-md'>Hubungkan device Anda terlebih dahulu dan mulai jelajahi fitur-fitur unggulan Forwardin</p>
+                    </div>
+                    <div className='flex-none'>
+                        <Button onClick={() => setopenQrModal(true)} color='primary' className='rounded-md'>
+                            Hubungkan Device
+                        </Button>
+                    </div>
+                </div>
+            )}
             <div className='flex gap-4 mt-8 flex-col xl:flex-row '>
                 <div className='bg-white rounded-md px-4 lg:px-8 py-8 grow flex flex-col justify-between gap-4'>
                     <div className='flex lg:flex-row flex-col justify-between w-full basis-1/3 items-end lg:items-center'>

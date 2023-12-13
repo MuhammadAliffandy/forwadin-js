@@ -1,9 +1,7 @@
 'use client'
 import DropdownDevice from "@/components/dashboard/DropdownDevice"
 import InputContactAndLabel from "@/components/dashboard/InputContactAndLabel"
-import MultipleInputContact from "@/components/dashboard/MultipleInputContact"
 import MultipleInputLabel from "@/components/dashboard/MultipleInputLabel"
-import MultipleInputReceiver from "@/components/dashboard/MultipleInputReceiver"
 import TagsInput from "@/components/dashboard/TagsInput"
 import UploadFile from "@/components/dashboard/UploadFile"
 import DisplayImage from "@/components/dashboard/auto-reply/DisplayImage"
@@ -11,6 +9,7 @@ import TextAreaInput from "@/components/dashboard/chat/TextAreaInput"
 import InputForm from "@/components/form/InputForm"
 import useTemplate from "@/components/hooks/useTemplate"
 import { fetchClient } from "@/utils/helper/fetchClient"
+import { getFileFromUrl } from "@/utils/helper/fileHelper"
 import { getMessageVariables, parseTextInput } from "@/utils/helper/messageUtils"
 import { AutoReply, ContactData, DeviceData, DeviceSession, Label } from "@/utils/types"
 import { Button, Select, SelectItem, Skeleton } from "@nextui-org/react"
@@ -115,6 +114,9 @@ const DetailAutoReply = ({ autoReplyId }: { autoReplyId: string }) => {
         if (result?.ok) {
             const resultData: AutoReply = await result.json()
             console.log(resultData)
+            if (resultData.mediaPath) {
+                getFileFromUrl(resultData.mediaPath, setfiles)
+            }
             setautoReplyName(resultData.name)
             setValue('name', resultData.name)
             setrequestList(resultData.requests.map(item => {
@@ -133,6 +135,7 @@ const DetailAutoReply = ({ autoReplyId }: { autoReplyId: string }) => {
             setisLoaded(true)
         }
     }
+
     const fetchAll = async () => {
         fetchAutoReplyData()
     }
@@ -185,6 +188,7 @@ const DetailAutoReply = ({ autoReplyId }: { autoReplyId: string }) => {
                                     selectedKeys={receiverList}
                                     setselectedKeys={setreceiverList}
                                     isAutoReply={true}
+                                    user={session?.user}
                                 />)}
                             </div>
                         </div>
@@ -243,12 +247,12 @@ const DetailAutoReply = ({ autoReplyId }: { autoReplyId: string }) => {
                                 </div>
                             )}
                             <div className="mt-4">
-                                {autoReplyImage && (
+                                {/* {autoReplyImage && (
                                     <>
                                         <p className="my-2">Media</p>
                                         <DisplayImage imageUrl={autoReplyImage} />
                                     </>
-                                )}
+                                )} */}
                                 <div className="mt-2" />
                                 <UploadFile
                                     files={files}

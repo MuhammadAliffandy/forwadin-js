@@ -14,7 +14,7 @@ import { useSocket } from '@/app/SocketProvider';
 import { getArrayFromSet } from '@/utils/helper';
 
 const DeviceTable = ({ setcountDevice }: { setcountDevice: Dispatch<SetStateAction<number>> }) => {
-    const { data: session, update } = useSession()
+    const { data: session } = useSession()
     const { isConnected, socket } = useSocket()
     const [isLoaded, setisLoaded] = useState(false)
     const { push } = useRouter()

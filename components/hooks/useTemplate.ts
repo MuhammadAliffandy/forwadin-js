@@ -1,10 +1,10 @@
 import { fetchClient } from '@/utils/helper/fetchClient';
 import { MessageTemplate } from '@/utils/types';
-import { User } from 'next-auth';
+import { CustomerService, User } from 'next-auth';
 import { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 
-const useTemplate = (user: User | undefined) => {
+const useTemplate = (user: User | CustomerService | undefined) => {
 
     const [templateList, settemplateList] = useState<MessageTemplate[]>([]);
     const [loading, setLoading] = useState(true);
@@ -28,7 +28,7 @@ const useTemplate = (user: User | undefined) => {
             fetchData();
         }
 
-    }, [user]);
+    }, [user?.token]);
 
     return { templateList, loading };
 };

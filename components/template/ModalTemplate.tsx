@@ -7,8 +7,9 @@ interface ModalTemplateProps {
     openModal: boolean,
     setopenModal: Dispatch<SetStateAction<boolean>>,
     outsideClose: boolean
+    hideCloseButton?: boolean
 }
-const ModalTemplate = ({ children, openModal, setopenModal, outsideClose = true }: ModalTemplateProps) => {
+const ModalTemplate = ({ children, openModal, setopenModal, outsideClose = true, hideCloseButton = false }: ModalTemplateProps) => {
     const modalContentRef = useRef<HTMLDivElement>(null)
     const modalBackgroudRef = useRef<HTMLDivElement>(null)
     const handleCloseModal = (e: React.MouseEvent) => {
@@ -45,7 +46,9 @@ const ModalTemplate = ({ children, openModal, setopenModal, outsideClose = true 
             <Modal isOpen={openModal}
                 onOpenChange={setopenModal}
                 isDismissable={outsideClose}
-                scrollBehavior="inside">
+                scrollBehavior="inside"
+                hideCloseButton={hideCloseButton}
+            >
                 <ModalContent>
                     <ModalBody className="rounded-md max-h-[90vh] overflow-y-auto">
                         <>

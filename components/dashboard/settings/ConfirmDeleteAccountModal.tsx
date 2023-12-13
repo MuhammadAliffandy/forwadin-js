@@ -17,7 +17,10 @@ const ConfirmDeleteAccountModal = ({ deleteFunction, openModal, setopenModal }: 
     }
     return (
         <ModalTemplate openModal={openModal} setopenModal={setopenModal} outsideClose={true}>
-            <p className="font-lexend text-xl font-bold text-center mb-8 mt-4">Anda yakin ingin menghapus akun?</p>
+            <p className="font-lexend text-xl font-bold text-center mt-4">Anda yakin ingin menghapus akun?</p>
+            <div className="bg-neutral-75 p-3 rounded-md">
+                <p className="text-xs text-danger">Jika Anda menghapus akun, semua informasi Anda akan dihapus dari database kami dan proses ini tidak dapat dibatalkan.</p>
+            </div>
             <YesNoButton isLoading={isLoading} yesClick={handleYesClick} noClick={() => setopenModal(false)} />
         </ModalTemplate>
     )

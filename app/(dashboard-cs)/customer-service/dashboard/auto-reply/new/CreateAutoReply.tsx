@@ -1,14 +1,17 @@
 'use client'
+import DropdownDevice from "@/components/dashboard/DropdownDevice"
 import InputContactAndLabel from "@/components/dashboard/InputContactAndLabel"
+import MultipleInputContact from "@/components/dashboard/MultipleInputContact"
 import MultipleInputLabel from "@/components/dashboard/MultipleInputLabel"
+import TagsInput from "@/components/dashboard/TagsInput"
 import UploadFile from "@/components/dashboard/UploadFile"
 import TextAreaInput from "@/components/dashboard/chat/TextAreaInput"
 import InputForm from "@/components/form/InputForm"
 import useTemplate from "@/components/hooks/useTemplate"
 import { fetchClient } from "@/utils/helper/fetchClient"
 import { getMessageVariables, parseTextInput } from "@/utils/helper/messageUtils"
-import { DeviceSession, Label } from "@/utils/types"
-import { Button } from "@nextui-org/react"
+import { ContactData, DeviceData, DeviceSession, Label } from "@/utils/types"
+import { Button, Select, SelectItem } from "@nextui-org/react"
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
@@ -24,12 +27,12 @@ interface AutoReplyForm {
 const CreateAutoReply = () => {
     const { push } = useRouter()
     const { data: session } = useSession()
-    const { loading, templateList } = useTemplate(session?.user)
+    const { loading, templateList } = useTemplate(session?.customerService)
     const [isLoading, setisLoading] = useState(false)
     const [listDevice, setlistDevice] = useState<DeviceSession[]>([])
     const [currentDevice, setcurrentDevice] = useState<DeviceSession>()
     const [isDisabled, setisDisabled] = useState(true)
-    const { handleSubmit, register, reset, setValue, formState: { errors } } = useForm<AutoReplyForm>()
+    const { handleSubmit, register, reset, formState: { errors } } = useForm<AutoReplyForm>()
     const [files, setfiles] = useState<File[]>([])
     const [receiverList, setreceiverList] = useState<string[]>([])
     const [requestList, setrequestList] = useState<Label[]>([])
@@ -59,18 +62,14 @@ const CreateAutoReply = () => {
             toast.error('Response masih kosong!')
             mark = false
         }
-        if (!ARData.deviceId) {
-            toast.error('Device masih kosong!')
-            mark = false
-        }
-        if (mark) {
+        if (mark && session?.customerService?.deviceId) {
             const formData = new FormData()
             if (files.length > 0) {
                 // @ts-ignore
                 formData.set('media', files[0].file, files[0].name)
             }
             formData.append('name', ARData.name)
-            formData.append('deviceId', ARData.deviceId)
+            formData.append('deviceId', session?.customerService?.deviceId)
             requestList.forEach((element, idx) => {
                 formData.append(`requests[${idx}]`, element.label.name)
             })
@@ -83,37 +82,19 @@ const CreateAutoReply = () => {
                 method: 'POST',
                 isFormData: true,
                 body: formData,
-                user: session?.user
+                user: session?.customerService
             })
             if (result?.ok) {
                 toast.success('Berhasil buat auto reply')
-                push('/dashboard/auto-reply')
+                push('/customer-service/dashboard/auto-reply')
             } else {
                 toast.error('Gagal buat auto reply')
-
+                console.log(await result?.json())
             }
         }
         setisLoading(false)
     }
-    const fetchContactData = async () => {
-        const result = await fetchClient({
-            url: '/contacts',
-            method: 'GET',
-            user: session?.user
-        })
-        if (result?.ok) {
-            const resultData = await result.json()
-            const updatedReceiverList = [...receiverList, ...resultData]
-            setreceiverList(updatedReceiverList)
-        }
-    }
-    useEffect(() => {
-        if (session?.user?.device && listDevice.length === 0) {
-            setlistDevice(session.user.device)
-            setValue('deviceId', session.user.device[0].id)
-            fetchContactData()
-        }
-    }, [session?.user?.device])
+
     useEffect(() => {
         if (textInput.length > 0 && receiverList.length > 0 && requestList.some(item => item.label.active === true)) {
             setisDisabled(false)
@@ -140,22 +121,12 @@ const CreateAutoReply = () => {
                         }} />
                     </div>
                     <div>
-                        <p className="mb-2">Device</p>
-                        <select {...register('deviceId')} className="px-4 py-3 focus:outline-none text-sm rounded-md focus:ring-0 w-full border-[#B0B4C5] focus:border-primary">
-                            {listDevice.map(item => (
-                                <option key={item.id} value={item.id} className="">{item.name}</option>
-                            ))}
-                        </select>
-                    </div>
-                    <div>
                         <p className="mb-2">Penerima</p>
-                        {/* <TagsInput /> */}
-                        {/* <MultipleInputContact contactList={receiverList} setcontactList={setreceiverList} /> */}
                         <InputContactAndLabel
                             selectedKeys={receiverList}
                             setselectedKeys={setreceiverList}
                             isAutoReply={true}
-                            user={session?.user}
+                            user={session?.customerService}
                         />
 
                     </div>
