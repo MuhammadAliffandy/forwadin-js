@@ -7,8 +7,11 @@ import { toast } from 'react-toastify';
 import { Button, Skeleton, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@nextui-org/react';
 import { formatDate } from '@/utils/helper';
 import OrderModal from './OrderModal';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 const OrderTable = ({ setcountOrder }: { setcountOrder: Dispatch<SetStateAction<number>> }) => {
+    const router = useRouter()
     const { data: session } = useSession()
     const [isLoaded, setisLoaded] = useState(false)
     const [settingOrderModal, setSettingOrderModal] = useState(false)
@@ -40,6 +43,12 @@ const OrderTable = ({ setcountOrder }: { setcountOrder: Dispatch<SetStateAction<
             if (regex.test(item.name) || regex.test(item.status))
                 return item
         })
+    }
+    const handleConfirmOrder = async (order: OrderData) => {
+        if (confirm('Tandai selesai untuk order \n' + order.name + '?')) {
+            toast.success('Success TODO')
+        } else {
+        }
     }
     useEffect(() => {
         if (session?.customerService?.token)
@@ -113,9 +122,24 @@ const OrderTable = ({ setcountOrder }: { setcountOrder: Dispatch<SetStateAction<
                                     <TableCell >{item.orderData}</TableCell>
                                     <TableCell >{formatDate(item.createdAt)}</TableCell>
                                     <TableCell >
-                                        <div className="flex items-center">
-                                            <div className='text-primary py-1 px-4  border border-black/20 rounded-md hover:cursor-pointer whitespace-nowrap  flex items-center' onClick={() => { }}>lorem</div>
-                                            <div className='text-primary py-1 px-4  border border-black/20 rounded-md hover:cursor-pointer whitespace-nowrap  flex items-center' onClick={() => { }}>lorem</div>
+                                        <div className="flex items-center gap-2">
+                                            <Button as={Link} href={'/customer-service/dashboard/messenger?phone=' + item.phone} variant='bordered' className='rounded-md' size='sm'>
+                                                Chat
+                                            </Button>
+                                            <Button
+                                                className='rounded-md'
+                                                color='primary'
+                                                size='sm'
+                                                onClick={() => handleConfirmOrder(item)}
+                                            >
+                                                Tandai Selesai
+                                            </Button>
+                                            <Button
+                                                className='rounded-md'
+                                                color='danger'
+                                                size='sm'>
+                                                Batal
+                                            </Button>
                                         </div>
                                     </TableCell>
                                 </TableRow>

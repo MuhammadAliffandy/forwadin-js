@@ -30,7 +30,7 @@ declare module "next-auth" {
         user: {
             id: string,
             firstName: string,
-            lastName: string
+            lastName: string,
         },
         createdAt: string,
         updatedAt: string
@@ -129,15 +129,17 @@ export const authConfig: NextAuthOptions = {
                             },
                         })
                         if (!fetchSessionCS.ok) return null
-                        const sessionCSData: CustomerService = await fetchSessionCS.json()
+                        const sessionCSData = await fetchSessionCS.json()
                         console.log('ini session cs')
-                        console.log(sessionCSData)
-                        return {
+                        const csData = {
                             ...userData,
-                            sessionId: sessionCSData.sessionId || null,
+                            sessionId: sessionCSData.user.devices[0].sessions[0].sessionId || null,
                             id: resultData.id,
                             token: resultData.accessToken
-                        } as any
+                        }
+
+                        console.log(csData)
+                        return csData as any
                     }
                     const userSubscription = await fetch(process.env.BACKEND_URL + '/users/' + userData.id + '/subscription/', {
                         method: 'GET',

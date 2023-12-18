@@ -44,7 +44,7 @@ const QRModal = ({ openModal, setopenModal, session, socket, refresh }: QRModalP
         generateQR()
 
         const refreshSession = async () => {
-            if (session?.user) {
+            if (session?.customerService) {
                 console.log('masuk refresh')
                 const refresh = await signIn('refresh', {
                     redirect: false,

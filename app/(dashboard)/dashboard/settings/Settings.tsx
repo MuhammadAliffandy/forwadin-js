@@ -15,8 +15,6 @@ const Account = dynamic(() => import('./Account'), { ssr: false, })
 const Settings = () => {
     const { data: session } = useSession()
     const [isLoaded, setisLoaded] = useState(false)
-    const activeButtonStyle = 'bg-primary text-white'
-    const inactiveButtonStyle = 'hover:cursor-pointer bg-white hover:text-primary text-black hover:bg-neutral-75'
     const [userData, setuserData] = useState<UserProfile>({
         firstName: '',
         lastName: '',

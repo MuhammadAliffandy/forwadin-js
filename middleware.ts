@@ -4,6 +4,7 @@ import middleware, { withAuth } from 'next-auth/middleware'
 import { getToken } from "next-auth/jwt"
 import { NextResponse } from 'next/server'
 import { NextRequest } from 'next/server'
+import { signIn } from "next-auth/react"
 const signUrl = ['/signin', '/signup', '/customer-service/signin']
 
 const adminPath = {
@@ -62,7 +63,8 @@ export default withAuth(
     },
     {
         callbacks: {
-            authorized: () => true
+            authorized: () => true,
+
         },
     }
 )

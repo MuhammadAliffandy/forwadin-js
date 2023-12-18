@@ -27,7 +27,7 @@ const fetchClient = async ({ method, body = null, url, user, isFormData = false 
                 headers: headers,
                 body: body,
             })
-            if (result.status === 401 || result.status === 403) {
+            if (result.status === 401) {
                 //renew the session
                 // return null
                 if (isRefreshing) return null
