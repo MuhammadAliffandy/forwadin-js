@@ -89,7 +89,7 @@ const QRModal = ({ openModal, setopenModal, data, session, socket, refresh }: QR
     return (
         <>
             <ModalTemplate openModal={openModal} setopenModal={setopenModal} outsideClose={false}>
-                <div className='text-center font-bold text-2xl'>Verifikasi Device, {data?.name ? data.name : ''}</div>
+                <div className='text-center font-bold text-2xl font-lexend'>Verifikasi Device, {data?.name ? data.name : ''}</div>
                 <div className='bg-neutral-75 text-xs text-[#777C88] p-4 rounded-md mt-8'>
                     <ul className='list-disc list-inside'>
                         <li>Disarankan menggunakan WhatsApp Business</li>

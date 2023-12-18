@@ -157,7 +157,7 @@ const AutoReplyTable = ({ settotalAutoReply, customerService }: AutoReplyTablePr
                                         {item.recipients.length}
                                     </TableCell>
                                     <TableCell>
-                                        <Button as={Link} href={'/dashboard/auto-reply/' + item.id} variant='bordered'>
+                                        <Button as={Link} href={'/customer-service/dashboard/auto-reply/' + item.id} variant='bordered'>
                                             Detail
                                         </Button>
                                     </TableCell>

@@ -16,6 +16,7 @@ import { randomInt } from "crypto"
 import ListChats from "@/app/(dashboard)/dashboard/messenger/ListChats"
 import Chat from "@/app/(dashboard)/dashboard/messenger/Chat"
 import ProfileDetail from "@/app/(dashboard)/dashboard/messenger/ProfileDetail"
+import CreateOrderModal from "@/components/customer-service/dashboard/CreateOrderModal"
 const Messenger = () => {
     const searchParams = useSearchParams()
     const { data: session } = useSession()
@@ -42,7 +43,7 @@ const Messenger = () => {
     const [inputFile, setinputFile] = useState<File[]>([]);
     const [showfile, setshowfile] = useState(false)
     const [sendMessageLoading, setsendMessageLoading] = useState(false)
-    const [mobileDropdown, setmobileDropdown] = useState(false)
+    const [orderModal, setorderModal] = useState(false)
     const [listMessenger, setlistMessenger] = useState<ContactLatestMessage[]>([])
     const [currentMessenger, setcurrentMessenger] = useState<MessengerList>()
     const [chatDisabled, setchatDisabled] = useState(true)
@@ -145,8 +146,7 @@ const Messenger = () => {
     }
     const fetchChatMessage = async (page: number) => {
         if (!session?.customerService?.sessionId && !currentMessenger) return
-        console.log(`/messages/${session?.customerService?.sessionId}/?phoneNumber=${currentMessenger?.phone}&page=${messageMetadata?.currentPage}&pageSize=${PAGINATION_BATCH}&sort=asc`)
-        console.log('ini fetch chat')
+
         const result = await fetchClient({
             url: `/messages/${session?.customerService?.sessionId}/?phoneNumber=${currentMessenger?.phone}&page=${page}&pageSize=${PAGINATION_BATCH}&sort=asc`,
             method: 'GET',
@@ -250,10 +250,15 @@ const Messenger = () => {
             fetchTemplate()
         }
     }, [session?.customerService?.sessionId])
-    return (
+    return (<>
+        <CreateOrderModal
+            customerService={session?.customerService}
+            openModal={orderModal}
+            setopenModal={setorderModal}
+            contact={currentMessenger?.contact} />
         <div className=" overflow-y-auto lg:overflow-y-hidden">
             <div className='flex lg:flex-row flex-col items-center justify-between gap-4 mb-12 lg:mb-0 lg:h-[82vh]'>
-                <div className='max-w-md lg:max-w-[250px] w-full lg:h-[78vh] bg-white lg:bg-neutral-75 p-4 lg:p-0 text-xs'>
+                <div className='max-w-md lg:max-w-[250px] w-full h-[78vh] bg-white lg:bg-neutral-75 p-4 lg:p-0 text-xs'>
                     <ListChats setlistMessage={setlistMessage} listMessenger={listMessenger} currentMessenger={currentMessenger} setcurrentMessenger={setcurrentMessenger} />
                 </div>
                 <div className={"bg-white p-4 rounded-md w-full max-w-md lg:max-w-full h-full " + (chatDisabled && "opacity-50 pointer-events-none")}>
@@ -273,9 +278,9 @@ const Messenger = () => {
                                 <UploadFile files={inputFile} setfiles={setinputFile} />
                             )}
                             {orderMessage && (
-                                <div className="flex gap-2 justify-start text-sm my-2">
+                                <div className="flex gap-2 justify-start text-sm my-2 flex-wrap">
                                     {orderTools.map(tool => (
-                                        <div key={tool.title} className='rounded-full px-2 py-[2px] border border-customGray hover:cursor-pointer' onClick={() => insertTemplate(tool.content)}>
+                                        <div key={tool.title} className='rounded-full px-2 py-[2px] border hover:cursor-pointer border-[#B0B4C5]/50 hover:border-neutral-75 hover:bg-neutral-75' onClick={() => insertTemplate(tool.content)}>
                                             + {tool.title}
                                         </div>
                                     ))}
@@ -283,7 +288,10 @@ const Messenger = () => {
                             )}
                             <TextAreaInput text={textInput} settext={settextInput} />
 
-                            <div className="flex justify-end mt-2">
+                            <div className="flex justify-between mt-2">
+                                <Button color="primary" className="rounded-md" onClick={() => setorderModal(true)}>
+                                    Buat Order
+                                </Button>
                                 <ButtonGroup color="primary" className="rounded-md">
                                     <Button isIconOnly onClick={() => setshowfile(!showfile)}>
                                         <img src="/assets/icons/attach_file.svg" alt="" />
@@ -303,6 +311,7 @@ const Messenger = () => {
                 </div>
             </div>
         </div>
+    </>
     )
 }
 
