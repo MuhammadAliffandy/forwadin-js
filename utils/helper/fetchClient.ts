@@ -54,8 +54,7 @@ const fetchClient = async ({ method, body = null, url, user, isFormData = false 
         }
         return null
     } catch (error) {
-        toast.error('Failed to fetch, check your internet connection')
-        console.log(error)
+        toast.error('Server error, please contact CS for further assistance')
         return null
     }
 }

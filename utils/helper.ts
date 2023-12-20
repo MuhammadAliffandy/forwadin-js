@@ -129,9 +129,12 @@ export const formatCurrencyIDR = (number: number) => {
 export const getFirst2Digits = (text: string) => {
     return text.slice(0, 2)
 }
-export const getNumberFromString = (text: string) => {
-    const parts = text.split('@');
-    return parts[0]
+export const getNumberFromString = (text: string | undefined) => {
+    if (text) {
+        const parts = text.split('@');
+        return parts[0]
+    }
+    return ''
 }
 export const convertLabelList = (labels: Label[], checked: boolean) => {
     return labels.filter(item => item.label.active === checked).map(item => item.label.name)

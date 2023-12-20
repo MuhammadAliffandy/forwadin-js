@@ -462,7 +462,18 @@ export interface CSProfile {
     updatedAt: string,
     userId: number,
     deviceId: number,
-    privilegeId: 222
+    privilegeId: 222,
+    user: {
+        id: string,
+        firstName: string,
+        lastName: string,
+        devices:
+        {
+            sessions: {
+                sessionId: string
+            }[]
+        }[]
+    }
 }
 
 export interface OrderData {

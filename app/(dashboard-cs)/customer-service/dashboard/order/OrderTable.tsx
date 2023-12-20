@@ -9,9 +9,9 @@ import { formatDate } from '@/utils/helper';
 import OrderModal from './OrderModal';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { Result } from 'postcss';
 
 const OrderTable = ({ setcountOrder }: { setcountOrder: Dispatch<SetStateAction<number>> }) => {
-    const router = useRouter()
     const { data: session } = useSession()
     const [isLoaded, setisLoaded] = useState(false)
     const [settingOrderModal, setSettingOrderModal] = useState(false)
@@ -46,8 +46,53 @@ const OrderTable = ({ setcountOrder }: { setcountOrder: Dispatch<SetStateAction<
     }
     const handleConfirmOrder = async (order: OrderData) => {
         if (confirm('Tandai selesai untuk order \n' + order.name + '?')) {
-            toast.success('Success TODO')
-        } else {
+            const result = await fetchClient({
+                url: '/orders/' + order.id,
+                method: 'PATCH',
+                body: JSON.stringify({ status: 'completed' }),
+                user: session?.customerService
+            })
+            const body = await result?.json()
+            if (result?.ok) {
+                fetchData()
+                toast.success('Berhasil update order')
+
+            } else {
+                toast.error('Gagal update order')
+                toast.error(body.message)
+            }
+        }
+    }
+    const handleCancelOrder = async (order: OrderData) => {
+        if (confirm('Batalkan order \n' + order.name + '?')) {
+            const result = await fetchClient({
+                url: '/orders/' + order.id,
+                method: 'PATCH',
+                body: JSON.stringify({ status: 'cancelled' }),
+                user: session?.customerService
+            })
+            const body = await result?.json()
+            if (result?.ok) {
+                fetchData()
+                toast.success('Berhasil update order')
+
+            } else {
+                toast.error('Gagal update order')
+                toast.error(body.message)
+            }
+        }
+    }
+    const printStatus = (status: string) => {
+        switch (status) {
+            case 'completed':
+                return (<p className='text-success'>{status}</p>)
+
+            case 'pending':
+                return (<p className='text-warning'>{status}</p>)
+            case 'cancelled':
+                return (<p className='text-danger'>{status}</p>)
+            default:
+                return (<p className=''>{status}</p>)
         }
     }
     useEffect(() => {
@@ -118,7 +163,7 @@ const OrderTable = ({ setcountOrder }: { setcountOrder: Dispatch<SetStateAction<
                             {(item: OrderData) => (
                                 <TableRow key={item.id}>
                                     <TableCell >{item.name}</TableCell>
-                                    <TableCell >{item.status}</TableCell>
+                                    <TableCell >{printStatus(item.status)}</TableCell>
                                     <TableCell >{item.orderData}</TableCell>
                                     <TableCell >{formatDate(item.createdAt)}</TableCell>
                                     <TableCell >
@@ -137,7 +182,8 @@ const OrderTable = ({ setcountOrder }: { setcountOrder: Dispatch<SetStateAction<
                                             <Button
                                                 className='rounded-md'
                                                 color='danger'
-                                                size='sm'>
+                                                size='sm'
+                                                onClick={() => handleCancelOrder(item)}>
                                                 Batal
                                             </Button>
                                         </div>
@@ -159,3 +205,5 @@ const OrderTable = ({ setcountOrder }: { setcountOrder: Dispatch<SetStateAction<
 }
 
 export default OrderTable
+
+
