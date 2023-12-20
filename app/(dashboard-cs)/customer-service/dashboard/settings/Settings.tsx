@@ -7,11 +7,13 @@ import { useSession } from "next-auth/react"
 import { useEffect, useState } from "react"
 import Profile from "./Profile"
 import System from "./System"
+import { CSProfile } from "@/utils/types"
 
 const Settings = () => {
     const { data: session } = useSession()
     const [isLoaded, setisLoaded] = useState(false)
     const [currentPage, setcurrentPage] = useState('profile')
+    const [csProfile, setcsProfile] = useState<CSProfile>()
     const componentTransition = useTransition(currentPage, {
         from: {
             transform: "translateX(100px)",
@@ -22,9 +24,21 @@ const Settings = () => {
             opacity: "1",
         },
     })
+
+    const fetchProfile = async () => {
+        const result = await fetchClient({
+            url: '/customer-services/' + session?.customerService?.id,
+            method: 'GET',
+            user: session?.customerService
+        })
+        if (result?.ok) {
+            setcsProfile(await result.json())
+            setisLoaded(true)
+        }
+    }
     useEffect(() => {
         if (session?.customerService?.token) {
-            setisLoaded(true)
+            fetchProfile()
         }
     }, [session?.customerService?.token])
     return (
@@ -44,7 +58,7 @@ const Settings = () => {
                         <>
                             {componentTransition((style, item) => item === 'profile' && (
                                 <animated.div style={style}>
-                                    <Profile />
+                                    <Profile csProfile={csProfile} />
                                 </animated.div>
                             ))}
                             {componentTransition((style, item) => item === 'system' && (

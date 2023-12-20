@@ -42,7 +42,7 @@ const Settings = () => {
                 url: '/users/' + session?.user?.id, method: 'GET',
                 user: session?.user
             })
-            if (result && result.ok) {
+            if (result?.ok) {
                 const data = await result.json()
                 setuserData(data)
             } else {
@@ -77,7 +77,7 @@ const Settings = () => {
                         <>
                             {componentTransition((style, item) => item === 'profile' && (
                                 <animated.div style={style}>
-                                    <Profile profileData={userData} />
+                                    <Profile profileData={userData} user={session?.user} />
                                 </animated.div>
                             ))}
                             {componentTransition((style, item) => item === 'device' && (

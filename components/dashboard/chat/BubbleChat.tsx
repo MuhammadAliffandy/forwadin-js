@@ -53,7 +53,7 @@ const BubbleChat = ({ text, received, status, isOutgoing = false, currentDate, m
                             <img src="/assets/icons/dashboard/message_send.svg" alt="" />
                         )}
                         {status === "server_ack" && (
-                            <p className="text-white"> check</p>
+                            <img src="/assets/icons/dashboard/message_send.svg" alt="" />
                         )}
                     </div>
                 </div>
@@ -70,7 +70,12 @@ const BubbleChat = ({ text, received, status, isOutgoing = false, currentDate, m
                         <img src={process.env.NEXT_PUBLIC_BACKEND_URL + '/' + mediaPath} alt="photos" className="object-cover w-full h-full hover:bg-neutral-75" onClick={() => { }} />
                     </div>
                 )}
-                <p className="mt-2">{text}</p>
+                {text.split('\n').map((line, index) => (
+                    <React.Fragment key={index}>
+                        {line}
+                        {index < text.length - 1 && <br />}
+                    </React.Fragment>
+                ))}
                 <div className="flex items-center justify-end gap-2 mt-2">
                     <p className="text-customGray text-right">{receivedMessage}</p>
                 </div>

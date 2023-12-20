@@ -193,7 +193,6 @@ const Device = ({ user }: DevicePageProps) => {
                 </>
             ) : (
                 <>
-
                     <p className="font-lexend font-bold text-2xl mt-8 mb-2">Basic Information</p>
                     <Dropdown>
                         <DropdownTrigger className="p-3">
@@ -202,7 +201,8 @@ const Device = ({ user }: DevicePageProps) => {
                                     <img src="/assets/icons/dashboard/Devices.svg" alt="" className="invert-[1] grayscale-0" />
                                 </div>
                                 <p className="font-bold min-w-0 whitespace-nowrap overflow-hidden overflow-ellipsis w-max">{currentDevice?.name}</p>
-                                <p className="text-customGray min-w-0 whitespace-nowrap overflow-hidden overflow-ellipsis w-max">{'+' + currentDevice?.phone}</p>
+                                <p className="text-customGray min-w-0 whitespace-nowrap overflow-hidden overflow-ellipsis w-max">
+                                    {currentDevice?.phone ? '+' + currentDevice.phone : ''}</p>
                             </div>
                         </DropdownTrigger>
                         <DropdownMenu items={listDevice} aria-label="device list">

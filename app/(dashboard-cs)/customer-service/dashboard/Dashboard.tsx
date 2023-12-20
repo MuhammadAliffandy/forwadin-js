@@ -1,13 +1,10 @@
 'use client'
-import Message from '@/components/dashboard/Message'
-import CustomButton from '@/components/landing/Button'
 import Link from 'next/link'
-import dynamic from 'next/dynamic';
 import { useEffect, useState } from 'react';
-import { CSProfile, DeviceSession, IncomingMessage, SubscriptionTypes, UserProfile } from '@/utils/types';
+import { CSProfile, ConversationMessage, DeviceSession, GetMessage, IncomingMessage, OrderData, SubscriptionTypes, UserProfile } from '@/utils/types';
 import { fetchClient } from '@/utils/helper/fetchClient';
 import { toast } from 'react-toastify';
-import { formatDate, formatDateBahasa, getTodayDateBahasa } from '@/utils/helper';
+import { formatDate, formatDateBahasa, getInitials, getNumberFromString, getTodayDateBahasa } from '@/utils/helper';
 import { Button, Progress, Link as UILink } from '@nextui-org/react';
 import { signIn, useSession } from 'next-auth/react';
 import ActivatePlanModal from '@/components/dashboard/ActivatePlanModal';
@@ -23,13 +20,18 @@ const Dashboard = () => {
     const [openQrModal, setopenQrModal] = useState(false)
     const [isLoaded, setisLoaded] = useState(false)
     const [latestMessage, setlatestMessage] = useState<IncomingMessage[]>([])
-    const [csProfile, setcsProfile] = useState<CSProfile>()
+    const [progressData, setprogressData] = useState({
+        totalMessage: 0,
+        totalOrder: 0,
+        receivedOrder: 0,
+        completedOrder: 0
+    })
     const [progressOrder, setprogressOrder] = useState({
         value: 0,
         color: 'primary'
     })
-    const [progressMessage, setprogressMessage] = useState({
-        value: 20,
+    const [receivedOrder, setreceivedOrder] = useState({
+        value: 0,
         color: 'primary'
     })
     const fetchLatestMessage = async () => {
@@ -43,16 +45,60 @@ const Dashboard = () => {
             setlatestMessage(resultData.data)
         }
     }
+    const fetchOrderData = async () => {
+        const result = await fetchClient({
+            url: '/orders',
+            method: 'GET',
+            user: session?.customerService
+        })
+        const incoming = await fetchClient({
+            url: `/messages/${session?.customerService?.sessionId}/incoming`,
+            method: 'GET',
+            user: session?.customerService
+        })
+        if (result?.ok && incoming?.ok) {
+            const incomingMessage: GetMessage<IncomingMessage> = await incoming.json()
+            const orderData: OrderData[] = await result.json()
+            console.log(orderData)
+            const completedOrder = orderData.filter(order => order.status === 'completed')
+            const pendingOrder = orderData.filter(order => order.status === 'pending')
+            setprogressData({
+                completedOrder: completedOrder.length,
+                receivedOrder: pendingOrder.length,
+                totalOrder: orderData.length,
+                totalMessage: incomingMessage.metadata.totalMessages
+            })
+        }
+    }
     useEffect(() => {
         if (session?.customerService?.token && session.customerService.sessionId) {
             fetchLatestMessage()
-            console.log(session.customerService)
+            fetchOrderData()
         }
         // if (!session?.customerService?.sessionId) {
         //     console.log('setopenQR')
         //     setopenQrModal(true)
         // }
     }, [session?.customerService?.token])
+    useEffect(() => {
+        let orderPercent = 0
+        let messagePercent = 0
+        if (progressData.totalOrder !== 0) {
+            orderPercent = (progressData.completedOrder / progressData.totalOrder) * 100
+        }
+        if (progressData.totalMessage !== 0) {
+            messagePercent = (progressData.receivedOrder / progressData.totalMessage) * 100
+        }
+        setprogressOrder({
+            value: orderPercent,
+            color: 'primary'
+        })
+        setreceivedOrder({
+            value: messagePercent,
+            color: 'primary'
+        })
+
+    }, [progressData])
     return (
         <>
             {openQrModal && (
@@ -94,7 +140,7 @@ const Dashboard = () => {
                 <div className='bg-white rounded-md px-4 lg:px-8 py-8 grow flex flex-col justify-between gap-4'>
                     <div className='flex lg:flex-row flex-col justify-between w-full basis-1/3 items-end lg:items-center'>
                         <div className='flex items-center w-full gap-12'>
-                            <div>
+                            <div className=''>
                                 <p>Admin <br /> Utama</p>
                             </div>
                             <div >
@@ -108,16 +154,16 @@ const Dashboard = () => {
                     </div>
 
                     <div className='flex lg:flex-row flex-col gap-8 items-end '>
-                        <div className='max-w-[60px] w-full'>Pesan Diterima</div>
+                        <div className='max-w-[60px] w-full'>Order Diterima</div>
                         <div className='flex flex-col w-full'>
                             <Progress
                                 aria-label="device"
-                                value={progressMessage.value}
+                                value={receivedOrder.value}
                                 className="w-full"
-                                color={progressMessage.color as any}
+                                color={receivedOrder.color as any}
                             />
 
-                            <p className='text-[#777C88] text-[10px]'>{0} dari {0} device yang tersedia</p>
+                            <p className='text-[#777C88] text-[10px]'>{progressData.receivedOrder} order diterima dari {progressData.totalMessage} pesan masuk</p>
                         </div>
                     </div>
                     <div className='flex lg:flex-row flex-col gap-8 items-end '>
@@ -129,7 +175,7 @@ const Dashboard = () => {
                                 className="w-full"
                                 color={progressOrder.color as any}
                             />
-                            <p className='text-[#777C88] text-[10px]'>{0} dari {0} device yang tersedia</p>
+                            <p className='text-[#777C88] text-[10px]'>{progressData.completedOrder} dari {progressData.totalOrder} order yang selesai</p>
                         </div>
                     </div>
                 </div>
@@ -151,3 +197,71 @@ const Dashboard = () => {
 }
 
 export default Dashboard
+
+
+const Message = ({ message }: { message: ConversationMessage }) => {
+
+    if (message.to)
+        return (
+            <Button as={Link} href={"/customer-service/dashboard/messenger?phone=" + getNumberFromString(message.to)} variant="light" fullWidth className="rounded-md flex justify-between gap-4 text-[10px]">
+                <div className={`flex-none rounded-full text-white w-7 h-7 flex items-center justify-center bg-primary`}>
+                    <img src="/assets/icons/user.svg" alt="" />
+                </div>
+                <div className="w-full">
+                    <p className="font-bold">{message.contact ? message.contact.firstName + ' ' + (message.contact.lastName || '') : getNumberFromString(message.to)}</p>
+                    <div className="flex items-center gap-1 -mt-1">
+                        {message.mediaPath && (
+                            <div>
+                                <img src="/assets/icons/chat/image_media.svg" alt="" />
+                            </div>
+                        )}
+                        <p className="w-full" style={{ WebkitLineClamp: 2, overflow: 'hidden', WebkitBoxOrient: 'vertical', display: '-webkit-box' }}>{message.message}</p>
+                    </div>
+                </div>
+            </Button>
+        )
+    return (
+        <Button as={Link} href={"/customer-service/dashboard/messenger?phone=" + getNumberFromString(message.from)} variant="light" fullWidth className="rounded-md flex justify-between gap-4 text-[10px]">
+            <PrintIcon contact={message.contact} phone={message.from!} />
+            <div className="w-full">
+                <p className="font-bold">{message.contact ? message.contact.firstName + ' ' + (message.contact.lastName || '') : getNumberFromString(message.from!)}</p>
+                <div className="flex items-center gap-1 -mt-1">
+                    {message.mediaPath && (
+                        <div>
+                            <img src="/assets/icons/chat/image_media.svg" alt="" />
+                        </div>
+                    )}
+                    <p className="w-full" style={{ WebkitLineClamp: 2, overflow: 'hidden', WebkitBoxOrient: 'vertical', display: '-webkit-box' }}>{message.message}</p>
+                </div>
+            </div>
+        </Button>
+    )
+}
+
+const PrintIcon = ({ contact, phone }: {
+    contact?: {
+        firstName: string,
+        lastName: string,
+        colorCode: string
+    },
+    phone: string
+}) => {
+    if (contact) {
+        return (
+            <>
+                <div className="text-sm">
+                    <div style={{
+                        backgroundColor: '#' + contact.colorCode
+                    }} className={`flex-none rounded-full text-white w-7 h-7 flex items-center justify-center`}>{getInitials(contact.firstName + ' ' + contact.lastName)}</div>
+                </div>
+            </>
+        )
+    }
+    return (
+        <>
+            <div className="text-sm">
+                <div className={`flex-none rounded-full text-white w-7 h-7 bg-primary flex items-center justify-center`}>{phone.slice(0, 2)}</div>
+            </div>
+        </>
+    )
+}

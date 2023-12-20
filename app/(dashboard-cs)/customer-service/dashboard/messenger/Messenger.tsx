@@ -1,19 +1,16 @@
 'use client'
-import { ChangeEvent, useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 
-import { ContactData, DeviceData, ConversationMessage, DeviceSession, MessageMetadata, OutgoingMessage, ContactLatestMessage, GetMessage, MessengerList, OrderMessage } from "@/utils/types"
+import { ContactData, ConversationMessage, DeviceSession, MessageMetadata, ContactLatestMessage, GetMessage, MessengerList, OrderMessage } from "@/utils/types"
 import TextAreaInput from "@/components/dashboard/chat/TextAreaInput"
 import { useSession } from "next-auth/react"
 import { fetchClient } from "@/utils/helper/fetchClient"
-import { Button, ButtonGroup, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Popover, PopoverContent, PopoverTrigger } from "@nextui-org/react"
-import { formatBirthDate, getInitials } from "@/utils/helper"
+import { Button, ButtonGroup } from "@nextui-org/react"
 import { toast } from "react-toastify"
-import DropdownDevice from "@/components/dashboard/DropdownDevice"
 import UploadFile from "@/components/dashboard/UploadFile"
 import { useSearchParams } from 'next/navigation'
 import { PAGINATION_BATCH } from "@/utils/constant"
-import { randomInt } from "crypto"
-import ListChats from "@/app/(dashboard)/dashboard/messenger/ListChats"
+import ListChats from './ListChats'
 import Chat from "@/app/(dashboard)/dashboard/messenger/Chat"
 import ProfileDetail from "@/app/(dashboard)/dashboard/messenger/ProfileDetail"
 import CreateOrderModal from "@/components/customer-service/dashboard/CreateOrderModal"

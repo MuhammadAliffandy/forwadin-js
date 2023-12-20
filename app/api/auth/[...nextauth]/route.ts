@@ -105,6 +105,7 @@ export const authConfig: NextAuthOptions = {
                 console.log('refresh session 1')
                 const userData: User | CustomerService = JSON.parse(credentials?.user!)
                 console.log('refresh session 2')
+                console.log(userData.refreshToken)
                 // todo
                 const result = await fetch(process.env.BACKEND_URL + '/auth/refresh-token', {
                     method: 'POST',
@@ -131,9 +132,10 @@ export const authConfig: NextAuthOptions = {
                         if (!fetchSessionCS.ok) return null
                         const sessionCSData = await fetchSessionCS.json()
                         console.log('ini session cs')
+                        const sessionCS = sessionCSData.user.devices[0].sessions[0].sessionId
                         const csData = {
                             ...userData,
-                            sessionId: sessionCSData.user.devices[0].sessions[0].sessionId || null,
+                            sessionId: (sessionCS ? sessionCS : null),
                             id: resultData.id,
                             token: resultData.accessToken
                         }
