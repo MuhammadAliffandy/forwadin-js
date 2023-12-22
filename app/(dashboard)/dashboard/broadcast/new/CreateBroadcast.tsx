@@ -2,9 +2,11 @@
 import InputContactAndLabel from "@/components/dashboard/InputContactAndLabel"
 import MultipleInputContact from "@/components/dashboard/MultipleInputContact"
 import MultipleInputLabel from "@/components/dashboard/MultipleInputLabel"
+import TemplateContainer from "@/components/dashboard/TemplateContainer"
 import UploadFile from "@/components/dashboard/UploadFile"
 import TextAreaInput from "@/components/dashboard/chat/TextAreaInput"
 import InputForm from "@/components/form/InputForm"
+import SelectDevice from "@/components/form/SelectDevice"
 import useTemplate from "@/components/hooks/useTemplate"
 import { formatDatetoISO8601 } from "@/utils/helper"
 import { fetchClient } from "@/utils/helper/fetchClient"
@@ -122,11 +124,7 @@ const CreateBroadcast = () => {
 
                     <div>
                         <p className="mb-2">Device</p>
-                        <select {...register('deviceId')} className="px-4 py-3 focus:outline-none text-sm rounded-md focus:ring-0 w-full border-[#B0B4C5] focus:border-primary">
-                            {listDevice.map(item => (
-                                <option key={item.id} value={item.id} className="">{item.name}</option>
-                            ))}
-                        </select>
+                        <SelectDevice register={register} listDevice={listDevice} name="deviceId" />
                     </div>
                     <div>
                         <p className="mb-2">Penerima</p>
@@ -151,30 +149,11 @@ const CreateBroadcast = () => {
                         }} />
                     </div>
                 </div>
-                <div className='w-full bg-white rounded-md p-4'>
-                    <p className="font-bold text-xl font-lexend">Trigger</p>
-                    {/* <div className="mt-4">
-                        <p className="mb-2">Kata</p>
-                        <MultipleInputLabel setlabelList={setrequestList} labelList={requestList} placeholder="tambah kata" maxChar={20} />
-                    </div> */}
-                </div>
-
             </div>
             <div className='w-full max-w-sm lg:max-w-full'>
                 <div className='bg-white w-full p-4'>
                     <p className="font-bold text-xl font-lexend">Pesan Broadcast</p>
-                    {templateList.length > 0 && (
-                        <div className="mt-4">
-                            <p>Template</p>
-                            <div className="flex gap-2 flex-wrap w-full mt-2">
-                                {templateList.map(item => (
-                                    <div key={item.id} className='rounded-full px-2 py-[2px] border border-customGray hover:cursor-pointer' onClick={() => handleTemplateClick(item.id)}>
-                                        {item.name}
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    )}
+                    <TemplateContainer templateList={templateList} handleClick={handleTemplateClick} />
                     <div className="mt-4">
                         <p className="mb-2">Response</p>
                         <TextAreaInput text={textInput} settext={settextInput} limit={255} />

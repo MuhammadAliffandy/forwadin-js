@@ -200,7 +200,7 @@ const InputContactAndLabel = ({ selectedKeys, setselectedKeys, isAutoReply = fal
                 </div>
             )}
             {isDisabled ? (
-                <div className='rounded-md text-sm w-full border border-customGray relative hover:cursor-not-allowed bg-[#F0F0F5]'>
+                <div className='rounded-md text-sm w-full border border-customGray/50 hover:border-customGray relative hover:cursor-not-allowed bg-[#F0F0F5]'>
                     <p className="absolute right-4 top-1/2 -translate-y-2   text-customGray">tidak dapat diganti</p>
                     <div className="w-full flex flex-wrap gap-2 py-3 pl-4 z-10">
                         {contactLabelList.map((item, idx) => item.label.active && (
@@ -233,7 +233,7 @@ const InputContactAndLabel = ({ selectedKeys, setselectedKeys, isAutoReply = fal
                     </div>
                 </div>
             ) : (
-                <div className='rounded-md text-sm w-full border border-customGray relative'>
+                <div className='rounded-md text-sm w-full border border-customGray/50 hover:border-customGray relative'>
                     <div className='flex'>
                         <div className="basis-5/6 flex flex-wrap gap-2 py-3 pl-4 ">
                             {contactLabelList.map((item, idx) => item.label.active && (

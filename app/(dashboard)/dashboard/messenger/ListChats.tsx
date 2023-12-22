@@ -68,7 +68,6 @@ const ListChats = ({ listMessenger, currentMessenger, setcurrentMessenger, setli
                     </>
                 ) : (
                     <>
-
                         {listMessenger.map(item => (
                             <MessengerCard
                                 currentMessenger={currentMessenger}

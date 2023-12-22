@@ -19,6 +19,7 @@ import { toast } from "react-toastify"
 
 import { BreadcrumbItem, Breadcrumbs } from "@nextui-org/breadcrumbs"
 import useTemplate from "@/components/hooks/useTemplate"
+import SelectDevice from "@/components/form/SelectDevice"
 
 const CreateCampaign = () => {
     const { push } = useRouter()
@@ -166,11 +167,7 @@ const CreateCampaign = () => {
 
                         <div>
                             <p className="mb-2">Device</p>
-                            <select {...register('deviceId')} className="px-4 py-3 focus:outline-none text-sm rounded-md focus:ring-0 w-full border-[#B0B4C5] focus:border-primary">
-                                {listDevice.map(item => (
-                                    <option key={item.id} value={item.id} className="">{item.name}</option>
-                                ))}
-                            </select>
+                            <SelectDevice register={register} listDevice={listDevice} name="deviceId" />
                         </div>
                         <div>
                             <p className="mb-2">Penerima</p>
@@ -250,7 +247,7 @@ const CreateCampaign = () => {
                                             <p>Template</p>
                                             <div className="flex gap-2 flex-wrap w-full mt-2">
                                                 {templateList.map(list => (
-                                                    <div key={list.id} className='rounded-full px-2 py-[2px] border border-customGray hover:cursor-pointer' onClick={() => handleTemplateClick(list.id, item)}>
+                                                    <div key={list.id} className='rounded-full px-2 py-[2px] border border-customGray/50 hover:border-customGray hover:cursor-pointer' onClick={() => handleTemplateClick(list.id, item)}>
                                                         {list.name}
                                                     </div>
                                                 ))}

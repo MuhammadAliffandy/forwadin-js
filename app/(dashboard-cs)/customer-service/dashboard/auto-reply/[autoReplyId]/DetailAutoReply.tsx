@@ -3,12 +3,10 @@ import DropdownDevice from "@/components/dashboard/DropdownDevice"
 import InputContactAndLabel from "@/components/dashboard/InputContactAndLabel"
 import MultipleInputLabel from "@/components/dashboard/MultipleInputLabel"
 import TagsInput from "@/components/dashboard/TagsInput"
-import TemplateContainer from "@/components/dashboard/TemplateContainer"
 import UploadFile from "@/components/dashboard/UploadFile"
 import DisplayImage from "@/components/dashboard/auto-reply/DisplayImage"
 import TextAreaInput from "@/components/dashboard/chat/TextAreaInput"
 import InputForm from "@/components/form/InputForm"
-import SelectDevice from "@/components/form/SelectDevice"
 import useTemplate from "@/components/hooks/useTemplate"
 import { fetchClient } from "@/utils/helper/fetchClient"
 import { getFileFromUrl } from "@/utils/helper/fileHelper"
@@ -30,7 +28,7 @@ interface AutoReplyForm {
 const DetailAutoReply = ({ autoReplyId }: { autoReplyId: string }) => {
     const { push } = useRouter()
     const { data: session } = useSession()
-    const { loading, templateList } = useTemplate(session?.user)
+    const { loading, templateList } = useTemplate(session?.customerService)
     const [isLoaded, setisLoaded] = useState(false)
     const [isLabelLoaded, setisLabelLoaded] = useState(false)
     const [isLoading, setisLoading] = useState(false)
@@ -178,7 +176,11 @@ const DetailAutoReply = ({ autoReplyId }: { autoReplyId: string }) => {
                             </div>
                             <div>
                                 <p className="mb-2">Device</p>
-                                <SelectDevice listDevice={listDevice} register={register} name="deviceId" />
+                                <select {...register('deviceId')} className="px-4 py-3 focus:outline-none text-sm rounded-md focus:ring-0 w-full border-[#B0B4C5] focus:border-primary">
+                                    {listDevice.map(item => (
+                                        <option key={item.id} value={item.id} className="">{item.name}</option>
+                                    ))}
+                                </select>
                             </div>
                             <div>
                                 <p className="mb-2">Penerima</p>
@@ -212,7 +214,18 @@ const DetailAutoReply = ({ autoReplyId }: { autoReplyId: string }) => {
                     {isLoaded ? (<>
                         <div className='bg-white w-full p-4'>
                             <p className="font-bold text-xl font-lexend">Pesan Auto Reply</p>
-                            <TemplateContainer handleClick={handleTemplateClick} templateList={templateList} />
+                            {templateList.length > 0 && (
+                                <div className="mt-4">
+                                    <p>Template</p>
+                                    <div className="flex gap-2 flex-wrap w-full mt-2">
+                                        {templateList.map(item => (
+                                            <div key={item.id} className='rounded-full px-2 py-[2px] border border-customGray hover:cursor-pointer' onClick={() => handleTemplateClick(item.id)}>
+                                                {item.name}
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
                             <div className="mt-4">
                                 <p className="mb-2">Response</p>
                                 <TextAreaInput text={textInput} settext={settextInput} />
