@@ -33,7 +33,7 @@ const Footer = () => {
                     <p>Twitter</p>
                 </div>
             </div>
-            <div className="flex items-center absolute bottom-0 left-1/2 -translate-x-1/2 gap-2">
+            <div className="flex items-center absolute bottom-5 left-1/2 -translate-x-1/2 gap-2">
                 <p className="font-light text-sm text-white whitespace-pre">Powered By</p>
                 <div>
                     <img src="/assets/icons/forwardin_white.svg" alt="" />

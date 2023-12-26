@@ -126,7 +126,6 @@ export default function Home() {
         setcurrentSection('broadcast')
       else if (window.scrollY >= section.campaign.offsetTop && window.scrollY < section.autoReply.offsetTop) {
         setcurrentSection('campaign')
-        // document.getElementById('sideNav')?.classList.remove('text-white/100')
       }
       else if (window.scrollY >= section.autoReply.offsetTop && window.scrollY < section.opportunity.offsetTop) {
         setcurrentSection('autoReply')

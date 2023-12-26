@@ -45,6 +45,13 @@ const Navbar = () => {
             opacity: '0'
         }
     })
+    const handleNavigationClick = (key: string) => {
+        const gotoElement = document.getElementsByClassName(key)[0] as HTMLDivElement
+        window.scrollTo({
+            behavior: "smooth",
+            top: gotoElement?.offsetTop,
+        });
+    }
     return (
         <>
 
@@ -93,15 +100,14 @@ const Navbar = () => {
                         <div>
                             <img src="/assets/icons/caret-down-blue.svg" alt="" />
                         </div>
-
                     </div>
-                    <div className="hover:cursor-pointer">Pricing</div>
-                    <div className="hover:cursor-pointer">Demo</div>
+                    <div className="hover:cursor-pointer hover:text-primary" onClick={() => handleNavigationClick('pricing')}>Pricing</div>
+                    <div className="hover:cursor-pointer hover:text-primary">Demo</div>
                     {featureTransition((style, item) => item && (
                         <animated.div style={style} className="absolute bg-white px-8 py-4 -left-8 top-16 flex flex-col text-center gap-6 rounded-md shadow-xl">
-                            <div className="hover:cursor-pointer hover:text-primary">Broadcast</div>
-                            <div className="hover:cursor-pointer hover:text-primary">Campaign</div>
-                            <div className="whitespace-pre hover:cursor-pointer hover:text-primary">Auto Reply</div>
+                            <div className="hover:cursor-pointer hover:text-primary" onClick={() => handleNavigationClick('broadcast')}>Broadcast</div>
+                            <div className="hover:cursor-pointer hover:text-primary" onClick={() => handleNavigationClick('campaign')}>Campaign</div>
+                            <div className="whitespace-pre hover:cursor-pointer hover:text-primary" onClick={() => handleNavigationClick('autoReply')}>Auto Reply</div>
                         </animated.div>
                     ))}
                 </div>

@@ -40,7 +40,7 @@ const OrderTable = ({ setcountOrder }: { setcountOrder: Dispatch<SetStateAction<
     const filterOrder = (text: string) => {
         const regex = new RegExp(text, 'i')
         return orderData.filter(item => {
-            if (regex.test(item.name) || regex.test(item.status))
+            if (regex.test(item.name) || regex.test(item.status) || regex.test(item.orderData))
                 return item
         })
     }
