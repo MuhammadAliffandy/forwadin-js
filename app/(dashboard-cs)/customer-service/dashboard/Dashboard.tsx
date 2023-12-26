@@ -18,7 +18,6 @@ const Dashboard = () => {
     const { data: session } = useSession()
     const { isConnected, socket } = useSocket()
     const [openQrModal, setopenQrModal] = useState(false)
-    const [isLoaded, setisLoaded] = useState(false)
     const [latestMessage, setlatestMessage] = useState<IncomingMessage[]>([])
     const [progressData, setprogressData] = useState({
         totalMessage: 0,
@@ -89,6 +88,8 @@ const Dashboard = () => {
         if (progressData.totalMessage !== 0) {
             messagePercent = (progressData.receivedOrder / progressData.totalMessage) * 100
         }
+        if (progressData.totalMessage === 0 && progressData.receivedOrder !== 0)
+            messagePercent = 100
         setprogressOrder({
             value: orderPercent,
             color: 'primary'
@@ -179,7 +180,8 @@ const Dashboard = () => {
                         </div>
                     </div>
                 </div>
-                <div className='bg-white rounded-md px-4 pt-4 pb-2 grow-0 w-full xl:max-w-sm flex flex-col justify-between'>
+
+                <div className={'bg-white rounded-md px-4 pt-4 pb-2 grow-0 w-full xl:max-w-sm flex flex-col justify-between ' + (!session?.customerService?.sessionId && "opacity-50 pointer-events-none")}>
                     <p className='font-nunito font-bold text-[16px]'>Pesan terakhir</p>
                     <div className='flex flex-col gap-2 mt-2 h-full'>
                         {latestMessage.map(message => (

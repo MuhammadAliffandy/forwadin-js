@@ -88,6 +88,7 @@ const DashboardTemplate = ({ currentPage, children }: { currentPage: string, chi
                 })
             })
         }
+
         return () => {
             channels.session.forEach(channel => {
                 socket.off(channel)
@@ -122,7 +123,7 @@ const DashboardTemplate = ({ currentPage, children }: { currentPage: string, chi
                         <NavButton text='Campaign' href='/dashboard/campaign' currentPage={currentPage} isDisabled={isDisabled} />
                         <NavButton text='Auto Reply' href='/dashboard/auto-reply' currentPage={currentPage} isDisabled={isDisabled} />
                         <NavButton text="Customer Service" href="/dashboard/customer-service" currentPage={currentPage} isDisabled={isDisabled} />
-                        <NavButton text="Forwardin API" href="/dashboard/api-reference/" currentPage={currentPage} isDisabled={isDisabled} />
+                        <NavButton text="Forwardin API" href="/dashboard/api-reference/" currentPage={currentPage} isDisabled={(session?.user?.subscription.name === 'Starter' ? true : false)} />
                         <p className='text-sm mt-2'>Others</p>
                         <NavButton text='Settings' href='/dashboard/settings' currentPage={currentPage} />
                     </div>

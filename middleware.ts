@@ -1,16 +1,14 @@
 
 import { CustomerService, User } from "next-auth"
-import middleware, { withAuth } from 'next-auth/middleware'
-import { getToken } from "next-auth/jwt"
+import { withAuth } from 'next-auth/middleware'
 import { NextResponse } from 'next/server'
-import { NextRequest } from 'next/server'
-import { signIn } from "next-auth/react"
 const signUrl = ['/signin', '/signup', '/customer-service/signin']
 
 const adminPath = {
     requireDevice: ['/contact', '/group', '/incoming', '/messenger', '/outgoing', '/auto-reply', '/broadcast', '/campaign'],
     protectedUrl: ["/dashboard/:path*", "/subscription", '/dashboard'],
-    subscriptionUrl: ['/subscription', '/dashboard']
+    subscriptionUrl: ['/subscription', '/dashboard'],
+    paidUrl: ['/dashboard/api-reference']
 }
 const csPath = {
     requiredDevice: ['/messenger', '/auto-reply'],
@@ -40,6 +38,9 @@ export default withAuth(
             if (user) {
                 if (signUrl.some(path => pathName.startsWith(path))) {
                     return NextResponse.redirect(new URL("/dashboard", req.url))
+                }
+                if (adminPath.paidUrl.some(path => pathName.startsWith(path)) && user.subscription.name === 'starter') {
+                    return NextResponse.redirect(new URL('/dashboard', req.url))
                 }
                 if (!adminPath.subscriptionUrl.some(path => pathName.startsWith(path)) && user.subscription.status === 0) return NextResponse.redirect(new URL('/dashboard', req.url))
                 if (adminPath.requireDevice.some(path => pathName.startsWith('/dashboard' + path))

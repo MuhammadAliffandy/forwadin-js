@@ -1,6 +1,7 @@
 'use client'
 import DisabledForm from "@/components/DisabledForm"
 import InputContactAndLabel from "@/components/dashboard/InputContactAndLabel"
+import TemplateContainer from "@/components/dashboard/TemplateContainer"
 import UploadFile from "@/components/dashboard/UploadFile"
 import TextAreaInput from "@/components/dashboard/chat/TextAreaInput"
 import InputForm from "@/components/form/InputForm"
@@ -162,18 +163,7 @@ const CreateCampaignMessage = ({ campaignId }: {
                 <div className='w-full max-w-sm lg:max-w-full'>
                     <div className='bg-white w-full p-4'>
                         <p className="font-bold text-xl font-lexend">Pesan</p>
-                        {templateList.length > 0 && (
-                            <div className="mt-4">
-                                <p>Template</p>
-                                <div className="flex gap-2 flex-wrap w-full mt-2">
-                                    {templateList.map(list => (
-                                        <div key={list.id} className='rounded-full px-2 py-[2px] border border-customGray hover:cursor-pointer' onClick={() => handleTemplateClick(list.id)}>
-                                            {list.name}
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
+                        <TemplateContainer handleClick={handleTemplateClick} templateList={templateList} />
                         <div className="mt-4">
                             <p className="mb-2">Response</p>
 

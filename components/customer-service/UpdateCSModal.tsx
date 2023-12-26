@@ -8,6 +8,7 @@ import { CustomerService, DeviceData } from "@/utils/types"
 import { fetchClient } from "@/utils/helper/fetchClient"
 import { toast } from "react-toastify"
 import ButtonSubmit from "../form/ButtonSubmit"
+import SelectDevice from "../form/SelectDevice"
 interface UpdateCSModalProps {
     openModal: boolean,
     setopenModal: Dispatch<SetStateAction<boolean>>,
@@ -198,19 +199,9 @@ const UpdateCSModal = ({ openModal, refresh, setopenModal, user, csData }: Updat
                     </div>
                     <div>
                         <p className="mb-2">Device</p>
-                        <select {...register('deviceId')} name="device" id="device" className="px-4 py-3 focus:outline-none text-sm rounded-md focus:ring-0 w-full border-[#B0B4C5] focus:border-primary" defaultValue={deviceList[0]?.id}>
-                            {deviceList.map(device => (
-                                <option value={device.id}>
-                                    <p className="px-4 py-3">
-                                        {device.name}
-                                    </p>
-                                </option>
-                            ))}
-
-                        </select>
+                        <SelectDevice register={register} listDevice={deviceList} name="deviceId" />
                     </div>
                     <div className="mt-2">
-
                         <ButtonSubmit text="Ubah" isLoading={isLoading} />
                     </div>
                 </form>
