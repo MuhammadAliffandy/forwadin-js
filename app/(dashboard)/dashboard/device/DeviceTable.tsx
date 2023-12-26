@@ -5,7 +5,7 @@ import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import AddDeviceModal from '@/components/dashboard/device/AddDeviceModal';
 import { MultipleCheckboxRef, DeviceData } from '@/utils/types'
-import { useSession } from 'next-auth/react';
+import { signIn, useSession } from 'next-auth/react';
 import { fetchClient } from '@/utils/helper/fetchClient';
 import { toast } from 'react-toastify';
 import { Button, Skeleton, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@nextui-org/react';
@@ -80,6 +80,13 @@ const DeviceTable = ({ setcountDevice }: { setcountDevice: Dispatch<SetStateActi
             })
             if (result?.ok) {
                 toast.success('Berhasil hapus device')
+                const refresh = await signIn('refresh', {
+                    redirect: false,
+                    user: JSON.stringify(session?.user)
+                })
+                if (refresh?.error) {
+                    toast.error('Gagal update session')
+                }
                 fetchData()
                 setSelectedKeys(new Set([]))
             } else {

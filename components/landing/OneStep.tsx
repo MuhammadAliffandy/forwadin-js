@@ -29,11 +29,11 @@ const OneStep = () => {
         },
         'button2': {
             label: "Komersial dan Penjualan",
-            text: "Text Komersial",
+            text: "Dengan fitur broadcast, pelaku bisnis dapat memberi tahu pelanggan tentang penawaran khusus, diskon, atau acara penjualan dengan cepat. Fitur campaign dapat membantu mengatur kampanye penjualan yang lebih terarah dan efektif.",
         },
         'button3': {
             label: "Organisasi Sosial",
-            text: "Text Organisasi",
+            text: "Organisasi non-profit dapat menggunakan fitur broadcast untuk menginformasikan para donatur tentang proyek, acara komunitas, atau inisiatif sosial yang sedang berlangsung. Fitur campaign bisa membantu dalam mengingatkan tentang acara atau program yang akan datang.",
         }
     }
     const handleClick = (e: React.MouseEvent) => {

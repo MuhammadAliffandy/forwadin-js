@@ -91,7 +91,7 @@ const UpdateCSModal = ({ openModal, refresh, setopenModal, user, csData }: Updat
             console.log(csData)
             setValue('username', csData.username)
             setValue('email', csData.email)
-            setValue('deviceId', csData.device.id)
+            // setValue('deviceId', csData.device.id)
 
         }
     }, [csData, deviceList])
