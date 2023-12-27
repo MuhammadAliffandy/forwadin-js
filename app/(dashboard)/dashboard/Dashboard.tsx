@@ -1,6 +1,5 @@
 'use client'
 import Message from '@/components/dashboard/Message'
-import CustomButton from '@/components/landing/Button'
 import Link from 'next/link'
 import dynamic from 'next/dynamic';
 import { useEffect, useState } from 'react';
@@ -9,7 +8,7 @@ import { fetchClient } from '@/utils/helper/fetchClient';
 import { toast } from 'react-toastify';
 import { formatDateBahasa, getTodayDateBahasa } from '@/utils/helper';
 import { Button, Progress, Link as UILink } from '@nextui-org/react';
-import { signIn, useSession } from 'next-auth/react';
+import { useSession } from 'next-auth/react';
 import ActivatePlanModal from '@/components/dashboard/ActivatePlanModal';
 const DynamicAnalytic = dynamic(() => import('@/components/dashboard/Analytic'), { ssr: false })
 const Dashboard = () => {

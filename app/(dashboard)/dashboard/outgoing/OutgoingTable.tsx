@@ -1,7 +1,7 @@
 'use client';
 
-import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import React, { ChangeEvent, Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { GetMessage, OutgoingMessage } from '@/utils/types';
 import { Button, Link, Pagination, Popover, PopoverContent, PopoverTrigger, Skeleton, Spinner, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@nextui-org/react';
 import ContactIcon from '@/components/dashboard/ContactIcon';
@@ -20,7 +20,9 @@ const OutgoingTable = ({ settotalMessage, totalMessage, sessionId, user }: {
     sessionId: string,
     user: User | undefined
 }) => {
-    const { push } = useRouter()
+    const router = useRouter()
+    const pathname = usePathname()
+    const searchParams = useSearchParams()!
     const [isLoaded, setisLoaded] = useState(false)
     const [isLoading, setisLoading] = useState(false)
     const [isChecked, setisChecked] = useState(false)
@@ -28,6 +30,8 @@ const OutgoingTable = ({ settotalMessage, totalMessage, sessionId, user }: {
     ])
     const [searchText, setsearchText] = useState('')
     const [searchedMessage, setsearchedMessage] = useState<OutgoingMessage[]>([])
+    const [phoneSearch, setphoneSearch] = useState('')
+    const [contactSearch, setcontactSearch] = useState('')
     const [currentPage, setcurrentPage] = useState(1)
     const [totalPage, settotalPage] = useState(1)
     const [hasMore, sethasMore] = useState(false)
@@ -42,14 +46,19 @@ const OutgoingTable = ({ settotalMessage, totalMessage, sessionId, user }: {
                 return item
         })
     }
-    const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setsearchText(e.target.value)
+    const handleSearch = async () => {
+        const query = `contactName=${contactSearch}&phoneNumber=${phoneSearch}`
+        router.push(pathname + "?" + query)
+        setcurrentPage(1)
+        settotalPage(1)
+        fetchOutgoingMessage(query)
     }
 
-    const fetchOutgoingMessage = async () => {
+    const fetchOutgoingMessage = async (query = '') => {
         setisLoading(true)
+
         const result = await fetchClient({
-            url: `/messages/${sessionId}/outgoing?page=${currentPage}&pageSize=${PAGINATION_BATCH}`,
+            url: `/messages/${sessionId}/outgoing?page=${currentPage}&pageSize=${PAGINATION_BATCH}` + (query && '&' + query),
             method: 'GET',
             user: user
         })
@@ -69,22 +78,35 @@ const OutgoingTable = ({ settotalMessage, totalMessage, sessionId, user }: {
         setmessagePhone(getNumberFromString(item.to))
         setaddContactModal(true)
     }
+    const handlePhoneSearch = (e: string) => {
+        if (isNaN(e as any)) return
+        setphoneSearch(e)
+    }
+    const fetchInit = async () => {
+        const contact = searchParams.get('contactName')
+        const phone = searchParams.get('phoneNumber')
+        if (contact || phone)
+            fetchOutgoingMessage(`contactName=${contact}&phoneNumber=${phone}`)
+        else
+            fetchOutgoingMessage()
+    }
     useEffect(() => {
         const searchResult = filterMessage(searchText)
         setsearchedMessage(searchResult)
     }, [searchText])
     useEffect(() => {
-        if (user?.token && sessionId)
-            fetchOutgoingMessage()
+        if (user?.token && sessionId) {
+            fetchInit()
+        }
 
     }, [user?.token, sessionId])
     useEffect(() => {
         // if (currentPage > 1)
         if (currentPage === 1 && messageData.length === 0)
             return
-        else {
-            fetchOutgoingMessage()
-        }
+        else
+            fetchInit()
+
     }, [currentPage])
 
     return (
@@ -99,11 +121,22 @@ const OutgoingTable = ({ settotalMessage, totalMessage, sessionId, user }: {
             }
             <div className="mt-8 p-4 bg-white rounded-md">
                 <div className="flex sm:flex-row flex-col gap-2 justify-between">
-                    <div className="w-full lg:w-1/2">
-                        <input type="text" className="text-xs rounded-md w-full max-w-md border border-customGray" placeholder="Cari nama / nomor / label"
-                            value={searchText}
-                            onChange={handleSearch}
-                        />
+                    <div className="flex lg:flex-row flex-col gap-2">
+                        <div className='w-full flex gap-2'>
+                            <input type="text" className="text-xs rounded-md w-full max-w-md border border-customGray" placeholder="Cari nomor"
+                                value={phoneSearch}
+                                onChange={e => handlePhoneSearch(e.target.value)}
+                            />
+                            <input type="text" className="text-xs rounded-md w-full max-w-md border border-customGray" placeholder="Cari kontak"
+                                value={contactSearch}
+                                onChange={e => setcontactSearch(e.target.value)}
+                            />
+                        </div>
+                        <Button
+                            color='primary'
+                            className='rounded-md px-8'
+                            onClick={handleSearch}
+                        >Cari</Button>
                     </div>
 
                 </div>
