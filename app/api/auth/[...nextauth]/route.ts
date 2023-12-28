@@ -84,7 +84,6 @@ export const authConfig: NextAuthOptions = {
             clientId: process.env.GOOGLE_CLIENT_ID as string,
             clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
             authorization: {
-
                 params: {
                     scope: 'profile email https://www.googleapis.com/auth/user.phonenumbers.read https://www.googleapis.com/auth/contacts https://www.googleapis.com/auth/contacts.readonly',
                     expire_in: 43200

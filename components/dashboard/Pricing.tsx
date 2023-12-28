@@ -13,14 +13,13 @@ const Pricing = () => {
             body: 'Mulai perjalanan Anda dengan paket Starter selama 14 hari. Nikmati pesan otomatis, siaran pesan, dan  manajemen kontak yang efisien. Dapatkan integrasi yang membantu dan sinkronisasi kontak WhatsApp.',
             features: [
                 { name: '10 Auto reply', available: true },
-                { name: '50 Broadcast', available: true },
-                { name: '5 Campaign', available: true },
+                { name: '5 Broadcast', available: true },
                 { name: '50 Contact', available: true },
                 { name: '5 Device', available: true },
-                { name: 'Excel / CSV Contact Import', available: true },
+                { name: 'Integrasi API', available: false },
+                { name: 'Excel / CSV Contact Import', available: false },
                 { name: 'Google Contact Sync', available: false },
                 { name: 'Whatsapp Contact Sync', available: false },
-
             ]
         },
         {
@@ -32,13 +31,13 @@ const Pricing = () => {
                 yearly: 'Rp. 650.000',
             },
             features: [
-                { name: '10 Auto reply', available: true },
-                { name: '50 Broadcast', available: true },
-                { name: '5 Campaign', available: true },
-                { name: '50 Contact', available: true },
-                { name: '5 Device', available: true },
+                { name: '4500 Auto reply', available: true },
+                { name: '2500 Broadcast', available: true },
+                { name: '1000 Contact', available: true },
+                { name: 'Integrasi API', available: true },
+                { name: '15 Device', available: true },
                 { name: 'Excel / CSV Contact Import', available: true },
-                { name: 'Google Contact Sync', available: false },
+                { name: 'Google Contact Sync', available: true },
                 { name: 'Whatsapp Contact Sync', available: false },
 
             ],
@@ -53,15 +52,14 @@ const Pricing = () => {
                 yearly: 'Rp. 800.000',
             },
             features: [
-                { name: '10 Auto reply', available: true },
-                { name: '50 Broadcast', available: true },
-                { name: '5 Campaign', available: true },
-                { name: '50 Contact', available: true },
-                { name: '5 Device', available: true },
+                { name: '9500 Auto reply', available: true },
+                { name: '5500 Broadcast', available: true },
+                { name: '5000 Contact', available: true },
+                { name: 'Integrasi API', available: true },
+                { name: '50 Device', available: true },
                 { name: 'Excel / CSV Contact Import', available: true },
-                { name: 'Google Contact Sync', available: false },
-                { name: 'Whatsapp Contact Sync', available: false },
-
+                { name: 'Google Contact Sync', available: true },
+                { name: 'Whatsapp Contact Sync', available: true },
             ],
         },
         {
@@ -73,15 +71,14 @@ const Pricing = () => {
                 yearly: 'Rp. 900.000',
             },
             features: [
-                { name: '10 Auto reply', available: true },
-                { name: '50 Broadcast', available: true },
-                { name: '5 Campaign', available: true },
-                { name: '50 Contact', available: true },
-                { name: '5 Device', available: true },
+                { name: '20000 Auto reply', available: true },
+                { name: '14500 Broadcast', available: true },
+                { name: '15000 Contact', available: true },
+                { name: 'Integrasi API', available: true },
+                { name: '100 Device', available: true },
                 { name: 'Excel / CSV Contact Import', available: true },
-                { name: 'Google Contact Sync', available: false },
-                { name: 'Whatsapp Contact Sync', available: false },
-
+                { name: 'Google Contact Sync', available: true },
+                { name: 'Whatsapp Contact Sync', available: true },
             ],
         },
     ]
@@ -112,9 +109,9 @@ const Pricing = () => {
                 </div>
             )}
 
-            <div className='flex overflow-x-scroll gap-4 lg:gap-12 flex-nowrap px-2 lg:justify-start text-xs mx-auto pb-12 lg:pl-32 '>
+            <div className='w-full flex overflow-x-scroll gap-4 lg:gap-12 flex-wrap px-2 lg:justify-start text-xs mx-auto pb-12 lg:pl-32'>
                 {subscriptionContent.map((data, i) => (
-                    <div className={"relative max-w-[280px] flex-none flex"} key={i}>
+                    <div className={"relative w-full max-w-[280px] flex-none flex"} key={i}>
                         <div className={(selected === i ? 'bg-white shadow-xl ' : 'shadow-xl md:shadow-none') + ' px-8 pt-16 pb-4 rounded-xl flex flex-col justify-between'} onMouseEnter={() => setSelected(i)}>
                             <div>
                                 {data.isFavorite && (
