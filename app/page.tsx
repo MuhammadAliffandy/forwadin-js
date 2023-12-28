@@ -10,94 +10,16 @@ import { useSession } from 'next-auth/react'
 import { toast } from 'react-toastify'
 import { useRouter } from 'next/navigation'
 import { fetchClient } from '@/utils/helper/fetchClient'
+import Pricing from '@/components/dashboard/Pricing'
 
 export default function Home() {
   // const FadeUp = Sticky()
-  const { data: session } = useSession()
-  const { push } = useRouter()
-  const FadeUp = batch(Move(), Fade());
-  const [buttonActive, setButtonActive] = useState('monthly')
-  const [selected, setSelected] = useState(1)
+  const FadeUp = batch(Move(), Fade())
   const [currentSection, setcurrentSection] = useState('getStarted')
-  const activeStyleButton = 'text-white-50 bg-primary'
-  const inactiveStyleButton = 'text-primary bg-white'
   // merchant_id=G265815203&order_id=ORDER-1698215438034-f9gd9a&status_code=200&transaction_status=settlement
   const titleTextStyle = "font-lexend font-bold text-2xl xl:text-4xl"
   const contentTextStyle = "lg:text-sm text-xs"
-  const subscriptionContent = [
-    {
-      title: 'Starter',
-      body: 'Start your 14-day trial and experience efficient message forwarding, simplified contact management, and a glimpse of campaign scheduling. Unleash the potential of streamlined communication and explore how FowardIn can elevate your messaging game.',
-      price: 'Rp. 300.000',
-      buttonText: 'Start for Free',
-      features: [
-        { name: '10 Auto reply', available: true },
-        { name: '50 Broadcast', available: true },
-        { name: '5 Campaign', available: true },
-        { name: '50 Contact', available: true },
-        { name: '5 Device', available: true },
-        { name: 'Excel / CSV Contact Import', available: true },
-        { name: 'Google Contact Sync', available: false },
-        { name: 'Whatsapp Contact Sync', available: false },
 
-      ],
-      cardStyle: ''
-    },
-    {
-      title: 'Basic',
-      body: 'Start your 14-day trial and experience efficient message forwarding, simplified contact management, and a glimpse of campaign scheduling. Unleash the potential of streamlined communication and explore how FowardIn can elevate your messaging game.',
-      price: 'Rp. 300.000',
-      buttonText: 'Get Started',
-      features: [
-        { name: '10 Auto reply', available: true },
-        { name: '50 Broadcast', available: true },
-        { name: '5 Campaign', available: true },
-        { name: '50 Contact', available: true },
-        { name: '5 Device', available: true },
-        { name: 'Excel / CSV Contact Import', available: true },
-        { name: 'Google Contact Sync', available: false },
-        { name: 'Whatsapp Contact Sync', available: false },
-
-      ],
-      isFavorite: true
-    },
-    {
-      title: 'Starter',
-      body: 'Start your 14-day trial and experience efficient message forwarding, simplified contact management, and a glimpse of campaign scheduling. Unleash the potential of streamlined communication and explore how FowardIn can elevate your messaging game.',
-      price: 'Rp. 300.000',
-      buttonText: 'Start for Free',
-      features: [
-        { name: '10 Auto reply', available: true },
-        { name: '50 Broadcast', available: true },
-        { name: '5 Campaign', available: true },
-        { name: '50 Contact', available: true },
-        { name: '5 Device', available: true },
-        { name: 'Excel / CSV Contact Import', available: true },
-        { name: 'Google Contact Sync', available: false },
-        { name: 'Whatsapp Contact Sync', available: false },
-
-      ],
-      cardStyle: ''
-    },
-    {
-      title: 'Starter',
-      body: 'Start your 14-day trial and experience efficient message forwarding, simplified contact management, and a glimpse of campaign scheduling. Unleash the potential of streamlined communication and explore how FowardIn can elevate your messaging game.',
-      price: 'Rp. 300.000',
-      buttonText: 'Start for Free',
-      features: [
-        { name: '10 Auto reply', available: true },
-        { name: '50 Broadcast', available: true },
-        { name: '5 Campaign', available: true },
-        { name: '50 Contact', available: true },
-        { name: '5 Device', available: true },
-        { name: 'Excel / CSV Contact Import', available: true },
-        { name: 'Google Contact Sync', available: false },
-        { name: 'Whatsapp Contact Sync', available: false },
-
-      ],
-      cardStyle: ''
-    },
-  ]
   const animatorClass = 'w-full px-4 lg:px-0 lg:max-w-[70%] mx-auto h-full flex flex-col items-center justify-center'
   const handleNavigationClick = (key: string) => {
     const gotoElement = document.getElementsByClassName(key)[0] as HTMLDivElement
@@ -150,7 +72,6 @@ export default function Home() {
     }
 
     document.addEventListener('scroll', scrollHandler)
-
 
     return () => {
       document.removeEventListener('scroll', scrollHandler)
@@ -271,62 +192,7 @@ export default function Home() {
         <ScrollPage style={{
         }} className='bg-no-repeat bg-cover pricing'>
           <Animator animation={FadeUp} className='w-full'>
-            <div className=' overflow-x-scroll h-[100vh]'>
-              <div className='px-6 container mx-auto pt-12'>
-                <p className='text-center text-xl'>Our Pricing</p>
-                <p className='text-center text-4xl font-bold mt-2'>Subscription</p>
-              </div>
-              <div className="flex justify-center my-8 text-sm">
-                <div className="flex bg-white p-2 rounded-full gap-2">
-                  <div className={(buttonActive === 'monthly' ? activeStyleButton : inactiveStyleButton) + " px-6 py-2 rounded-full hover:cursor-pointer"} onClick={() => setButtonActive('monthly')}>Monthly</div>
-                  <div className={(buttonActive === 'yearly' ? activeStyleButton : inactiveStyleButton) + " px-6 py-2 rounded-full hover:cursor-pointer"} onClick={() => setButtonActive('yearly')}>Yearly</div>
-                </div>
-              </div>
-              <div className="flex overflow-x-scroll gap-4 lg:gap-12 flex-nowrap px-2 lg:justify-start text-xs mx-auto pb-12 lg:pl-32">
-                {/* card */}
-                {subscriptionContent.map((data, i) => (
-                  <div className={"relative max-w-[280px] flex-none"} key={i}>
-                    <div className={(selected === i ? 'bg-white shadow-xl ' : 'shadow-xl md:shadow-none') + ' px-8 pt-16 pb-8 rounded-xl '} onMouseEnter={() => setSelected(i)}>
-                      {data.isFavorite && (
-                        <div className="absolute top-6 w-full flex">
-                          <div className="bg-[#FFB020] rounded-lg px-2 py-[2px] font-semibold">
-                            Most Popular
-                          </div>
-                        </div>
-                      )}
-                      <p className="text-2xl font-lexend">{data.title}</p>
-                      <p className="mt-4">{data.body}</p>
-                      <div className="flex items-baseline">
-                        <p className="mt-8 mb-4 font-bold font-lexend text-2xl">{data.price}</p>
-                        <p className="ml-1">/bulan</p>
-                      </div>
-                      <div id={'plan_' + i} className={(data.isFavorite ? 'bg-[#FFB020] border-[#FFB020]' : 'bg-primary border-primary') + ' border rounded-full px-6 py-2 text-center whitespace-nowrap text-white w-full block'}>
-                        {data.buttonText}
-                      </div>
-                    </div>
-                    <div className="mt-10 flex flex-col gap-4 px-8">
-                      {data.features.map((feature, j) => (
-                        <div className="flex gap-2" key={i + '' + j}>
-
-                          {feature.available ? (
-                            <img src={'assets/icons/checklist.svg'}
-                              width={20}
-                              height={20}
-                              alt="checklist" />
-                          ) : (
-                            <img src={'assets/icons/no sign.svg'}
-                              width={20}
-                              height={20}
-                              alt="checklist" />)}
-
-                          <p>{feature.name}</p>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
+            <Pricing />
           </Animator>
         </ScrollPage>
         <ScrollPage style={{

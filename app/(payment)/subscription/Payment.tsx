@@ -26,36 +26,59 @@ const Payment = () => {
 	const [selectedPlan, setselectedPlan] = useState<string>('')
 	const [currentPlan, setcurrentPlan] = useState<PlansProps>()
 	const [isChecked, setisChecked] = useState(false)
-	const features = [
-		{
-			feature: '100 Auto reply',
-			image: '/assets/icons/subscription/time_auto.svg'
+	const subscriptionContent = {
+		'basic': {
+			title: 'Basic',
+			body: 'Dapatkan akses selama 1 bulan dengan paket Basic. Manfaatkan fitur pesan otomatis, siaran pesan, dan manajemen kontak yang ditingkatkan. Rasakan kenyamanan integrasi yang luas dengan sinkronisasi kontak Google dan WhatsApp.',
+			features: [
+				{ name: '4500 Auto reply', type: 'autoReply' },
+				{ name: '2500 Broadcast', type: 'broadcast' },
+				{ name: '1000 Contact', type: 'contact' },
+				// { name: 'Integrasi API', type: 'api' },
+				{ name: '15 Device', type: 'device' },
+				{ name: 'Excel / CSV Contact Import', type: 'import' },
+				{ name: 'Google Contact Sync', type: 'sync' },
+			],
+			isFavorite: true
 		},
-		{
-			feature: '500 Broadcast',
-			image: '/assets/icons/subscription/cast.svg'
+		'premium': {
+			title: 'Premium',
+			body: 'Perpanjang pengalaman Anda dengan paket Premium selama 1 bulan. Nikmati manfaat pesan otomatis, siaran pesan, dan manajemen kontak tanpa batasan. Aktifkan integrasi yang luas dengan sinkronisasi kontak Google dan WhatsApp.',
+			features: [
+				{ name: '9500 Auto reply', type: 'autoReply' },
+				{ name: '5500 Broadcast', type: 'broadcast' },
+				{ name: '5000 Contact', type: 'contact' },
+				// { name: 'Integrasi API', type: true },
+				{ name: '50 Device', type: 'device' },
+				{ name: 'Excel / CSV Contact Import', type: 'import' },
+				{ name: 'Google Contact Sync', type: 'sync' },
+				// { name: 'Whatsapp Contact Sync', type: true },
+			],
 		},
-		{
-			feature: '50 Campaign',
-			image: '/assets/icons/subscription/data_exploration.svg'
+		'pro': {
+			title: 'Pro',
+			body: 'Jelajahi seluruh fitur dengan paket Pro selama 1 bulan. Dapatkan keuntungan dari pesan otomatis, siaran pesan, serta manajemen kontak yang tidak terbatas. Aktifkan integrasi yang luas dengan sinkronisasi kontak Google dan WhatsApp.',
+			features: [
+				{ name: '20000 Auto reply', type: 'autoReply' },
+				{ name: '14500 Broadcast', type: 'broadcast' },
+				{ name: '15000 Contact', type: 'contact' },
+				// { name: 'Integrasi API', type: true },
+				{ name: '100 Device', type: 'device' },
+				{ name: 'Excel / CSV Contact Import', type: 'import' },
+				{ name: 'Google Contact Sync', type: 'sync' },
+				// { name: 'Whatsapp Contact Sync', type: true },
+			],
 		},
-		{
-			feature: '500 Contact',
-			image: '/assets/icons/subscription/contacts.svg'
-		},
-		{
-			feature: '50 Device',
-			image: '/assets/icons/subscription/ad_units.svg'
-		},
-		{
-			feature: 'Excel / CSV Contact Import',
-			image: '/assets/icons/subscription/article.svg'
-		},
-		{
-			feature: 'Google Contact Sync',
-			image: '/assets/icons/subscription/sync_saved_locally.svg'
-		},
-	]
+	}
+	const featureImage = {
+		autoReply: '/assets/icons/subscription/time_auto.svg',
+		broadcast: '/assets/icons/subscription/cast.svg',
+		campaign: '/assets/icons/subscription/data_exploration.svg',
+		contact: '/assets/icons/subscription/contacts.svg',
+		device: '/assets/icons/subscription/ad_units.svg',
+		import: '/assets/icons/subscription/article.svg',
+		sync: '/assets/icons/subscription/sync_saved_locally.svg'
+	}
 	const fetchSubscriptionPlans = async () => {
 		const result = await fetchClient({
 			url: '/payment/subscriptions',
@@ -184,13 +207,19 @@ const Payment = () => {
 									onSelectionChange={setselectedPlan as any}
 								>
 									<Tab key={plans[0]?.name} title={plans[0]?.name} className="">
-										<BasicPlan planData={plans[0]} durationPlan={durationPlan} features={features} />
+										<BasicPlan planData={subscriptionContent['basic']}
+											currentPrice={plans[0]}
+											durationPlan={durationPlan} featureImage={featureImage} />
 									</Tab>
 									<Tab key={plans[1]?.name} title={plans[1]?.name} className="">
-										<BasicPlan planData={plans[1]} durationPlan={durationPlan} features={features} />
+										<BasicPlan planData={subscriptionContent['premium']}
+											currentPrice={plans[1]}
+											durationPlan={durationPlan} featureImage={featureImage} />
 									</Tab>
 									<Tab key={plans[2]?.name} title={plans[2]?.name} className="">
-										<BasicPlan planData={plans[2]} durationPlan={durationPlan} features={features} />
+										<BasicPlan planData={subscriptionContent['pro']}
+											currentPrice={plans[2]}
+											durationPlan={durationPlan} featureImage={featureImage} />
 									</Tab>
 
 								</Tabs>
@@ -238,7 +267,7 @@ const Payment = () => {
 							<Checkbox className="text-xs" isSelected={isChecked} onValueChange={setisChecked} />
 							<p className=" text-xs">
 								I acknowledge that i agree to the Terms of Use and have read the
-								<a href="" target="_blank" className="text-primary">
+								<a href="https://www.privacypolicyonline.com/live.php?token=JJFOaCo3fAWgt4f6MNBkHtXo6v1RasCs" target="_blank" className="text-primary">
 									&nbsp;Privacy Policy
 								</a>
 							</p>

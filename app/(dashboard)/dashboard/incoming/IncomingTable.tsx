@@ -1,7 +1,7 @@
 'use client';
 
-import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { ChangeEvent, Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
 import { GetMessage, IncomingMessage, MultipleCheckboxRef } from '@/utils/types';
 import { Button, Pagination, Popover, PopoverContent, PopoverTrigger, Skeleton, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@nextui-org/react';
 import { User } from 'next-auth';
@@ -13,6 +13,7 @@ import { PAGINATION_BATCH } from '@/utils/constant';
 import ProfileAvatar from '@/components/dashboard/ProfileAvatar';
 import BubbleChat from '@/components/dashboard/chat/BubbleChat';
 import MessageAddContact from '@/components/dashboard/contact/MessageAddContact';
+import { useSearchParams } from 'next/navigation';
 
 interface IncomingMessageProps {
     settotalMessage: Dispatch<SetStateAction<number>>,
@@ -21,11 +22,15 @@ interface IncomingMessageProps {
     totalMessage: number
 }
 const IncomingTable = ({ settotalMessage, totalMessage, sessionId, user }: IncomingMessageProps) => {
-    const { push } = useRouter()
+    const router = useRouter()
+    const pathname = usePathname()
+    const searchParams = useSearchParams()!
     const [isLoaded, setisLoaded] = useState(false)
     const [isChecked, setisChecked] = useState(false)
     const [messageData, setmessageData] = useState<IncomingMessage[]>([])
-    const [searchText, setsearchText] = useState('')
+    const [query, setquery] = useState('')
+    const [phoneSearch, setphoneSearch] = useState('')
+    const [contactSearch, setcontactSearch] = useState('')
     const [searchedMessage, setsearchedMessage] = useState<IncomingMessage[]>([])
     const [currentPage, setcurrentPage] = useState(1)
     const [totalPage, settotalPage] = useState(1)
@@ -42,18 +47,16 @@ const IncomingTable = ({ settotalMessage, totalMessage, sessionId, user }: Incom
                 return item
         })
     }
-    const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setsearchText(e.target.value)
-    }
+
 
     useEffect(() => {
-        const searchResult = filterMessage(searchText)
+        const searchResult = filterMessage(phoneSearch)
         setsearchedMessage(searchResult)
-    }, [searchText])
-    const fetchIncomingMessage = async () => {
+    }, [phoneSearch])
+    const fetchIncomingMessage = async (query = '') => {
         setisLoaded(false)
         const result = await fetchClient({
-            url: `/messages/${sessionId}/incoming?page=${currentPage}&pageSize=${PAGINATION_BATCH}`,
+            url: `/messages/${sessionId}/incoming?page=${currentPage}&pageSize=${PAGINATION_BATCH}` + (query && '&' + query),
             method: 'GET',
             user: user
         })
@@ -76,19 +79,37 @@ const IncomingTable = ({ settotalMessage, totalMessage, sessionId, user }: Incom
         setmessagePhone(getNumberFromString(item.from))
         setaddContactModal(true)
     }
+    const fetchInit = async () => {
+        const contact = searchParams.get('contactName')
+        const phone = searchParams.get('phoneNumber')
+        if (contact || phone)
+            fetchIncomingMessage(`contactName=${contact}&phoneNumber=${phone}`)
+        else
+            fetchIncomingMessage()
+    }
+    const handleSearch = async () => {
+        const query = `contactName=${contactSearch}&phoneNumber=${phoneSearch}`
+        router.push(pathname + "?" + query)
+        setcurrentPage(1)
+        settotalPage(1)
+        fetchIncomingMessage(query)
+    }
+    const handlePhoneSearch = (e: string) => {
+        if (isNaN(e as any)) return
+        setphoneSearch(e)
+    }
     useEffect(() => {
         if (user?.token && sessionId)
-            fetchIncomingMessage()
+            fetchInit()
     }, [user?.token, sessionId])
     useEffect(() => {
         if (currentPage === 1 && messageData.length === 0)
             return
         else {
-            fetchIncomingMessage()
+            fetchInit()
         }
     }, [currentPage])
     useEffect(() => {
-        console.log(selectedMessage)
         // @ts-ignore
         if (selectedMessage.size > 0 || selectedMessage === 'all') {
             setisChecked(true)
@@ -108,12 +129,24 @@ const IncomingTable = ({ settotalMessage, totalMessage, sessionId, user }: Incom
             }
             <div className="mt-8 p-4 bg-white rounded-md">
                 <div className="flex sm:flex-row flex-col gap-2 justify-between">
-                    <div className="w-full lg:w-1/2">
-                        <input type="text" className="text-xs rounded-md w-full max-w-md border border-customGray" placeholder="Cari nama / nomor / label"
-                            value={searchText}
-                            onChange={handleSearch}
-                        />
+                    <div className="flex lg:flex-row flex-col gap-2">
+                        <div className='w-full flex gap-2'>
+                            <input type="text" className="text-xs rounded-md w-full max-w-md border border-customGray" placeholder="Cari nomor"
+                                value={phoneSearch}
+                                onChange={e => handlePhoneSearch(e.target.value)}
+                            />
+                            <input type="text" className="text-xs rounded-md w-full max-w-md border border-customGray" placeholder="Cari kontak"
+                                value={contactSearch}
+                                onChange={e => setcontactSearch(e.target.value)}
+                            />
+                        </div>
+                        <Button
+                            color='primary'
+                            className='rounded-md px-8'
+                            onClick={handleSearch}
+                        >Cari</Button>
                     </div>
+
                 </div>
             </div>
             {isLoaded ? (

@@ -1,48 +1,52 @@
 import { formatCurrencyIDR } from "@/utils/helper"
 import { useEffect } from "react"
 interface FeatureProps {
-    feature: string,
-    image: string
+    [key: string]: string
 }
 interface PlansProps {
-    id?: string,
-    name?: string,
-    monthlyPrice?: number,
-    yearlyPrice?: number,
-    vat?: number,
-    sum?: number
+    title: string,
+    body: string,
+    features: {
+        name: string, type: string
+    }[],
+    isFavorite?: boolean
 }
-const BasicPlan = ({ planData, durationPlan, features }: { planData: PlansProps, durationPlan: string, features: FeatureProps[] }) => {
-    useEffect(() => { console.log(durationPlan) }, [])
+interface CurrentPrice {
+    monthlyPrice: number,
+    yearlyPrice: number
+}
+const BasicPlan = ({ planData, currentPrice, durationPlan, featureImage }: { planData: PlansProps, currentPrice: CurrentPrice, durationPlan: string, featureImage: FeatureProps }) => {
     return (
         <div className="flex flex-col gap-2 mt-2">
-            <div className="flex">
-                <div className="bg-[#FFB020] rounded-full px-2 text-xs">
-                    Most Popular
+            {planData.isFavorite && (
+                <div className="flex">
+                    <div className="bg-[#FFB020] rounded-full px-2 text-xs">
+                        Most Popular
+                    </div>
                 </div>
-            </div>
-            <p className="font-bold font-lexend text-2xl">{planData?.name}</p>
-            <p className="text-xs">Dapatkan akses selama 1 bulan dengan paket Basic. Manfaatkan fitur pesan otomatis, siaran pesan, dan manajemen kontak yang ditingkatkan. Rasakan kenyamanan integrasi yang luas dengan sinkronisasi kontak Google dan WhatsApp.</p>
+            )}
+            <p className="font-bold font-lexend text-2xl">{planData.title}</p>
+            <p className="text-xs">{planData.body}</p>
             <div className="flex items-baseline">
                 {durationPlan === 'Monthly' ? (
                     <>
-                        <p className="my-2 font-bold font-lexend text-2xl">{formatCurrencyIDR(planData?.monthlyPrice!)}</p>
+                        <p className="my-2 font-bold font-lexend text-2xl">{formatCurrencyIDR(currentPrice?.monthlyPrice!)}</p>
                         <p className="ml-1">/bulan</p>
                     </>
                 ) : (
                     <>
-                        <p className="my-2 font-bold font-lexend text-2xl">{formatCurrencyIDR(planData?.yearlyPrice!)}</p>
+                        <p className="my-2 font-bold font-lexend text-2xl">{formatCurrencyIDR(currentPrice?.yearlyPrice!)}</p>
                         <p className="ml-1">/tahun</p>
                     </>
                 )}
             </div>
             <div className="flex flex-wrap gap-2 text-sm">
-                {features.map(feat => (
+                {planData.features.map(feat => (
                     <div className="flex items-center gap-1">
                         <div className="flex-none">
-                            <img src={feat.image} alt="" />
+                            <img src={featureImage[feat.type]} alt="" />
                         </div>
-                        <p>{feat.feature}</p>
+                        <p>{feat.name}</p>
                     </div>
                 ))}
             </div>
