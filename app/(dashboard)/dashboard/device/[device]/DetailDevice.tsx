@@ -45,6 +45,20 @@ const DetailDevice = ({ device }: { device: string }) => {
             }
         }
     }
+    const generateAPIKey = async () => {
+        if (!deviceData) return
+        const result = await fetchClient({
+            url: '/devices/api-key/' + deviceData?.id,
+            method: 'GET',
+            user: session?.user
+        })
+        if (result?.ok) {
+            toast.success('Berhasil generate API Key baru')
+            fetchDetailDevice()
+        } else {
+            toast.error('Gagal generate API Key baru')
+        }
+    }
     const handleDeleteDevice = async () => {
         const result = await fetchClient({
             url: '/devices/',
@@ -111,7 +125,14 @@ const DetailDevice = ({ device }: { device: string }) => {
                             <div className='w-full px-4 py-3 bg-neutral-75 rounded-md break-words mt-4 text-[#777C88]'>
                                 {deviceData?.apiKey}
                             </div>
-                            <div className='px-4 py-3 text-center border border-black/50 rounded-md mt-4'>Generate API key baru</div>
+                            <Button
+                                fullWidth
+                                variant="faded"
+                                className="rounded-md mt-2"
+                                onClick={generateAPIKey}
+                            >
+                                Generate API key baru
+                            </Button>
 
                             <Button fullWidth={true} type='button' color="primary" isLoading={isLoading} className='rounded-md mt-8' size='lg' onClick={handleUpdateDevice}>
                                 Simpan Perubahan

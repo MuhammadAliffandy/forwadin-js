@@ -77,7 +77,7 @@ const getDeviceSession = async (data: GetSession[], token: string) => {
 export const authConfig: NextAuthOptions = {
     session: {
         strategy: "jwt",
-        maxAge: 30 * 24 * 60
+        maxAge: 43200
     },
     providers: [
         GoogleProvider({
@@ -87,9 +87,9 @@ export const authConfig: NextAuthOptions = {
 
                 params: {
                     scope: 'profile email https://www.googleapis.com/auth/user.phonenumbers.read https://www.googleapis.com/auth/contacts https://www.googleapis.com/auth/contacts.readonly',
+                    expire_in: 43200
                 }
             },
-
         }),
         CredentialsProvider({
             id: 'refresh',
