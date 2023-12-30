@@ -11,9 +11,11 @@ import { UserProfile } from "@/utils/types"
 import { Tab, Tabs } from "@nextui-org/react"
 import { useSession } from "next-auth/react"
 import dynamic from "next/dynamic"
+import { useSearchParams } from "next/navigation"
 const Account = dynamic(() => import('./Account'), { ssr: false, })
 const Settings = () => {
     const { data: session } = useSession()
+    const searchParams = useSearchParams()
     const [isLoaded, setisLoaded] = useState(false)
     const [userData, setuserData] = useState<UserProfile>({
         firstName: '',
@@ -57,7 +59,19 @@ const Settings = () => {
 
         }
     }, [session?.user?.token])
-
+    useEffect(() => {
+        if (searchParams?.has('section')) {
+            const page = searchParams.get('section')
+            if (page === 'system')
+                setcurrentPage('system')
+            else if (page === 'device')
+                setcurrentPage('device')
+            else if (page === 'account')
+                setcurrentPage('account')
+            else
+                setcurrentPage('profile')
+        }
+    }, [searchParams])
     return (
         <>
             <div className="w-full bg-white rounded-md px-3 py-3 pb-6 mt-2">

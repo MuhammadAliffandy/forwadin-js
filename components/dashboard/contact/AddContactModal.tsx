@@ -193,8 +193,9 @@ const AddContactModal = ({ openModal, setopenModal, fetchData }: AddContactModal
                                 <div className="relative flex-1 flex">
                                     {errors.phone && (<p className="px-1 text-danger absolute right-4 top-1/2 -translate-y-1/2">{`${errors.phone.message}`}</p>)}
                                     <div className="absolute top-1/2 -translate-y-1/2 text-customGray left-4">{currentCountryCode.dial_code}</div>
-                                    <input type="text" placeholder='Whatsapp Number' className={'text-sm pr-4 pl-12 py-3 focus:outline-none  rounded-md focus:ring-0 w-full ' + (errors.phone ? 'border-danger focus:border-danger' : 'border-[#B0B4C5] focus:border-primary ')} {...register('phone', {
-                                        required: 'Required'
+                                    <input type="number" placeholder='Whatsapp Number' className={'text-sm pr-4 pl-12 py-3 focus:outline-none  rounded-md focus:ring-0 w-full ' + (errors.phone ? 'border-danger focus:border-danger' : 'border-[#B0B4C5] focus:border-primary ')} {...register('phone', {
+                                        required: 'Required',
+                                        pattern: /^[0-9]+$/
                                     })} />
                                 </div>
                                 {componentTransition((style, item) => item && (

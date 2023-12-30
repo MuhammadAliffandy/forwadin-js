@@ -34,7 +34,7 @@ const Payment = () => {
 				{ name: '4500 Auto reply', type: 'autoReply' },
 				{ name: '2500 Broadcast', type: 'broadcast' },
 				{ name: '1000 Contact', type: 'contact' },
-				// { name: 'Integrasi API', type: 'api' },
+				{ name: 'Integrasi API', type: 'api' },
 				{ name: '15 Device', type: 'device' },
 				{ name: 'Excel / CSV Contact Import', type: 'import' },
 				{ name: 'Google Contact Sync', type: 'sync' },
@@ -48,7 +48,7 @@ const Payment = () => {
 				{ name: '9500 Auto reply', type: 'autoReply' },
 				{ name: '5500 Broadcast', type: 'broadcast' },
 				{ name: '5000 Contact', type: 'contact' },
-				// { name: 'Integrasi API', type: true },
+				{ name: 'Integrasi API', type: 'api' },
 				{ name: '50 Device', type: 'device' },
 				{ name: 'Excel / CSV Contact Import', type: 'import' },
 				{ name: 'Google Contact Sync', type: 'sync' },
@@ -62,7 +62,7 @@ const Payment = () => {
 				{ name: '20000 Auto reply', type: 'autoReply' },
 				{ name: '14500 Broadcast', type: 'broadcast' },
 				{ name: '15000 Contact', type: 'contact' },
-				// { name: 'Integrasi API', type: true },
+				{ name: 'Integrasi API', type: 'api' },
 				{ name: '100 Device', type: 'device' },
 				{ name: 'Excel / CSV Contact Import', type: 'import' },
 				{ name: 'Google Contact Sync', type: 'sync' },
@@ -77,7 +77,8 @@ const Payment = () => {
 		contact: '/assets/icons/subscription/contacts.svg',
 		device: '/assets/icons/subscription/ad_units.svg',
 		import: '/assets/icons/subscription/article.svg',
-		sync: '/assets/icons/subscription/sync_saved_locally.svg'
+		sync: '/assets/icons/subscription/sync_saved_locally.svg',
+		api: '/assets/icons/subscription/api.svg',
 	}
 	const fetchSubscriptionPlans = async () => {
 		const result = await fetchClient({

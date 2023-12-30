@@ -227,9 +227,10 @@ const Register = ({ setCurrentStep, setUserData, userData }: {
                             {errors.phone && (<p className="px-1 text-danger absolute right-4 top-1/2 -translate-y-1/2">{`${errors.phone.message}`}</p>)}
                             <div className={'flex items-center px-2 text-sm rounded-md focus:outline-none focus:ring-0 w-full border ' + (errors.phone ? 'border-danger/50 hover:border-danger focus:border-danger' : 'border-[#B0B4C5]/50 hover:border-[#B0B4C5] focus:border-primary')} style={{ MozAppearance: 'textfield', WebkitAppearance: 'textfield' }}>
                                 <div className=" text-customGray ">{currentCountryCode.dial_code}</div>
-                                <input type="text" placeholder='Whatsapp Number' className='focus:ring-0 focus:outline-none border-none' {...register('phone', {
+                                <input type="number" placeholder='Whatsapp Number' className='focus:ring-0 focus:outline-none border-none' {...register('phone', {
                                     required: 'Required',
-                                    value: userData.phone
+                                    value: userData.phone,
+                                    pattern: /^[0-9]+$/
                                 })} />
                             </div>
                         </div>
