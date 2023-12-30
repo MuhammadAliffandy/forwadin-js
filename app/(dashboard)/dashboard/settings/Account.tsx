@@ -1,7 +1,7 @@
 import ConfirmDeleteAccountModal from "@/components/dashboard/settings/ConfirmDeleteAccountModal"
 import ButtonSubmit from "@/components/form/ButtonSubmit"
 import InputForm from "@/components/form/InputForm"
-import { getCountryList } from "@/utils/helper/countryCode"
+import { formatPhoneCode, getCountryList } from "@/utils/helper/countryCode"
 import { fetchClient } from "@/utils/helper/fetchClient"
 import { CountryCode, UserProfile } from "@/utils/types"
 import { Button } from "@nextui-org/react"
@@ -27,6 +27,8 @@ interface ChangePasswordType {
 }
 const Account = ({ user, userProfile }: AccountPageProps) => {
     const router = useRouter()
+    const [emailIsLoading, setemailIsLoading] = useState(false)
+    const [phoneIsLoading, setphoneIsLoading] = useState(false)
     const [isPasswordLoading, setisPasswordLoading] = useState(false)
     const [deleteAccountModal, setdeleteAccountModal] = useState(false)
     const [showPasswordCriteria, setshowPasswordCriteria] = useState(false)
@@ -103,10 +105,38 @@ const Account = ({ user, userProfile }: AccountPageProps) => {
         }
     }
     const onSubmitEmail = async (data: { email: string }) => {
-
+        setemailIsLoading(true)
+        if (data.email === userProfile.email) return
+        const result = await fetchClient({
+            url: '/users/change-email/' + user?.id,
+            method: 'PATCH',
+            body: JSON.stringify({ email: data.email }),
+            user: user
+        })
+        if (result?.ok) {
+            toast.success('Berhasil ubah email')
+        } else {
+            toast.error('Gagal ubah email')
+        }
+        setemailIsLoading(false)
     }
     const onSubmitPhone = async (data: { phone: string }) => {
-
+        console.log(currentCountryCode)
+        setphoneIsLoading(true)
+        const formattedPhone = formatPhoneCode(data.phone, currentCountryCode.dial_code)
+        if (formattedPhone === userProfile.phone) return
+        const result = await fetchClient({
+            url: '/users/change-phone-number/' + user?.id,
+            method: 'PATCH',
+            body: JSON.stringify({ phoneNumber: formattedPhone }),
+            user: user
+        })
+        if (result?.ok) {
+            toast.success('Berhasil ubah nomor')
+        } else {
+            toast.error('Gagal ubah nomor')
+        }
+        setphoneIsLoading(false)
     }
     const onSubmitPassword = async (data: ChangePasswordType) => {
         setisPasswordLoading(true)
@@ -159,7 +189,7 @@ const Account = ({ user, userProfile }: AccountPageProps) => {
         if (userProfile) {
             console.log(userProfile)
             setValueEmail('email', userProfile.email)
-            setValuePhone('phone', userProfile.phone)
+            // setValuePhone('phone', userProfile.phone.slice(1))
         }
     }, [userProfile])
     useEffect(() => {
@@ -226,8 +256,9 @@ const Account = ({ user, userProfile }: AccountPageProps) => {
                                 {errorsPhone.phone && (<p className="px-1 text-danger absolute right-4 top-1/2 -translate-y-1/2">{`${errorsPhone.phone.message}`}</p>)}
                                 <div className={'flex items-center px-2 text-sm rounded-md focus:outline-none focus:ring-0 w-full border ' + (errorsPhone.phone ? 'border-danger/50 hover:border-danger focus:border-danger' : 'border-[#B0B4C5]/50 hover:border-[#B0B4C5] focus:border-primary')} style={{ MozAppearance: 'textfield', WebkitAppearance: 'textfield' }}>
                                     <div className=" text-customGray ">{currentCountryCode.dial_code}</div>
-                                    <input type="text" placeholder='Phone Number' className='focus:ring-0 focus:outline-none border-none' {...registerPhone('phone', {
-                                        required: 'Required'
+                                    <input type="number" placeholder='Phone Number' className='focus:ring-0 focus:outline-none border-none' {...registerPhone('phone', {
+                                        required: 'Required',
+                                        pattern: /^[0-9]+$/
                                     })} />
                                 </div>
                             </div>
