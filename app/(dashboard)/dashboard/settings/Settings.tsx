@@ -38,20 +38,21 @@ const Settings = () => {
             opacity: "1",
         },
     })
-    useEffect(() => {
-        const fetchUser = async () => {
-            const result = await fetchClient({
-                url: '/users/' + session?.user?.id, method: 'GET',
-                user: session?.user
-            })
-            if (result?.ok) {
-                const data = await result.json()
-                setuserData(data)
-            } else {
-                toast.error('Failed to fetch user!')
-            }
-            setisLoaded(true)
+    const fetchUser = async () => {
+        const result = await fetchClient({
+            url: '/users/' + session?.user?.id, method: 'GET',
+            user: session?.user
+        })
+        if (result?.ok) {
+            const data = await result.json()
+            setuserData(data)
+        } else {
+            toast.error('Failed to fetch user!')
         }
+        setisLoaded(true)
+    }
+    useEffect(() => {
+
         if (session?.user?.token) {
             fetchUser()
         }
@@ -91,7 +92,7 @@ const Settings = () => {
                         <>
                             {componentTransition((style, item) => item === 'profile' && (
                                 <animated.div style={style}>
-                                    <Profile profileData={userData} user={session?.user} />
+                                    <Profile profileData={userData} user={session?.user} fetchUser={fetchUser} />
                                 </animated.div>
                             ))}
                             {componentTransition((style, item) => item === 'device' && (

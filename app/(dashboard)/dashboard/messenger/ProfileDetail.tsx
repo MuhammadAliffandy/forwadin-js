@@ -26,26 +26,6 @@ const ProfileDetail = ({ currentMessenger }: {
                     onClick={() => push('/dashboard/contact/' + currentMessenger.contact?.id)}>
                     Detail
                 </div>
-                {/* <div className="flex gap-2 ">
-                    <div className="w-full rounded-md bg-primary p-2 text-white flex items-center">
-                        <div className="w-full flex justify-center items-center">
-                            <img src="/assets/icons/history.svg" alt="" />
-                        </div>
-                        <div className="w-full">
-                            <p className="text-xs">Histori</p>
-                            <p className="text-2xl font-bold">3</p>
-                        </div>
-                    </div>
-                    <div className="w-full rounded-md bg-primary p-2 text-white flex items-center">
-                        <div className="w-full flex justify-center items-center">
-                            <img src="/assets/icons/media.svg" alt="" />
-                        </div>
-                        <div className="w-full">
-                            <p className="text-xs">Media</p>
-                            <p className="text-2xl font-bold">3</p>
-                        </div>
-                    </div>
-                </div> */}
                 <table className='w-full border-spacing-y-2 border-spacing-x-2 -mx-2 border-separate mt-4'>
                     <tbody >
                         <tr>
