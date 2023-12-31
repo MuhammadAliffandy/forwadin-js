@@ -115,6 +115,8 @@ const Account = ({ user, userProfile }: AccountPageProps) => {
         })
         if (result?.ok) {
             toast.success('Berhasil ubah email')
+            await signOut()
+            router.push('/signin')
         } else {
             toast.error('Gagal ubah email')
         }

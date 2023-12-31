@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@microlink/react-json-view": "^1.23.0",
     "@nextui-org/breadcrumbs": "^2.0.4",
     "@nextui-org/react": "^2.2.9",
     "@react-spring/web": "^9.7.3",
@@ -45,6 +46,7 @@
     "react": "^18.2.0",
     "react-card-flip": "^1.2.0",
     "react-chartjs-2": "^5.0.0",
+    "react-code-blocks": "^0.1.5",
     "react-dom": "^18.2.0",
     "react-filepond": "^7.1.2",
     "react-hook-form": "^7.46.1",
