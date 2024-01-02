@@ -3,7 +3,7 @@ import { useEffect, useState } from "react"
 
 import { ContactData, ConversationMessage, DeviceSession, MessageMetadata, ContactLatestMessage, GetMessage, MessengerList, OrderMessage } from "@/utils/types"
 import TextAreaInput from "@/components/dashboard/chat/TextAreaInput"
-import { useSession } from "next-auth/react"
+import { signIn, signOut, useSession } from "next-auth/react"
 import { fetchClient } from "@/utils/helper/fetchClient"
 import { Button, ButtonGroup } from "@nextui-org/react"
 import { toast } from "react-toastify"
@@ -164,22 +164,33 @@ const Messenger = () => {
                 const formdata = new FormData()
                 formdata.append("caption", textInput)
                 // @ts-ignore
-                formdata.set('image', inputFile[0].file, inputFile[0].name)
+                formdata.set('document', inputFile[0].file, inputFile[0].name)
                 formdata.append("recipients[0]", currentMessenger.phone)
                 formdata.append("sessionId", session?.customerService?.sessionId)
                 try {
-                    const result = await fetch('/api/message/media', {
+                    const result = await fetch('/api/message/media/customer-service', {
                         method: 'POST',
                         body: formdata
                     })
-                    // console.log(result.body)
+                    if (result.status === 401) {
+                        const refresh = await signIn('refresh', {
+                            redirect: false,
+                            user: JSON.stringify(session?.customerService)
+                        })
+                        if (refresh?.error) {
+                            signOut()
+                            window.location.replace('/signin')
+                        } else {
+                            window.location = window.location
+                        }
+                    }
                     if (result?.ok) {
                         const resultData = await result.json()
-                        console.log(resultData)
+                        // console.log(resultData)
                         setinputFile([])
                         settextInput('')
                         fetchChatMessage(1)
-                        toast.success('Berhasil kirim image')
+                        toast.success('Berhasil kirim document')
 
                     } else {
                         const resultData = await result.text()

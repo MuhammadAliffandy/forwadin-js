@@ -8,6 +8,8 @@ import ApiMethod from './ApiMethod';
 const ApiList = dynamic(() => import('./ApiList'), { ssr: false })
 const ApiRef = () => {
     const [apiCount, setapiCount] = useState(0)
+    const [searchText, setSearchText] = useState('')
+    const [searchedListApi, setsearchedListApi] = useState<ApiDataTypes[]>([])
     const handleScroll = (classname: string) => {
         const gotoElement = document.getElementsByClassName(classname)[0] as HTMLDivElement
         const container = document.getElementById('scrollContainer')
@@ -19,6 +21,18 @@ const ApiRef = () => {
         }
 
     }
+    const filterApi = (text: string) => {
+        const regex = new RegExp(text, 'i')
+        let arrayResult: ApiDataTypes[] = []
+        allApiData.forEach(item => {
+            const searchResult = item.apiList.filter(api => {
+                if (regex.test(api.name) || regex.test(api.url) || regex.test(api.method))
+                    return api
+            })
+            arrayResult.push(...searchResult)
+        })
+        return arrayResult
+    }
     useEffect(() => {
         let num = 0
         allApiData.forEach(apiData => {
@@ -26,6 +40,9 @@ const ApiRef = () => {
         })
         setapiCount(num)
     }, [])
+    useEffect(() => {
+        setsearchedListApi(filterApi(searchText))
+    }, [searchText])
     return (
         <>
             <div className="flex gap-2 lg:justify-between justify-center items-center mt-2 lg:mt-0 w-full">
@@ -47,22 +64,41 @@ const ApiRef = () => {
                     ))}
                 </div>
                 <div className='w-full max-w-xs h-[90vh] overflow-y-auto bg-white'>
-                    <Accordion variant='light' selectionMode='multiple' itemClasses={{
-                        title: 'text-sm font-inter'
-                    }}>
-                        {allApiData.map((apiData, index) => (
-                            <AccordionItem key={index} aria-label={apiData.group} title={apiData.group}>
-                                <div className='flex flex-col gap-2'>
-                                    {apiData.apiList.map((api, idx) => (
-                                        <Button className='rounded-md flex gap-2 justify-start' variant='light' key={idx} onClick={() => handleScroll(api.url)}>
-                                            <ApiMethod type={api.method} size='sm' />
-                                            <p className='text-xs font-medium text-ellipsis overflow-hidden'> {api.name}</p>
-                                        </Button>
-                                    ))}
-                                </div>
-                            </AccordionItem>
-                        ))}
-                    </Accordion>
+                    <div className='flex gap-2 items-center px-4 py-3 sticky top-0 bg-white z-10 border-b border-customGray'>
+                        <div className='flex-none'>
+                            <img src="/assets/icons/search_grey.png" alt="" />
+                        </div>
+                        <input placeholder='cari disini' type="text" value={searchText} onChange={e => setSearchText(e.target.value)}
+                            className=' focus:outline-none text-sm rounded-md focus:ring-0 w-full border-none'
+                        />
+                    </div>
+                    {searchText ? (
+                        <div className='flex flex-col gap-2'>
+                            {searchedListApi.map((api, idx) => (
+                                <Button fullWidth className='rounded-md flex gap-2 justify-start' variant='light' key={idx} onClick={() => handleScroll(api.url + '_' + api.method)}>
+                                    <ApiMethod type={api.method} size='sm' />
+                                    <p className='text-xs font-medium text-ellipsis overflow-hidden'> {api.name}</p>
+                                </Button>
+                            ))}
+                        </div>
+                    ) : (<>
+                        <Accordion variant='light' selectionMode='multiple' itemClasses={{
+                            title: 'text-sm font-inter'
+                        }}>
+                            {allApiData.map((apiData, index) => (
+                                <AccordionItem key={index} aria-label={apiData.group} title={apiData.group}>
+                                    <div className='flex flex-col gap-2'>
+                                        {apiData.apiList.map((api, idx) => (
+                                            <Button className='rounded-md flex gap-2 justify-start' variant='light' key={idx} onClick={() => handleScroll(api.url + '_' + api.method)}>
+                                                <ApiMethod type={api.method} size='sm' />
+                                                <p className='text-xs font-medium text-ellipsis overflow-hidden'> {api.name}</p>
+                                            </Button>
+                                        ))}
+                                    </div>
+                                </AccordionItem>
+                            ))}
+                        </Accordion>
+                    </>)}
                 </div>
             </div>
         </>

@@ -5,7 +5,7 @@ import Chat from "./Chat"
 import ListChats from "./ListChats"
 import { ContactData, ConversationMessage, DeviceSession, MessageMetadata, ContactLatestMessage, GetMessage, MessengerList } from "@/utils/types"
 import TextAreaInput from "@/components/dashboard/chat/TextAreaInput"
-import { useSession } from "next-auth/react"
+import { signIn, signOut, useSession } from "next-auth/react"
 import { fetchClient } from "@/utils/helper/fetchClient"
 import { Button, ButtonGroup } from "@nextui-org/react"
 import { toast } from "react-toastify"
@@ -131,7 +131,7 @@ const Messenger = () => {
                 const formdata = new FormData()
                 formdata.append("caption", textInput)
                 // @ts-ignore
-                formdata.set('image', inputFile[0].file, inputFile[0].name)
+                formdata.set('document', inputFile[0].file, inputFile[0].name)
                 formdata.append("recipients[0]", currentMessenger.phone)
                 formdata.append("sessionId", currentDevice.sessionId)
                 try {
@@ -139,6 +139,18 @@ const Messenger = () => {
                         method: 'POST',
                         body: formdata
                     })
+                    if (result.status === 401) {
+                        const refresh = await signIn('refresh', {
+                            redirect: false,
+                            user: JSON.stringify(session?.user)
+                        })
+                        if (refresh?.error) {
+                            signOut()
+                            window.location.replace('/signin')
+                        } else {
+                            window.location = window.location
+                        }
+                    }
                     // console.log(result.body)
                     if (result?.ok) {
                         const resultData = await result.json()

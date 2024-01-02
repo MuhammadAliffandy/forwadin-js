@@ -1,5 +1,7 @@
 import { formatDate } from "@/utils/helper"
+import { isFileImage } from "@/utils/helper/fileHelper"
 import React, { useEffect, useState } from "react"
+import DisplayFile from "../DisplayFile"
 
 interface BubbleChatProps {
     text: string,
@@ -34,9 +36,15 @@ const BubbleChat = ({ text, received, status, isOutgoing = false, currentDate, m
                         <img src={(isCopied ? "/assets/icons/tick.svg" : "/assets/icons/copy.svg")} alt="" className="invert-[1] grayscale-0 transition-transform transform-gpu scale-100 hover:scale-125 duration-300 hover:cursor-pointer" onClick={handleCopy} />
                     </div>
                     {mediaPath && (
-                        <div className="max-w-xs max-h-[250px] overflow-scroll">
-                            <img src={process.env.NEXT_PUBLIC_BACKEND_URL + '/' + mediaPath} alt="photos" className="object-cover w-full h-full hover:bg-neutral-75" onClick={() => { }} />
-                        </div>
+                        <>
+                            <div className="max-w-xs max-h-[250px] overflow-scroll">
+                                {isFileImage(mediaPath) ? (
+                                    <img src={process.env.NEXT_PUBLIC_BACKEND_URL + '/' + mediaPath} alt="photos" className="object-cover w-full h-full hover:bg-neutral-75" onClick={() => { }} />
+                                ) : (
+                                    <DisplayFile fileUrl={mediaPath} />
+                                )}
+                            </div>
+                        </>
                     )}
                     {text.split('\n').map((line, index) => (
                         <React.Fragment key={index}>
@@ -67,7 +75,11 @@ const BubbleChat = ({ text, received, status, isOutgoing = false, currentDate, m
                 </div>
                 {mediaPath && (
                     <div className="max-w-xs max-h-[250px] overflow-scroll">
-                        <img src={process.env.NEXT_PUBLIC_BACKEND_URL + '/' + mediaPath} alt="photos" className="object-cover w-full h-full hover:bg-neutral-75" onClick={() => { }} />
+                        {isFileImage(mediaPath) ? (
+                            <img src={process.env.NEXT_PUBLIC_BACKEND_URL + '/' + mediaPath} alt="photos" className="object-cover w-full h-full hover:bg-neutral-75" onClick={() => { }} />
+                        ) : (
+                            <DisplayFile fileUrl={mediaPath} />
+                        )}
                     </div>
                 )}
                 {text.split('\n').map((line, index) => (

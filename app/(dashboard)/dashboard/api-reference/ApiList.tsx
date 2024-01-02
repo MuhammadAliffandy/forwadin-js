@@ -20,10 +20,13 @@ export default ApiList
 
 const ApiDetail = ({ apiDetail }: { apiDetail: ApiDataTypes }) => {
     return (
-        <div className={apiDetail.url}>
+        <div className={apiDetail.url + '_' + apiDetail.method}>
             <Accordion variant='shadow' isCompact className={'rounded-md'} fullWidth>
                 <AccordionItem title={<div className='flex gap-4 items-center'>
                     <ApiMethod type={apiDetail.method} />
+                    <p className='text-sm font-bold'>
+                        {apiDetail.name}
+                    </p>
                     <p className='text-xs'>
                         {apiDetail.url}
                     </p>
@@ -82,6 +85,27 @@ const ApiDetail = ({ apiDetail }: { apiDetail: ApiDataTypes }) => {
                             </div>
                         </>
                     )}
+                    {apiDetail.queryParams && (
+                        <>
+
+                            <p className='font-lexend text-lg font-bold mt-6'>Query Params</p>
+                            <Divider className='' />
+                            <div className='flex flex-col gap-4 mt-2'>
+                                {apiDetail.queryParams.map(query => (
+                                    <>
+                                        <div className='flex items-end justify-between'>
+                                            <div>
+                                                <p className=''>{query.name}</p>
+                                            </div>
+                                            <div className='text-customGray'>
+                                                {query.description}
+                                            </div>
+                                        </div>
+                                    </>
+                                ))}
+                            </div>
+                        </>
+                    )}
                     {(apiDetail.type === 'json' && apiDetail.jsonSampleRequests) && (
                         <>
                             <p className='font-lexend text-lg font-bold mt-6'>Request Body</p>
@@ -92,7 +116,7 @@ const ApiDetail = ({ apiDetail }: { apiDetail: ApiDataTypes }) => {
                                         <ReactJson
                                             key={idx}
                                             enableClipboard
-                                            collapsed={false}
+                                            collapsed={3}
                                             displayDataTypes={false}
                                             displayObjectSize={false}
                                             name={false}
@@ -131,7 +155,7 @@ const ApiDetail = ({ apiDetail }: { apiDetail: ApiDataTypes }) => {
                                 <div className='rounded-md border border-customGray p-2 overflow-hidden'>
                                     <ReactJson
                                         enableClipboard
-                                        collapsed={false}
+                                        collapsed={3}
                                         displayDataTypes={false}
                                         displayObjectSize={false}
                                         name={false}

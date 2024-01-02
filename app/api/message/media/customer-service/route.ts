@@ -1,5 +1,5 @@
 import { writeFile, unlink } from 'fs/promises'
-import { getServerSession } from 'next-auth'
+import { Session, getServerSession } from 'next-auth'
 import { NextRequest, NextResponse } from 'next/server'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { join } from 'path'
@@ -19,7 +19,7 @@ export const POST = async (request: NextRequest, response: NextResponse) => {
         return NextResponse.json({ success: false }, { status: 400 })
     }
     try {
-        const session: any = await getServerSession(
+        const session: Session | null = await getServerSession(
             request as unknown as NextApiRequest,
             {
                 ...response,
@@ -29,7 +29,7 @@ export const POST = async (request: NextRequest, response: NextResponse) => {
             authConfig
         );
 
-        if (!session?.user) {
+        if (!session?.customerService) {
             return NextResponse.json({ error: 'Session not found' }, { status: 400 })
         }
         const bytes = await file.arrayBuffer()
@@ -40,17 +40,17 @@ export const POST = async (request: NextRequest, response: NextResponse) => {
         formdata.set('document', file, path)
         formdata.append('caption', caption)
         formdata.append('recipients[0]', recipients)
-        console.log(formdata)
+        // console.log(formdata)
+        console.log('ini ses')
+        console.log(session.customerService)
         const sendMessage = await fetch(process.env.BACKEND_URL + '/messages/' + sessionId + '/send/doc', {
             method: 'POST',
             headers: {
-                'Authorization': 'Bearer ' + session.user.token,
+                'Authorization': 'Bearer ' + session.customerService.token,
                 // 'Content-Type': 'multipart/form-data'
             },
             body: formdata
         })
-        console.log(sendMessage.status)
-        console.log(await sendMessage.text())
         if (sendMessage.ok) {
             unlink(path)
             return NextResponse.json({ message: 'success send data' }, { status: 200 })
