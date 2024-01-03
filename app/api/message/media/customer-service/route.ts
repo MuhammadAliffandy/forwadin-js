@@ -37,26 +37,46 @@ export const POST = async (request: NextRequest, response: NextResponse) => {
         const path = join(process.cwd(), 'public', 'uploads', file.name)
         await writeFile(path, buffer)
         const formdata = new FormData()
-        formdata.set('document', file, path)
         formdata.append('caption', caption)
         formdata.append('recipients[0]', recipients)
-        // console.log(formdata)
-        console.log('ini ses')
-        console.log(session.customerService)
-        const sendMessage = await fetch(process.env.BACKEND_URL + '/messages/' + sessionId + '/send/doc', {
-            method: 'POST',
-            headers: {
-                'Authorization': 'Bearer ' + session.customerService.token,
-                // 'Content-Type': 'multipart/form-data'
-            },
-            body: formdata
-        })
-        if (sendMessage.ok) {
-            unlink(path)
-            return NextResponse.json({ message: 'success send data' }, { status: 200 })
-        }
-        if (sendMessage.status === 401) {
-            return NextResponse.json({ message: 'unauthorized' }, { status: 401 })
+        if (file.type.includes('image')) {
+            formdata.set('image', file, path)
+            const sendMessage = await fetch(process.env.BACKEND_URL + '/messages/' + sessionId + '/send/image', {
+                method: 'POST',
+                headers: {
+                    'Authorization': 'Bearer ' + session.customerService.token,
+                    // 'Content-Type': 'multipart/form-data'
+                },
+                body: formdata
+            })
+            console.log(sendMessage.status)
+            console.log(await sendMessage.text())
+            if (sendMessage.ok) {
+                unlink(path)
+                return NextResponse.json({ message: 'success send data' }, { status: 200 })
+            }
+            if (sendMessage.status === 401) {
+                return NextResponse.json({ message: 'unauthorized' }, { status: 401 })
+            }
+        } else {
+            formdata.set('document', file, path)
+            const sendMessage = await fetch(process.env.BACKEND_URL + '/messages/' + sessionId + '/send/doc', {
+                method: 'POST',
+                headers: {
+                    'Authorization': 'Bearer ' + session.customerService.token,
+                    // 'Content-Type': 'multipart/form-data'
+                },
+                body: formdata
+            })
+            console.log(sendMessage.status)
+            console.log(await sendMessage.text())
+            if (sendMessage.ok) {
+                unlink(path)
+                return NextResponse.json({ message: 'success send data' }, { status: 200 })
+            }
+            if (sendMessage.status === 401) {
+                return NextResponse.json({ message: 'unauthorized' }, { status: 401 })
+            }
         }
         unlink(path)
 

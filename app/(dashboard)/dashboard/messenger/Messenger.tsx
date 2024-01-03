@@ -158,12 +158,12 @@ const Messenger = () => {
                         setinputFile([])
                         settextInput('')
                         fetchChatMessage(1)
-                        toast.success('Berhasil kirim image')
+                        toast.success('Berhasil kirim file')
 
                     } else {
                         const resultData = await result.text()
                         console.log(resultData)
-                        toast.error('gagal kirim media')
+                        toast.error('gagal kirim file')
                     }
                 } catch (error) {
                     console.log(error)
