@@ -63,6 +63,18 @@ const BroadcastTable = ({ settotalBroadcast, totalBroadcast, user }: BroadcastTa
             deletedBroadcast = null
         }
     }
+    const handleToggleBroadcast = async (id: string, status: boolean) => {
+        const result = await fetchClient({
+            url: '/broadcasts/' + id + '/status',
+            method: 'PATCH',
+            body: JSON.stringify({ status: status }),
+            user: user,
+        })
+        if (result?.ok) {
+            // toast.success('Ber')
+            fetchBroadcast()
+        }
+    }
     const fetchBroadcast = async () => {
         const result = await fetchClient({
             url: '/broadcasts/',
@@ -158,7 +170,7 @@ const BroadcastTable = ({ settotalBroadcast, totalBroadcast, user }: BroadcastTa
                                 <TableRow key={item.id}>
                                     <TableCell >{item.name}</TableCell>
                                     <TableCell>
-                                        <Switch size='sm' isSelected={item.status} unselectable='on' />
+                                        <Switch size='sm' isSelected={item.status} onClick={() => handleToggleBroadcast(item.id, !item.status)} />
                                     </TableCell>
                                     <TableCell>
                                         {item.device.name}
