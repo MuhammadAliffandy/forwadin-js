@@ -40,14 +40,14 @@ const fetchClient = async ({ method, body = null, url, user, isFormData = false 
                     })
                     isRefreshing = false
                     if (refresh?.error) {
-                        signOut()
-                        window.location.replace('/signin')
+                        // signOut()
+                        // window.location.replace('/signin')
                     } else {
                         window.location = window.location
                     }
                 } else {
-                    signOut()
-                    window.location.replace('/signin')
+                    // signOut()
+                    // window.location.replace('/signin')
                 }
             }
             return result

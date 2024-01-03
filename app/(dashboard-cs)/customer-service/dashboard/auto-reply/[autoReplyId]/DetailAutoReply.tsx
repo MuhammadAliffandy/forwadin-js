@@ -1,4 +1,5 @@
 'use client'
+import DisabledForm from "@/components/DisabledForm"
 import DropdownDevice from "@/components/dashboard/DropdownDevice"
 import InputContactAndLabel from "@/components/dashboard/InputContactAndLabel"
 import MultipleInputLabel from "@/components/dashboard/MultipleInputLabel"
@@ -33,12 +34,9 @@ const DetailAutoReply = ({ autoReplyId }: { autoReplyId: string }) => {
     const [isLabelLoaded, setisLabelLoaded] = useState(false)
     const [isLoading, setisLoading] = useState(false)
     const [autoReplyName, setautoReplyName] = useState('')
-    const [listDevice, setlistDevice] = useState<DeviceSession[]>([])
-    const [currentDevice, setcurrentDevice] = useState<DeviceSession>()
     const [files, setfiles] = useState<File[]>([])
     const [isDisabled, setisDisabled] = useState(true)
     const { handleSubmit, register, reset, formState: { errors }, setValue } = useForm<AutoReplyForm>()
-    const [autoReplyImage, setautoReplyImage] = useState<string | null>(null)
     // change
     const [receiverList, setreceiverList] = useState<string[]>([])
     const [requestList, setrequestList] = useState<Label[]>([])
@@ -68,7 +66,7 @@ const DetailAutoReply = ({ autoReplyId }: { autoReplyId: string }) => {
             toast.error('Response masih kosong!')
             mark = false
         }
-        if (!ARData.deviceId) {
+        if (!session?.customerService?.deviceId) {
             toast.error('Device masih kosong!')
             mark = false
         }
@@ -79,7 +77,7 @@ const DetailAutoReply = ({ autoReplyId }: { autoReplyId: string }) => {
                 formData.set('media', files[0].file, files[0].name)
             }
             formData.append('name', ARData.name)
-            formData.append('deviceId', ARData.deviceId)
+            formData.append('deviceId', session?.customerService?.deviceId!)
             requestList.forEach((element, idx) => {
                 formData.append(`requests[${idx}]`, element.label.name)
             })
@@ -92,11 +90,11 @@ const DetailAutoReply = ({ autoReplyId }: { autoReplyId: string }) => {
                 method: 'PUT',
                 isFormData: true,
                 body: formData,
-                user: session?.user
+                user: session?.customerService
             })
             if (result?.ok) {
                 toast.success('Berhasil ubah auto reply')
-                push('/dashboard/auto-reply')
+                push('/customer-service/dashboard/auto-reply')
             } else {
                 toast.error('Gagal ubah auto reply')
 
@@ -106,14 +104,15 @@ const DetailAutoReply = ({ autoReplyId }: { autoReplyId: string }) => {
     }
 
     const fetchAutoReplyData = async () => {
+        console.log('autoReplyId')
+        console.log(autoReplyId)
         const result = await fetchClient({
             url: '/auto-replies/' + autoReplyId,
             method: 'GET',
-            user: session?.user
+            user: session?.customerService
         })
         if (result?.ok) {
             const resultData: AutoReply = await result.json()
-            console.log(resultData)
             if (resultData.mediaPath) {
                 getFileFromUrl(resultData.mediaPath, setfiles)
             }
@@ -129,22 +128,33 @@ const DetailAutoReply = ({ autoReplyId }: { autoReplyId: string }) => {
             }))
             settextInput(resultData.response)
             setreceiverList(resultData.recipients)
-            if (resultData.mediaPath) {
-                setautoReplyImage(resultData.mediaPath)
-            }
             setisLoaded(true)
         }
     }
-
+    // const fetchDevice = async () => {
+    //     if (!session?.customerService?.deviceId) return
+    //     const result = await fetchClient({
+    //         url: '/devices/' + session?.customerService?.deviceId,
+    //         method: 'GET',
+    //         user: session.customerService
+    //     })
+    //     if (result?.ok) {
+    //         setdeviceData(await result.json())
+    //     } else {
+    //         if (result) {
+    //             const body = await result.json()
+    //             toast.error(body.message)
+    //         }
+    //     }
+    // }
     const fetchAll = async () => {
         fetchAutoReplyData()
     }
     useEffect(() => {
-        if (session?.user?.device && listDevice.length === 0) {
-            setlistDevice(session.user.device)
+        if (session?.customerService?.token) {
             fetchAll()
         }
-    }, [session?.user?.device])
+    }, [session?.customerService?.token])
     useEffect(() => {
         if (textInput.length > 0 && receiverList?.length! > 0 && requestList.some(item => item.label.active === true)) {
             setisDisabled(false)
@@ -176,11 +186,7 @@ const DetailAutoReply = ({ autoReplyId }: { autoReplyId: string }) => {
                             </div>
                             <div>
                                 <p className="mb-2">Device</p>
-                                <select {...register('deviceId')} className="px-4 py-3 focus:outline-none text-sm rounded-md focus:ring-0 w-full border-[#B0B4C5] focus:border-primary">
-                                    {listDevice.map(item => (
-                                        <option key={item.id} value={item.id} className="">{item.name}</option>
-                                    ))}
-                                </select>
+                                <DisabledForm text={session?.customerService?.deviceId} type="text" />
                             </div>
                             <div>
                                 <p className="mb-2">Penerima</p>
@@ -188,7 +194,7 @@ const DetailAutoReply = ({ autoReplyId }: { autoReplyId: string }) => {
                                     selectedKeys={receiverList}
                                     setselectedKeys={setreceiverList}
                                     isAutoReply={true}
-                                    user={session?.user}
+                                    user={session?.customerService}
                                 />)}
                             </div>
                         </div>

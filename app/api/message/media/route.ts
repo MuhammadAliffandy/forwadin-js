@@ -85,6 +85,8 @@ export const POST = async (request: NextRequest, response: NextResponse) => {
 
     } catch (error) {
         console.log(error)
+        const path = join(process.cwd(), 'public', 'uploads', file.name)
+        unlink(path)
         return NextResponse.json({ error: error }, { status: 500 })
     }
 }

@@ -1,7 +1,6 @@
 'use client'
 
-import DropdownDevice from "@/components/dashboard/DropdownDevice"
-import { DeviceSession } from "@/utils/types"
+
 import { useSession } from "next-auth/react"
 import { useEffect, useState } from "react"
 import AutoReplyTable from "./AutoReplyTable"
