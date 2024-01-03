@@ -35,6 +35,18 @@ const CampaignTable = ({ settotalCampaign, totalCampaign, user }: CampaignTableP
         }
         setisLoaded(true)
     }
+    const handleToggleCampaign = async (id: string, status: boolean) => {
+        const result = await fetchClient({
+            url: '/campaigns/' + id + '/status',
+            method: 'PATCH',
+            body: JSON.stringify({ status: status }),
+            user: user,
+        })
+        if (result?.ok) {
+            // toast.success('Ber')
+            fetchCampaign()
+        }
+    }
     const handleDeleteCampaign = async () => {
         // tambah konfirmasi delete
         let deletedCampaign = null
@@ -152,7 +164,9 @@ const CampaignTable = ({ settotalCampaign, totalCampaign, user }: CampaignTableP
                                     <TableCell >{item.name}</TableCell>
                                     <TableCell>
                                         <div className='flex gap-1 items-center'>
-                                            <Switch size='sm' isSelected={item.status} />
+                                            <Switch size='sm' isSelected={item.status}
+                                                onClick={() => handleToggleCampaign(item.id, !item.status)}
+                                            />
                                             {item.status ? (
                                                 <p className='text-primary font-bold'>Live</p>
                                             ) : (
