@@ -14,6 +14,8 @@ import Link from "next/link"
 import TabTitle from "@/components/tabs/TabTitle"
 import DetailCampaignTable from "../../DetailCampaignTable"
 import { BreadcrumbItem, Breadcrumbs } from "@nextui-org/breadcrumbs"
+import { isFileImage } from "@/utils/helper/fileHelper"
+import DisplayFile from "@/components/dashboard/DisplayFile"
 
 const DetailCampaignMessage = ({ campaignId, messageId }: { campaignId: string, messageId: string }) => {
     const { data: session } = useSession()
@@ -157,7 +159,12 @@ const DetailCampaignMessage = ({ campaignId, messageId }: { campaignId: string, 
                         {campaignMessage?.mediaPath && (
                             <>
                                 <p className="my-2">Media</p>
-                                <DisplayImage imageUrl={campaignMessage.mediaPath} />
+                                {isFileImage(campaignMessage.mediaPath) ? (
+                                    <DisplayImage imageUrl={campaignMessage.mediaPath} />
+                                ) : (
+                                    <DisplayFile fileUrl={campaignMessage.mediaPath} />
+                                )}
+
                             </>
                         )}
                         <div className="flex justify-end mt-2">

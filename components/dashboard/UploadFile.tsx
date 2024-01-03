@@ -21,7 +21,7 @@ const UploadFile = ({ files, setfiles, customFileTypes }: {
                 onupdatefiles={setfiles}
                 className=''
                 // allowMultiple
-                acceptedFileTypes={(customFileTypes ? customFileTypes : ['image/png', 'image/jpg', 'image/jpeg'])}
+                // acceptedFileTypes={(customFileTypes ? customFileTypes : ['image/png', 'image/jpg', 'image/jpeg'])}
                 credits={false}
                 labelIdle='Drag & Drop your files or <span class="filepond--label-action">Browse</span>'
             />

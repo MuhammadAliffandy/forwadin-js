@@ -108,7 +108,7 @@ const Profile = ({ profileData, user, fetchUser }: { profileData: UserProfile, u
                                 )}
                             </div>
                             {!profileData.emailVerifiedAt && (
-                                <Button size="md" color="primary" className="rounded-md" onClick={() => setverifyModal(true)}>Verify </Button>
+                                <Button size="md" color="primary" className="rounded-md" onClick={() => setverifyModal(true)}>Verify</Button>
                             )}
                         </div>
                     </div>

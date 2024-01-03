@@ -1,15 +1,15 @@
-import { Label } from "./types";
+import { Label } from "./types"
 
 export const getInitials = (name: string) => {
-    const words = name.split(' ');
-    const initials = words.map((word) => word[0]);
-    const result = initials.join('').slice(0, 2);
+    const words = name.split(' ')
+    const initials = words.map((word) => word[0])
+    const result = initials.join('').slice(0, 2)
 
-    return result.toUpperCase();
+    return result.toUpperCase()
 }
 export const formatDate = (inputDate: string) => {
 
-    const date = new Date(inputDate);
+    const date = new Date(inputDate)
     const formatter = new Intl.DateTimeFormat('en-US', {
         year: 'numeric',
         month: 'numeric',
@@ -17,29 +17,29 @@ export const formatDate = (inputDate: string) => {
         hour: '2-digit',
         minute: '2-digit',
         hour12: true,
-    });
+    })
     try {
 
-        return formatter.format(date).toString();
+        return formatter.format(date).toString()
     } catch (error) {
         console.log(error)
-        return inputDate;
+        return inputDate
 
     }
 }
 export const formatBirthDate = (inputDate: string) => {
     const originalDate = new Date(inputDate)
-    const year = originalDate.getFullYear();
-    const month = String(originalDate.getMonth() + 1).padStart(2, '0');
-    const day = String(originalDate.getDate()).padStart(2, '0');
+    const year = originalDate.getFullYear()
+    const month = String(originalDate.getMonth() + 1).padStart(2, '0')
+    const day = String(originalDate.getDate()).padStart(2, '0')
     return `${month}/${day}/${year}`
 }
 export const formatBackendBirthDate = (inputDate: any) => {
     const date = new Date(inputDate)
-    const year = date.getFullYear();
+    const year = date.getFullYear()
     const month = String(date.getMonth() + 1).padStart(2, '0')
-    const day = String(date.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
+    const day = String(date.getDate()).padStart(2, '0')
+    return `${year}-${month}-${day}`
 }
 export const formatDateBahasa = (inputDate: string) => {
     const days = [
@@ -50,7 +50,7 @@ export const formatDateBahasa = (inputDate: string) => {
         "Kamis",
         "Jumat",
         "Sabtu"
-    ];
+    ]
 
     const months = [
         "Januari",
@@ -65,15 +65,15 @@ export const formatDateBahasa = (inputDate: string) => {
         "Oktober",
         "November",
         "Desember"
-    ];
-    const today = new Date(inputDate);
+    ]
+    const today = new Date(inputDate)
 
-    const hari = days[today.getDay()];
-    const tanggal = today.getDate();
-    const bulan = months[today.getMonth()];
-    const tahun = today.getFullYear();
+    const hari = days[today.getDay()]
+    const tanggal = today.getDate()
+    const bulan = months[today.getMonth()]
+    const tahun = today.getFullYear()
 
-    const result = hari + ", " + tanggal + " " + bulan + " " + tahun;
+    const result = hari + ", " + tanggal + " " + bulan + " " + tahun
 
     return result
 }
@@ -86,7 +86,7 @@ export const getTodayDateBahasa = () => {
         "Kamis",
         "Jumat",
         "Sabtu"
-    ];
+    ]
 
     const months = [
         "Januari",
@@ -101,16 +101,16 @@ export const getTodayDateBahasa = () => {
         "Oktober",
         "November",
         "Desember"
-    ];
+    ]
 
-    const today = new Date();
+    const today = new Date()
 
-    const hari = days[today.getDay()];
-    const tanggal = today.getDate();
-    const bulan = months[today.getMonth()];
-    const tahun = today.getFullYear();
+    const hari = days[today.getDay()]
+    const tanggal = today.getDate()
+    const bulan = months[today.getMonth()]
+    const tahun = today.getFullYear()
 
-    const result = hari + ", " + tanggal + " " + bulan + " " + tahun;
+    const result = hari + ", " + tanggal + " " + bulan + " " + tahun
 
     return result
 }
@@ -121,7 +121,7 @@ export const formatCurrencyIDR = (number: number) => {
             currency: 'IDR',
             minimumFractionDigits: 0,
             maximumFractionDigits: 2
-        }).format(number);
+        }).format(number)
         return formattedIDR
     }
     return '-'
@@ -131,7 +131,7 @@ export const getFirst2Digits = (text: string) => {
 }
 export const getNumberFromString = (text: string | undefined) => {
     if (text) {
-        const parts = text.split('@');
+        const parts = text.split('@')
         return parts[0]
     }
     return ''
@@ -144,28 +144,28 @@ export const formatDatetoISO8601 = (date: string) => {
     return dateTime.toISOString()
 }
 export const getYearMonthDate = (date: string) => {
-    const dateTime = new Date(date);
-    const year = dateTime.getFullYear();
-    const month = String(dateTime.getMonth() + 1).padStart(2, '0');
-    const day = String(dateTime.getDate()).padStart(2, '0');
-    const formattedDate = `${year}.${month}.${day}`;
+    const dateTime = new Date(date)
+    const year = dateTime.getFullYear()
+    const month = String(dateTime.getMonth() + 1).padStart(2, '0')
+    const day = String(dateTime.getDate()).padStart(2, '0')
+    const formattedDate = `${year}.${month}.${day}`
 
-    return formattedDate;
+    return formattedDate
 }
 
 export const formatHoursMinutes = (minutes: number) => {
     if (isNaN(minutes) || minutes < 0 || minutes > 1440) {
-        return "Invalid input";
+        return "Invalid input"
     }
 
-    var hours = Math.floor(minutes / 60);
-    var remainingMinutes = minutes % 60;
+    var hours = Math.floor(minutes / 60)
+    var remainingMinutes = minutes % 60
 
     // Add leading zero if needed
-    var hoursStr = (hours < 10) ? "0" + hours : hours.toString();
-    var minutesStr = (remainingMinutes < 10) ? "0" + remainingMinutes : remainingMinutes.toString();
+    var hoursStr = (hours < 10) ? "0" + hours : hours.toString()
+    var minutesStr = (remainingMinutes < 10) ? "0" + remainingMinutes : remainingMinutes.toString()
 
-    return hoursStr + ":" + minutesStr;
+    return hoursStr + ":" + minutesStr
 }
 
 export const getArrayFromSet = (currentSet: Set<string> | 'all', itemList: any) => {
@@ -178,3 +178,5 @@ export const getArrayFromSet = (currentSet: Set<string> | 'all', itemList: any) 
     }
     return deletedList
 }
+
+

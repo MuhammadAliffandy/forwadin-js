@@ -1,5 +1,11 @@
 import { Dispatch, SetStateAction } from "react";
-
+const imageExt = [
+    'jpg',
+    'jpeg',
+    'png',
+    'svg',
+    'raw'
+]
 export const getFileFromUrl = async (url: string, setfiles: Dispatch<SetStateAction<File[]>>) => {
     console.log(url)
     const image = await fetch(process.env.NEXT_PUBLIC_BACKEND_URL + '/' + url)
@@ -18,4 +24,22 @@ export const getFileFromUrl = async (url: string, setfiles: Dispatch<SetStateAct
         console.log(file)
         setfiles(prev => [...prev, file])
     }
+}
+
+export const getExtensionFromUrl = (url: string) => {
+    const path = url.split('/')
+    const filename = path[path.length - 1]
+    const parts = filename.split('.')
+
+    if (parts.length > 1) {
+        return parts[parts.length - 1].toLowerCase()
+    } else {
+        return ''
+    }
+}
+
+export const isFileImage = (url: string) => {
+    const extension = getExtensionFromUrl(url)
+    // console.log(extension)
+    return imageExt.includes(extension)
 }

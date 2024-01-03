@@ -118,11 +118,16 @@ const CreateCampaign = () => {
                 isFormData: true,
                 user: session?.user
             })
+
             if (result?.ok) {
                 toast.success('Berhasil buat campaign')
                 push('/dashboard/campaign')
             } else {
                 toast.error('Gagal buat campaign')
+                if (result) {
+                    const response = await result.json()
+                    toast.error(response.message)
+                }
             }
 
         }

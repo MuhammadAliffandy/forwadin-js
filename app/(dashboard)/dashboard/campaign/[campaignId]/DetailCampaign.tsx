@@ -8,13 +8,14 @@ import { animated, useTransition } from "@react-spring/web"
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
-import { toast } from "react-toastify"
-import DetailBroadcastTable from "../../broadcast/[broadcastId]/DetailBroadcastTable"
+
 import DetailCampaignTable from "./DetailCampaignTable"
 import DisplayImage from "@/components/dashboard/auto-reply/DisplayImage"
 import Link from "next/link"
 import TabTitle from "@/components/tabs/TabTitle"
 import { BreadcrumbItem, Breadcrumbs } from "@nextui-org/breadcrumbs"
+import DisplayFile from "@/components/dashboard/DisplayFile"
+import { isFileImage } from "@/utils/helper/fileHelper"
 
 const DetailCampaign = ({ campaignId }: { campaignId: string }) => {
     const { data: session } = useSession()
@@ -157,7 +158,13 @@ const DetailCampaign = ({ campaignId }: { campaignId: string }) => {
                             }}>
                             <AccordionItem key="1" aria-label="Tampilan Pesan Subscribe" title="Tampilan Pesan Subscribe">
                                 {campaignData?.mediaPath && (
-                                    <DisplayImage imageUrl={campaignData.mediaPath} />
+                                    <>
+                                        {isFileImage(campaignData.mediaPath) ? (
+                                            <DisplayImage imageUrl={campaignData.mediaPath} />
+                                        ) : (
+                                            <DisplayFile fileUrl={campaignData.mediaPath} />
+                                        )}
+                                    </>
                                 )}
                                 <p className="mt-2">
                                     {campaignData?.registrationMessage}

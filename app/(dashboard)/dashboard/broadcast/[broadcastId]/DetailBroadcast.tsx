@@ -11,6 +11,8 @@ import DetailBroadcastTable from "./DetailBroadcastTable"
 import DisplayImage from "@/components/dashboard/auto-reply/DisplayImage"
 import { toast } from "react-toastify"
 import { useRouter } from "next/navigation"
+import { isFileImage } from "@/utils/helper/fileHelper"
+import DisplayFile from "@/components/dashboard/DisplayFile"
 
 const DetailBroadcast = ({ broadcastId }: { broadcastId: string }) => {
 	const { data: session } = useSession()
@@ -149,7 +151,11 @@ const DetailBroadcast = ({ broadcastId }: { broadcastId: string }) => {
 						{broadcastData?.mediaPath && (
 							<>
 								<p className="my-2">Media</p>
-								<DisplayImage imageUrl={broadcastData.mediaPath} />
+								{isFileImage(broadcastData.mediaPath) ? (
+									<DisplayImage imageUrl={broadcastData.mediaPath} />
+								) : (
+									<DisplayFile fileUrl={broadcastData.mediaPath} />
+								)}
 							</>
 						)}
 						<div className="flex justify-end gap-2 mt-4">
