@@ -204,7 +204,7 @@ const Dashboard = () => {
                         ))}
                     </div>
                     <div className=' flex items-end justify-center mt-2'>
-                        <Link href={'/dashboard/incoming'} className=" text-primary">Tampilkan lainnya</Link>
+                        <Link href={'/customer-service/dashboard/messenger'} className=" text-primary">Ke Messenger</Link>
                     </div>
                 </div>
             </div>

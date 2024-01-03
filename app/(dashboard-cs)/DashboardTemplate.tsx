@@ -91,8 +91,6 @@ const DashboardTemplate = ({ currentPage, children }: { currentPage: string, chi
                                     <p className="text-[10px] text-center">{session?.customerService?.email}</p>
                                 </DropdownItem>
                             </DropdownSection>
-                            <DropdownItem key={'forwardin profile'}>Forwardin Profile</DropdownItem>
-                            <DropdownItem key={'subscription'}>Subscription</DropdownItem>
                             <DropdownItem key='sign out' className="text-danger" onClick={() => signOut({ callbackUrl: '/customer-service/signin' })}>Sign Out</DropdownItem>
                         </DropdownMenu>
                     </Dropdown>
@@ -135,12 +133,10 @@ const DashboardTemplate = ({ currentPage, children }: { currentPage: string, chi
                                         <p className="text-[10px] text-center">{session?.customerService?.email}</p>
                                     </DropdownItem>
                                 </DropdownSection>
-                                <DropdownItem key={'forwardin profile'}>Forwardin Profile</DropdownItem>
-                                <DropdownItem key={'subscription'}>Subscription</DropdownItem>
                                 <DropdownItem key='sign out' className="text-danger" onClick={() => signOut({ callbackUrl: '/customer-service/signin' })}>Sign Out</DropdownItem>
                             </DropdownMenu>
                         </Dropdown>
-                        <div className='flex-none bg-white rounded-full p-2 hover:cursor-pointer'>
+                        <div className='flex-none bg-white rounded-full p-2 hover:cursor-pointer' onClick={() => router.push('/customer-service/dashboard/settings')}>
                             <img src="/assets/icons/dashboard/gear.svg" alt="" />
                         </div>
                     </div>

@@ -195,6 +195,9 @@ const InputContactAndLabel = ({ selectedKeys, setselectedKeys, isAutoReply = fal
                         <li>
                             Kontak hanya akan menerima satu salinan pesan, meskipun mereka ada dalam beberapa label atau grup yang Anda pilih.
                         </li>
+                        <li>
+                            Jika kontak tersimpan di device yang berbeda, maka pesan tidak bisa terkirim
+                        </li>
                     </ul>
 
                 </div>
