@@ -1,13 +1,11 @@
 import { ContactData } from "@/utils/types"
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react"
-import { animated, useTransition } from "@react-spring/web";
 
 const MultipleInputContact = (
     { contactList, setcontactList }:
         { contactList: ContactData[], setcontactList: Dispatch<SetStateAction<ContactData[]>>, }
 ) => {
     const contactInputRef = useRef<HTMLInputElement>(null)
-    const [isContactOpen, setisContactOpen] = useState(false)
     const [searchContactList, setsearchContactList] = useState<ContactData[]>([])
 
     const [inputText, setinputText] = useState('')
