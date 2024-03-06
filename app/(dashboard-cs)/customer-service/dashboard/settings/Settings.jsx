@@ -13,7 +13,7 @@ const Settings = () => {
     const { data: session } = useSession()
     const [isLoaded, setisLoaded] = useState(false)
     const [currentPage, setcurrentPage] = useState('profile')
-    const [csProfile, setcsProfile] = useState<CSProfile>()
+    const [csProfile, setcsProfile] = useState()
     const componentTransition = useTransition(currentPage, {
         from: {
             transform: "translateX(100px)",
