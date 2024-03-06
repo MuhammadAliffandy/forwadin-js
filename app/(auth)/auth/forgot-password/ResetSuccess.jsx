@@ -2,7 +2,7 @@ import { Dispatch, SetStateAction, useState } from "react"
 import { BarLoader } from "react-spinners"
 import { toast } from "react-toastify"
 
-const ResetSuccess = ({ userEmail, setCurrentStep }: { userEmail: string, setCurrentStep: Dispatch<SetStateAction<string>> }) => {
+const ResetSuccess = ({ userEmail, setCurrentStep }) => {
     const [isloading, setisloading] = useState(false)
     const sendOTP = async () => {
         setisloading(true)

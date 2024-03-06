@@ -3,13 +3,11 @@ import InputForm from "@/components/form/InputForm"
 import { Dispatch, SetStateAction, useState } from "react"
 import { useForm } from "react-hook-form"
 import { toast } from "react-toastify"
-interface ForgotPassword {
-    email: string
-}
-const ResetForm = ({ setCurrentStep, setuserEmail }: { setCurrentStep: Dispatch<SetStateAction<string>>, setuserEmail: Dispatch<SetStateAction<string>> }) => {
+
+const ResetForm = ({ setCurrentStep, setuserEmail }) => {
     const [isLoading, setisLoading] = useState(false)
-    const { handleSubmit, register } = useForm<ForgotPassword>()
-    const onSubmit = async (formData: ForgotPassword) => {
+    const { handleSubmit, register } = useForm()
+    const onSubmit = async (formData) => {
         setisLoading(true)
         console.log(formData)
         try {

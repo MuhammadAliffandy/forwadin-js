@@ -28,7 +28,7 @@ const ResetPassword = () => {
     }, [currentStep])
     useEffect(() => {
         if (searchParams?.get('token'))
-            settoken(searchParams.get('token')!)
+            settoken(searchParams.get('token'))
         else
             push('/auth/forgot-password')
     }, [])

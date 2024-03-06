@@ -1,14 +1,14 @@
 'use client'
 import React, { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react";
 import { Dispatch, SetStateAction } from "react";
-import { toast } from "react-toastify";
+import { toast } from  'react-toastify';
 import ButtonSubmit from "@/components/form/ButtonSubmit";
 import { MultipleInputRef, ResetUserData } from "@/utils/types";
 
-const ForgotOTPForm = ({ setCurrentStep, userData, setuserData }: { setCurrentStep: Dispatch<SetStateAction<string>>, userData: ResetUserData, setuserData: Dispatch<SetStateAction<ResetUserData>> }) => {
+const ForgotOTPForm = ({ setCurrentStep, userData, setuserData }) => {
     const [isLoading, setisLoading] = useState(false)
     const multipleInputRef = useRef<MultipleInputRef>({})
-    const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const handleInputChange = (e) => {
         const { name, value } = e.target;
         const [fieldName, index] = name.split('_')
         let current = parseInt(index, 10)
@@ -18,12 +18,12 @@ const ForgotOTPForm = ({ setCurrentStep, userData, setuserData }: { setCurrentSt
                 multipleInputRef.current[`otp_${current + 1}`].focus()
             }
     }
-    const handleRefChange = (element: HTMLInputElement | null, id: number) => {
+    const handleRefChange = (element, id) => {
         if (multipleInputRef.current && element) {
             multipleInputRef.current[`otp_${id}`] = element
         }
     }
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = (e) => {
         e.preventDefault()
         const otp = multipleInputRef.current['otp_1'].value.toString() +
             multipleInputRef.current['otp_2'].value.toString() +
@@ -58,7 +58,7 @@ const ForgotOTPForm = ({ setCurrentStep, userData, setuserData }: { setCurrentSt
             multipleInputRef.current[`otp_${i}`].value = ''
         }
     }
-    const handlePaste = (e: React.ClipboardEvent) => {
+    const handlePaste = (e) => {
         const pasteText = e.clipboardData.getData('text')
         multipleInputRef.current['otp_1'].value = pasteText[0]
         multipleInputRef.current['otp_2'].value = pasteText[1]

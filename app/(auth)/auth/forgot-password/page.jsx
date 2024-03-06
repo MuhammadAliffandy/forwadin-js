@@ -1,8 +1,7 @@
-import type { Metadata } from 'next'
 import ResetForm from './ResetForm'
 import ForgotPassword from './ForgotPassword'
 
-export const metadata: Metadata = {
+export const metadata = {
     title: 'Reset Password',
 }
 

@@ -4,12 +4,9 @@ import { signOut } from "next-auth/react"
 import { Dispatch, SetStateAction, useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { toast } from "react-toastify"
-interface PasswordReset {
-    password: string,
-    confirmPassword: string
-}
-const NewPasswordForm = ({ setCurrentStep, token }: { setCurrentStep: Dispatch<SetStateAction<string>>, token: string }) => {
-    const { handleSubmit, register, setValue, watch, setError, formState: { errors } } = useForm<PasswordReset>()
+
+const NewPasswordForm = ({ setCurrentStep, token }) => {
+    const { handleSubmit, register, setValue, watch, setError, formState: { errors } } = useForm()
     const [isLoading, setisLoading] = useState(false)
     const [showPasswordCriteria, setshowPasswordCriteria] = useState(false)
     const [passwordValidator, setPasswordValidator] = useState({
@@ -26,7 +23,7 @@ const NewPasswordForm = ({ setCurrentStep, token }: { setCurrentStep: Dispatch<S
         numeric: new RegExp("^(?=.*[0-9])"),
         // specialChar: new RegExp("^(?=.*[!@#$%^&*])")
     }
-    const onSubmit = async (formData: PasswordReset) => {
+    const onSubmit = async (formData) => {
         setisLoading(true)
         console.log(token)
         try {
@@ -58,7 +55,7 @@ const NewPasswordForm = ({ setCurrentStep, token }: { setCurrentStep: Dispatch<S
     }
     useEffect(() => {
         const watchPassword = watch(value => {
-            const password: string = value.password!
+            const password= value.password
             if (strongRegex.eightLength.test(password))
                 setPasswordValidator(prev => ({ ...prev, eightLength: true }))
             else
@@ -114,7 +111,7 @@ const NewPasswordForm = ({ setCurrentStep, token }: { setCurrentStep: Dispatch<S
                 error: errors.confirmPassword,
                 registerConfig: {
                     required: true,
-                    validate: (value: String) => {
+                    validate: (value) => {
                         if (value != watch('password'))
                             return 'Password do not match'
                     }

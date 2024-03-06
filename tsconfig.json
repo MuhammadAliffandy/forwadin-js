@@ -33,7 +33,7 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts"
-  ],
+, "app/(auth)/auth/forgot-password/ForgotOTPForm.jsx", "app/(auth)/auth/forgot-password/ForgotPassword.jsx", "app/(auth)/auth/forgot-password/page.jsx", "app/(auth)/auth/forgot-password/ResetForm.jsx", "app/(auth)/auth/forgot-password/ResetSuccess.jsx", "app/(auth)/auth/reset-password/page.jsx", "app/(auth)/auth/reset-password/ResetPassword.jsx", "app/(auth)/auth/reset-password/NewPasswordForm.jsx"  ],
   "exclude": [
     "node_modules"
   ]
