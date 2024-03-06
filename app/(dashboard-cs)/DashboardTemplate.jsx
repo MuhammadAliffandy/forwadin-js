@@ -8,18 +8,18 @@ import { Dropdown, DropdownItem, DropdownMenu, DropdownSection, DropdownTrigger 
 import { CustomerService, UserProfile } from "@/utils/types";
 import { fetchClient } from "@/utils/helper/fetchClient";
 import { useRouter } from "next/navigation";
-const DashboardTemplate = ({ currentPage, children }: { currentPage: string, children: React.ReactNode }) => {
+const DashboardTemplate = ({ currentPage, children }) => {
     const { data: session } = useSession()
     const router = useRouter()
     const [sideNavDropdown, setsideNavDropdown] = useState(false)
     const [isDisabled, setisDisabled] = useState(true)
-    const handleClick = (event: React.MouseEvent) => {
+    const handleClick = (event) => {
         setsideNavDropdown(true)
     }
-    const handleWindowClick = (e: React.MouseEvent) => {
+    const handleWindowClick = (e) => {
         const mainContent = document.getElementById('main_content')
         if (sideNavDropdown)
-            if (mainContent?.contains(e.target as Node))
+            if (mainContent?.contains(e.target))
                 setsideNavDropdown(false)
     }
     useEffect(() => {

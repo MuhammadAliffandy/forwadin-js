@@ -2,10 +2,10 @@
 import { useEffect, useState } from 'react'
 import { usePathname } from 'next/navigation'
 import DashboardTemplate from './DashboardTemplate'
-const Template = ({ children }: { children: React.ReactNode }) => {
+const Template = ({ children }) => {
 
     const [currentPage, setCurrentPage] = useState<string>('')
-    const pathName = usePathname()!
+    const pathName = usePathname()
     useEffect(() => {
         if (pathName.includes('/dashboard/settings'))
             setCurrentPage('Settings')

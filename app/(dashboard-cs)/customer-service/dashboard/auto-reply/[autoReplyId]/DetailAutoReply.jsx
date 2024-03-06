@@ -19,14 +19,8 @@ import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { toast } from "react-toastify"
-interface AutoReplyForm {
-    name: string,
-    deviceId: string,
-    receivers: string[],
-    request: string[],
-    response: string
-}
-const DetailAutoReply = ({ autoReplyId }: { autoReplyId: string }) => {
+
+const DetailAutoReply = ({ autoReplyId }) => {
     const { push } = useRouter()
     const { data: session } = useSession()
     const { loading, templateList } = useTemplate(session?.customerService)
@@ -34,24 +28,24 @@ const DetailAutoReply = ({ autoReplyId }: { autoReplyId: string }) => {
     const [isLabelLoaded, setisLabelLoaded] = useState(false)
     const [isLoading, setisLoading] = useState(false)
     const [autoReplyName, setautoReplyName] = useState('')
-    const [files, setfiles] = useState<File[]>([])
+    const [files, setfiles] = useState([])
     const [isDisabled, setisDisabled] = useState(true)
-    const { handleSubmit, register, reset, formState: { errors }, setValue } = useForm<AutoReplyForm>()
+    const { handleSubmit, register, reset, formState: { errors }, setValue } = useForm()
     // change
-    const [receiverList, setreceiverList] = useState<string[]>([])
-    const [requestList, setrequestList] = useState<Label[]>([])
+    const [receiverList, setreceiverList] = useState([])
+    const [requestList, setrequestList] = useState([])
     const [textInput, settextInput] = useState<string>('')
-    const handleTemplateClick = (id: string) => {
+    const handleTemplateClick = (id) => {
         const findContent = templateList.find(item => item.id === id)?.message
         if (findContent)
             settextInput(findContent)
 
     }
-    const handleInsertVariable = (text: string) => {
+    const handleInsertVariable = (text) => {
         settextInput(prev => prev + '{{$' + text + '}}')
 
     }
-    const onSubmit = async (ARData: any) => {
+    const onSubmit = async (ARData) => {
         setisLoading(true)
         let mark = true
         if (receiverList?.length === 0) {
@@ -77,7 +71,7 @@ const DetailAutoReply = ({ autoReplyId }: { autoReplyId: string }) => {
                 formData.set('media', files[0].file, files[0].name)
             }
             formData.append('name', ARData.name)
-            formData.append('deviceId', session?.customerService?.deviceId!)
+            formData.append('deviceId', session?.customerService?.deviceId)
             requestList.forEach((element, idx) => {
                 formData.append(`requests[${idx}]`, element.label.name)
             })
@@ -112,7 +106,7 @@ const DetailAutoReply = ({ autoReplyId }: { autoReplyId: string }) => {
             user: session?.customerService
         })
         if (result?.ok) {
-            const resultData: AutoReply = await result.json()
+            const resultData = await result.json()
             if (resultData.mediaPath) {
                 getFileFromUrl(resultData.mediaPath, setfiles)
             }
@@ -156,7 +150,7 @@ const DetailAutoReply = ({ autoReplyId }: { autoReplyId: string }) => {
         }
     }, [session?.customerService?.token])
     useEffect(() => {
-        if (textInput.length > 0 && receiverList?.length! > 0 && requestList.some(item => item.label.active === true)) {
+        if (textInput.length > 0 && receiverList?.length > 0 && requestList.some(item => item.label.active === true)) {
             setisDisabled(false)
         } else {
             setisDisabled(true)

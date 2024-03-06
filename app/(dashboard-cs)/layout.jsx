@@ -2,7 +2,7 @@
 import React from "react"
 import Template from "./Template"
 
-const Layout = ({ children }: { children: React.ReactNode }) => {
+const Layout = ({ children }) => {
     return (
         <Template>
             {children}

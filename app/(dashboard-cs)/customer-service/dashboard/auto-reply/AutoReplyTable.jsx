@@ -8,17 +8,14 @@ import { CustomerService } from 'next-auth'
 import Link from 'next/link'
 import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
-interface AutoReplyTableProps {
-    settotalAutoReply: Dispatch<SetStateAction<number>>,
-    customerService: CustomerService | undefined
-}
-const AutoReplyTable = ({ settotalAutoReply, customerService }: AutoReplyTableProps) => {
+
+const AutoReplyTable = ({ settotalAutoReply, customerService }) => {
     const [isChecked, setisChecked] = useState(false)
     const [isLoaded, setisLoaded] = useState(false)
-    const [autoReplyData, setautoReplyData] = useState<AutoReply[]>([])
+    const [autoReplyData, setautoReplyData] = useState([])
     const [searchText, setsearchText] = useState('')
-    const [searchedAutoReplyData, setsearchedAutoReplyData] = useState<AutoReply[]>([])
-    const [selectedAutoReply, setselectedAutoReply] = useState<Set<string> | 'all'>(new Set([]))
+    const [searchedAutoReplyData, setsearchedAutoReplyData] = useState([])
+    const [selectedAutoReply, setselectedAutoReply] = useState(new Set([]))
     const fetchAutoReply = async () => {
         const result = await fetchClient({
             url: '/auto-replies',
@@ -26,13 +23,13 @@ const AutoReplyTable = ({ settotalAutoReply, customerService }: AutoReplyTablePr
             user: customerService
         })
         if (result?.ok) {
-            const resultData: AutoReply[] = await result.json()
+            const resultData= await result.json()
             setautoReplyData(resultData)
             settotalAutoReply(resultData.length)
         }
         setisLoaded(true)
     }
-    const handleToggleAutoReply = async (id: string, status: boolean) => {
+    const handleToggleAutoReply = async (id ,status) => {
         console.log('Toggle')
         console.log(id, status)
         const result = await fetchClient({
@@ -82,7 +79,7 @@ const AutoReplyTable = ({ settotalAutoReply, customerService }: AutoReplyTablePr
         }
     }, [customerService?.token])
     useEffect(() => {
-        if ((selectedAutoReply as Set<string>).size > 0 || selectedAutoReply === 'all')
+        if ((selectedAutoReply ).size > 0 || selectedAutoReply === 'all')
             setisChecked(true)
         else
             setisChecked(false)
@@ -126,8 +123,8 @@ const AutoReplyTable = ({ settotalAutoReply, customerService }: AutoReplyTablePr
                             wrapper: 'rounded-md'
                         }}
                         radius='md'
-                        selectedKeys={selectedAutoReply as any}
-                        onSelectionChange={setselectedAutoReply as any}
+                        selectedKeys={selectedAutoReply }
+                        onSelectionChange={setselectedAutoReply }
                     >
                         <TableHeader>
                             <TableColumn
@@ -147,7 +144,7 @@ const AutoReplyTable = ({ settotalAutoReply, customerService }: AutoReplyTablePr
                         </div>}
                             items={autoReplyData}
                         >
-                            {(item: AutoReply) => (
+                            {(item) => (
                                 <TableRow key={item.id}>
                                     <TableCell >{item.name}</TableCell>
                                     <TableCell>
