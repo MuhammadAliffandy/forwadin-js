@@ -1,7 +1,6 @@
-import type { Metadata } from 'next'
 import Order from './Order'
 
-export const metadata: Metadata = {
+export const metadata = {
     title: 'Order',
 }
 

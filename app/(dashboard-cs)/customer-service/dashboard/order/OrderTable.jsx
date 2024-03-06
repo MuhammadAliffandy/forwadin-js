@@ -11,13 +11,13 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Result } from 'postcss';
 
-const OrderTable = ({ setcountOrder }: { setcountOrder: Dispatch<SetStateAction<number>> }) => {
+const OrderTable = ({ setcountOrder }) => {
     const { data: session } = useSession()
     const [isLoaded, setisLoaded] = useState(false)
     const [settingOrderModal, setSettingOrderModal] = useState(false)
     const [searchText, setSearchText] = useState('')
-    const [orderData, setorderData] = useState<OrderData[]>([])
-    const [searchedOrder, setsearchedOrder] = useState<OrderData[]>([])
+    const [orderData, setorderData] = useState([])
+    const [searchedOrder, setsearchedOrder] = useState([])
     const [isChecked, setisChecked] = useState(false)
     const fetchData = async () => {
         const fetchOrder = await fetchClient({
@@ -26,7 +26,7 @@ const OrderTable = ({ setcountOrder }: { setcountOrder: Dispatch<SetStateAction<
             user: session?.customerService
         })
         if (fetchOrder) {
-            const data: OrderData[] = await fetchOrder.json()
+            const data = await fetchOrder.json()
             if (fetchOrder.status === 200) {
                 setcountOrder(data.length)
                 setorderData(data)
@@ -37,14 +37,14 @@ const OrderTable = ({ setcountOrder }: { setcountOrder: Dispatch<SetStateAction<
             setisLoaded(true)
         }
     }
-    const filterOrder = (text: string) => {
+    const filterOrder = (text) => {
         const regex = new RegExp(text, 'i')
         return orderData.filter(item => {
             if (regex.test(item.name) || regex.test(item.status) || regex.test(item.orderData))
                 return item
         })
     }
-    const handleConfirmOrder = async (order: OrderData) => {
+    const handleConfirmOrder = async (order) => {
         if (confirm('Tandai selesai untuk order \n' + order.name + '?')) {
             const result = await fetchClient({
                 url: '/orders/' + order.id,
@@ -63,7 +63,7 @@ const OrderTable = ({ setcountOrder }: { setcountOrder: Dispatch<SetStateAction<
             }
         }
     }
-    const handleCancelOrder = async (order: OrderData) => {
+    const handleCancelOrder = async (order) => {
         if (confirm('Batalkan order \n' + order.name + '?')) {
             const result = await fetchClient({
                 url: '/orders/' + order.id,
@@ -82,7 +82,7 @@ const OrderTable = ({ setcountOrder }: { setcountOrder: Dispatch<SetStateAction<
             }
         }
     }
-    const printStatus = (status: string) => {
+    const printStatus = (status) => {
         switch (status) {
             case 'completed':
                 return (<p className='text-success'>{status}</p>)
@@ -160,7 +160,7 @@ const OrderTable = ({ setcountOrder }: { setcountOrder: Dispatch<SetStateAction<
                                 </div>
 
                             </div>} items={searchText ? searchedOrder : orderData}>
-                            {(item: OrderData) => (
+                            {(item) => (
                                 <TableRow key={item.id}>
                                     <TableCell >{item.name}</TableCell>
                                     <TableCell >{printStatus(item.status)}</TableCell>

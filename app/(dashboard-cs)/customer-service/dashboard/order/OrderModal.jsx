@@ -8,19 +8,14 @@ import { Button } from '@nextui-org/react'
 import { Session } from 'next-auth'
 import React, { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
-interface OrderModalProps {
-    openModal: boolean,
-    setopenModal: Dispatch<SetStateAction<boolean>>,
-    data: OrderData | undefined,
-    session: Session | null
-}
-const OrderModal = ({ data, openModal, session, setopenModal }: OrderModalProps) => {
+
+const OrderModal = ({ data, openModal, session, setopenModal }) => {
     const [orderTemplate, setorderTemplate] = useState('')
     const [welcomeMessage, setwelcomeMessage] = useState('')
     const [followUpMessage, setfollowUpMessage] = useState('')
     const [completeMessage, setcompleteMessage] = useState('')
-    const [keyList, setkeyList] = useState<string[]>([])
-    const [orderMessage, setorderMessage] = useState<OrderMessage>()
+    const [keyList, setkeyList] = useState([])
+    const [orderMessage, setorderMessage] = useState()
     const fetchOrderMessage = async () => {
         const result = await fetchClient({
             url: '/orders/messages',
