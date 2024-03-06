@@ -9,14 +9,8 @@ import { signIn, useSession } from 'next-auth/react';
 import { Socket, io } from "socket.io-client";
 import { useSocket } from '@/app/SocketProvider';
 import ModalTemplate from '@/components/template/ModalTemplate';
-interface QRModalProps {
-    openModal: boolean,
-    setopenModal: Dispatch<SetStateAction<boolean>>,
-    session: Session | null,
-    socket: Socket | null,
-    refresh: () => void
-}
-const QRModal = ({ openModal, setopenModal, session, socket, refresh }: QRModalProps) => {
+
+const QRModal = ({ openModal, setopenModal, session, socket, refresh }) => {
     const [isLoaded, setisLoaded] = useState(false)
     const [qrData, setqrData] = useState('')
     const generateQR = async () => {
@@ -70,7 +64,7 @@ const QRModal = ({ openModal, setopenModal, session, socket, refresh }: QRModalP
         const channel = `device:${session?.customerService?.deviceId}:status`
         console.log(channel)
         if (socket) {
-            socket.on(channel, (status: string) => {
+            socket.on(channel, (status) => {
                 console.log(status)
                 if (status === 'open') {
                     toast.success('Connected!')

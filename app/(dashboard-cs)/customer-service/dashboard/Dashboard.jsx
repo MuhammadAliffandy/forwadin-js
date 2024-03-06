@@ -18,7 +18,7 @@ const Dashboard = () => {
     const { data: session } = useSession()
     const { isConnected, socket } = useSocket()
     const [openQrModal, setopenQrModal] = useState(false)
-    const [latestMessage, setlatestMessage] = useState<IncomingMessage[]>([])
+    const [latestMessage, setlatestMessage] = useState([])
     const [progressData, setprogressData] = useState({
         totalMessage: 0,
         totalOrder: 0,
@@ -56,8 +56,8 @@ const Dashboard = () => {
             user: session?.customerService
         })
         if (result?.ok && incoming?.ok) {
-            const incomingMessage: GetMessage<IncomingMessage> = await incoming.json()
-            const orderData: OrderData[] = await result.json()
+            const incomingMessage = await incoming.json()
+            const orderData = await result.json()
             console.log(orderData)
             const completedOrder = orderData.filter(order => order.status === 'completed')
             const pendingOrder = orderData.filter(order => order.status === 'pending')
@@ -165,7 +165,7 @@ const Dashboard = () => {
                         </div>
                         <div className='text-right whitespace-nowrap'>
                             <p className='font-normal text-[10px] text-[#777C88]'>CS Dibuat Pada</p>
-                            <p className='font-nunito font-bold text-[12px]'>{formatDateBahasa(session?.customerService?.createdAt!)}</p>
+                            <p className='font-nunito font-bold text-[12px]'>{formatDateBahasa(session?.customerService?.createdAt)}</p>
                         </div>
                     </div>
 
@@ -176,7 +176,7 @@ const Dashboard = () => {
                                 aria-label="device"
                                 value={receivedOrder.value}
                                 className="w-full"
-                                color={receivedOrder.color as any}
+                                color={receivedOrder.color }
                             />
 
                             <p className='text-[#777C88] text-[10px]'>{progressData.receivedOrder} order diterima dari {progressData.totalMessage} pesan masuk</p>
@@ -189,7 +189,7 @@ const Dashboard = () => {
                                 aria-label="device"
                                 value={progressOrder.value}
                                 className="w-full"
-                                color={progressOrder.color as any}
+                                color={progressOrder.color}
                             />
                             <p className='text-[#777C88] text-[10px]'>{progressData.completedOrder} dari {progressData.totalOrder} order yang selesai</p>
                         </div>
@@ -216,7 +216,7 @@ const Dashboard = () => {
 export default Dashboard
 
 
-const Message = ({ message }: { message: ConversationMessage }) => {
+const Message = ({ message }) => {
 
     if (message.to)
         return (
@@ -239,9 +239,9 @@ const Message = ({ message }: { message: ConversationMessage }) => {
         )
     return (
         <Button as={Link} href={"/customer-service/dashboard/messenger?phone=" + getNumberFromString(message.from)} variant="light" fullWidth className="rounded-md flex justify-between gap-4 text-[10px]">
-            <PrintIcon contact={message.contact} phone={message.from!} />
+            <PrintIcon contact={message.contact} phone={message.from} />
             <div className="w-full">
-                <p className="font-bold">{message.contact ? message.contact.firstName + ' ' + (message.contact.lastName || '') : getNumberFromString(message.from!)}</p>
+                <p className="font-bold">{message.contact ? message.contact.firstName + ' ' + (message.contact.lastName || '') : getNumberFromString(message.from)}</p>
                 <div className="flex items-center gap-1 -mt-1">
                     {message.mediaPath && (
                         <div>
@@ -255,14 +255,7 @@ const Message = ({ message }: { message: ConversationMessage }) => {
     )
 }
 
-const PrintIcon = ({ contact, phone }: {
-    contact?: {
-        firstName: string,
-        lastName: string,
-        colorCode: string
-    },
-    phone: string
-}) => {
+const PrintIcon = ({ contact, phone }) => {
     if (contact) {
         return (
             <>
