@@ -9,16 +9,12 @@ import InputForm from '@/components/form/InputForm';
 import ButtonSubmit from '@/components/form/ButtonSubmit';
 import { toast } from 'react-toastify';
 
-interface UserLoginData {
-    userEmail: string,
-    password: string
-}
 const SignIn = () => {
-    const searchParams = useSearchParams()!
-    const callbackUrl = (searchParams.has('callbackUrl') ? searchParams.get('callbackUrl') : '/dashboard')!
+    const searchParams = useSearchParams()
+    const callbackUrl = (searchParams.has('callbackUrl') ? searchParams.get('callbackUrl') : '/dashboard')
     const { push } = useRouter()
     const [isLoading, setisLoading] = useState(false)
-    const { handleSubmit, setError, register, formState: { errors } } = useForm<UserLoginData>()
+    const { handleSubmit, setError, register, formState: { errors } } = useForm()
 
     const componentSpring = useSpring({
         from: {
@@ -30,7 +26,7 @@ const SignIn = () => {
             opacity: "1",
         },
     })
-    const onSubmit = async (formData: UserLoginData) => {
+    const onSubmit = async (formData) => {
         setisLoading(true)
         try {
             const login = await signIn('customerService', {
