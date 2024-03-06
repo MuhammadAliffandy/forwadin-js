@@ -4,8 +4,6 @@ import CustomCarousel from '@/components/packages/CustomCarousel'
 import Link from "next/link"
 export default function Layout({
     children,
-}: {
-    children: React.ReactNode
 }) {
 
     return (
