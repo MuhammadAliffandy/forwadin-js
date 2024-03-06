@@ -1,6 +1,5 @@
-import { Metadata } from "next"
 import AutoReply from "./AutoReply"
-export const metadata: Metadata = {
+export const metadata= {
     title: 'Auto Reply'
 }
 const page = () => {

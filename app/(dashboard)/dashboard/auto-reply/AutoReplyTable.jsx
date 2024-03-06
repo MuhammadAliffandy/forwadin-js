@@ -8,17 +8,14 @@ import { User } from 'next-auth'
 import Link from 'next/link'
 import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
-interface AutoReplyTableProps {
-    settotalAutoReply: Dispatch<SetStateAction<number>>,
-    user: User | undefined
-}
-const AutoReplyTable = ({ settotalAutoReply, user }: AutoReplyTableProps) => {
+
+const AutoReplyTable = ({ settotalAutoReply, user }) => {
     const [isChecked, setisChecked] = useState(false)
     const [isLoaded, setisLoaded] = useState(false)
-    const [autoReplyData, setautoReplyData] = useState<AutoReply[]>([])
+    const [autoReplyData, setautoReplyData] = useState([])
     const [searchText, setsearchText] = useState('')
-    const [searchedAutoReplyData, setsearchedAutoReplyData] = useState<AutoReply[]>([])
-    const [selectedAutoReply, setselectedAutoReply] = useState<Set<string> | 'all'>(new Set([]))
+    const [searchedAutoReplyData, setsearchedAutoReplyData] = useState([])
+    const [selectedAutoReply, setselectedAutoReply] = useState(new Set([]))
 
     const fetchAutoReply = async () => {
         const result = await fetchClient({
@@ -27,13 +24,13 @@ const AutoReplyTable = ({ settotalAutoReply, user }: AutoReplyTableProps) => {
             user: user
         })
         if (result?.ok) {
-            const resultData: AutoReply[] = await result.json()
+            const resultData = await result.json()
             setautoReplyData(resultData)
             settotalAutoReply(resultData.length)
         }
         setisLoaded(true)
     }
-    const handleToggleAutoReply = async (id: string, status: boolean) => {
+    const handleToggleAutoReply = async (id, status) => {
         console.log('Toggle')
         console.log(id, status)
         const result = await fetchClient({
@@ -61,7 +58,7 @@ const AutoReplyTable = ({ settotalAutoReply, user }: AutoReplyTableProps) => {
         if (selectedAutoReply === 'all') {
             deletedAR = autoReplyData.map(item => item.id)
         }
-        else if ((selectedAutoReply as Set<string>).size > 0) {
+        else if ((selectedAutoReply).size > 0) {
             deletedAR = Array.from(selectedAutoReply)
         }
         const isConfirm = window.confirm('Anda yakin ingin menghapus ' + deletedAR?.length + ' auto reply?')
@@ -88,7 +85,7 @@ const AutoReplyTable = ({ settotalAutoReply, user }: AutoReplyTableProps) => {
         }
     }, [user?.token])
     useEffect(() => {
-        if ((selectedAutoReply as Set<string>).size > 0 || selectedAutoReply === 'all')
+        if ((selectedAutoReply).size > 0 || selectedAutoReply === 'all')
             setisChecked(true)
         else
             setisChecked(false)
@@ -132,8 +129,8 @@ const AutoReplyTable = ({ settotalAutoReply, user }: AutoReplyTableProps) => {
                             wrapper: 'rounded-md'
                         }}
                         radius='md'
-                        selectedKeys={selectedAutoReply as any}
-                        onSelectionChange={setselectedAutoReply as any}
+                        selectedKeys={selectedAutoReply}
+                        onSelectionChange={setselectedAutoReply}
                     >
                         <TableHeader>
                             <TableColumn
@@ -153,7 +150,7 @@ const AutoReplyTable = ({ settotalAutoReply, user }: AutoReplyTableProps) => {
                         </div>}
                             items={autoReplyData}
                         >
-                            {(item: AutoReply) => (
+                            {(item) => (
                                 <TableRow key={item.id}>
                                     <TableCell key={'name_' + item.id}>{item.name}</TableCell>
                                     <TableCell key={'switch_' + item.id}>

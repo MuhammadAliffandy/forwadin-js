@@ -10,8 +10,8 @@ import TagsInput from "@/components/dashboard/TagsInput"
 const AutoReply = () => {
     const { data: session } = useSession()
     const [totalAutoReply, settotalAutoReply] = useState(0)
-    const [listDevice, setlistDevice] = useState<DeviceSession[]>([])
-    const [currentDevice, setcurrentDevice] = useState<DeviceSession>()
+    const [listDevice, setlistDevice] = useState([])
+    const [currentDevice, setcurrentDevice] = useState()
 
 
     useEffect(() => {

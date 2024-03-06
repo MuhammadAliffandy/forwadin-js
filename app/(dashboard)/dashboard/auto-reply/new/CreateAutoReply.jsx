@@ -16,37 +16,31 @@ import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { toast } from "react-toastify"
-interface AutoReplyForm {
-    name: string,
-    deviceId: string,
-    receivers: string[],
-    request: string[],
-    response: string
-}
+
 const CreateAutoReply = () => {
     const { push } = useRouter()
     const { data: session } = useSession()
     const { loading, templateList } = useTemplate(session?.user)
     const [isLoading, setisLoading] = useState(false)
-    const [listDevice, setlistDevice] = useState<DeviceSession[]>([])
-    const [currentDevice, setcurrentDevice] = useState<DeviceSession>()
+    const [listDevice, setlistDevice] = useState([])
+    const [currentDevice, setcurrentDevice] = useState()
     const [isDisabled, setisDisabled] = useState(true)
-    const { handleSubmit, register, reset, setValue, formState: { errors } } = useForm<AutoReplyForm>()
-    const [files, setfiles] = useState<File[]>([])
-    const [receiverList, setreceiverList] = useState<string[]>([])
-    const [requestList, setrequestList] = useState<Label[]>([])
-    const [textInput, settextInput] = useState<string>('')
-    const handleTemplateClick = (id: string) => {
+    const { handleSubmit, register, reset, setValue, formState: { errors } } = useForm()
+    const [files, setfiles] = useState([])
+    const [receiverList, setreceiverList] = useState([])
+    const [requestList, setrequestList] = useState<([])
+    const [textInput, settextInput] = useState('')
+    const handleTemplateClick = (id) => {
         const findContent = templateList.find(item => item.id === id)?.message
         if (findContent)
             settextInput(findContent)
 
     }
-    const handleInsertVariable = (text: string) => {
+    const handleInsertVariable = (text) => {
         settextInput(prev => prev + '{{$' + text + '}}')
 
     }
-    const onSubmit = async (ARData: AutoReplyForm) => {
+    const onSubmit = async (ARData) => {
         setisLoading(true)
         let mark = true
         if (receiverList.length === 0) {
