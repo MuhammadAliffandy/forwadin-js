@@ -9,9 +9,9 @@ const ApiList = dynamic(() => import('./ApiList'), { ssr: false })
 const ApiRef = () => {
     const [apiCount, setapiCount] = useState(0)
     const [searchText, setSearchText] = useState('')
-    const [searchedListApi, setsearchedListApi] = useState<ApiDataTypes[]>([])
-    const handleScroll = (classname: string) => {
-        const gotoElement = document.getElementsByClassName(classname)[0] as HTMLDivElement
+    const [searchedListApi, setsearchedListApi] = useState([])
+    const handleScroll = (classname) => {
+        const gotoElement = document.getElementsByClassName(classname)[0] 
         const container = document.getElementById('scrollContainer')
         if (gotoElement && container) {
             container.scrollTo({
@@ -21,9 +21,9 @@ const ApiRef = () => {
         }
 
     }
-    const filterApi = (text: string) => {
+    const filterApi = (text) => {
         const regex = new RegExp(text, 'i')
-        let arrayResult: ApiDataTypes[] = []
+        let arrayResult = []
         allApiData.forEach(item => {
             const searchResult = item.apiList.filter(api => {
                 if (regex.test(api.name) || regex.test(api.url) || regex.test(api.method))

@@ -65,7 +65,7 @@ const templatePathVariable = {
     }
 }
 
-const allApiData: AllApiDataTypes[] = [
+const allApiData = [
     {
         group: 'Authentication',
         apiList: [
@@ -3946,46 +3946,6 @@ const allApiData: AllApiDataTypes[] = [
         ]
     }
 ]
-export interface AllApiDataTypes {
-    group: string,
-    apiList: ApiDataTypes[]
-}
-export interface TemplateHeaderTypes {
-    [key: string]: HeaderTypes
-}
-export interface templatePathVariableTypes {
-    [key: string]: PathVariableTypes
-}
-export interface ApiDataTypes {
-    name: string,
-    url: string,
-    method: 'GET' | 'POST' | 'PATCH' | 'DELETE' | 'PUT',
-    pathVariables?: PathVariableTypes[],
-    headers: HeaderTypes[],
-    queryParams?: {
-        name: string,
-        description: string
-    }[],
-    type: 'formdata' | 'json' | 'none',
-    jsonSampleRequests?: Object[],
-    sampleResponses: SampleResponseType[],
-    formDataSampleRequests?: {
-        key: string,
-        value: string
-    }[]
-}
-interface HeaderTypes {
-    name: string,
-    description: string,
-    value: string
-}
-interface PathVariableTypes {
-    name: string,
-    description: string
-}
-interface SampleResponseType {
-    response: any,
-    status: number
-}
+
 
 export { allApiData }

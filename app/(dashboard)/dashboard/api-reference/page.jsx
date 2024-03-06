@@ -1,7 +1,6 @@
-import type { Metadata } from 'next'
 import ApiRef from './ApiRef'
 
-export const metadata: Metadata = {
+export const metadata = {
     title: 'API Reference',
 }
 

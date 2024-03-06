@@ -1,7 +1,7 @@
 import { Button } from '@nextui-org/react'
 import React from 'react'
 
-const ApiMethod = ({ type, size = 'md' }: { type: 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE', size?: 'sm' | 'md' | 'lg' }) => {
+const ApiMethod = ({ type, size = 'md' }) => {
     if (type === 'POST')
         return (
             <>

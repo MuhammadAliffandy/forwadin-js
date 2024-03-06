@@ -1,17 +1,14 @@
 import Link from 'next/link'
 import DetailAutoReply from './DetailAutoReply'
 
-type Params = {
-    params: { autoReplyId: string }
-}
-export async function generateMetadata({ params }: Params) {
+export async function generateMetadata({ params }) {
     // const contact = params.contactId
     return {
         title: "Detail Auto Reply"
     }
 }
 
-const page = async ({ params }: Params) => {
+const page = async ({ params }) => {
 
     return (
         <>

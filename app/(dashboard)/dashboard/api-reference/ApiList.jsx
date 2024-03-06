@@ -6,7 +6,7 @@ import { Accordion, AccordionItem, Card, CardBody, Divider, Snippet } from '@nex
 import { CodeBlock, CopyBlock } from 'react-code-blocks'
 import ReactJson from '@microlink/react-json-view'
 
-const ApiList = ({ listApi }: { listApi: ApiDataTypes[] }) => {
+const ApiList = ({ listApi }) => {
     return (
         <>
             {listApi.map((api, index) => (
@@ -18,7 +18,7 @@ const ApiList = ({ listApi }: { listApi: ApiDataTypes[] }) => {
 
 export default ApiList
 
-const ApiDetail = ({ apiDetail }: { apiDetail: ApiDataTypes }) => {
+const ApiDetail = ({ apiDetail }) => {
     return (
         <div className={apiDetail.url + '_' + apiDetail.method}>
             <Accordion variant='shadow' isCompact className={'rounded-md'} fullWidth>
