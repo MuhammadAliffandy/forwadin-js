@@ -37,16 +37,16 @@ const Messenger = () => {
     ]
     const currentDate = new Date()
     const [textInput, settextInput] = useState('')
-    const [inputFile, setinputFile] = useState<File[]>([]);
+    const [inputFile, setinputFile] = useState([]);
     const [showfile, setshowfile] = useState(false)
     const [sendMessageLoading, setsendMessageLoading] = useState(false)
     const [orderModal, setorderModal] = useState(false)
-    const [listMessenger, setlistMessenger] = useState<ContactLatestMessage[]>([])
-    const [currentMessenger, setcurrentMessenger] = useState<MessengerList>()
+    const [listMessenger, setlistMessenger] = useState([])
+    const [currentMessenger, setcurrentMessenger] = useState()
     const [chatDisabled, setchatDisabled] = useState(true)
-    const [messageMetadata, setmessageMetadata] = useState<MessageMetadata>()
-    const [listMessage, setlistMessage] = useState<ConversationMessage[]>([])
-    const [orderMessage, setorderMessage] = useState<OrderMessage>()
+    const [messageMetadata, setmessageMetadata] = useState()
+    const [listMessage, setlistMessage] = useState([])
+    const [orderMessage, setorderMessage] = useState()
     const fetchlistMessenger = async () => {
         const result = await fetchClient({
             url: `/messages/${session?.customerService?.sessionId}/messenger-list`,
@@ -59,11 +59,11 @@ const Messenger = () => {
             user: session?.customerService
         })
         if (result?.ok && result2?.ok) {
-            const resultData: GetMessage<MessengerList> = await result.json()
-            const result2Data: ContactData[] = await result2.json()
-            const newArray: ContactLatestMessage[] = []
-            const fetchPromises: (() => Promise<void>)[] = [];
-            const fetchMessage = async (element: string) => {
+            const resultData= await result.json()
+            const result2Data= await result2.json()
+            const newArray = []
+            const fetchPromises = [];
+            const fetchMessage = async (element) => {
                 const response = await fetchClient({
                     url: `/messages/${session?.customerService?.sessionId}/?phoneNumber=${element}&pageSize=1&sort=asc`,
                     method: 'GET',
@@ -79,23 +79,23 @@ const Messenger = () => {
                 if (element.phone)
                     fetchPromises.push(async () => {
                         try {
-                            const message: GetMessage<ConversationMessage> = await fetchMessage(element.phone);
+                            const message = await fetchMessage(element.phone);
                             console.log(`Fetched message for phone ${element.phone}`, message);
                             if (message.data.length > 0) {
-                                const withMessage: ContactLatestMessage = {
+                                const withMessage= {
                                     messenger: element,
                                     latestMessage: message.data[0]
                                 }
                                 newArray.push(withMessage)
                                 return
                             }
-                            const withoutMessage: ContactLatestMessage = {
+                            const withoutMessage = {
                                 messenger: element,
                                 latestMessage: null
                             }
                             newArray.push(withoutMessage)
                             return
-                        } catch (error: any) {
+                        } catch (error) {
                             console.error(error);
                         }
                     })
@@ -109,7 +109,7 @@ const Messenger = () => {
 
                 return timestampB - timestampA;
             });
-            const newContactArray: ContactLatestMessage[] = result2Data.filter(contact => !newArray.some(element => element.messenger.phone === contact.phone)).map(contact => {
+            const newContactArray = result2Data.filter(contact => !newArray.some(element => element.messenger.phone === contact.phone)).map(contact => {
                 return {
                     latestMessage: null,
                     messenger: {
@@ -122,11 +122,11 @@ const Messenger = () => {
             setlistMessenger([...newArray, ...newContactArray])
         }
     }
-    const insertTemplate = (text: string) => {
+    const insertTemplate = (text) => {
         if (!orderMessage) return
         if (Object.keys(orderMessage).includes(text)) {
             // @ts-ignore
-            const orderText: string = orderMessage[text]
+            const orderText = orderMessage[text]
             settextInput(orderText)
         }
 
@@ -141,7 +141,7 @@ const Messenger = () => {
             setorderMessage(await result.json())
         }
     }
-    const fetchChatMessage = async (page: number) => {
+    const fetchChatMessage = async (page) => {
         if (!session?.customerService?.sessionId && !currentMessenger) return
 
         const result = await fetchClient({
@@ -278,7 +278,7 @@ const Messenger = () => {
                             sessionId={session?.customerService?.sessionId}
                             setlistMessage={setlistMessage}
                             fetchChatMessage={fetchChatMessage}
-                            metadata={messageMetadata!}
+                            metadata={messageMetadata}
                         />
 
                         <div className="py-2 flex-none">

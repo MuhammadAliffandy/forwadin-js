@@ -3,23 +3,16 @@ import { MessengerList, ContactLatestMessage, ConversationMessage } from "@/util
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { Dispatch, SetStateAction, useEffect, useState } from "react"
 
-interface ListChatsProps {
-    listMessenger: ContactLatestMessage[],
-    currentMessenger: MessengerList | undefined,
-    setcurrentMessenger: Dispatch<SetStateAction<MessengerList | undefined>>,
-    setlistMessage: Dispatch<SetStateAction<ConversationMessage[]>>,
-    // fetchMessage: (page: number) => void
-}
-const ListChats = ({ listMessenger, currentMessenger, setcurrentMessenger, setlistMessage }: ListChatsProps) => {
+const ListChats = ({ listMessenger, currentMessenger, setcurrentMessenger, setlistMessage }) => {
     const router = useRouter()
     const pathname = usePathname()
-    const searchParams = useSearchParams()!
+    const searchParams = useSearchParams()
     const [switchButton, setswitchButton] = useState('active')
     const [inputText, setinputText] = useState('')
-    const [activeListMessenger, setActiveListMessenger] = useState<ContactLatestMessage[]>([])
-    const [pendingListMessenger, setPendingListMessenger] = useState<ContactLatestMessage[]>([])
-    const [searchedMessenger, setsearchedMessenger] = useState<ContactLatestMessage[]>([])
-    const handleClickMessenger = (messenger: MessengerList) => {
+    const [activeListMessenger, setActiveListMessenger] = useState([])
+    const [pendingListMessenger, setPendingListMessenger] = useState([])
+    const [searchedMessenger, setsearchedMessenger] = useState([])
+    const handleClickMessenger = (messenger) => {
         if (currentMessenger?.phone === messenger.phone) return
         setlistMessage([])
         setcurrentMessenger(messenger)
@@ -27,7 +20,7 @@ const ListChats = ({ listMessenger, currentMessenger, setcurrentMessenger, setli
         params.set('phone', messenger.phone)
         router.push(pathname + '?' + params.toString())
     }
-    const filterMessenger = (text: string, currentListMessenger: ContactLatestMessage[]) => {
+    const filterMessenger = (text, currentListMessenger) => {
         const regex = new RegExp(text, 'i')
         return currentListMessenger.filter(item => {
             const contact = item.messenger.contact
@@ -118,10 +111,10 @@ const ListChats = ({ listMessenger, currentMessenger, setcurrentMessenger, setli
 export default ListChats
 
 
-const MessengerCard = ({ item, handleClick, currentMessenger }: {
-    item: ContactLatestMessage,
-    currentMessenger: MessengerList | undefined,
-    handleClick: (item: MessengerList) => void
+const MessengerCard = ({ item, handleClick, currentMessenger } ,{
+    item,
+    currentMessenger,
+    handleClick,
 }) => {
     return (
         <div key={item.messenger.phone} className={"rounded-md p-3 " + (currentMessenger?.phone === item.messenger.phone ? 'bg-white' : 'hover:cursor-pointer ')} onClick={() => handleClick(item.messenger)}>
