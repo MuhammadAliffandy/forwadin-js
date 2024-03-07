@@ -1,8 +1,7 @@
-import { Metadata } from "next"
 import Link from "next/link"
 import CreateCampaign from "./CreateCampaign"
 
-export const metadata: Metadata = {
+export const metadata = {
     title: 'Buat Campaign'
 }
 const page = () => {

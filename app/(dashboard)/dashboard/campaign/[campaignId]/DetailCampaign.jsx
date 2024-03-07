@@ -17,15 +17,15 @@ import { BreadcrumbItem, Breadcrumbs } from "@nextui-org/breadcrumbs"
 import DisplayFile from "@/components/dashboard/DisplayFile"
 import { isFileImage } from "@/utils/helper/fileHelper"
 
-const DetailCampaign = ({ campaignId }: { campaignId: string }) => {
+const DetailCampaign = ({ campaignId }) => {
     const { data: session } = useSession()
     const { push } = useRouter()
     const [isCampaignLoaded, setisCampaignLoaded] = useState(false)
     const [isDetailCampaignLoaded, setisDetailCampaignLoaded] = useState(false)
-    const [campaignData, setcampaignData] = useState<CampaignData>()
+    const [campaignData, setcampaignData] = useState()
 
 
-    const [selectedKeys, setselectedKeys] = useState<Set<string>>(new Set())
+    const [selectedKeys, setselectedKeys] = useState(new Set())
     const [campaignDetail, setcampaignDetail] = useState({
         Terkirim: [],
         Diterima: [],
@@ -40,7 +40,7 @@ const DetailCampaign = ({ campaignId }: { campaignId: string }) => {
             user: session?.user
         })
         if (result?.ok) {
-            const resultData: CampaignData = await result.json()
+            const resultData = await result.json()
             setcampaignData(resultData)
             setisCampaignLoaded(true)
             console.log(resultData)
@@ -141,7 +141,7 @@ const DetailCampaign = ({ campaignId }: { campaignId: string }) => {
                                 </tr>
                                 <tr>
                                     <th className='font-bold whitespace-pre '>Schedule</th>
-                                    <td className="break-all">{formatDate(campaignData?.schedule!)}</td>
+                                    <td className="break-all">{formatDate(campaignData?.schedule)}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -203,7 +203,7 @@ const DetailCampaign = ({ campaignId }: { campaignId: string }) => {
                         <div className="flex gap-2">
                             <Tabs aria-label="Options" variant="light" color="primary" radius="md" size="lg"
                                 selectedKey={currentPage}
-                                onSelectionChange={setcurrentPage as any}>
+                                onSelectionChange={setcurrentPage}>
                                 <Tab key="Terkirim" title={<TabTitle text="Terkirim" count={campaignDetail.Terkirim.length} />} />
                                 <Tab key="Diterima" title={<TabTitle text="Diterima" count={campaignDetail.Diterima.length} />} />
                                 <Tab key="Terbaca" title={<TabTitle text="Terbaca" count={campaignDetail.Terbaca.length} />} />

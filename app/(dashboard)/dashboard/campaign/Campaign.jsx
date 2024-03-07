@@ -8,8 +8,8 @@ import CampaignTable from './CampaignTable'
 const Campaign = () => {
     const { data: session } = useSession()
     const [totalCampaign, settotalCampaign] = useState(0)
-    const [listDevice, setlistDevice] = useState<DeviceSession[]>([])
-    const [currentDevice, setcurrentDevice] = useState<DeviceSession>()
+    const [listDevice, setlistDevice] = useState([])
+    const [currentDevice, setcurrentDevice] = useState()
 
 
     useEffect(() => {

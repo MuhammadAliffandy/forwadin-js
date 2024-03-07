@@ -26,17 +26,17 @@ const CreateCampaign = () => {
     const { data: session } = useSession()
     const { templateList, loading } = useTemplate(session?.user)
     const [isLoading, setisLoading] = useState(false)
-    const [listDevice, setlistDevice] = useState<DeviceSession[]>([])
+    const [listDevice, setlistDevice] = useState([])
     const [isDisabled, setisDisabled] = useState(true)
-    const { handleSubmit, register, reset, formState: { errors } } = useForm<CampaignForm>()
-    const [receiverList, setreceiverList] = useState<string[]>([])
-    const [requestList, setrequestList] = useState<Label[]>([])
-    const [registrationMessage, setregistrationMessage] = useState<string>('')
-    const [files, setfiles] = useState<File[]>([])
+    const { handleSubmit, register, reset, formState: { errors } } = useForm()
+    const [receiverList, setreceiverList] = useState([])
+    const [requestList, setrequestList] = useState([])
+    const [registrationMessage, setregistrationMessage] = useState('')
+    const [files, setfiles] = useState([])
     const [successMessage, setsuccessMessage] = useState('')
     const [failedMessage, setfailedMessage] = useState('')
     const [unregisteredMessage, setunregisteredMessage] = useState('')
-    const [currentMessage, setcurrentMessage] = useState<MessageTypes>('registrationMessage')
+    const [currentMessage, setcurrentMessage] = useState('registrationMessage')
 
     const componentTransition = useTransition(currentMessage, {
         from: {
@@ -49,7 +49,7 @@ const CreateCampaign = () => {
         },
     })
 
-    const handleTemplateClick = (id: string, text: MessageTypes) => {
+    const handleTemplateClick = (id, text) => {
         const findContent = templateList.find(item => item.id === id)?.message
         if (findContent) {
             if (text === 'registrationMessage')
@@ -62,7 +62,7 @@ const CreateCampaign = () => {
                 setunregisteredMessage(findContent)
         }
     }
-    const handleInsertVariable = (text: string, types: MessageTypes) => {
+    const handleInsertVariable = (text, types) => {
 
         if (types === 'registrationMessage')
             setregistrationMessage(prev => prev + '{{$' + text + '}}')
@@ -74,7 +74,7 @@ const CreateCampaign = () => {
             setunregisteredMessage(prev => prev + '{{$' + text + '}}')
 
     }
-    const onSubmit = async (campaignFormData: CampaignForm) => {
+    const onSubmit = async (campaignFormData) => {
         setisLoading(true)
         let mark = true
         console.log(campaignFormData)
@@ -225,7 +225,7 @@ const CreateCampaign = () => {
                     <div className='bg-white w-full p-4'>
                         <Tabs aria-label="Options" variant="light" color="primary" radius="md" size="lg"
                             selectedKey={currentMessage}
-                            onSelectionChange={setcurrentMessage as any}>
+                            onSelectionChange={setcurrentMessage}>
 
                             <Tab key="registrationMessage" title="Subscribe" />
                             <Tab key="successMessage" title="Success" />

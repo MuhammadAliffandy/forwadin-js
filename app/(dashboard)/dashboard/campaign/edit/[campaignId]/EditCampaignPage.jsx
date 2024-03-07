@@ -8,10 +8,10 @@ import { toast } from 'react-toastify'
 import EditCampaign from './EditCampaign'
 import { BreadcrumbItem, Breadcrumbs } from "@nextui-org/breadcrumbs"
 
-const EditCampaignPage = ({ campaignId }: { campaignId: string }) => {
+const EditCampaignPage = ({ campaignId }) => {
     const router = useRouter()
     const { data: session } = useSession()
-    const [campaignData, setcampaignData] = useState<CampaignData>()
+    const [campaignData, setcampaignData] = useState()
     const fetchCampaignData = async () => {
         const result = await fetchClient({
             url: '/campaigns/' + campaignId,

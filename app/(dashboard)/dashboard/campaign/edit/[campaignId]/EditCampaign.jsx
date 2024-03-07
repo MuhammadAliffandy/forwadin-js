@@ -22,23 +22,23 @@ import { useForm } from "react-hook-form"
 import { toast } from "react-toastify"
 
 
-const CreateCampaign = ({ campaignData }: { campaignData: CampaignData }) => {
+const CreateCampaign = ({ campaignData }) => {
     const { push } = useRouter()
     const { data: session } = useSession()
     const { loading, templateList } = useTemplate(session?.user)
     const [isLoading, setisLoading] = useState(false)
-    const [listDevice, setlistDevice] = useState<DeviceSession[]>([])
+    const [listDevice, setlistDevice] = useState([])
     const [isDisabled, setisDisabled] = useState(true)
-    const { handleSubmit, register, setValue, formState: { errors } } = useForm<CampaignForm>()
-    const [receiverList, setreceiverList] = useState<string[]>([])
-    const [requestList, setrequestList] = useState<Label[]>([])
-    const [registrationMessage, setregistrationMessage] = useState<string>('')
-    const [files, setfiles] = useState<File[]>([])
+    const { handleSubmit, register, setValue, formState: { errors } } = useForm()
+    const [receiverList, setreceiverList] = useState([])
+    const [requestList, setrequestList] = useState([])
+    const [registrationMessage, setregistrationMessage] = useState('')
+    const [files, setfiles] = useState([])
     const [successMessage, setsuccessMessage] = useState('')
     const [failedMessage, setfailedMessage] = useState('')
     const [unregisteredMessage, setunregisteredMessage] = useState('')
     const [currentMessage, setcurrentMessage] = useState<MessageTypes>('registrationMessage')
-    const [campaignImage, setcampaignImage] = useState<string | null>(null)
+    const [campaignImage, setcampaignImage] = useState(null)
     const [isLabelLoaded, setisLabelLoaded] = useState(false)
 
     const componentTransition = useTransition(currentMessage, {
@@ -52,7 +52,7 @@ const CreateCampaign = ({ campaignData }: { campaignData: CampaignData }) => {
         },
     })
 
-    const handleTemplateClick = (id: string, text: MessageTypes) => {
+    const handleTemplateClick = (id, text) => {
         const findContent = templateList.find(item => item.id === id)?.message
         if (findContent) {
             if (text === 'registrationMessage')
@@ -65,7 +65,7 @@ const CreateCampaign = ({ campaignData }: { campaignData: CampaignData }) => {
                 setunregisteredMessage(findContent)
         }
     }
-    const handleInsertVariable = (text: string, types: MessageTypes) => {
+    const handleInsertVariable = (text, types) => {
 
         if (types === 'registrationMessage')
             setregistrationMessage(prev => prev + '{{$' + text + '}}')
@@ -77,7 +77,7 @@ const CreateCampaign = ({ campaignData }: { campaignData: CampaignData }) => {
             setunregisteredMessage(prev => prev + '{{$' + text + '}}')
 
     }
-    const onSubmit = async (campaignFormData: CampaignForm) => {
+    const onSubmit = async (campaignFormData) => {
         setisLoading(true)
         let mark = true
         console.log(campaignFormData)
@@ -253,7 +253,7 @@ const CreateCampaign = ({ campaignData }: { campaignData: CampaignData }) => {
                 <div className='bg-white w-full p-4'>
                     <Tabs aria-label="Options" variant="light" color="primary" radius="md" size="lg"
                         selectedKey={currentMessage}
-                        onSelectionChange={setcurrentMessage as any}>
+                        onSelectionChange={setcurrentMessage}>
 
                         <Tab key="registrationMessage" title="Subscribe" />
                         <Tab key="successMessage" title="Success" />

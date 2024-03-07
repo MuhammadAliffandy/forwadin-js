@@ -6,18 +6,13 @@ import { formatDate, getNumberFromString } from "@/utils/helper"
 import { ContactBroadcast, ContactData, MessageTableStatus } from "@/utils/types"
 import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Button, Popover, PopoverContent, PopoverTrigger } from "@nextui-org/react"
 import { Dispatch, SetStateAction, useState } from "react"
-interface DetailCampaignTableProps {
-    selectedKeys: Set<string>,
-    setSelectedKeys: Dispatch<SetStateAction<Set<string>>>,
-    type: MessageTableStatus,
-    data: ContactBroadcast[]
-}
-const DetailCampaignTable = ({ selectedKeys, setSelectedKeys, data, type }: DetailCampaignTableProps) => {
+
+const DetailCampaignTable = ({ selectedKeys, setSelectedKeys, data, type }) => {
     const currentDate = new Date()
     const [messagePhone, setmessagePhone] = useState<string>('')
 
     const [addContactModal, setaddContactModal] = useState(false)
-    const handleAddContactClick = (phone: string) => {
+    const handleAddContactClick = (phone) => {
         setmessagePhone(getNumberFromString(phone))
         setaddContactModal(true)
     }
@@ -46,8 +41,8 @@ const DetailCampaignTable = ({ selectedKeys, setSelectedKeys, data, type }: Deta
                     wrapper: 'rounded-md'
                 }}
                 radius='md'
-                selectedKeys={selectedKeys as any}
-                onSelectionChange={setSelectedKeys as any}
+                selectedKeys={selectedKeys }
+                onSelectionChange={setSelectedKeys}
             >
                 <TableHeader>
                     <TableColumn>Nama Penerima</TableColumn>
@@ -65,7 +60,7 @@ const DetailCampaignTable = ({ selectedKeys, setSelectedKeys, data, type }: Deta
                     </div>
 
                 } items={data}>
-                    {(item: ContactBroadcast) => (
+                    {(item) => (
                         <TableRow key={item.id}>
                             <TableCell className='flex gap-2 items-center'>
                                 <p>{item.contact.firstName} {item.contact.lastName}</p>
@@ -95,7 +90,7 @@ const DetailCampaignTable = ({ selectedKeys, setSelectedKeys, data, type }: Deta
                                             <div className='flex gap-2 items-center'>
                                                 <ProfileAvatar profile={item.contact} />
                                                 <div className='text-xs'>
-                                                    {item.contact ? item.contact.firstName + ' ' + item.contact.lastName : getNumberFromString(item.from! + item.to)}
+                                                    {item.contact ? item.contact.firstName + ' ' + item.contact.lastName : getNumberFromString(item.from + item.to)}
                                                 </div>
                                             </div>
                                             <BubbleChat
@@ -113,7 +108,7 @@ const DetailCampaignTable = ({ selectedKeys, setSelectedKeys, data, type }: Deta
                                                     </p>
                                                     <div className='flex justify-end '>
 
-                                                        <Button onClick={() => handleAddContactClick(item.from! + item.to)}
+                                                        <Button onClick={() => handleAddContactClick(item.from + item.to)}
                                                             color='primary'
                                                             radius='md'
                                                         >

@@ -7,20 +7,15 @@ import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
-interface CampaignTableProps {
-    settotalCampaign: Dispatch<SetStateAction<number>>,
-    // currentDevice: DeviceSession,
-    user: User | undefined,
-    totalCampaign: number
-}
-const CampaignTable = ({ settotalCampaign, totalCampaign, user }: CampaignTableProps) => {
+
+const CampaignTable = ({ settotalCampaign, totalCampaign, user }) => {
     // const { data: session } = useSession()
     const [isChecked, setisChecked] = useState(false)
     const [isLoaded, setisLoaded] = useState(false)
-    const [campaignData, setcampaignData] = useState<GetCampaign[]>([])
+    const [campaignData, setcampaignData] = useState([])
     const [searchText, setsearchText] = useState('')
-    const [searchedCampaignData, setsearchedcampaignData] = useState<GetCampaign[]>([])
-    const [selectedCampaign, setselectedCampaign] = useState<Set<string> | 'all'>(new Set([]))
+    const [searchedCampaignData, setsearchedcampaignData] = useState([])
+    const [selectedCampaign, setselectedCampaign] = useState(new Set([]))
     const fetchCampaign = async () => {
         const result = await fetchClient({
             url: '/campaigns',
@@ -28,14 +23,14 @@ const CampaignTable = ({ settotalCampaign, totalCampaign, user }: CampaignTableP
             user: user
         })
         if (result?.ok) {
-            const resultData: GetCampaign[] = await result.json()
+            const resultData = await result.json()
             console.log(resultData)
             setcampaignData(resultData)
             settotalCampaign(resultData.length)
         }
         setisLoaded(true)
     }
-    const handleToggleCampaign = async (id: string, status: boolean) => {
+    const handleToggleCampaign = async (id, status) => {
         const result = await fetchClient({
             url: '/campaigns/' + id + '/status',
             method: 'PATCH',
@@ -53,7 +48,7 @@ const CampaignTable = ({ settotalCampaign, totalCampaign, user }: CampaignTableP
         if (selectedCampaign === 'all') {
             deletedCampaign = campaignData.map(item => item.id)
         }
-        else if ((selectedCampaign as Set<string>).size > 0) {
+        else if ((selectedCampaign).size > 0) {
             deletedCampaign = Array.from(selectedCampaign)
         }
         const isConfirm = window.confirm('Anda yakin ingin menghapus ' + deletedCampaign?.length + ' campaign?')
@@ -82,7 +77,7 @@ const CampaignTable = ({ settotalCampaign, totalCampaign, user }: CampaignTableP
         }
     }, [user?.token])
     useEffect(() => {
-        if ((selectedCampaign as Set<string>).size > 0 || selectedCampaign === 'all')
+        if ((selectedCampaign ).size > 0 || selectedCampaign === 'all')
             setisChecked(true)
         else
             setisChecked(false)
@@ -129,8 +124,8 @@ const CampaignTable = ({ settotalCampaign, totalCampaign, user }: CampaignTableP
                             wrapper: 'rounded-md'
                         }}
                         radius='md'
-                        selectedKeys={selectedCampaign as any}
-                        onSelectionChange={setselectedCampaign as any}
+                        selectedKeys={selectedCampaign }
+                        onSelectionChange={setselectedCampaign}
                     >
                         <TableHeader>
                             <TableColumn
@@ -159,7 +154,7 @@ const CampaignTable = ({ settotalCampaign, totalCampaign, user }: CampaignTableP
                             items={campaignData}
                         // className='font-nunito'
                         >
-                            {(item: GetCampaign) => (
+                            {(item) => (
                                 <TableRow key={item.id}>
                                     <TableCell >{item.name}</TableCell>
                                     <TableCell>
