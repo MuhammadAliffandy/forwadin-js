@@ -2,7 +2,7 @@
 import Link from "next/link"
 import { useState } from "react"
 import DetailGroup from "./DetailGroup"
-const Group = ({ groupId }: { groupId: string }) => {
+const Group = ({ groupId }) => {
     const [countContact, setcountContact] = useState(0)
     const [groupName, setgroupName] = useState('')
     return (

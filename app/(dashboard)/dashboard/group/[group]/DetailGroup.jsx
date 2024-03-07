@@ -12,40 +12,35 @@ import { toast } from 'react-toastify';
 import { Button, Skeleton, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@nextui-org/react';
 import ContactIcon from '@/components/dashboard/ContactIcon';
 import { formatDate } from '@/utils/helper';
-interface DetailGroupProps {
-    groupId: string,
-    groupName: string,
-    setcountContact: Dispatch<SetStateAction<number>>,
-    setgroupName: Dispatch<SetStateAction<string>>
-}
-const DetailGroup = ({ groupId, groupName, setcountContact, setgroupName }: DetailGroupProps) => {
+
+const DetailGroup = ({ groupId, groupName, setcountContact, setgroupName }) => {
     const { data: session } = useSession()
     const { push } = useRouter()
     const [isLoaded, setisLoaded] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
     const mainCheckboxRef = useRef<HTMLInputElement>(null)
     const [currentGroupName, setcurrentGroupName] = useState(groupName)
-    const groupCheckboxRef = useRef<MultipleCheckboxRef>({})
+    const groupCheckboxRef = useRef({})
     const [isChecked, setisChecked] = useState(false)
-    const [groupData, setgroupData] = useState<GroupData>()
-    const [contactData, setcontactData] = useState<ContactData[]>([])
+    const [groupData, setgroupData] = useState()
+    const [contactData, setcontactData] = useState([])
     const [searchText, setsearchText] = useState('')
-    const [searchedContact, setsearchedContact] = useState<ContactData[]>([])
+    const [searchedContact, setsearchedContact] = useState([])
     const [addContactModal, setaddContactModal] = useState(false)
     const [deleteGroupModal, setDeleteGroupModal] = useState(false)
     const [deleteContactModal, setdeleteContactModal] = useState(false)
-    const [selectedMember, setselectedMember] = useState<Set<string> | 'all'>(new Set())
-    const handleCheckBoxClick = (e: React.FormEvent<HTMLInputElement>, id: string) => {
+    const [selectedMember, setselectedMember] = useState(new Set())
+    const handleCheckBoxClick = (e) => {
         const newcontactData = contactData.map(obj => {
             return (obj.id === id ? { ...obj, checked: e.currentTarget.checked } : obj)
         })
         setcontactData(() => newcontactData)
     }
 
-    const handleOpenDetailModal = (params: string) => {
+    const handleOpenDetailModal = (params) => {
         push('/dashboard/contact/' + params)
     }
-    const filterContact = (text: string) => {
+    const filterContact = (text) => {
         const regex = new RegExp(text, 'i')
         return contactData.filter(item => {
             if (regex.test(item.firstName) || regex.test(item.lastName) || regex.test(item.phone) || regex.test(item.email))
@@ -55,7 +50,7 @@ const DetailGroup = ({ groupId, groupName, setcountContact, setgroupName }: Deta
                 return item
         })
     }
-    const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleSearch = (e) => {
         setsearchText(e.target.value)
     }
     const handleDeleteMember = async () => {
@@ -64,7 +59,7 @@ const DetailGroup = ({ groupId, groupName, setcountContact, setgroupName }: Deta
         if (selectedMember === 'all') {
             deletedContact = contactData.map(item => item.id)
         }
-        else if ((selectedMember as Set<string>).size > 0) {
+        else if ((selectedMember ).size > 0) {
             deletedContact = Array.from(selectedMember)
         }
         if (deletedContact) {
@@ -115,14 +110,14 @@ const DetailGroup = ({ groupId, groupName, setcountContact, setgroupName }: Deta
             user: session?.user
         })
         if (result) {
-            const resultData: GroupData = await result.json()
+            const resultData = await result.json()
             if (result.ok) {
                 setgroupData(resultData)
-                setcontactData(resultData.contactGroups!.map(item => item.contact))
+                setcontactData(resultData.contactGroups.map(item => item.contact))
                 console.log(resultData.contactGroups)
                 setgroupName(resultData.name)
                 setcurrentGroupName(resultData.name)
-                setcountContact(resultData.contactGroups?.length!)
+                setcountContact(resultData.contactGroups?.length)
                 setisLoaded(true)
             } else {
                 toast.error('Gagal fetch data')
@@ -140,7 +135,7 @@ const DetailGroup = ({ groupId, groupName, setcountContact, setgroupName }: Deta
             fetchGroupData()
     }, [session?.user?.token])
     useEffect(() => {
-        if ((selectedMember as Set<string>).size > 0 || selectedMember === 'all') {
+        if ((selectedMember).size > 0 || selectedMember === 'all') {
             setisChecked(true)
         } else {
             setisChecked(false)
@@ -215,8 +210,8 @@ const DetailGroup = ({ groupId, groupName, setcountContact, setgroupName }: Deta
                             wrapper: 'rounded-md'
                         }}
                         radius='md'
-                        selectedKeys={selectedMember as any}
-                        onSelectionChange={setselectedMember as any}
+                        selectedKeys={selectedMember }
+                        onSelectionChange={setselectedMember }
                     >
                         <TableHeader>
                             <TableColumn>Nama</TableColumn>
@@ -240,7 +235,7 @@ const DetailGroup = ({ groupId, groupName, setcountContact, setgroupName }: Deta
                             </div>
 
                         } items={searchText ? searchedContact : contactData}>
-                            {(item: ContactData) => (
+                            {(item) => (
                                 <TableRow key={item.id}>
                                     <TableCell className='flex gap-2 items-center'>
                                         <ContactIcon phone={item.phone} contact={item} />

@@ -10,26 +10,26 @@ import { toast } from 'react-toastify';
 import { useSession } from 'next-auth/react';
 import { formatDate } from '@/utils/helper';
 
-const GroupTable = ({ setcountGroup }: { setcountGroup: Dispatch<SetStateAction<number>> }) => {
+const GroupTable = ({ setcountGroup }) => {
     const { data: session } = useSession()
     const { push } = useRouter()
     const [isLoaded, setisLoaded] = useState(false)
 
     const [isChecked, setisChecked] = useState(false)
-    const [groupData, setgroupData] = useState<GroupData[]>([
+    const [groupData, setgroupData] = useState([
     ])
     const [searchText, setsearchText] = useState('')
-    const [searchedGroup, setsearchedGroup] = useState<GroupData[]>([])
+    const [searchedGroup, setsearchedGroup] = useState([])
     const [addGroupModal, setaddGroupModal] = useState(false)
-    const [selectedGroup, setselectedGroup] = useState<Set<string> | 'all'>(new Set())
-    const handleOpenDetailModal = (params: string) => {
+    const [selectedGroup, setselectedGroup] = useState(new Set())
+    const handleOpenDetailModal = (params) => {
         push('/dashboard/group/' + params)
     }
-    const filterDevice = (text: string) => {
+    const filterDevice = (text) => {
         const regex = new RegExp(text, 'i')
         return groupData.filter(item => regex.test(item.name))
     }
-    const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleSearch = (e) => {
         setsearchText(e.target.value)
     }
     const handleDeleteGroup = async () => {
@@ -38,7 +38,7 @@ const GroupTable = ({ setcountGroup }: { setcountGroup: Dispatch<SetStateAction<
         if (selectedGroup === 'all') {
             deletedGroup = groupData.map(item => item.id)
         }
-        else if ((selectedGroup as Set<string>).size > 0) {
+        else if ((selectedGroup).size > 0) {
             deletedGroup = Array.from(selectedGroup)
         }
         const isConfirm = window.confirm('Anda yakin ingin menghapus ' + deletedGroup?.length + ' grup?')
@@ -66,7 +66,7 @@ const GroupTable = ({ setcountGroup }: { setcountGroup: Dispatch<SetStateAction<
             user: session?.user
         })
         if (result?.ok) {
-            const resultData: GroupData[] = await result.json()
+            const resultData = await result.json()
 
             setgroupData(resultData)
             setcountGroup(resultData.length)
@@ -82,7 +82,7 @@ const GroupTable = ({ setcountGroup }: { setcountGroup: Dispatch<SetStateAction<
         setsearchedGroup(searchResult)
     }, [searchText])
     useEffect(() => {
-        if ((selectedGroup as Set<string>).size > 0 || selectedGroup === 'all')
+        if ((selectedGroup).size > 0 || selectedGroup === 'all')
             setisChecked(true)
         else
             setisChecked(false)
@@ -128,8 +128,8 @@ const GroupTable = ({ setcountGroup }: { setcountGroup: Dispatch<SetStateAction<
                             wrapper: 'rounded-md'
                         }}
                         radius='md'
-                        selectedKeys={selectedGroup as any}
-                        onSelectionChange={setselectedGroup as any}
+                        selectedKeys={selectedGroup}
+                        onSelectionChange={setselectedGroup}
                     >
                         <TableHeader>
                             <TableColumn>Nama</TableColumn>
@@ -153,7 +153,7 @@ const GroupTable = ({ setcountGroup }: { setcountGroup: Dispatch<SetStateAction<
                                 </div>
                             </div>
                         } items={searchText ? searchedGroup : groupData}>
-                            {(item: GroupData) => (
+                            {(item) => (
                                 <TableRow key={item.id}>
                                     <TableCell >{item.name}</TableCell>
                                     <TableCell >{item.type}</TableCell>
