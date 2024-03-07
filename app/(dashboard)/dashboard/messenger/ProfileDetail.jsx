@@ -3,10 +3,7 @@ import { MessengerList } from "@/utils/types"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 
-const ProfileDetail = ({ currentMessenger }: {
-    currentMessenger: MessengerList | undefined,
-
-}) => {
+const ProfileDetail = ({ currentMessenger }) => {
     const { push } = useRouter()
     if (!currentMessenger)
         return (
@@ -58,7 +55,7 @@ const ProfileDetail = ({ currentMessenger }: {
                         </tr>
                         <tr>
                             <th className='font-medium whitespace-pre'>Birthdate</th>
-                            <td>{formatDate(currentMessenger.contact.dob!) || '-'}</td>
+                            <td>{formatDate(currentMessenger.contact.dob) || '-'}</td>
                         </tr>
                         <tr>
                             <th className='font-medium whitespace-pre'>Labels</th>

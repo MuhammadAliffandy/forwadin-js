@@ -1,7 +1,6 @@
-import type { Metadata } from 'next'
 import Messenger from './Messenger'
 
-export const metadata: Metadata = {
+export const metadata = {
     title: 'Messenger',
 }
 

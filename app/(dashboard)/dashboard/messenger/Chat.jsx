@@ -7,16 +7,8 @@ import { MessengerList, ConversationMessage, MessageMetadata } from "@/utils/typ
 import { Dispatch, SetStateAction, useEffect, useState } from "react"
 import InfiniteScroll from "react-infinite-scroll-component"
 
-interface ChatProps {
-    currentMessenger: MessengerList | undefined,
-    currentDate: Date,
-    sessionId: string | undefined,
-    listMessage: ConversationMessage[],
-    setlistMessage: Dispatch<SetStateAction<ConversationMessage[]>>,
-    metadata: MessageMetadata,
-    fetchChatMessage: (page: number) => void
-}
-const Chat = ({ currentMessenger, currentDate, sessionId, listMessage, setlistMessage, metadata, fetchChatMessage }: ChatProps) => {
+
+const Chat = ({ currentMessenger, currentDate, sessionId, listMessage, setlistMessage, metadata, fetchChatMessage }) => {
     useEffect(() => {
         console.log(listMessage)
     }, [listMessage])
@@ -54,7 +46,7 @@ const Chat = ({ currentMessenger, currentDate, sessionId, listMessage, setlistMe
     )
 }
 
-const ChatDetails = ({ message }: { message: ConversationMessage }) => {
+const ChatDetails = ({ message }) => {
     if (message.to)
         return (
             <>
