@@ -16,22 +16,22 @@ const CustomerServiceTable = () => {
     const { data: session } = useSession()
     const [isLoaded, setisLoaded] = useState(false)
     const [isChecked, setisChecked] = useState(false)
-    const [CSData, setCSData] = useState<CustomerService[]>([])
-    const [searchedCSData, setsearchedCSData] = useState<CustomerService[]>([])
+    const [CSData, setCSData] = useState([])
+    const [searchedCSData, setsearchedCSData] = useState([])
     const [searchText, setsearchText] = useState('')
     const [createCSModal, setcreateCSModal] = useState(false)
     const [deleteCSModal, setdeleteCSModal] = useState(false)
     const [updateCSModal, setupdateCSModal] = useState(false)
-    const [updateCSData, setupdateCSData] = useState<CustomerService>()
-    const [selectedCS, setselectedCS] = useState<Set<string> | 'all'>(new Set([]))
-    const filterCS = (text: string) => {
+    const [updateCSData, setupdateCSData] = useState()
+    const [selectedCS, setselectedCS] = useState(new Set([]))
+    const filterCS = (text) => {
         const regex = new RegExp(text, 'i')
         return CSData.filter(item => {
             if (regex.test(item.username))
                 return item
         })
     }
-    const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleSearch = (e) => {
         setsearchText(e.target.value)
     }
     const deleteCS = async () => {
@@ -66,12 +66,12 @@ const CustomerServiceTable = () => {
         }
         setisLoaded(true)
     }
-    const handleUpdateCS = (data: CustomerService) => {
+    const handleUpdateCS = (data) => {
         setupdateCSData(data)
         setupdateCSModal(true)
     }
     useEffect(() => {
-        if ((selectedCS as Set<string>).size > 0 || selectedCS === 'all')
+        if ((selectedCS).size > 0 || selectedCS === 'all')
             setisChecked(true)
         else
             setisChecked(false)
@@ -89,7 +89,7 @@ const CustomerServiceTable = () => {
         <>
             <CreateCSModal openModal={createCSModal} setopenModal={setcreateCSModal} refresh={fetchCSData} user={session?.user} />
             <UpdateCSModal openModal={updateCSModal} setopenModal={setupdateCSModal} refresh={fetchCSData} user={session?.user} csData={updateCSData} />
-            <DeleteModal count={(selectedCS === 'all' ? 'semua' : (selectedCS as Set<string>).size) as string} deleteFunction={deleteCS} openModal={deleteCSModal} setopenModal={setdeleteCSModal} type="Customer Service" />
+            <DeleteModal count={(selectedCS === 'all' ? 'semua' : (selectedCS).size)} deleteFunction={deleteCS} openModal={deleteCSModal} setopenModal={setdeleteCSModal} type="Customer Service" />
             <div className="flex gap-2 lg:justify-start justify-center items-center mt-2 lg:mt-0 w-full">
                 <p className='font-lexend text-2xl font-bold'>Customer Service</p>
                 <div>
@@ -133,8 +133,8 @@ const CustomerServiceTable = () => {
                             wrapper: 'rounded-md'
                         }}
                         radius='md'
-                        selectedKeys={selectedCS as any}
-                        onSelectionChange={setselectedCS as any}
+                        selectedKeys={selectedCS}
+                        onSelectionChange={setselectedCS}
                     >
                         <TableHeader>
                             <TableColumn>Username</TableColumn>
@@ -156,7 +156,7 @@ const CustomerServiceTable = () => {
                                 </div>
 
                             </div>} items={searchText ? searchedCSData : CSData}>
-                            {(item: CustomerService) => (
+                            {(item) => (
                                 <TableRow key={item.id}>
                                     <TableCell >{item.username}</TableCell>
                                     <TableCell >{item.email}</TableCell>

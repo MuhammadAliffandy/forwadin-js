@@ -1,7 +1,6 @@
-import type { Metadata } from 'next'
 import CustomerServiceTable from './CustomerServiceTable'
 
-export const metadata: Metadata = {
+export const metadata= {
     title: 'Customer Service',
 }
 
