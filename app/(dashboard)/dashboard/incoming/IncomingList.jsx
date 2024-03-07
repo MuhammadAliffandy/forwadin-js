@@ -4,14 +4,9 @@ import { IncomingMessage, MultipleCheckboxRef } from "@/utils/types"
 import { Button, Popover, PopoverContent, PopoverTrigger } from "@nextui-org/react"
 import Link from "next/link"
 
-interface IncomingListProps {
-    incomingData: IncomingMessage[],
-    handleCheckBoxClick: (event: React.FormEvent<HTMLInputElement>, id: string) => void,
-    multipleCheckboxRef: React.MutableRefObject<MultipleCheckboxRef>,
-    handleOpenDetailModal: (params: string) => void
-}
-const IncomingList = ({ incomingData, handleCheckBoxClick, multipleCheckboxRef, handleOpenDetailModal }: IncomingListProps) => {
-    const handleRefChange = (element: HTMLInputElement | null, item: IncomingMessage) => {
+
+const IncomingList = ({ incomingData, handleCheckBoxClick, multipleCheckboxRef, handleOpenDetailModal }) => {
+    const handleRefChange = (element, item) => {
         if (multipleCheckboxRef.current && element)
             multipleCheckboxRef.current[`checkbox_${item.id}`] = element
     }
@@ -51,7 +46,7 @@ const IncomingList = ({ incomingData, handleCheckBoxClick, multipleCheckboxRef, 
     )
 }
 
-const PrintType = ({ type, chatId }: { type: string, chatId: string }) => {
+const PrintType = ({ type, chatId }) => {
     if (type === 'campaign') {
         return (
             <Link href={{

@@ -15,32 +15,27 @@ import BubbleChat from '@/components/dashboard/chat/BubbleChat';
 import MessageAddContact from '@/components/dashboard/contact/MessageAddContact';
 import { useSearchParams } from 'next/navigation';
 
-interface IncomingMessageProps {
-    settotalMessage: Dispatch<SetStateAction<number>>,
-    sessionId: string,
-    user: User | undefined,
-    totalMessage: number
-}
-const IncomingTable = ({ settotalMessage, totalMessage, sessionId, user }: IncomingMessageProps) => {
+
+const IncomingTable = ({ settotalMessage, totalMessage, sessionId, user }) => {
     const router = useRouter()
     const pathname = usePathname()
-    const searchParams = useSearchParams()!
+    const searchParams = useSearchParams()
     const [isLoaded, setisLoaded] = useState(false)
     const [isChecked, setisChecked] = useState(false)
-    const [messageData, setmessageData] = useState<IncomingMessage[]>([])
+    const [messageData, setmessageData] = useState([])
     const [query, setquery] = useState('')
     const [phoneSearch, setphoneSearch] = useState('')
     const [contactSearch, setcontactSearch] = useState('')
-    const [searchedMessage, setsearchedMessage] = useState<IncomingMessage[]>([])
+    const [searchedMessage, setsearchedMessage] = useState([])
     const [currentPage, setcurrentPage] = useState(1)
     const [totalPage, settotalPage] = useState(1)
     const [hasMore, sethasMore] = useState(false)
     const [selectedMessage, setselectedMessage] = useState(new Set())
 
-    const [messagePhone, setmessagePhone] = useState<string>('')
+    const [messagePhone, setmessagePhone] = useState('')
     const [addContactModal, setaddContactModal] = useState(false)
     const currentDate = new Date()
-    const filterMessage = (text: string) => {
+    const filterMessage = (text) => {
         const regex = new RegExp(text, 'i')
         return messageData.filter(item => {
             if (regex.test(item.from))
@@ -61,7 +56,7 @@ const IncomingTable = ({ settotalMessage, totalMessage, sessionId, user }: Incom
             user: user
         })
         if (result) {
-            const resultData: GetMessage<IncomingMessage> = await result.json()
+            const resultData = await result.json()
             if (result.ok) {
                 setmessageData(resultData.data)
                 settotalMessage(resultData.metadata.totalMessages)
@@ -75,7 +70,7 @@ const IncomingTable = ({ settotalMessage, totalMessage, sessionId, user }: Incom
         }
         setisLoaded(true)
     }
-    const handleAddContactClick = (item: IncomingMessage) => {
+    const handleAddContactClick = (item) => {
         setmessagePhone(getNumberFromString(item.from))
         setaddContactModal(true)
     }
@@ -94,8 +89,8 @@ const IncomingTable = ({ settotalMessage, totalMessage, sessionId, user }: Incom
         settotalPage(1)
         fetchIncomingMessage(query)
     }
-    const handlePhoneSearch = (e: string) => {
-        if (isNaN(e as any)) return
+    const handlePhoneSearch = (e) => {
+        if (isNaN(e)) return
         setphoneSearch(e)
     }
     useEffect(() => {
@@ -165,8 +160,8 @@ const IncomingTable = ({ settotalMessage, totalMessage, sessionId, user }: Incom
                             wrapper: 'rounded-md'
                         }}
                         radius='md'
-                        selectedKeys={selectedMessage as any}
-                        onSelectionChange={setselectedMessage as any}
+                        selectedKeys={selectedMessage }
+                        onSelectionChange={setselectedMessage }
                     >
                         <TableHeader>
                             <TableColumn
@@ -184,7 +179,7 @@ const IncomingTable = ({ settotalMessage, totalMessage, sessionId, user }: Incom
                                 <p className='text-xs text-[#777C88]'>Pesan yang dikirimkan kepada anda akan masuk di sini</p>
                             </div>
                         </div>} items={messageData}>
-                            {(item: IncomingMessage) => (
+                            {(item) => (
                                 <TableRow key={item.id}>
                                     <TableCell >+{getNumberFromString(item.from)}</TableCell>
                                     <TableCell> <div className="flex items-center gap-2">

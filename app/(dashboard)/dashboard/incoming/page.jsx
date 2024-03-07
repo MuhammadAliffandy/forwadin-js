@@ -1,7 +1,6 @@
-import type { Metadata } from 'next'
 import Incoming from './Incoming'
 
-export const metadata: Metadata = {
+export const metadata = {
     title: 'Incoming Message',
 }
 

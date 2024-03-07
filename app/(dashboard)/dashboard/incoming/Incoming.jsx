@@ -11,8 +11,8 @@ const Incoming = () => {
     const { data: session } = useSession()
     const searchParams = useSearchParams()
     const [totalMessage, settotalMessage] = useState(0)
-    const [listDevice, setlistDevice] = useState<DeviceSession[]>([])
-    const [currentDevice, setcurrentDevice] = useState<DeviceSession>()
+    const [listDevice, setlistDevice] = useState([])
+    const [currentDevice, setcurrentDevice] = useState()
     useEffect(() => {
         if (session?.user?.device)
             setlistDevice(session.user.device)
@@ -40,7 +40,7 @@ const Incoming = () => {
                 <DropdownDevice currentDevice={currentDevice} setcurrentDevice={setcurrentDevice} listDevice={session?.user?.device} />
 
             </div>
-            <IncomingTable settotalMessage={settotalMessage} totalMessage={totalMessage} sessionId={currentDevice?.sessionId!} user={session?.user} />
+            <IncomingTable settotalMessage={settotalMessage} totalMessage={totalMessage} sessionId={currentDevice?.sessionId} user={session?.user} />
         </>
     )
 }
