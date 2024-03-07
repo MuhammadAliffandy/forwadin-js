@@ -4,16 +4,12 @@ import { MultipleInputRef } from '@/utils/types'
 import React, { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react'
 import { BarLoader } from 'react-spinners'
 import { toast } from 'react-toastify'
-interface EmailVerifyModalProps {
-    openModal: boolean,
-    setopenModal: Dispatch<SetStateAction<boolean>>,
-    refresh: () => void
-}
-const EmailVerifyModal = ({ openModal, setopenModal, refresh }: EmailVerifyModalProps) => {
+
+const EmailVerifyModal = ({ openModal, setopenModal, refresh }) => {
     const [isLoading, setisLoading] = useState(false)
     const [otpLoading, setotpLoading] = useState(false)
     const multipleInputRef = useRef<MultipleInputRef>({})
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleInputChange = (e) => {
         const { name, value } = e.target;
         const [fieldName, index] = name.split('_')
         let current = parseInt(index, 10)
@@ -23,12 +19,12 @@ const EmailVerifyModal = ({ openModal, setopenModal, refresh }: EmailVerifyModal
                 multipleInputRef.current[`otp_${current + 1}`].focus()
             }
     }
-    const handleRefChange = (element: HTMLInputElement | null, id: number) => {
+    const handleRefChange = (element, id) => {
         if (multipleInputRef.current && element) {
             multipleInputRef.current[`otp_${id}`] = element
         }
     }
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handleSubmit = async (e) => {
         setisLoading(true)
         e.preventDefault()
         const otp = multipleInputRef.current['otp_1'].value.toString() +
@@ -75,7 +71,7 @@ const EmailVerifyModal = ({ openModal, setopenModal, refresh }: EmailVerifyModal
         }
         setotpLoading(false)
     }
-    const handlePaste = (e: React.ClipboardEvent) => {
+    const handlePaste = (e) => {
         const pasteText = e.clipboardData.getData('text')
         multipleInputRef.current['otp_1'].value = pasteText[0]
         multipleInputRef.current['otp_2'].value = pasteText[1]

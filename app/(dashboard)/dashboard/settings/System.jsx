@@ -10,16 +10,13 @@ import { Message } from "postcss"
 import { useEffect, useState } from "react"
 import { toast } from "react-toastify"
 
-interface SystemPageProps {
-    user: User | undefined,
-}
-const System = ({ user }: SystemPageProps) => {
-    const [deviceLabel, setdeviceLabel] = useState<string[]>([])
-    const [contactLabel, setcontactLabel] = useState<string[]>([])
+const System = ({ user }) => {
+    const [deviceLabel, setdeviceLabel] = useState([])
+    const [contactLabel, setcontactLabel] = useState([])
     const [templateModal, settemplateModal] = useState(false)
-    const [templateList, settemplateList] = useState<MessageTemplate[]>([])
+    const [templateList, settemplateList] = useState([])
     const [deleteTemplateModal, setdeleteTemplateModal] = useState(false)
-    const [selectedTemplate, setselectedTemplate] = useState<Set<string> | 'all'>(new Set([]))
+    const [selectedTemplate, setselectedTemplate] = useState(new Set([]))
     const [isChecked, setisChecked] = useState(false)
     const fetchDeviceLabel = async () => {
         const result = await fetchClient({
@@ -83,7 +80,7 @@ const System = ({ user }: SystemPageProps) => {
         }
     }, [user?.token])
     useEffect(() => {
-        if ((selectedTemplate as Set<string>).size > 0 || selectedTemplate === 'all')
+        if ((selectedTemplate).size > 0 || selectedTemplate === 'all')
             setisChecked(true)
         else
             setisChecked(false)
@@ -91,7 +88,7 @@ const System = ({ user }: SystemPageProps) => {
     return (
         <>
             <CreateTemplateModal refresh={fetchTemplate} openModal={templateModal} setopenModal={settemplateModal} user={user} />
-            <DeleteModal deleteFunction={deleteTemplate} openModal={deleteTemplateModal} setopenModal={setdeleteTemplateModal} count={(selectedTemplate === 'all' ? 'semua' : (selectedTemplate as Set<string>).size) as string} type="Template" />
+            <DeleteModal deleteFunction={deleteTemplate} openModal={deleteTemplateModal} setopenModal={setdeleteTemplateModal} count={(selectedTemplate === 'all' ? 'semua' : (selectedTemplate).size)} type="Template" />
             <p className="font-lexend text-lg font-bold">Labels</p>
             <div className="flex flex-col gap-4 mt-4">
                 <p className="">Device Labels</p>
@@ -149,15 +146,15 @@ const System = ({ user }: SystemPageProps) => {
                         wrapper: 'rounded-md'
                     }}
                     radius='md'
-                    selectedKeys={selectedTemplate as any}
-                    onSelectionChange={setselectedTemplate as any}
+                    selectedKeys={selectedTemplate }
+                    onSelectionChange={setselectedTemplate }
                 >
                     <TableHeader>
                         <TableColumn>Nama</TableColumn>
                         <TableColumn>Pesan</TableColumn>
                     </TableHeader>
                     <TableBody items={templateList}>
-                        {(item: MessageTemplate) => (
+                        {(item) => (
                             <TableRow key={item.id}>
                                 <TableCell >{item.name}</TableCell>
                                 <TableCell >{item.message}</TableCell>

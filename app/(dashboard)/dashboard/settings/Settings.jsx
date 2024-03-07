@@ -79,7 +79,7 @@ const Settings = () => {
                 <div className="flex gap-2">
                     <Tabs aria-label="Options" variant="light" color="primary" radius="md" size="lg"
                         selectedKey={currentPage}
-                        onSelectionChange={setcurrentPage as any}>
+                        onSelectionChange={setcurrentPage}>
                         <Tab key="profile" title="Profile" />
                         <Tab key="device" title="Device" />
                         <Tab key="account" title="Account" />

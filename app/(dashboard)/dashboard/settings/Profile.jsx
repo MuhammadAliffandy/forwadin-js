@@ -8,10 +8,10 @@ import { useForm } from "react-hook-form"
 import { toast } from "react-toastify"
 import EmailVerifyModal from "./EmailVerifyModal"
 
-const Profile = ({ profileData, user, fetchUser }: { profileData: UserProfile, user: User | undefined, fetchUser: () => void }) => {
+const Profile = ({ profileData, user, fetchUser }) => {
     const [isLoading, setIsLoading] = useState(false)
     const [verifyModal, setverifyModal] = useState(false)
-    const { handleSubmit, register, setValue, watch, setError, formState: { errors } } = useForm<UserProfile>()
+    const { handleSubmit, register, setValue, watch, setError, formState: { errors } } = useForm()
     useEffect(() => {
         if (profileData) {
             setValue('firstName', profileData.firstName)
@@ -20,7 +20,7 @@ const Profile = ({ profileData, user, fetchUser }: { profileData: UserProfile, u
         }
     }, [profileData])
 
-    const onSubmit = async (data: UserProfile) => {
+    const onSubmit = async (data) => {
         setIsLoading(true)
         const result = await fetchClient({
             url: '/users/' + user?.id,

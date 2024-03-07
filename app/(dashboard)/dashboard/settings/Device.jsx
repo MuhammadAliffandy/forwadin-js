@@ -9,21 +9,18 @@ import { Dispatch, SetStateAction, useEffect, useState } from "react"
 import { Controller, useForm } from "react-hook-form"
 import TimezoneSelect from 'react-timezone-select'
 import { toast } from "react-toastify"
-interface DevicePageProps {
-    user: User | undefined,
-}
-type SliderValue = [number, number]
 
-const Device = ({ user }: DevicePageProps) => {
+
+const Device = ({ user }) => {
     const presenceList = [
         'unavailable', 'available', 'composing', 'recording', 'paused'
     ]
-    const [listDevice, setlistDevice] = useState<DeviceData[]>()
+    const [listDevice, setlistDevice] = useState()
     const [isDisabled, setisDisabled] = useState(true)
     const [isLoading, setisLoading] = useState(false)
     const [profileIsLoading, setprofileIsLoading] = useState(false)
-    const [currentDevice, setcurrentDevice] = useState<DeviceData>()
-    const { handleSubmit, register, control, setValue, watch, setError, formState: { errors } } = useForm<SessionProfile>()
+    const [currentDevice, setcurrentDevice] = useState()
+    const { handleSubmit, register, control, setValue, watch, setError, formState: { errors } } = useForm()
     const [profileAddress, setprofileAddress] = useState('lorem')
     const [timezone, settimezone] = useState(
         Intl.DateTimeFormat().resolvedOptions().timeZone
@@ -55,7 +52,7 @@ const Device = ({ user }: DevicePageProps) => {
             user: user,
         })
         if (result?.ok) {
-            const resultData: BusinessHours = await result.json()
+            const resultData = await result.json()
             console.log('businesshours')
             console.log(resultData)
             if (!resultData) {
@@ -132,7 +129,7 @@ const Device = ({ user }: DevicePageProps) => {
             user: user
         })
         if (result?.ok) {
-            const resultData: SessionProfile = await result.json()
+            const resultData = await result.json()
             if (!resultData) return
             console.log(resultData)
             setprofileAddress((resultData.address ? resultData.address : '-'))
@@ -141,7 +138,7 @@ const Device = ({ user }: DevicePageProps) => {
             setValue('profileName', resultData.profileName)
         }
     }
-    const submitSessionProfile = async (data: SessionProfile) => {
+    const submitSessionProfile = async (data) => {
         setprofileIsLoading(true)
         if (!currentDevice) return
         const result = await fetchClient({
@@ -206,7 +203,7 @@ const Device = ({ user }: DevicePageProps) => {
                             </div>
                         </DropdownTrigger>
                         <DropdownMenu items={listDevice} aria-label="device list">
-                            {(item: any) => (
+                            {(item) => (
                                 <DropdownItem
                                     key={item.id}
                                     onClick={() => {
@@ -325,12 +322,9 @@ const Device = ({ user }: DevicePageProps) => {
 
 export default Device
 
-interface BarSliderProps {
-    selectedHours: SliderValue,
-    setselectedHours: Dispatch<SetStateAction<SliderValue>>
-}
-const BarSlider = ({ selectedHours, setselectedHours }: BarSliderProps) => {
-    const formatValue = (text: string) => {
+
+const BarSlider = ({ selectedHours, setselectedHours }) => {
+    const formatValue = (text) => {
         const splittedValue = text.split(',')
         return formatHoursMinutes(parseInt(splittedValue[0])) + ' - ' + formatHoursMinutes(parseInt(splittedValue[1]))
     }
@@ -344,7 +338,7 @@ const BarSlider = ({ selectedHours, setselectedHours }: BarSliderProps) => {
                 minValue={0}
                 maxValue={1440}
                 value={selectedHours}
-                onChange={setselectedHours as any}
+                onChange={setselectedHours}
                 getValue={value => formatValue(value.toString())}
                 color="primary"
             />

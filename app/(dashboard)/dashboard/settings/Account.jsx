@@ -16,16 +16,7 @@ import { useEffect, useRef, useState } from "react"
 import { useForm } from "react-hook-form"
 import { toast } from "react-toastify"
 
-interface AccountPageProps {
-    user: User | undefined,
-    userProfile: UserProfile
-}
-interface ChangePasswordType {
-    currentPassword: string,
-    password: string,
-    confirmPassword: string
-}
-const Account = ({ user, userProfile }: AccountPageProps) => {
+const Account = ({ user, userProfile }) => {
     const router = useRouter()
     const [emailIsLoading, setemailIsLoading] = useState(false)
     const [phoneIsLoading, setphoneIsLoading] = useState(false)
@@ -34,8 +25,8 @@ const Account = ({ user, userProfile }: AccountPageProps) => {
     const [showPasswordCriteria, setshowPasswordCriteria] = useState(false)
     const [countryCodeDropdown, setcountryCodeDropdown] = useState(false)
     const [countryCodeSearchText, setcountryCodeSearchText] = useState('')
-    const [countryCodeData, setcountryCodeData] = useState<CountryCode[]>([])
-    const [countryCodeSearchData, setcountryCodeSearchData] = useState<CountryCode[]>([])
+    const [countryCodeData, setcountryCodeData] = useState([])
+    const [countryCodeSearchData, setcountryCodeSearchData] = useState([])
     const countryCodeInputRef = useRef<HTMLInputElement>(null)
     const [currentCountryCode, setcurrentCountryCode] = useState<CountryCode>({
         name: '',
@@ -62,19 +53,19 @@ const Account = ({ user, userProfile }: AccountPageProps) => {
         handleSubmit: handleSubmitEmail,
         register: registerEmail,
         setValue: setValueEmail,
-        formState: { errors: errorsEmail } } = useForm<{ email: string }>()
+        formState: { errors: errorsEmail } } = useForm()
     const {
         handleSubmit: handleSubmitPhone,
         register: registerPhone,
         setValue: setValuePhone,
-        formState: { errors: errorsPhone } } = useForm<{ phone: string }>()
+        formState: { errors: errorsPhone } } = useForm()
     const {
         handleSubmit: handleSubmitPassword,
         register: registerPassword,
         setValue: setValuePassword,
         watch: watchPassword,
         setError: setErrorPassword,
-        formState: { errors: errorsPassword } } = useForm<ChangePasswordType>()
+        formState: { errors: errorsPassword } } = useForm()
 
     const [passwordValidator, setPasswordValidator] = useState({
         eightLength: false,
@@ -104,7 +95,7 @@ const Account = ({ user, userProfile }: AccountPageProps) => {
             toast.error('Gagal hapus akun')
         }
     }
-    const onSubmitEmail = async (data: { email: string }) => {
+    const onSubmitEmail = async (data) => {
         setemailIsLoading(true)
         if (data.email === userProfile.email) return
         const result = await fetchClient({
@@ -122,7 +113,7 @@ const Account = ({ user, userProfile }: AccountPageProps) => {
         }
         setemailIsLoading(false)
     }
-    const onSubmitPhone = async (data: { phone: string }) => {
+    const onSubmitPhone = async (data) => {
         console.log(currentCountryCode)
         setphoneIsLoading(true)
         const formattedPhone = formatPhoneCode(data.phone, currentCountryCode.dial_code)
@@ -140,7 +131,7 @@ const Account = ({ user, userProfile }: AccountPageProps) => {
         }
         setphoneIsLoading(false)
     }
-    const onSubmitPassword = async (data: ChangePasswordType) => {
+    const onSubmitPassword = async (data) => {
         setisPasswordLoading(true)
         const result = await fetchClient({
             url: '/auth/change-password',
@@ -157,13 +148,13 @@ const Account = ({ user, userProfile }: AccountPageProps) => {
         }
         setisPasswordLoading(false)
     }
-    const handleCountryCodeClick = (countryCode: CountryCode) => {
+    const handleCountryCodeClick = (countryCode) => {
         setcurrentCountryCode(countryCode)
         setcountryCodeDropdown(false)
     }
     useEffect(() => {
         const watch = watchPassword(value => {
-            const password: string = value.password!
+            const password = value.password
             if (strongRegex.eightLength.test(password))
                 setPasswordValidator(prev => ({ ...prev, eightLength: true }))
             else
@@ -195,8 +186,8 @@ const Account = ({ user, userProfile }: AccountPageProps) => {
         }
     }, [userProfile])
     useEffect(() => {
-        setcountryCodeData(getCountryList() as CountryCode[])
-        setcurrentCountryCode(getCountryList('+62') as CountryCode)
+        setcountryCodeData(getCountryList())
+        setcurrentCountryCode(getCountryList('+62'))
         window.scrollTo(0, 0)
     }, [])
     useEffect(() => {
