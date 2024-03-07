@@ -1,14 +1,10 @@
 import Link from 'next/link'
-import { Metadata } from 'next'
 import DetailBroadcast from './DetailBroadcast'
-type Params = {
-    params: { broadcastId: string }
-}
 
-export const metadata: Metadata = {
+export const metadata = {
     title: 'Detail Broadcast',
 }
-const page = ({ params }: Params) => {
+const page = ({ params }) => {
 
     return (
         <>

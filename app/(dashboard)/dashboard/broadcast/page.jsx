@@ -1,7 +1,6 @@
-import type { Metadata } from 'next'
 import Broadcast from './Broadcast'
 
-export const metadata: Metadata = {
+export const metadata = {
     title: 'Broadcast Message',
 }
 

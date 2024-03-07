@@ -14,11 +14,11 @@ import { useRouter } from "next/navigation"
 import { isFileImage } from "@/utils/helper/fileHelper"
 import DisplayFile from "@/components/dashboard/DisplayFile"
 
-const DetailBroadcast = ({ broadcastId }: { broadcastId: string }) => {
-	const { data: session } = useSession()
+const DetailBroadcast = ({ broadcastId }) => {
+	const { data } = useSession()
 	const router = useRouter()
 	const [isbroadcastLoaded, setisbroadcastLoaded] = useState(false)
-	const [broadcastData, setbroadcastData] = useState<GetBroadcast>()
+	const [broadcastData, setbroadcastData] = useState()
 	const [isDetailBroadcastLoaded, setisDetailBroadcastLoaded] = useState(false)
 	const [broadcastDetail, setbroadcastDetail] = useState({
 		Terkirim: [],
@@ -26,7 +26,7 @@ const DetailBroadcast = ({ broadcastId }: { broadcastId: string }) => {
 		Terbaca: [],
 		Balasan: []
 	})
-	const [selectedKeys, setselectedKeys] = useState<Set<string>>(new Set())
+	const [selectedKeys, setselectedKeys] = useState(new Set())
 	const [currentPage, setcurrentPage] = useState<'Terkirim' | 'Diterima' | 'Terbaca' | 'Balasan'>('Terkirim')
 	const fetchBroadcast = async () => {
 		const result = await fetchClient({
@@ -132,7 +132,7 @@ const DetailBroadcast = ({ broadcastId }: { broadcastId: string }) => {
 								</tr>
 								<tr>
 									<th className='font-bold whitespace-pre '>Schedule</th>
-									<td className="break-all">{formatDate(broadcastData?.schedule!)}</td>
+									<td className="break-all">{formatDate(broadcastData?.schedule)}</td>
 								</tr>
 							</tbody>
 						</table>
@@ -184,7 +184,7 @@ const DetailBroadcast = ({ broadcastId }: { broadcastId: string }) => {
 						<div className="flex gap-2">
 							<Tabs aria-label="Options" variant="light" color="primary" radius="md" size="lg"
 								selectedKey={currentPage}
-								onSelectionChange={setcurrentPage as any}>
+								onSelectionChange={setcurrentPage}>
 								<Tab key="Terkirim" title="Terkirim" />
 								<Tab key="Diterima" title="Diterima" />
 								<Tab key="Terbaca" title="Terbaca" />

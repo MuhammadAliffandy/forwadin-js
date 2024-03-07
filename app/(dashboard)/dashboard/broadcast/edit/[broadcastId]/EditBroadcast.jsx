@@ -1,9 +1,8 @@
 'use client'
 import InputContactAndLabel from "@/components/dashboard/InputContactAndLabel"
-import MultipleInputContact from "@/components/dashboard/MultipleInputContact"
-import MultipleInputLabel from "@/components/dashboard/MultipleInputLabel"
 import TemplateContainer from "@/components/dashboard/TemplateContainer"
 import UploadFile from "@/components/dashboard/UploadFile"
+import DisplayImage from "@/components/dashboard/auto-reply/DisplayImage"
 import TextAreaInput from "@/components/dashboard/chat/TextAreaInput"
 import InputForm from "@/components/form/InputForm"
 import SelectDevice from "@/components/form/SelectDevice"
@@ -11,7 +10,7 @@ import useTemplate from "@/components/hooks/useTemplate"
 import { formatDatetoISO8601 } from "@/utils/helper"
 import { fetchClient } from "@/utils/helper/fetchClient"
 import { getMessageVariables, parseTextInput } from "@/utils/helper/messageUtils"
-import { BroadcastForm, ContactData, DeviceSession, Label } from "@/utils/types"
+import { BroadcastData, BroadcastForm, ContactData, DeviceSession, Label } from "@/utils/types"
 import { Button } from "@nextui-org/react"
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
@@ -20,28 +19,30 @@ import { useForm } from "react-hook-form"
 import { toast } from "react-toastify"
 
 
-const CreateBroadcast = () => {
-    const { push } = useRouter()
+const EditBroadcast = ({ broadcastData }) => {
+    const router = useRouter()
     const { data: session } = useSession()
     const { loading, templateList } = useTemplate(session?.user)
     const [isLoading, setisLoading] = useState(false)
-    const [listDevice, setlistDevice] = useState<DeviceSession[]>([])
+    const [listDevice, setlistDevice] = useState([])
     const [isDisabled, setisDisabled] = useState(true)
-    const { handleSubmit, register, reset, formState: { errors } } = useForm<BroadcastForm>()
-    const [receiverList, setreceiverList] = useState<string[]>([])
-    const [files, setfiles] = useState<File[]>([])
-    const [textInput, settextInput] = useState<string>('')
-    const handleTemplateClick = (id: string) => {
+    const { handleSubmit, register, setValue, formState: { errors } } = useForm()
+    const [receiverList, setreceiverList] = useState([])
+    const [files, setfiles] = useState([])
+    const [broadcastImage, setbroadcastImage] = useState(null)
+    const [textInput, settextInput] = useState('')
+    const [isLabelLoaded, setisLabelLoaded] = useState(false)
+    const handleTemplateClick = (id) => {
         const findContent = templateList.find(item => item.id === id)?.message
         if (findContent)
             settextInput(findContent)
 
     }
-    const handleInsertVariable = (text: string) => {
+    const handleInsertVariable = (text) => {
         settextInput(prev => prev + '{{$' + text + '}}')
 
     }
-    const onSubmit = async (broadcastFormData: any) => {
+    const onSubmit = async (broadcastFormData) => {
         setisLoading(true)
         let mark = true
         if (receiverList.length === 0) {
@@ -75,15 +76,15 @@ const CreateBroadcast = () => {
 
 
             const result = await fetchClient({
-                url: '/broadcasts',
-                method: 'POST',
+                url: '/broadcasts/' + broadcastData.id,
+                method: 'PUT',
                 body: formData,
                 isFormData: true,
                 user: session?.user
             })
             if (result?.ok) {
-                toast.success('Berhasil buat broadcast')
-                push('/dashboard/broadcast')
+                toast.success('Berhasil update broadcast')
+                router.push('/dashboard/broadcast/' + broadcastData.id)
             } else {
                 toast.error('Gagal buat broadcast')
             }
@@ -104,6 +105,23 @@ const CreateBroadcast = () => {
             setisDisabled(true)
         }
     }, [textInput, receiverList])
+    useEffect(() => {
+        if (listDevice.length > 0) {
+            setValue('name', broadcastData.name)
+            const findDevice = listDevice.find(item => item.name === broadcastData.device.name)
+            if (findDevice)
+                setValue('deviceId', findDevice?.id)
+            setreceiverList(broadcastData.recipients)
+            setValue('schedule', (new Date(broadcastData.schedule).toISOString().slice(0, 16)))
+            console.log(broadcastData)
+            if (broadcastData.mediaPath)
+                setbroadcastImage(broadcastData.mediaPath)
+            settextInput(broadcastData.message)
+        }
+    }, [listDevice])
+    useEffect(() => {
+        if (receiverList.length > 0 && !isLabelLoaded) setisLabelLoaded(true)
+    }, [receiverList])
     return (
         <form onSubmit={handleSubmit(onSubmit)} className='flex justify-center items-center lg:items-start lg:flex-row flex-col gap-4 mt-4'>
             <div className='max-w-sm w-full items-center flex flex-col gap-4'>
@@ -124,17 +142,17 @@ const CreateBroadcast = () => {
 
                     <div>
                         <p className="mb-2">Device</p>
-                        <SelectDevice register={register} listDevice={listDevice} name="deviceId" />
+                        <SelectDevice listDevice={listDevice} name="deviceId" register={register} />
                     </div>
                     <div>
                         <p className="mb-2">Penerima</p>
-                        {/* <TagsInput /> */}
-                        <InputContactAndLabel
-                            selectedKeys={receiverList}
-                            setselectedKeys={setreceiverList}
-                            user={session?.user}
-                        />
-                        {/* <MultipleInputContact contactList={receiverList} setcontactList={setreceiverList} /> */}
+                        {isLabelLoaded && (
+                            <InputContactAndLabel
+                                selectedKeys={receiverList}
+                                setselectedKeys={setreceiverList}
+                                user={session?.user}
+                            />
+                        )}
                     </div>
                     <div>
                         <p className="mb-2">Jadwal Broadcast</p>
@@ -142,25 +160,24 @@ const CreateBroadcast = () => {
                             name: 'schedule',
                             placeholder: 'Nama broadcast',
                             type: 'datetime-local',
+
                             error: errors.schedule,
                             registerConfig: {
                                 required: 'required'
                             }
                         }} />
+
+
                     </div>
                 </div>
             </div>
             <div className='w-full max-w-sm lg:max-w-full'>
                 <div className='bg-white w-full p-4'>
                     <p className="font-bold text-xl font-lexend">Pesan Broadcast</p>
-                    <TemplateContainer templateList={templateList} handleClick={handleTemplateClick} />
+                    <TemplateContainer handleClick={handleTemplateClick} templateList={templateList} />
                     <div className="mt-4">
                         <p className="mb-2">Response</p>
                         <TextAreaInput text={textInput} settext={settextInput} limit={255} />
-                        <UploadFile
-                            files={files}
-                            setfiles={setfiles}
-                        />
                     </div>
                     <div className="flex gap-2 flex-wrap mt-2">
                         {getMessageVariables().map(item => (
@@ -177,6 +194,19 @@ const CreateBroadcast = () => {
                             </div>
                         </div>
                     )}
+                    <div className="mt-4">
+                        {broadcastImage && (
+                            <>
+                                <p className="my-2">Media</p>
+                                <DisplayImage imageUrl={broadcastImage} />
+                            </>
+                        )}
+                        <div className="mt-2" />
+                        <UploadFile
+                            files={files}
+                            setfiles={setfiles}
+                        />
+                    </div>
                     <Button color="primary" className="rounded-md mt-4" fullWidth type="submit" isLoading={isLoading} isDisabled={isDisabled}>
                         Simpan
                     </Button>
@@ -186,4 +216,4 @@ const CreateBroadcast = () => {
     )
 }
 
-export default CreateBroadcast
+export default EditBroadcast

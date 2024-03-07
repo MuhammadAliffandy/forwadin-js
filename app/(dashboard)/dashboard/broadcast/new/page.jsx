@@ -1,8 +1,7 @@
-import type { Metadata } from 'next'
 import Link from 'next/link'
 import CreateBroadcast from './CreateBroadcast'
 
-export const metadata: Metadata = {
+export const metadata = {
     title: 'Buat Broadcast',
 }
 

@@ -9,31 +9,26 @@ import { useSession } from 'next-auth/react';
 import { User } from 'next-auth';
 import { toast } from 'react-toastify';
 import { formatDate } from '@/utils/helper';
-interface BroadcastTableProps {
-    settotalBroadcast: Dispatch<SetStateAction<number>>,
-    user: User | undefined,
-    totalBroadcast: number,
-    // currentDevice: DeviceSession
-}
-const BroadcastTable = ({ settotalBroadcast, totalBroadcast, user }: BroadcastTableProps) => {
+
+const BroadcastTable = ({ settotalBroadcast, totalBroadcast, user }) => {
     const { push } = useRouter()
     const [isChecked, setisChecked] = useState(false)
     const [isLoaded, setisLoaded] = useState(false)
-    const [broadcastData, setbroadcastData] = useState<GetBroadcast[]>([])
+    const [broadcastData, setbroadcastData] = useState([])
     const [searchText, setsearchText] = useState('')
-    const [searchedGetBroadcast, setsearchedGetBroadcast] = useState<GetBroadcast[]>([])
-    const [selectedBroadcast, setselectedBroadcast] = useState<Set<string> | 'all'>(new Set([]))
-    const handleOpenDetailModal = (params: string) => {
+    const [searchedGetBroadcast, setsearchedGetBroadcast] = useState([])
+    const [selectedBroadcast, setselectedBroadcast] = useState(new Set([]))
+    const handleOpenDetailModal = (params) => {
         push('/dashboard/contact/' + params)
     }
-    const filterMessage = (text: string) => {
+    const filterMessage = (text) => {
         const regex = new RegExp(text, 'i')
         return broadcastData.filter(item => {
             if (regex.test(item.name))
                 return item
         })
     }
-    const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleSearch = (e) => {
         setsearchText(e.target.value)
     }
     const handleDeleteBroadcast = async () => {
@@ -42,7 +37,7 @@ const BroadcastTable = ({ settotalBroadcast, totalBroadcast, user }: BroadcastTa
         if (selectedBroadcast === 'all') {
             deletedBroadcast = broadcastData.map(item => item.id)
         }
-        else if ((selectedBroadcast as Set<string>).size > 0) {
+        else if ((selectedBroadcast).size > 0) {
             deletedBroadcast = Array.from(selectedBroadcast)
         }
         const isConfirm = window.confirm('Anda yakin ingin menghapus ' + deletedBroadcast?.length + ' broadcast?')
@@ -63,7 +58,7 @@ const BroadcastTable = ({ settotalBroadcast, totalBroadcast, user }: BroadcastTa
             deletedBroadcast = null
         }
     }
-    const handleToggleBroadcast = async (id: string, status: boolean) => {
+    const handleToggleBroadcast = async (id, status) => {
         const result = await fetchClient({
             url: '/broadcasts/' + id + '/status',
             method: 'PATCH',
@@ -102,7 +97,7 @@ const BroadcastTable = ({ settotalBroadcast, totalBroadcast, user }: BroadcastTa
         }
     }, [user?.token])
     useEffect(() => {
-        if ((selectedBroadcast as Set<string>).size > 0 || selectedBroadcast === 'all')
+        if ((selectedBroadcast ).size > 0 || selectedBroadcast === 'all')
             setisChecked(true)
         else
             setisChecked(false)
@@ -147,8 +142,8 @@ const BroadcastTable = ({ settotalBroadcast, totalBroadcast, user }: BroadcastTa
                             wrapper: 'rounded-md'
                         }}
                         radius='md'
-                        selectedKeys={selectedBroadcast as any}
-                        onSelectionChange={setselectedBroadcast as any}
+                        selectedKeys={selectedBroadcast}
+                        onSelectionChange={setselectedBroadcast}
                     >
                         <TableHeader>
                             <TableColumn>Nama</TableColumn>
@@ -166,7 +161,7 @@ const BroadcastTable = ({ settotalBroadcast, totalBroadcast, user }: BroadcastTa
                         </div>}
                             items={broadcastData}
                         >
-                            {(item: GetBroadcast) => (
+                            {(item) => (
                                 <TableRow key={item.id}>
                                     <TableCell >{item.name}</TableCell>
                                     <TableCell>

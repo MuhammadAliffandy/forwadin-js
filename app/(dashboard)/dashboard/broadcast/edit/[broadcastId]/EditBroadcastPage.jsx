@@ -7,10 +7,10 @@ import { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 import EditBroadcast from './EditBroadcast'
 
-const EditBroadcastPage = ({ broadcastId }: { broadcastId: string }) => {
+const EditBroadcastPage = ({ broadcastId }) => {
     const router = useRouter()
     const { data: session } = useSession()
-    const [broadcastData, setbroadcastData] = useState<BroadcastData>()
+    const [broadcastData, setbroadcastData] = useState()
     const fetchBroadcastData = async () => {
         const result = await fetchClient({
             url: '/broadcasts/' + broadcastId,
