@@ -9,14 +9,14 @@ import { Button, Skeleton } from "@nextui-org/react"
 import { PulseLoader } from "react-spinners"
 import { toast } from "react-toastify"
 import { signIn, useSession } from "next-auth/react"
-const DetailDevice = ({ device }: { device: string }) => {
+const DetailDevice = ({ device }) => {
     const router = useRouter()
     const { data: session } = useSession()
     const [isLoading, setisLoading] = useState(false)
     const [isLoaded, setisLoaded] = useState(false)
     const [deviceName, setdeviceName] = useState('')
-    const [deviceData, setdeviceData] = useState<DeviceData>()
-    const [labelList, setlabelList] = useState<Label[]>([])
+    const [deviceData, setdeviceData] = useState()
+    const [labelList, setlabelList] = useState([])
     const fetchDetailDevice = async () => {
         const result = await fetchClient({
             method: 'GET',
@@ -24,7 +24,7 @@ const DetailDevice = ({ device }: { device: string }) => {
             user: session?.user
         })
         if (result) {
-            const data: DeviceData = await result.json()
+            const data = await result.json()
             if (result.status === 200) {
                 document.title = data.name + "'s Detail"
                 setdeviceData(data)

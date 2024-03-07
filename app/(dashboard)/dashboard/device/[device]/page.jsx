@@ -1,14 +1,11 @@
 import Link from 'next/link'
 import DetailDevice from './DetailDevice'
 import { Metadata } from 'next'
-type Params = {
-    params: { device: string }
-}
 
-export const metadata: Metadata = {
+export const metadata= {
     title: 'Detail Device',
 }
-const page = ({ params }: Params) => {
+const page = ({ params }) => {
 
     return (
         <>

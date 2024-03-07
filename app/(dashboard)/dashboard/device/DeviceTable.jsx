@@ -13,31 +13,31 @@ import DeleteModal from '@/components/dashboard/device/DeleteModal';
 import { useSocket } from '@/app/SocketProvider';
 import { getArrayFromSet } from '@/utils/helper';
 
-const DeviceTable = ({ setcountDevice }: { setcountDevice: Dispatch<SetStateAction<number>> }) => {
+const DeviceTable = ({ setcountDevice }) => {
     const { data: session } = useSession()
     const { isConnected, socket } = useSocket()
     const [isLoaded, setisLoaded] = useState(false)
     const { push } = useRouter()
     const [isChecked, setisChecked] = useState(false)
-    const [deviceData, setdeviceData] = useState<DeviceData[]>([
+    const [deviceData, setdeviceData] = useState([
     ])
-    const [selectedKeys, setSelectedKeys] = useState<Set<string> | 'all'>(new Set([]))
+    const [selectedKeys, setSelectedKeys] = useState(new Set([]))
 
     const [searchText, setsearchText] = useState('')
-    const [searchedDevice, setsearchedDevice] = useState<DeviceData[]>([])
+    const [searchedDevice, setsearchedDevice] = useState([])
     const [openQrModal, setopenQrModal] = useState(false)
     const [deleteModal, setdeleteModal] = useState(false)
-    const [qrModalData, setqrModalData] = useState<DeviceData>()
+    const [qrModalData, setqrModalData] = useState()
     const [deviceModal, setdeviceModal] = useState(false)
-    const handleOpenQRModal = (params: DeviceData) => {
+    const handleOpenQRModal = (params) => {
         const device = deviceData.find(obj => obj.pkId === params.pkId)
         setqrModalData(device)
         setopenQrModal(true)
     }
-    const handleOpenDetailModal = (params: string) => {
+    const handleOpenDetailModal = (params) => {
         push('/dashboard/device/' + params)
     }
-    const filterDevice = (text: string) => {
+    const filterDevice = (text) => {
         const regex = new RegExp(text, 'i')
         return deviceData.filter(item => {
             if (regex.test(item.name))
@@ -47,7 +47,7 @@ const DeviceTable = ({ setcountDevice }: { setcountDevice: Dispatch<SetStateActi
                 return item
         })
     }
-    const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleSearch = (e) => {
         setsearchText(e.target.value)
     }
 
@@ -58,7 +58,7 @@ const DeviceTable = ({ setcountDevice }: { setcountDevice: Dispatch<SetStateActi
             user: session?.user
         })
         if (fetchDeviceData) {
-            const data: DeviceData[] = await fetchDeviceData.json()
+            const data= await fetchDeviceData.json()
             if (fetchDeviceData.status === 200) {
                 setcountDevice(data.length)
                 setdeviceData(data)
@@ -105,7 +105,7 @@ const DeviceTable = ({ setcountDevice }: { setcountDevice: Dispatch<SetStateActi
         setsearchedDevice(searchResult)
     }, [searchText])
     useEffect(() => {
-        if ((selectedKeys as Set<string>).size > 0 || selectedKeys === 'all')
+        if ((selectedKeys).size > 0 || selectedKeys === 'all')
             setisChecked(true)
         else
             setisChecked(false)
@@ -115,7 +115,7 @@ const DeviceTable = ({ setcountDevice }: { setcountDevice: Dispatch<SetStateActi
             {openQrModal && (
                 <QRModal openModal={openQrModal} setopenModal={setopenQrModal} data={qrModalData} session={session} socket={socket} refresh={fetchData} />
             )}
-            <DeleteModal setopenModal={setdeleteModal} openModal={deleteModal} count={(selectedKeys === 'all' ? 'semua' : (selectedKeys as Set<string>).size) as string} type='device' deleteFunction={deleteDevice} />
+            <DeleteModal setopenModal={setdeleteModal} openModal={deleteModal} count={(selectedKeys === 'all' ? 'semua' : (selectedKeys ).size)} type='device' deleteFunction={deleteDevice} />
             <AddDeviceModal openModal={deviceModal} setopenModal={setdeviceModal} fetchData={fetchData} />
             <div className="mt-8 p-4 bg-white rounded-md">
                 <div className="flex sm:flex-row flex-col gap-2 justify-between">
@@ -152,8 +152,8 @@ const DeviceTable = ({ setcountDevice }: { setcountDevice: Dispatch<SetStateActi
                             wrapper: 'rounded-md'
                         }}
                         radius='md'
-                        selectedKeys={selectedKeys as any}
-                        onSelectionChange={setSelectedKeys as any}
+                        selectedKeys={selectedKeys }
+                        onSelectionChange={setSelectedKeys }
                     >
                         <TableHeader>
                             <TableColumn>Nama</TableColumn>
@@ -184,7 +184,7 @@ const DeviceTable = ({ setcountDevice }: { setcountDevice: Dispatch<SetStateActi
                                 </div>
 
                             </div>} items={searchText ? searchedDevice : deviceData}>
-                            {(item: DeviceData) => (
+                            {(item) => (
                                 <TableRow key={item.id}>
                                     <TableCell >{item.name}</TableCell>
                                     <TableCell >{item.apiKey}</TableCell>
