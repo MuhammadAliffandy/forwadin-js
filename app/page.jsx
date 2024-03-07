@@ -21,8 +21,8 @@ export default function Home() {
   const contentTextStyle = "lg:text-sm text-xs"
 
   const animatorClass = 'w-full px-4 lg:px-0 lg:max-w-[70%] mx-auto h-full flex flex-col items-center justify-center'
-  const handleNavigationClick = (key: string) => {
-    const gotoElement = document.getElementsByClassName(key)[0] as HTMLDivElement
+  const handleNavigationClick = (key) => {
+    const gotoElement = document.getElementsByClassName(key)[0] 
     window.scrollTo({
       behavior: "smooth",
       top: gotoElement?.offsetTop,
@@ -31,16 +31,16 @@ export default function Home() {
 
   useEffect(() => {
     const section = {
-      getStarted: document.getElementsByClassName('getStarted')[0] as HTMLDivElement,
-      broadcast: document.getElementsByClassName('broadcast')[0] as HTMLDivElement,
-      campaign: document.getElementsByClassName('campaign')[0] as HTMLDivElement,
-      autoReply: document.getElementsByClassName('autoReply')[0] as HTMLDivElement,
-      opportunity: document.getElementsByClassName('opportunity')[0] as HTMLDivElement,
-      pricing: document.getElementsByClassName('pricing')[0] as HTMLDivElement,
-      FAQ: document.getElementsByClassName('FAQ')[0] as HTMLDivElement,
-      contact: document.getElementsByClassName('contact')[0] as HTMLDivElement,
+      getStarted: document.getElementsByClassName('getStarted')[0] ,
+      broadcast: document.getElementsByClassName('broadcast')[0] ,
+      campaign: document.getElementsByClassName('campaign')[0] ,
+      autoReply: document.getElementsByClassName('autoReply')[0] ,
+      opportunity: document.getElementsByClassName('opportunity')[0] ,
+      pricing: document.getElementsByClassName('pricing')[0] ,
+      FAQ: document.getElementsByClassName('FAQ')[0] ,
+      contact: document.getElementsByClassName('contact')[0] ,
     }
-    const sideNav = document.getElementById('sideNav') as HTMLDivElement
+    const sideNav = document.getElementById('sideNav') 
     const scrollHandler = () => {
       if (window.scrollY >= section.getStarted.offsetTop && window.scrollY < section.broadcast.offsetTop)
         setcurrentSection('getStarted')

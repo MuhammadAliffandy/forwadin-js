@@ -2,10 +2,8 @@ import Message from '@/components/dashboard/Message'
 import { ConversationMessage, IncomingMessage } from '@/utils/types'
 import { Listbox, ListboxItem } from '@nextui-org/react'
 import React from 'react'
-interface NotificationProps {
-    notification: ConversationMessage[]
-}
-const Notification = ({ notification }: NotificationProps) => {
+
+const Notification = ({ notification }) => {
 
     return (
         <div className='w-[250px] max-h-[250px] overflow-y-auto'>
@@ -16,7 +14,7 @@ const Notification = ({ notification }: NotificationProps) => {
                 variant='light'
 
             >
-                {(item: ConversationMessage) => (
+                {(item) => (
                     <ListboxItem
                         key={item.id}
                     >

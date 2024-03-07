@@ -8,23 +8,16 @@ import { useEffect, useState } from "react"
 import { toast } from "react-toastify"
 import BasicPlan from "./Plans"
 import { formatCurrencyIDR } from "@/utils/helper"
-interface PlansProps {
-	id: string,
-	name: string,
-	monthlyPrice: number,
-	yearlyPrice: number,
-	vat?: number,
-	sum?: number
-}
+
 
 const Payment = () => {
 	const { data: session } = useSession()
 	const [isLoaded, setisLoaded] = useState(false)
 	const [isLoading, setisLoading] = useState(false)
 	const [durationPlan, setdurationPlan] = useState('Monthly')
-	const [plans, setplans] = useState<PlansProps[]>([])
-	const [selectedPlan, setselectedPlan] = useState<string>('')
-	const [currentPlan, setcurrentPlan] = useState<PlansProps>()
+	const [plans, setplans] = useState([])
+	const [selectedPlan, setselectedPlan] = useState('')
+	const [currentPlan, setcurrentPlan] = useState()
 	const [isChecked, setisChecked] = useState(false)
 	const subscriptionContent = {
 		'basic': {
@@ -87,12 +80,12 @@ const Payment = () => {
 			user: session?.user
 		})
 		if (result) {
-			const resultData: PlansProps[] = await result.json()
+			const resultData = await result.json()
 			if (result.ok) {
 				console.log(resultData)
 				setplans(resultData.filter(item => item.name.toLowerCase() !== 'starter').map(item => {
-					item.monthlyPrice = parseInt(item.monthlyPrice as any)
-					item.yearlyPrice = parseInt(item.yearlyPrice as any)
+					item.monthlyPrice = parseInt(item.monthlyPrice )
+					item.yearlyPrice = parseInt(item.yearlyPrice )
 					return item
 				}))
 				setselectedPlan('basic')
@@ -189,7 +182,7 @@ const Payment = () => {
 											color="primary"
 											variant="light"
 											selectedKey={durationPlan}
-											onSelectionChange={setdurationPlan as any} size="sm" radius="full"
+											onSelectionChange={setdurationPlan} size="sm" radius="full"
 										>
 
 											{(item) => (
@@ -205,7 +198,7 @@ const Payment = () => {
 									variant="underlined"
 									fullWidth={true}
 									selectedKey={selectedPlan}
-									onSelectionChange={setselectedPlan as any}
+									onSelectionChange={setselectedPlan}
 								>
 									<Tab key={plans[0]?.name} title={plans[0]?.name} className="">
 										<BasicPlan planData={subscriptionContent['basic']}
@@ -245,11 +238,11 @@ const Payment = () => {
 								<tr>
 									<th className='font-normal'>Harga Paket</th>
 
-									<td className="flex justify-end font-bold">{formatCurrencyIDR(durationPlan === 'Monthly' ? currentPlan?.monthlyPrice! : currentPlan?.yearlyPrice!)}</td>
+									<td className="flex justify-end font-bold">{formatCurrencyIDR(durationPlan === 'Monthly' ? currentPlan?.monthlyPrice : currentPlan?.yearlyPrice)}</td>
 								</tr>
 								<tr>
 									<th className='font-normal'>VAT (2.9% + Rp 2.000)</th>
-									<td className="flex justify-end font-bold">{formatCurrencyIDR(currentPlan?.vat!)}</td>
+									<td className="flex justify-end font-bold">{formatCurrencyIDR(currentPlan?.vat)}</td>
 								</tr>
 							</tbody>
 
@@ -259,7 +252,7 @@ const Payment = () => {
 								Total:
 							</div>
 							<div className="text-2xl font-bold flex justify-end w-full">
-								{formatCurrencyIDR(currentPlan?.sum!)}
+								{formatCurrencyIDR(currentPlan?.sum)}
 							</div>
 						</div>
 					</div>

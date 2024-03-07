@@ -14,9 +14,9 @@ const DynamicAnalytic = dynamic(() => import('@/components/dashboard/Analytic'),
 const Dashboard = () => {
     const { data: session } = useSession()
     const [isLoaded, setisLoaded] = useState(false)
-    const [currentDevice, setcurrentDevice] = useState<DeviceSession>()
-    const [latestMessage, setlatestMessage] = useState<IncomingMessage[]>([])
-    const [userProfile, setuserProfile] = useState<UserProfile>({
+    const [currentDevice, setcurrentDevice] = useState()
+    const [latestMessage, setlatestMessage] = useState([])
+    const [userProfile, setuserProfile] = useState({
         firstName: '',
         lastName: '',
         username: '',
@@ -26,7 +26,7 @@ const Dashboard = () => {
         phone: '',
         emailVerifiedAt: ''
     })
-    const [userSubscription, setuserSubscription] = useState<SubscriptionTypes>()
+    const [userSubscription, setuserSubscription] = useState()
     const [progressDevice, setprogressDevice] = useState({
         value: 0,
         color: 'primary'
@@ -54,7 +54,7 @@ const Dashboard = () => {
             user: session?.user
         })
         if (result && result.ok) {
-            const resultData: SubscriptionTypes = await result.json()
+            const resultData = await result.json()
             setuserSubscription(resultData)
             const deviceProgress = (resultData.deviceUsed / resultData.deviceMax) * 100
             const contactProgress = (resultData.contactUsed / resultData.contactMax) * 100
@@ -187,7 +187,7 @@ const Dashboard = () => {
                                         aria-label="device"
                                         value={progressDevice.value}
                                         className="w-full"
-                                        color={progressDevice.color as any}
+                                        color={progressDevice.color}
                                     />
 
                                     <p className='text-[#777C88] text-[10px]'>{userSubscription?.deviceUsed} dari {userSubscription?.deviceMax} device yang tersedia</p>
@@ -197,7 +197,7 @@ const Dashboard = () => {
                                         aria-label="device"
                                         value={progressContact.value}
                                         className="w-full"
-                                        color={progressContact.color as any}
+                                        color={progressContact.color}
                                     />
                                     <p className='text-[#777C88] text-[10px]'>{userSubscription?.contactUsed} dari {userSubscription?.contactMax} kontak yang tersedia</p>
                                 </div>

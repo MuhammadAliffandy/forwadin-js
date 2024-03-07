@@ -10,23 +10,23 @@ import { fetchClient } from "@/utils/helper/fetchClient";
 import { useRouter } from "next/navigation";
 import Notification from "./dashboard/Notification";
 import { useSocket } from "../SocketProvider";
-const DashboardTemplate = ({ currentPage, children }: { currentPage: string, children: React.ReactNode }) => {
+const DashboardTemplate = ({ currentPage, children }) => {
     const { data: session } = useSession()
     const { socket, isConnected } = useSocket()
     const router = useRouter()
     const [isPopover, setisPopover] = useState(false)
-    const [notification, setnotification] = useState<ConversationMessage[]>([])
+    const [notification, setnotification] = useState([])
 
     const [sideNavDropdown, setsideNavDropdown] = useState(false)
     const [isDisabled, setisDisabled] = useState(true)
-    const [user, setuser] = useState<UserProfile>()
-    const handleClick = (event: React.MouseEvent) => {
+    const [user, setuser] = useState()
+    const handleClick = (event) => {
         setsideNavDropdown(true)
     }
-    const handleWindowClick = (e: React.MouseEvent) => {
+    const handleWindowClick = (e) => {
         const mainContent = document.getElementById('main_content')
         if (sideNavDropdown)
-            if (mainContent?.contains(e.target as Node))
+            if (mainContent?.contains(e.target))
                 setsideNavDropdown(false)
     }
     const fetchUserProfile = async () => {
@@ -37,7 +37,7 @@ const DashboardTemplate = ({ currentPage, children }: { currentPage: string, chi
             user: session?.user
         })
         if (result && result.ok) {
-            const body: UserProfile = await result.json()
+            const body = await result.json()
             setuser(body)
         }
     }
@@ -64,14 +64,14 @@ const DashboardTemplate = ({ currentPage, children }: { currentPage: string, chi
                 channels.device.add(`device:${device.id}:status`)
             })
             channels.session.forEach(session => {
-                socket.on(session, (message: ConversationMessage) => {
+                socket.on(session, (message) => {
                     console.log('ini message dari session ' + session)
                     console.log(message)
                     setnotification(prev => [...prev, message])
                 })
             })
             channels.device.forEach(device => {
-                socket.on(device, async (message: string) => {
+                socket.on(device, async (message) => {
                     console.log('ini message dari session ' + device)
                     console.log(message)
                     if (message === 'closed') {

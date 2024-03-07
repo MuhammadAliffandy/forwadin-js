@@ -1,21 +1,8 @@
 import { formatCurrencyIDR } from "@/utils/helper"
 import { useEffect } from "react"
-interface FeatureProps {
-    [key: string]: string
-}
-interface PlansProps {
-    title: string,
-    body: string,
-    features: {
-        name: string, type: string
-    }[],
-    isFavorite?: boolean
-}
-interface CurrentPrice {
-    monthlyPrice: number,
-    yearlyPrice: number
-}
-const BasicPlan = ({ planData, currentPrice, durationPlan, featureImage }: { planData: PlansProps, currentPrice: CurrentPrice, durationPlan: string, featureImage: FeatureProps }) => {
+
+
+const BasicPlan = ({ planData, currentPrice, durationPlan, featureImage }) => {
     return (
         <div className="flex flex-col gap-2 mt-2">
             {planData.isFavorite && (
@@ -30,12 +17,12 @@ const BasicPlan = ({ planData, currentPrice, durationPlan, featureImage }: { pla
             <div className="flex items-baseline">
                 {durationPlan === 'Monthly' ? (
                     <>
-                        <p className="my-2 font-bold font-lexend text-2xl">{formatCurrencyIDR(currentPrice?.monthlyPrice!)}</p>
+                        <p className="my-2 font-bold font-lexend text-2xl">{formatCurrencyIDR(currentPrice?.monthlyPrice)}</p>
                         <p className="ml-1">/bulan</p>
                     </>
                 ) : (
                     <>
-                        <p className="my-2 font-bold font-lexend text-2xl">{formatCurrencyIDR(currentPrice?.yearlyPrice!)}</p>
+                        <p className="my-2 font-bold font-lexend text-2xl">{formatCurrencyIDR(currentPrice?.yearlyPrice)}</p>
                         <p className="ml-1">/tahun</p>
                     </>
                 )}

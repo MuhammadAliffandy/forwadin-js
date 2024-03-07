@@ -1,19 +1,16 @@
 import './globals.css'
-import type { Metadata } from 'next'
 import { ToastContainer, toast } from "react-toastify"
 import 'react-toastify/dist/ReactToastify.css';
 import Provider from '@/components/Provider';
 import { NextUIProviders } from './NextUIProvider';
 import { SocketProvider } from './SocketProvider';
-export const metadata: Metadata = {
+export const metadata = {
   title: 'ForwardIn | Home',
   description: 'Lorem Ipsum'
 }
 
 export default function RootLayout({
   children,
-}: {
-  children: React.ReactNode
 }) {
   return (
     <html lang="en">

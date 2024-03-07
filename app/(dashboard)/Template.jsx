@@ -3,10 +3,10 @@ import { useEffect, useState } from 'react'
 import DashboardTemplate from '@/app/(dashboard)/DashboardTemplate'
 import { usePathname } from 'next/navigation'
 import { useSession } from 'next-auth/react'
-const Template = ({ children }: { children: React.ReactNode }) => {
+const Template = ({ children }) => {
 
     const [currentPage, setCurrentPage] = useState<string>('')
-    const pathName = usePathname()!
+    const pathName = usePathname()
     useEffect(() => {
         if (pathName.includes('/dashboard/device'))
             setCurrentPage('Devices')
