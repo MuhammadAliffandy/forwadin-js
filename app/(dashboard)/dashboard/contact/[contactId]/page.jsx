@@ -1,15 +1,13 @@
 import Link from 'next/link'
 import DetailContact from './DetailContact'
-type Params = {
-    params: { contactId: string }
-}
-export async function generateMetadata({ params }: Params) {
+
+export async function generateMetadata({ params }) {
     // const contact = params.contactId
     return {
         title: "Detail Kontak"
     }
 }
-const page = ({ params }: Params) => {
+const page = ({ params }) => {
 
     return (
         <>

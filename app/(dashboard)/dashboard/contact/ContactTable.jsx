@@ -17,32 +17,24 @@ import SyncModal from '@/components/dashboard/contact/SyncModal';
 import { User } from 'next-auth';
 import DeleteModal from '@/components/dashboard/device/DeleteModal';
 import { Router } from 'next/router'
-const ContactTable = ({ setcontactCount, currentDevice, user }: {
-    setcontactCount: Dispatch<SetStateAction<number>>,
-    currentDevice: {
-        name: string,
-        phone?: string,
-        id: string,
-    },
-    user: User | undefined
-}) => {
+const ContactTable = ({ setcontactCount, currentDevice, user }) => {
     const { push } = useRouter()
-    const pathName = usePathname()!
+    const pathName = usePathname()
     const [isLoaded, setisLoaded] = useState(false)
     const [isChecked, setisChecked] = useState(false)
-    const [contactData, setcontactData] = useState<ContactData[]>([
+    const [contactData, setcontactData] = useState([
     ])
-    const [selectedKeys, setSelectedKeys] = useState<Set<string> | 'all'>(new Set())
+    const [selectedKeys, setSelectedKeys] = useState(new Set())
     const [searchText, setsearchText] = useState('')
-    const [searchedContact, setsearchedContact] = useState<ContactData[]>([])
+    const [searchedContact, setsearchedContact] = useState([])
     const [addContactModal, setaddContactModal] = useState(false)
     const [deleteContactModal, setdeleteContactModal] = useState(false)
     const [importContactModal, setimportContactModal] = useState(false)
     const [syncModal, setsyncModal] = useState(false)
-    const handleOpenDetailModal = (params: string) => {
+    const handleOpenDetailModal = (params) => {
         push('/dashboard/contact/' + params)
     }
-    const filterContact = (text: string) => {
+    const filterContact = (text) => {
         const regex = new RegExp(text, 'i')
         return contactData.filter(item => {
             if (regex.test(item.firstName + ' ' + (item.lastName || '')) || regex.test(item.lastName) || regex.test(item.phone) || regex.test(item.email))
@@ -52,7 +44,7 @@ const ContactTable = ({ setcontactCount, currentDevice, user }: {
                 return item
         })
     }
-    const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleSearch = (e) => {
         setsearchText(e.target.value)
     }
 
@@ -70,7 +62,7 @@ const ContactTable = ({ setcontactCount, currentDevice, user }: {
             user: user
         })
         if (fetchContactData) {
-            const data: ContactData[] = await fetchContactData.json()
+            const data = await fetchContactData.json()
             if (fetchContactData.status === 200) {
                 // console.log(data)
                 const newContactData = data.map(obj => {
@@ -96,7 +88,7 @@ const ContactTable = ({ setcontactCount, currentDevice, user }: {
         if (selectedKeys === 'all') {
             deletedContact = contactData.map(item => item.id)
         }
-        else if ((selectedKeys as Set<string>).size > 0) {
+        else if ((selectedKeys).size > 0) {
             deletedContact = Array.from(selectedKeys)
         }
         if (deletedContact) {
@@ -128,7 +120,7 @@ const ContactTable = ({ setcontactCount, currentDevice, user }: {
         setsearchedContact(searchResult)
     }, [searchText])
     useEffect(() => {
-        if ((selectedKeys as Set<string>).size > 0 || selectedKeys === 'all') {
+        if ((selectedKeys).size > 0 || selectedKeys === 'all') {
             setisChecked(true)
         } else {
             setisChecked(false)
@@ -140,7 +132,7 @@ const ContactTable = ({ setcontactCount, currentDevice, user }: {
                 <SyncModal setopenModal={setsyncModal} openModal={syncModal} user={user} refresh={fetchData} />
             )}
             <ImportContactModal openModal={importContactModal} setopenModal={setimportContactModal} user={user} refresh={fetchData} />
-            <DeleteModal openModal={deleteContactModal} setopenModal={setdeleteContactModal} count={(selectedKeys === 'all' ? 'semua' : (selectedKeys as Set<string>).size) as string} deleteFunction={handleDeleteContact} type='Kontak' />
+            <DeleteModal openModal={deleteContactModal} setopenModal={setdeleteContactModal} count={(selectedKeys === 'all' ? 'semua' : (selectedKeys).size)} deleteFunction={handleDeleteContact} type='Kontak' />
             <AddContactModal openModal={addContactModal} setopenModal={setaddContactModal} fetchData={fetchData} />
             <div className="mt-8 p-4 bg-white rounded-md">
                 <div className="flex sm:flex-row flex-col gap-2 justify-between">
@@ -198,8 +190,8 @@ const ContactTable = ({ setcontactCount, currentDevice, user }: {
                             wrapper: 'rounded-md'
                         }}
                         radius='md'
-                        selectedKeys={selectedKeys as any}
-                        onSelectionChange={setSelectedKeys as any}
+                        selectedKeys={selectedKeys }
+                        onSelectionChange={setSelectedKeys }
                     >
                         <TableHeader>
                             <TableColumn>Nama</TableColumn>
@@ -224,7 +216,7 @@ const ContactTable = ({ setcontactCount, currentDevice, user }: {
                             </div>
 
                         } items={searchText ? searchedContact : contactData}>
-                            {(item: ContactData) => (
+                            {(item) => (
                                 <TableRow key={item.id}>
                                     <TableCell className='flex gap-2 items-center'>
                                         <ContactIcon phone={item.phone} contact={item} />

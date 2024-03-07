@@ -7,15 +7,11 @@ import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem } from "@nextui-o
 import { useSession } from "next-auth/react"
 import { fetchClient } from "@/utils/helper/fetchClient"
 import { DeviceData } from "@/utils/types"
-interface DropdownDeviceProps {
-    name: string,
-    phone?: string,
-    id: string,
-}
+
 const Contacts = () => {
     const { data: session } = useSession()
     const [contactCount, setcontactCount] = useState(0)
-    const [listDevice, setlistDevice] = useState<DropdownDeviceProps[]>([
+    const [listDevice, setlistDevice] = useState([
         {
             name: 'all device',
             id: '*',
@@ -32,8 +28,8 @@ const Contacts = () => {
             user: session?.user
         })
         if (result?.ok) {
-            const resultData: DeviceData[] = await result.json()
-            const newArrDevice: DropdownDeviceProps[] = resultData.map(device => {
+            const resultData = await result.json()
+            const newArrDevice = resultData.map(device => {
                 return {
                     id: device.id,
                     name: device.name,
@@ -73,7 +69,7 @@ const Contacts = () => {
                             </div>
                         </DropdownTrigger>
                         <DropdownMenu items={listDevice} aria-label="device list">
-                            {(item: any) => (
+                            {(item) => (
                                 <DropdownItem
                                     key={item.id}
                                     onClick={() => {

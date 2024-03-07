@@ -1,10 +1,6 @@
-import { Metadata } from "next"
 import Campaign from "./Campaign"
 
-type Params = {
-    params: { contactId: string }
-}
-export const metadata: Metadata = {
+export const metadata = {
     title: 'Campaign'
 }
 const page = () => {

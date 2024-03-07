@@ -14,22 +14,22 @@ import TextAreaInput from '@/components/dashboard/chat/TextAreaInput'
 import UploadFile from '@/components/dashboard/UploadFile'
 import { useRouter } from 'next/navigation'
 
-const DetailContact = ({ contactId }: { contactId: string }) => {
+const DetailContact = ({ contactId }) => {
     const router = useRouter()
     const { data: session } = useSession()
     const currentDate = new Date()
     const [openModal, setopenModal] = useState(false)
     const [isLoaded, setisLoaded] = useState(false)
-    const [contactData, setcontactData] = useState<ContactData>()
+    const [contactData, setcontactData] = useState()
     const [messageCount, setmessageCount] = useState(0)
-    const [message, setmessage] = useState<IncomingMessage[]>([
+    const [message, setmessage] = useState([
     ])
     const [textInput, settextInput] = useState('')
-    const [inputFile, setinputFile] = useState<File[]>([]);
+    const [inputFile, setinputFile] = useState([]);
     const [showfile, setshowfile] = useState(false)
     const [sendMessageLoading, setsendMessageLoading] = useState(false)
     const [isChecked, setisChecked] = useState(false)
-    const [currentDevice, setcurrentDevice] = useState<DeviceSession>()
+    const [currentDevice, setcurrentDevice] = useState()
     const [mobileDropdown, setmobileDropdown] = useState(false)
 
     const fetchDetailContact = async () => {
@@ -39,9 +39,9 @@ const DetailContact = ({ contactId }: { contactId: string }) => {
             user: session?.user
         })
         if (result) {
-            const data: ContactData = await result.json()
+            const data = await result.json()
             if (result.status === 200) {
-                data.dob = formatBirthDate(data.dob!)
+                data.dob = formatBirthDate(data.dob)
                 setcontactData(data)
                 if (session?.user?.device && session?.user?.device.length > 0) {
                     const findDevice = session.user.device.find(item => item.id === data.contactDevices[0].device.id)
@@ -66,7 +66,7 @@ const DetailContact = ({ contactId }: { contactId: string }) => {
                 user: session?.user
             })
             if (result && result.ok) {
-                const resultData: GetMessage<IncomingMessage> = await result.json()
+                const resultData  = await result.json()
                 setmessage(resultData.data)
                 setmessageCount(resultData.data.length)
                 console.log(resultData)
@@ -160,7 +160,7 @@ const DetailContact = ({ contactId }: { contactId: string }) => {
                                     <div>
                                         <div style={{
                                             backgroundColor: '#' + '4FBEAB'
-                                        }} className={`flex-none rounded-full text-white w-20 h-20 text-[32px] flex items-center justify-center`}>{getInitials(contactData?.firstName + ' ' + contactData?.lastName!)}</div>
+                                        }} className={`flex-none rounded-full text-white w-20 h-20 text-[32px] flex items-center justify-center`}>{getInitials(contactData?.firstName + ' ' + contactData?.lastName)}</div>
 
                                         <p className='font-lexend text-2xl font-bold mt-8'>{contactData?.firstName} {contactData?.lastName}</p>
                                         <p className='mt-4'>+{contactData?.phone}</p>

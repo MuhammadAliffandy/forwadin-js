@@ -1,7 +1,6 @@
-import type { Metadata } from 'next'
 import Contacts from './Contacts'
 
-export const metadata: Metadata = {
+export const metadata = {
     title: 'Contacts',
 }
 
