@@ -14,22 +14,17 @@ import ProfileAvatar from '@/components/dashboard/ProfileAvatar'
 import BubbleChat from '@/components/dashboard/chat/BubbleChat'
 import MessageAddContact from '@/components/dashboard/contact/MessageAddContact'
 
-const OutgoingTable = ({ settotalMessage, totalMessage, sessionId, user }: {
-    settotalMessage: Dispatch<SetStateAction<number>>,
-    totalMessage: number,
-    sessionId: string,
-    user: User | undefined
-}) => {
+const OutgoingTable = ({ settotalMessage, totalMessage, sessionId, user }) => {
     const router = useRouter()
     const pathname = usePathname()
-    const searchParams = useSearchParams()!
+    const searchParams = useSearchParams()
     const [isLoaded, setisLoaded] = useState(false)
     const [isLoading, setisLoading] = useState(false)
     const [isChecked, setisChecked] = useState(false)
-    const [messageData, setmessageData] = useState<OutgoingMessage[]>([
+    const [messageData, setmessageData] = useState([
     ])
     const [searchText, setsearchText] = useState('')
-    const [searchedMessage, setsearchedMessage] = useState<OutgoingMessage[]>([])
+    const [searchedMessage, setsearchedMessage] = useState([])
     const [phoneSearch, setphoneSearch] = useState('')
     const [contactSearch, setcontactSearch] = useState('')
     const [currentPage, setcurrentPage] = useState(1)
@@ -39,7 +34,7 @@ const OutgoingTable = ({ settotalMessage, totalMessage, sessionId, user }: {
     const [messagePhone, setmessagePhone] = useState<string>('')
     const [addContactModal, setaddContactModal] = useState(false)
     const currentDate = new Date()
-    const filterMessage = (text: string) => {
+    const filterMessage = (text) => {
         const regex = new RegExp(text, 'i')
         return messageData.filter(item => {
             if (regex.test(item.source))
@@ -63,7 +58,7 @@ const OutgoingTable = ({ settotalMessage, totalMessage, sessionId, user }: {
             user: user
         })
         if (result && result.ok) {
-            const resultData: GetMessage<OutgoingMessage> = await result.json()
+            const resultData = await result.json()
             console.log(resultData)
             setmessageData(resultData.data)
             setcurrentPage(resultData.metadata.currentPage)
@@ -74,12 +69,12 @@ const OutgoingTable = ({ settotalMessage, totalMessage, sessionId, user }: {
         setisLoaded(true)
         setisLoading(false)
     }
-    const handleAddContactClick = (item: OutgoingMessage) => {
+    const handleAddContactClick = (item) => {
         setmessagePhone(getNumberFromString(item.to))
         setaddContactModal(true)
     }
-    const handlePhoneSearch = (e: string) => {
-        if (isNaN(e as any)) return
+    const handlePhoneSearch = (e) => {
+        if (isNaN(e)) return
         setphoneSearch(e)
     }
     const fetchInit = async () => {
@@ -158,8 +153,8 @@ const OutgoingTable = ({ settotalMessage, totalMessage, sessionId, user }: {
                             wrapper: 'rounded-md'
                         }}
                         radius='md'
-                        selectedKeys={selectedMessage as any}
-                        onSelectionChange={setselectedMessage as any}
+                        selectedKeys={selectedMessage }
+                        onSelectionChange={setselectedMessage }
                     >
                         <TableHeader>
                             <TableColumn
@@ -180,7 +175,7 @@ const OutgoingTable = ({ settotalMessage, totalMessage, sessionId, user }: {
                                     <p className='text-xs text-[#777C88]'>Pesan yang anda kirim akan masuk di sini</p>
                                 </div>
                             </div>} items={messageData}>
-                            {(item: OutgoingMessage) => (
+                            {(item) => (
                                 <TableRow key={item.id}>
                                     <TableCell >+{getNumberFromString(item.to)}</TableCell>
                                     <TableCell> <div className="flex items-center gap-2">

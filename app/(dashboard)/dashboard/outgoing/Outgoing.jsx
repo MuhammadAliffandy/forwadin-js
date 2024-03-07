@@ -9,8 +9,8 @@ import { DeviceSession } from "@/utils/types"
 const Outgoing = () => {
     const { data: session } = useSession()
     const [totalMessage, settotalMessage] = useState(0)
-    const [listDevice, setlistDevice] = useState<DeviceSession[]>([])
-    const [currentDevice, setcurrentDevice] = useState<DeviceSession>()
+    const [listDevice, setlistDevice] = useState([])
+    const [currentDevice, setcurrentDevice] = useState()
 
 
     useEffect(() => {
@@ -34,7 +34,7 @@ const Outgoing = () => {
                 </div>
                 <DropdownDevice currentDevice={currentDevice} setcurrentDevice={setcurrentDevice} listDevice={session?.user?.device} />
             </div>
-            <OutgoingTable settotalMessage={settotalMessage} totalMessage={totalMessage} sessionId={currentDevice?.sessionId!} user={session?.user} />
+            <OutgoingTable settotalMessage={settotalMessage} totalMessage={totalMessage} sessionId={currentDevice?.sessionId} user={session?.user} />
         </>
     )
 }
