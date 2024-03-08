@@ -1,11 +1,12 @@
-# Super Apps Web Frontend
+# Repo Website Forwarding Team 2 ADS MSIB Internship
 
-### Project
-- Sellerpro
+## Installation & Usage
 
-### Build With
-React - Next.JS
+```
+    // clone this repo
 
+    npm i
 
-
-
+    npm run build
+    npm run start
+```
