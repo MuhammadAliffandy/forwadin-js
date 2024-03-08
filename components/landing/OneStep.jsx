@@ -1,9 +1,6 @@
 import { useState } from "react"
 import { animated, useSpring, useTransition } from '@react-spring/web'
 import { Tabs, Tab } from "@nextui-org/react";
-interface ObjectContent {
-    [key: string]: any
-}
 
 const OneStep = () => {
     const [buttonActive, setButtonActive] = useState('button1')
@@ -22,7 +19,7 @@ const OneStep = () => {
         enter: { opacity: "1", transform: "scale(1)" },
         leave: { opacity: "0", transform: "scale(0.5)" },
     })
-    const textContent: ObjectContent = {
+    const textContent = {
         'button1': {
             label: "Bisnis dan Pemasaran",
             text: "Bidang ini dapat memanfaatkan fitur broadcast untuk mengirim promosi, pengumuman, dan informasi produk kepada pelanggan dalam jumlah besar secara efisien. Sementara itu, fitur Campaign dapat membantu merencanakan dan menyampaikan pesan iklan dengan waktu yang tepat kepada target audiens yang sesuai.",
@@ -36,7 +33,7 @@ const OneStep = () => {
             text: "Organisasi non-profit dapat menggunakan fitur broadcast untuk menginformasikan para donatur tentang proyek, acara komunitas, atau inisiatif sosial yang sedang berlangsung. Fitur campaign bisa membantu dalam mengingatkan tentang acara atau program yang akan datang.",
         }
     }
-    const handleClick = (e: React.MouseEvent) => {
+    const handleClick = (e) => {
         switch (e.currentTarget.innerHTML) {
             case 'Bisnis dan Pemasaran':
                 setButtonActive('button1')
@@ -83,7 +80,7 @@ const OneStep = () => {
                     />
                 </div>
                 <div className='lg:basis-3/5'>
-                    <Tabs color="primary" variant="light" fullWidth selectedKey={buttonActive} onSelectionChange={setButtonActive as any} className="hidden lg:block">
+                    <Tabs color="primary" variant="light" fullWidth selectedKey={buttonActive} onSelectionChange={setButtonActive} className="hidden lg:block">
                         <Tab key={'button1'} title="Bisnis dan Pemasaran" />
                         <Tab key={'button2'} title="Komersial dan Penjualan" />
                         <Tab key={'button3'} title="Organisasi Sosial" />

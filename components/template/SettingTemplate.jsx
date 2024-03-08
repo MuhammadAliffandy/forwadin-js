@@ -1,6 +1,6 @@
 import React from "react"
 
-const SettingTemplate = ({ children }: { children: React.ReactNode }) => {
+const SettingTemplate = ({ children }) => {
     return (
         <div className="w-full max-w-md bg">
             {children}

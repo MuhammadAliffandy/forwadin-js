@@ -1,7 +1,7 @@
 import { Button } from '@nextui-org/react'
 import { PulseLoader } from 'react-spinners'
 
-const ButtonSubmit = ({ isLoading, text, size = 'lg' }: { isLoading: boolean, text: string, size?: 'sm' | 'md' | 'lg' }) => {
+const ButtonSubmit = ({ isLoading, text, size = 'lg' }) => {
     return (
         <Button fullWidth={true} type='submit' color="primary" isLoading={isLoading} className='rounded-md' size={size}>
             {text}

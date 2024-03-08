@@ -1,12 +1,7 @@
 import { Button } from "@nextui-org/react"
 
-interface YesNoButtonProps {
-    yesClick: () => void,
-    noClick: () => void,
-    isLoading: boolean,
-    style?: string
-}
-const YesNoButton = ({ yesClick, noClick, style, isLoading }: YesNoButtonProps) => {
+
+const YesNoButton = ({ yesClick, noClick, style, isLoading }) => {
     return (
         <div className={"flex gap-2 " + style}>
             <Button variant="bordered" size="lg" fullWidth className="rounded-md" onClick={noClick}>

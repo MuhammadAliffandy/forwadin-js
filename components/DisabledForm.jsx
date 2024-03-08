@@ -1,4 +1,4 @@
-const DisabledForm = ({ text, type }: { text: string | undefined, type: string }) => {
+const DisabledForm = ({ text, type }) => {
     return (
         <>
             {text && (

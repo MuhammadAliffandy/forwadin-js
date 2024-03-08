@@ -1,12 +1,5 @@
-interface ConfigProps {
-    name: string,
-    placeholder: string,
-    type: string,
-    error?: any
-    data?: any,
-    registerConfig: any
-}
-const InputForm = ({ register, config }: { register: any, config: ConfigProps }) => {
+
+const InputForm = ({ register, config }) => {
     return (
         <div className="relative">
             {config.error && (<p className="px-1 text-danger absolute right-4 top-1/2 -translate-y-1/2">{`${config.error.message}`}</p>)}

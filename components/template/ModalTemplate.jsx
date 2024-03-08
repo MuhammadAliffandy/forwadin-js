@@ -2,31 +2,25 @@
 import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from "@nextui-org/react"
 import { animated, useTransition } from "@react-spring/web"
 import { Dispatch, SetStateAction, useEffect, useRef } from "react"
-interface ModalTemplateProps {
-    children: React.ReactNode,
-    openModal: boolean,
-    setopenModal: Dispatch<SetStateAction<boolean>>,
-    outsideClose: boolean
-    hideCloseButton?: boolean
-}
-const ModalTemplate = ({ children, openModal, setopenModal, outsideClose = true, hideCloseButton = false }: ModalTemplateProps) => {
-    const modalContentRef = useRef<HTMLDivElement>(null)
-    const modalBackgroudRef = useRef<HTMLDivElement>(null)
-    const handleCloseModal = (e: React.MouseEvent) => {
+
+const ModalTemplate = ({ children, openModal, setopenModal, outsideClose = true, hideCloseButton = false }) => {
+    const modalContentRef = useRef(null)
+    const modalBackgroudRef = useRef(null)
+    const handleCloseModal = (e) => {
         if (outsideClose && modalContentRef.current)
-            if (!modalContentRef.current.contains(e.target as Node)) {
+            if (!modalContentRef.current.contains(e.target)) {
                 setopenModal(false)
             }
     }
-    const handleKeyPress = (event: React.KeyboardEvent) => {
+    const handleKeyPress = (event) => {
         if (event.key === 'Escape') {
             setopenModal(false)
         }
     }
     useEffect(() => {
-        window.addEventListener('keydown', handleKeyPress as any);
+        window.addEventListener('keydown', handleKeyPress );
         return () => {
-            window.removeEventListener('keydown', handleKeyPress as any);
+            window.removeEventListener('keydown', handleKeyPress );
         };
     }, [])
     const componentTransition = useTransition(openModal, {

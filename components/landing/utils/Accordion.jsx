@@ -1,5 +1,5 @@
 import { useState } from 'react'
-const Accordion = ({ title, content }: { title: String, content: String }) => {
+const Accordion = ({ title, content }) => {
     const [isActive, setisActive] = useState(false)
     return (
         <div className='w-full bg-white p-2 rounded-md'>

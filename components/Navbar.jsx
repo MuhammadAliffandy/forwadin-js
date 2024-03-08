@@ -12,8 +12,8 @@ const Navbar = () => {
     const [isDropdown, setIsDropdown] = useState(false)
     const [signInDropdown, setSignInDropdown] = useState(false)
     const [featureDropdown, setfeatureDropdown] = useState(false)
-    const handleDropdownClick = (e: React.MouseEvent) => {
-        if (!document.getElementById('mobile_nav_dropdown')?.contains(e.target as Node)) {
+    const handleDropdownClick = (e) => {
+        if (!document.getElementById('mobile_nav_dropdown')?.contains(e.target)) {
             setIsDropdown(false)
         }
     }
@@ -45,8 +45,8 @@ const Navbar = () => {
             opacity: '0'
         }
     })
-    const handleNavigationClick = (key: string) => {
-        const gotoElement = document.getElementsByClassName(key)[0] as HTMLDivElement
+    const handleNavigationClick = (key) => {
+        const gotoElement = document.getElementsByClassName(key)[0]
         window.scrollTo({
             behavior: "smooth",
             top: gotoElement?.offsetTop,

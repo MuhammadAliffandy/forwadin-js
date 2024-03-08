@@ -1,12 +1,9 @@
 import { Accordion, AccordionItem } from "@nextui-org/react";
 import { useEffect, useRef, useState } from "react";
-interface FAQContent {
-    title: string,
-    content: string
-}
+
 const FAQ = () => {
     const [searchedText, setsearchedText] = useState('')
-    const [faqContent, setfaqContent] = useState<FAQContent[]>([
+    const [faqContent, setfaqContent] = useState([
         {
             title: "Apa itu Forwardin?",
             content: "Fowardin is a powerful communication management tool that simplifies message forwarding, enhances contact management, and streamlines campaign scheduling for businesses of all sizes."
@@ -20,9 +17,9 @@ const FAQ = () => {
             content: "Fowardin is a powerful communication management tool that simplifies message forwarding, enhances contact management, and streamlines campaign scheduling for businesses of all sizes."
         },
     ])
-    const [searchedFaq, setsearchedFaq] = useState<FAQContent[]>([])
-    const inputRef = useRef<HTMLInputElement>(null)
-    const filterFaq = (text: string) => {
+    const [searchedFaq, setsearchedFaq] = useState([])
+    const inputRef = useRef(null)
+    const filterFaq = (text) => {
         const regex = new RegExp(text, 'i')
         return faqContent.filter(faq => regex.test(faq.title))
     }
