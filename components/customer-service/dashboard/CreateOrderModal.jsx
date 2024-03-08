@@ -8,13 +8,7 @@ import { CustomerService } from "next-auth"
 import { Dispatch, SetStateAction, useEffect, useState } from "react"
 import { toast } from "react-toastify"
 
-interface CreateOrderModalProps {
-    customerService: CustomerService | undefined,
-    openModal: boolean,
-    setopenModal: Dispatch<SetStateAction<boolean>>,
-    contact: ContactData | undefined
-}
-const CreateOrderModal = ({ customerService, openModal, setopenModal, contact }: CreateOrderModalProps) => {
+const CreateOrderModal = ({ customerService, openModal, setopenModal, contact }) => {
     const [isLoading, setIsLoading] = useState(false)
     const [text, setText] = useState('')
     const submitOrder = async () => {

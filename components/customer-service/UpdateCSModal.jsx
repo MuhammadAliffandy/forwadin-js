@@ -4,28 +4,17 @@ import { User } from "next-auth"
 import { useForm } from "react-hook-form"
 import InputForm from "../form/InputForm"
 import { Button } from "@nextui-org/react"
-import { DeviceData } from "@/utils/types"
+import { CustomerService, DeviceData } from "@/utils/types"
 import { fetchClient } from "@/utils/helper/fetchClient"
 import { toast } from "react-toastify"
 import ButtonSubmit from "../form/ButtonSubmit"
 import SelectDevice from "../form/SelectDevice"
-interface CreateCSModalProps {
-    openModal: boolean,
-    setopenModal: Dispatch<SetStateAction<boolean>>,
-    user: User | undefined,
-    refresh: () => void
-}
-interface CSForm {
-    username: string,
-    email: string,
-    password: string,
-    confirmPassword: string,
-    deviceId: string
-}
-const CreateCSModal = ({ openModal, refresh, setopenModal, user }: CreateCSModalProps) => {
+
+
+const UpdateCSModal = ({ openModal, refresh, setopenModal, user, csData }) => {
     const [isLoading, setisLoading] = useState(false)
-    const { handleSubmit, register, reset, watch, formState: { errors } } = useForm<CSForm>()
-    const [deviceList, setdeviceList] = useState<DeviceData[]>([])
+    const { handleSubmit, register, setValue, watch, formState: { errors } } = useForm()
+    const [deviceList, setdeviceList] = useState([])
     const [showPasswordCriteria, setshowPasswordCriteria] = useState(false)
     const [passwordValidator, setPasswordValidator] = useState({
         eightLength: false,
@@ -54,30 +43,30 @@ const CreateCSModal = ({ openModal, refresh, setopenModal, user }: CreateCSModal
             toast.error('Tidak dapat fetching data device')
         }
     }
-    const onSubmit = async (CSData: CSForm) => {
+    const onSubmit = async (CSData) => {
         setisLoading(true)
-        if (!user) return
+        if (!user && !csData) return
         const body = {
             username: CSData.username,
             email: CSData.email,
             password: CSData.password,
             confirmPassword: CSData.confirmPassword,
             userId: user?.id,
-            deviceId: CSData.deviceId
+            deviceId: CSData.deviceId,
         }
+        console.log(body)
         const result = await fetchClient({
-            url: '/customer-services/register',
-            method: 'POST',
+            url: '/customer-services/' + csData?.id,
+            method: 'PUT',
             body: JSON.stringify(body),
             user: user
         })
         if (result?.ok) {
-            toast.success('Berhasil tambah CS')
+            toast.success('Berhasil ubah CS')
             refresh()
             setopenModal(false)
         } else {
-            console.log(await result?.json())
-            toast.error('Gagal tambah CS')
+            toast.error('Gagal ubah CS')
         }
         setisLoading(false)
     }
@@ -86,8 +75,17 @@ const CreateCSModal = ({ openModal, refresh, setopenModal, user }: CreateCSModal
             fetchDevice()
     }, [user?.token])
     useEffect(() => {
+        if (deviceList && csData) {
+            console.log(csData)
+            setValue('username', csData.username)
+            setValue('email', csData.email)
+            // setValue('deviceId', csData.device.id)
+
+        }
+    }, [csData, deviceList])
+    useEffect(() => {
         const watchPassword = watch(value => {
-            const password: string = value.password!
+            const password = value.password
             if (strongRegex.eightLength.test(password))
                 setPasswordValidator(prev => ({ ...prev, eightLength: true }))
             else
@@ -110,7 +108,7 @@ const CreateCSModal = ({ openModal, refresh, setopenModal, user }: CreateCSModal
     return (
         <ModalTemplate openModal={openModal} setopenModal={setopenModal} outsideClose={false}>
             <>
-                <p className="text-2xl font-lexend font-bold">Tambah Customer Service</p>
+                <p className="text-2xl font-lexend font-bold">Ubah Customer Service</p>
                 <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4 text-sm w-full mt-8 max-h-[80vh] overflow-y-auto">
                     <div>
                         <p className="mb-2">Username</p>
@@ -180,7 +178,7 @@ const CreateCSModal = ({ openModal, refresh, setopenModal, user }: CreateCSModal
                             error: errors.confirmPassword,
                             registerConfig: {
                                 required: true,
-                                validate: (value: String) => {
+                                validate: (value) => {
                                     if (value != watch('password'))
                                         return 'Password do not match'
                                 }
@@ -192,8 +190,7 @@ const CreateCSModal = ({ openModal, refresh, setopenModal, user }: CreateCSModal
                         <SelectDevice register={register} listDevice={deviceList} name="deviceId" />
                     </div>
                     <div className="mt-2">
-
-                        <ButtonSubmit text="Tambah" isLoading={isLoading} />
+                        <ButtonSubmit text="Ubah" isLoading={isLoading} />
                     </div>
                 </form>
             </>
@@ -201,4 +198,4 @@ const CreateCSModal = ({ openModal, refresh, setopenModal, user }: CreateCSModal
     )
 }
 
-export default CreateCSModal
+export default UpdateCSModal
