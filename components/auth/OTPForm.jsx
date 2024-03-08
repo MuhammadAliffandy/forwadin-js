@@ -6,11 +6,11 @@ import ButtonSubmit from "../form/ButtonSubmit";
 import { MultipleInputRef } from "@/utils/types";
 import { BarLoader } from "react-spinners";
 
-const OTPForm = ({ setCurrentStep }: { setCurrentStep: Dispatch<SetStateAction<string>> }) => {
+const OTPForm = ({ setCurrentStep }) => {
     const [isLoading, setisLoading] = useState(false)
     const [otpLoading, setotpLoading] = useState(false)
-    const multipleInputRef = useRef<MultipleInputRef>({})
-    const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const multipleInputRef = useRef({})
+    const handleInputChange = (e) => {
         const { name, value } = e.target;
         const [fieldName, index] = name.split('_')
         let current = parseInt(index, 10)
@@ -20,12 +20,12 @@ const OTPForm = ({ setCurrentStep }: { setCurrentStep: Dispatch<SetStateAction<s
                 multipleInputRef.current[`otp_${current + 1}`].focus()
             }
     }
-    const handleRefChange = (element: HTMLInputElement | null, id: number) => {
+    const handleRefChange = (element) => {
         if (multipleInputRef.current && element) {
             multipleInputRef.current[`otp_${id}`] = element
         }
     }
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handleSubmit = async (e) => {
         setisLoading(true)
         e.preventDefault()
         const otp = multipleInputRef.current['otp_1'].value.toString() +
@@ -69,7 +69,7 @@ const OTPForm = ({ setCurrentStep }: { setCurrentStep: Dispatch<SetStateAction<s
         }
         setotpLoading(false)
     }
-    const handlePaste = (e: React.ClipboardEvent) => {
+    const handlePaste = (e) => {
         const pasteText = e.clipboardData.getData('text')
         multipleInputRef.current['otp_1'].value = pasteText[0]
         multipleInputRef.current['otp_2'].value = pasteText[1]

@@ -13,19 +13,15 @@ import ButtonSubmit from "../form/ButtonSubmit";
 import { text } from "stream/consumers";
 import { signIn } from "next-auth/react";
 
-const Register = ({ setCurrentStep, setUserData, userData }: {
-    setCurrentStep: Dispatch<SetStateAction<string>>,
-    setUserData: Dispatch<SetStateAction<UserRegisterData>>,
-    userData: UserRegisterData
-}) => {
-    const { handleSubmit, register, setValue, watch, setError, formState: { errors } } = useForm<UserRegisterData>()
+const Register = ({ setCurrentStep, setUserData, userData }) => {
+    const { handleSubmit, register, setValue, watch, setError, formState: { errors } } = useForm()
     const [isLoading, setIsLoading] = useState(false)
     const [countryCodeDropdown, setcountryCodeDropdown] = useState(false)
     const [countryCodeSearchText, setcountryCodeSearchText] = useState('')
-    const [countryCodeData, setcountryCodeData] = useState<CountryCode[]>([])
-    const [countryCodeSearchData, setcountryCodeSearchData] = useState<CountryCode[]>([])
+    const [countryCodeData, setcountryCodeData] = useState([])
+    const [countryCodeSearchData, setcountryCodeSearchData] = useState([])
     const [showPasswordCriteria, setshowPasswordCriteria] = useState(false)
-    const [currentCountryCode, setcurrentCountryCode] = useState<CountryCode>({
+    const [currentCountryCode, setcurrentCountryCode] = useState({
         name: '',
         dial_code: '',
         code: '',
@@ -48,7 +44,7 @@ const Register = ({ setCurrentStep, setUserData, userData }: {
 
     })
 
-    const onSubmit = async (formData: UserRegisterData) => {
+    const onSubmit = async (formData) => {
         setIsLoading(true)
         try {
             const formattedPhone = formatPhoneCode(formData.phone, currentCountryCode.dial_code)
@@ -66,7 +62,7 @@ const Register = ({ setCurrentStep, setUserData, userData }: {
             })
             const body = await result.json()
             if (result.ok) {
-                const userStatus: { email: boolean, phone: boolean, username: boolean } = body
+                const userStatus = body
                 console.log(userStatus)
                 if (!userStatus.email || !userStatus.phone || !userStatus.username) {
                     if (!userStatus.email)
@@ -118,13 +114,13 @@ const Register = ({ setCurrentStep, setUserData, userData }: {
         numeric: new RegExp("^(?=.*[0-9])"),
         // specialChar: new RegExp("^(?=.*[!@#$%^&*])")
     }
-    const handleCountryCodeClick = (countryCode: CountryCode) => {
+    const handleCountryCodeClick = (countryCode) => {
         setcurrentCountryCode(countryCode)
         setcountryCodeDropdown(false)
     }
     useEffect(() => {
-        setcountryCodeData(getCountryList() as CountryCode[])
-        setcurrentCountryCode(getCountryList('+62') as CountryCode)
+        setcountryCodeData(getCountryList() )
+        setcurrentCountryCode(getCountryList('+62'))
         window.scrollTo(0, 0)
     }, [])
     useEffect(() => {
@@ -133,7 +129,7 @@ const Register = ({ setCurrentStep, setUserData, userData }: {
     }, [countryCodeSearchText])
     useEffect(() => {
         const watchPassword = watch(value => {
-            const password: string = value.password!
+            const password = value.password
             if (strongRegex.eightLength.test(password))
                 setPasswordValidator(prev => ({ ...prev, eightLength: true }))
             else
@@ -291,7 +287,7 @@ const Register = ({ setCurrentStep, setUserData, userData }: {
                         error: errors.confirmPassword,
                         registerConfig: {
                             required: true,
-                            validate: (value: String) => {
+                            validate: (value) => {
                                 if (value != watch('password'))
                                     return 'Password do not match'
                             }

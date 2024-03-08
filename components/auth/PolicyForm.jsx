@@ -3,11 +3,7 @@ import { signIn } from "next-auth/react";
 import React, { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import PulseLoader from "react-spinners/PulseLoader";
 import { toast } from "react-toastify";
-const PolicyForm = ({ setCurrentStep, setUserData, userData }: {
-    setCurrentStep: Dispatch<SetStateAction<string>>,
-    setUserData: Dispatch<SetStateAction<UserRegisterData>>,
-    userData: UserRegisterData
-}) => {
+const PolicyForm = ({ setCurrentStep, setUserData, userData }) => {
     const [isLoading, setisLoading] = useState(false)
     const [isChecked, setisChecked] = useState(false)
     const checkboxRef = useRef<HTMLInputElement>(null)
@@ -44,11 +40,11 @@ const PolicyForm = ({ setCurrentStep, setUserData, userData }: {
         }
     }
     const handleCheckbox = () => {
-        setisChecked(checkboxRef.current?.checked as boolean)
+        setisChecked(checkboxRef.current?.checked )
     }
     useEffect(() => {
 
-        setisChecked(checkboxRef.current?.checked as boolean)
+        setisChecked(checkboxRef.current?.checked )
     }, [])
 
 
