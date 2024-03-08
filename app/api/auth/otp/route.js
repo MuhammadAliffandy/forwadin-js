@@ -2,7 +2,7 @@ import { fetchServer } from "@/utils/helper/fetchServer";
 import { NextRequest, NextResponse } from "next/server";
 
 
-export const GET = async (request: NextRequest, response: NextResponse) => {
+export const GET = async (request, response) => {
     const result = await fetchServer(request, response, { url: '/auth/send-verification-email', method: 'POST' })
 
     if (!result)
@@ -11,7 +11,7 @@ export const GET = async (request: NextRequest, response: NextResponse) => {
         return NextResponse.json({ message: 'Failed to send OTP' }, { status: result.status })
     return NextResponse.json({ message: 'Success send OTP' }, { status: result.status })
 }
-export const POST = async (request: NextRequest, response: NextResponse) => {
+export const POST = async (request, response) => {
     const body = await request.json()
     const result = await fetchServer(request, response, { url: '/auth/verify-email', body: { otpToken: body.token }, method: 'POST' })
     if (!result)

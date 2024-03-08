@@ -1,52 +1,9 @@
 import NextAuth, { DefaultSession } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
-import type { CustomerService, NextAuthOptions, User } from 'next-auth'
 import { DeviceData, DeviceSession, SubscriptionTypes } from "@/utils/types";
 
-interface Subscription {
-    status: number,
-    name?: string
-}
-declare module "next-auth" {
-    interface User {
-        id: string | undefined,
-        role: 111 | 222 | 999, // 111 admin, 222 cs, 999 su
-        googleToken?: string,
-        token: string | undefined,
-        refreshToken: string | undefined,
-        device: DeviceSession[],
-        subscription: Subscription
-    }
-    interface CustomerService {
-        id: string | undefined,
-        username: string,
-        email: string,
-        role: 222,
-        token: string | undefined,
-        refreshToken: string | undefined,
-        sessionId: string | undefined,
-        deviceId: string | undefined,
-        user: {
-            id: string,
-            firstName: string,
-            lastName: string,
-        },
-        createdAt: string,
-        updatedAt: string
-    }
-    interface Session extends DefaultSession {
-        user?: User;
-        customerService?: CustomerService
-    }
-}
-interface GetSession {
-    sessionId: string,
-    device: {
-        id: string
-    }
-}
-const getDeviceSession = async (data: GetSession[], token: string) => {
+const getDeviceSession = async (data, token) => {
 
     const newArray = await Promise.all(
         data.map(async (ses) => {
@@ -60,7 +17,7 @@ const getDeviceSession = async (data: GetSession[], token: string) => {
 
             if (fetchDeviceDetails.ok) {
                 // console.log('ini get device session ' + ses.device.id)
-                const body: DeviceData = await fetchDeviceDetails.json()
+                const body= await fetchDeviceDetails.json()
                 // console.log(body)
                 const device = {
                     id: ses.device.id,
@@ -72,17 +29,17 @@ const getDeviceSession = async (data: GetSession[], token: string) => {
             }
         })
     )
-    return newArray as any
+    return newArray
 }
-export const authConfig: NextAuthOptions = {
+export const authConfig= {
     session: {
         strategy: "jwt",
         maxAge: 43200
     },
     providers: [
         GoogleProvider({
-            clientId: process.env.GOOGLE_CLIENT_ID as string,
-            clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+            clientId: process.env.GOOGLE_CLIENT_ID ,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET,
             authorization: {
                 params: {
                     scope: 'profile email https://www.googleapis.com/auth/user.phonenumbers.read https://www.googleapis.com/auth/contacts https://www.googleapis.com/auth/contacts.readonly',
@@ -97,12 +54,12 @@ export const authConfig: NextAuthOptions = {
                 user: {}
             },
             authorize: async (credentials) => {
-                let device: DeviceSession[] = []
-                let subscription: Subscription = {
+                let device= []
+                let subscription = {
                     status: 0
                 }
                 console.log('refresh session 1')
-                const userData: User | CustomerService = JSON.parse(credentials?.user!)
+                const userData = JSON.parse(credentials?.user)
                 console.log('refresh session 2')
                 console.log(userData.refreshToken)
                 // todo
@@ -121,7 +78,7 @@ export const authConfig: NextAuthOptions = {
                     if (userData.role === 222) {
                         console.log('refresh CS')
                         console.log(resultData)
-                        const fetchSessionCS = await fetch(process.env.BACKEND_URL + "/customer-services/" + (userData as CustomerService).id, {
+                        const fetchSessionCS = await fetch(process.env.BACKEND_URL + "/customer-services/" + (userData).id, {
                             method: 'GET',
                             headers: {
                                 'Content-Type': 'application/json',
@@ -140,7 +97,7 @@ export const authConfig: NextAuthOptions = {
                         }
 
                         console.log(csData)
-                        return csData as any
+                        return csData
                     }
                     const userSubscription = await fetch(process.env.BACKEND_URL + '/users/' + userData.id + '/subscription/', {
                         method: 'GET',
@@ -163,7 +120,7 @@ export const authConfig: NextAuthOptions = {
                             },
                         })
                         if (fetchSession.ok) {
-                            const fetchSessionData: GetSession[] = await fetchSession.json()
+                            const fetchSessionData = await fetchSession.json()
                             if (fetchSessionData.length) {
                                 device = await getDeviceSession(fetchSessionData, resultData.accessToken)
                             }
@@ -233,7 +190,7 @@ export const authConfig: NextAuthOptions = {
                             },
                         })
                         if (fetchSession.ok) {
-                            const fetchSessionData: GetSession[] = await fetchSession.json()
+                            const fetchSessionData = await fetchSession.json()
                             if (fetchSessionData.length) {
                                 user.device = await getDeviceSession(fetchSessionData, resultData.accessToken)
                             } else {
@@ -247,7 +204,7 @@ export const authConfig: NextAuthOptions = {
                             status: 0
                         }
                     }
-                    return user as any
+                    return user 
                 } else {
                     return null
                 }
@@ -260,7 +217,7 @@ export const authConfig: NextAuthOptions = {
                 username: {},
                 password: {}
             },
-            authorize: async (credentials: any) => {
+            authorize: async (credentials) => {
                 try {
 
                     console.log('masuk cs 1')
@@ -285,7 +242,7 @@ export const authConfig: NextAuthOptions = {
                         return null
                     }
                     const csProfileData = await csProfile.json()
-                    const customerService: CustomerService = {
+                    const customerService= {
                         id: resultData.id,
                         user: csProfileData.user,
                         email: csProfileData.email,
@@ -298,7 +255,7 @@ export const authConfig: NextAuthOptions = {
                         createdAt: csProfileData.createdAt,
                         updatedAt: csProfileData.updatedAt
                     }
-                    return customerService as any
+                    return customerService 
 
                 } catch (error) {
                     console.log(error)
@@ -312,7 +269,7 @@ export const authConfig: NextAuthOptions = {
         signIn: '/signin',
     },
     callbacks: {
-        async session({ session, token }: any) {
+        async session({ session, token }) {
             if (token.user)
                 session.user = token.user
             if (token.customerService)
@@ -334,7 +291,7 @@ export const authConfig: NextAuthOptions = {
             }
             return token;
         },
-        async signIn({ user, account }: any) {
+        async signIn({ user, account }) {
             if (account?.provider === 'google') {
                 // return null
                 const result = await fetch(process.env.BACKEND_URL + '/auth/google', {
@@ -374,7 +331,7 @@ export const authConfig: NextAuthOptions = {
                             },
                         })
                         if (fetchSession.ok) {
-                            const fetchSessionData: GetSession[] = await fetchSession.json()
+                            const fetchSessionData = await fetchSession.json()
                             if (fetchSessionData.length) {
                                 user.device = await getDeviceSession(fetchSessionData, resultData.accessToken)
                             } else {

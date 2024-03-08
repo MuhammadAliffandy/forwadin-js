@@ -1,7 +1,6 @@
 import { writeFile, unlink } from 'fs/promises'
-import { Session, getServerSession } from 'next-auth'
+import { getServerSession } from 'next-auth'
 import { NextRequest, NextResponse } from 'next/server'
-import type { NextApiRequest, NextApiResponse } from 'next'
 import { join } from 'path'
 import { authConfig } from "@/app/api/auth/[...nextauth]/route"
 // export const config = {
@@ -9,27 +8,28 @@ import { authConfig } from "@/app/api/auth/[...nextauth]/route"
 //         bodyParser: false
 //     },
 // }
-export const POST = async (request: NextRequest, response: NextResponse) => {
+export const POST = async (request, response) => {
     const data = await request.formData()
-    const file: File | null = data.get('document') as unknown as File
+    const file = data.get('document') 
+    console.log(file.type)
     const caption = data.get('caption') || ''
-    const recipients = data.get('recipients[0]') as string
+    const recipients = data.get('recipients[0]') 
     const sessionId = data.get('sessionId')
     if (!file && sessionId && recipients) {
         return NextResponse.json({ success: false }, { status: 400 })
     }
     try {
-        const session: Session | null = await getServerSession(
-            request as unknown as NextApiRequest,
+        const session  = await getServerSession(
+            request,
             {
                 ...response,
-                getHeader: (name: string) => response.headers?.get(name),
-                setHeader: (name: string, value: string) => response.headers?.set(name, value),
-            } as unknown as NextApiResponse,
+                getHeader: (name) => response.headers?.get(name),
+                setHeader: (name, value) => response.headers?.set(name, value),
+            } ,
             authConfig
         );
 
-        if (!session?.customerService) {
+        if (!session?.user) {
             return NextResponse.json({ error: 'Session not found' }, { status: 400 })
         }
         const bytes = await file.arrayBuffer()
@@ -44,7 +44,7 @@ export const POST = async (request: NextRequest, response: NextResponse) => {
             const sendMessage = await fetch(process.env.BACKEND_URL + '/messages/' + sessionId + '/send/image', {
                 method: 'POST',
                 headers: {
-                    'Authorization': 'Bearer ' + session.customerService.token,
+                    'Authorization': 'Bearer ' + session.user.token,
                     // 'Content-Type': 'multipart/form-data'
                 },
                 body: formdata
@@ -63,7 +63,7 @@ export const POST = async (request: NextRequest, response: NextResponse) => {
             const sendMessage = await fetch(process.env.BACKEND_URL + '/messages/' + sessionId + '/send/doc', {
                 method: 'POST',
                 headers: {
-                    'Authorization': 'Bearer ' + session.customerService.token,
+                    'Authorization': 'Bearer ' + session.user.token,
                     // 'Content-Type': 'multipart/form-data'
                 },
                 body: formdata
