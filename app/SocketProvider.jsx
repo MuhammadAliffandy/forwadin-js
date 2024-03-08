@@ -2,7 +2,7 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import { io as ClientIO } from 'socket.io-client'
 
-const SocketContext = createContext<SocketContextType>({
+const SocketContext = createContext({
     socket: null,
     isConnected: false
 })
