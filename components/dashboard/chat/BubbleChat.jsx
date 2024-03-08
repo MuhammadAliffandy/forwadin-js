@@ -3,15 +3,7 @@ import { isFileImage } from "@/utils/helper/fileHelper"
 import React, { useEffect, useState } from "react"
 import DisplayFile from "../DisplayFile"
 
-interface BubbleChatProps {
-    text: string,
-    received: string,
-    status?: string,
-    isOutgoing?: boolean,
-    mediaPath?: string,
-    currentDate: Date
-}
-const BubbleChat = ({ text, received, status, isOutgoing = false, currentDate, mediaPath }: BubbleChatProps) => {
+const BubbleChat = ({ text, received, status, isOutgoing = false, currentDate, mediaPath }) => {
     const [isCopied, setIsCopied] = useState(false)
     const messageDate = new Date(Date.parse(received))
     const [receivedMessage, setreceivedMessage] = useState('')

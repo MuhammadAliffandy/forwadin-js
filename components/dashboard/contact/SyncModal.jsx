@@ -9,20 +9,12 @@ import ButtonSubmit from "@/components/form/ButtonSubmit"
 import { Button } from "@nextui-org/react"
 import { toast } from "react-toastify"
 import { fetchClient } from "@/utils/helper/fetchClient"
-interface SyncModalProps {
-    openModal: boolean,
-    setopenModal: Dispatch<SetStateAction<boolean>>,
-    user: User | undefined,
-    refresh: () => void
-}
-interface DeviceForm {
-    deviceId: string,
-}
-const SyncModal = ({ openModal, setopenModal, user, refresh }: SyncModalProps) => {
-    const { handleSubmit, register, reset, formState: { errors } } = useForm<DeviceForm>()
-    const [listDevice, setlistDevice] = useState<DeviceSession[]>([])
+
+const SyncModal = ({ openModal, setopenModal, user, refresh }) => {
+    const { handleSubmit, register, reset, formState: { errors } } = useForm()
+    const [listDevice, setlistDevice] = useState([])
     const [isLoading, setisLoading] = useState(false)
-    const onSubmit = async (data: DeviceForm) => {
+    const onSubmit = async (data) => {
         setisLoading(true)
         if (!data.deviceId) {
             toast.error('Device masih kosong')

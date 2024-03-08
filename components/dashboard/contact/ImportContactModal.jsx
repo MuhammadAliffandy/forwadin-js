@@ -9,23 +9,14 @@ import ButtonSubmit from "@/components/form/ButtonSubmit"
 import { Button } from "@nextui-org/react"
 import { toast } from "react-toastify"
 import { fetchClient } from "@/utils/helper/fetchClient"
-interface ImportContactModalProps {
-    openModal: boolean,
-    setopenModal: Dispatch<SetStateAction<boolean>>,
-    user: User | undefined,
-    refresh: () => void
-}
-interface ImportForm {
-    deviceId: string,
-    groupName: string
-}
-const ImportContactModal = ({ openModal, setopenModal, user, refresh }: ImportContactModalProps) => {
-    const { handleSubmit, register, reset, formState: { errors } } = useForm<ImportForm>()
-    const [listDevice, setlistDevice] = useState<DeviceSession[]>([])
+
+const ImportContactModal = ({ openModal, setopenModal, user, refresh }) => {
+    const { handleSubmit, register, reset, formState: { errors } } = useForm()
+    const [listDevice, setlistDevice] = useState([])
     const [isLoading, setisLoading] = useState(false)
     const [isDisabled, setisDisabled] = useState(true)
-    const [files, setfiles] = useState<File[]>([])
-    const onSubmit = async (data: ImportForm) => {
+    const [files, setfiles] = useState([])
+    const onSubmit = async (data) => {
         setisLoading(true)
         if (files.length === 0) {
             toast.error('file masih kosong')

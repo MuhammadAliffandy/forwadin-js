@@ -1,11 +1,6 @@
 import { Dispatch, SetStateAction, useEffect, useState } from "react"
 
-const TextAreaInput = ({ text, settext, limit = 1500, placeholder = 'Tuliskan pesan anda' }: {
-    text: string,
-    settext: Dispatch<SetStateAction<string>>,
-    limit?: number,
-    placeholder?: string
-}) => {
+const TextAreaInput = ({ text, settext, limit = 1500, placeholder = 'Tuliskan pesan anda' }) => {
     const [counter, setcounter] = useState(0)
     useEffect(() => {
         if (text)

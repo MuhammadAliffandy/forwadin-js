@@ -1,9 +1,7 @@
 import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@nextui-org/react"
 import { Dispatch, SetStateAction, useEffect, useState } from "react"
 
-const DisplayImage = ({ imageUrl }: {
-    imageUrl: string
-}) => {
+const DisplayImage = ({ imageUrl }) => {
     const [fileName, setfileName] = useState('')
     const finalUrl = process.env.NEXT_PUBLIC_BACKEND_URL + '/' + imageUrl
     useEffect(() => {

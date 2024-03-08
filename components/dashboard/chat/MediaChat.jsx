@@ -1,11 +1,7 @@
 import { MediaMessageData } from '@/utils/types'
 import Link from 'next/link'
 import React from 'react'
-interface MediaChatProps {
-    media: MediaMessageData,
-    isOutgoing?: boolean
-}
-const MediaChat = ({ media, isOutgoing = false }: MediaChatProps) => {
+const MediaChat = ({ media, isOutgoing = false }) => {
     const handleClick = () => {
 
     }

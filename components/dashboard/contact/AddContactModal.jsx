@@ -12,30 +12,18 @@ import CountryFlagSvg from "country-list-with-dial-code-and-flag/dist/flag-svg"
 import { formatPhoneCode, getCountryList } from "@/utils/helper/countryCode"
 import { Skeleton } from "@nextui-org/react"
 import { useSession } from "next-auth/react"
-interface AddContactModalProps {
-    openModal: boolean,
-    setopenModal: Dispatch<SetStateAction<boolean>>,
-    fetchData: () => void
-}
-interface ContactDataForm {
-    firstName: string,
-    lastName: string,
-    email: string,
-    phone: string,
-    gender: string,
-    dob: string,
-    device: string,
-}
 
-const AddContactModal = ({ openModal, setopenModal, fetchData }: AddContactModalProps) => {
+
+
+const AddContactModal = ({ openModal, setopenModal, fetchData }) => {
     const { data: session } = useSession()
     const [isLoaded, setisLoaded] = useState(false)
     const [isLoading, setisLoading] = useState(false)
-    const { handleSubmit, register, reset, formState: { errors } } = useForm<ContactDataForm>()
-    const [labelList, setlabelList] = useState<Label[]>([
+    const { handleSubmit, register, reset, formState: { errors } } = useForm()
+    const [labelList, setlabelList] = useState([
     ])
-    const [deviceList, setdeviceList] = useState<DeviceData[]>([])
-    const [currentCountryCode, setcurrentCountryCode] = useState<CountryCode>({
+    const [deviceList, setdeviceList] = useState([])
+    const [currentCountryCode, setcurrentCountryCode] = useState({
         name: '',
         dial_code: '',
         code: '',
@@ -44,9 +32,9 @@ const AddContactModal = ({ openModal, setopenModal, fetchData }: AddContactModal
     const countryCodeInputRef = useRef<HTMLInputElement>(null)
     const [countryCodeDropdown, setcountryCodeDropdown] = useState(false)
     const [countryCodeSearchText, setcountryCodeSearchText] = useState('')
-    const [countryCodeData, setcountryCodeData] = useState<CountryCode[]>([])
-    const [countryCodeSearchData, setcountryCodeSearchData] = useState<CountryCode[]>([])
-    const handleCountryCodeClick = (countryCode: CountryCode) => {
+    const [countryCodeData, setcountryCodeData] = useState([])
+    const [countryCodeSearchData, setcountryCodeSearchData] = useState([])
+    const handleCountryCodeClick = (countryCode) => {
         setcurrentCountryCode(countryCode)
         setcountryCodeDropdown(false)
     }
@@ -65,7 +53,7 @@ const AddContactModal = ({ openModal, setopenModal, fetchData }: AddContactModal
         }
 
     })
-    const onSubmit = async (formData: ContactDataForm) => {
+    const onSubmit = async (formData) => {
         setisLoading(true)
         const formattedPhone = formatPhoneCode(formData.phone, currentCountryCode.dial_code)
         formData.phone = formattedPhone.replace('+', '')
@@ -120,8 +108,8 @@ const AddContactModal = ({ openModal, setopenModal, fetchData }: AddContactModal
         }
     }
     useEffect(() => {
-        setcountryCodeData(getCountryList() as CountryCode[])
-        setcurrentCountryCode(getCountryList('+62') as CountryCode)
+        setcountryCodeData(getCountryList() )
+        setcurrentCountryCode(getCountryList('+62'))
         fetchDevice()
     }, [session?.user?.token])
     useEffect(() => {

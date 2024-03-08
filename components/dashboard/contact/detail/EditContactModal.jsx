@@ -12,29 +12,24 @@ import { formatPhoneCode, getCountryList } from "@/utils/helper/countryCode"
 import MultipleInputLabel from "../../MultipleInputLabel"
 import { convertLabelList, formatBackendBirthDate } from "@/utils/helper"
 import { useSession } from "next-auth/react"
-interface EditContactModalProps {
-    openModal: boolean,
-    setopenModal: Dispatch<SetStateAction<boolean>>,
-    fetchData: () => void,
-    contactData: ContactData
-}
-const EditContactModal = ({ openModal, setopenModal, fetchData, contactData }: EditContactModalProps) => {
+
+const EditContactModal = ({ openModal, setopenModal, fetchData, contactData }) => {
     const { data: session } = useSession()
     const [isLoading, setisLoading] = useState(false)
-    const [labelList, setlabelList] = useState<Label[]>([])
-    const countryCodeInputRef = useRef<HTMLInputElement>(null)
+    const [labelList, setlabelList] = useState([])
+    const countryCodeInputRef = useRef(null)
     const [countryCodeDropdown, setcountryCodeDropdown] = useState(false)
     const [countryCodeSearchText, setcountryCodeSearchText] = useState('')
-    const [countryCodeData, setcountryCodeData] = useState<CountryCode[]>([])
-    const [countryCodeSearchData, setcountryCodeSearchData] = useState<CountryCode[]>([])
-    const [currentCountryCode, setcurrentCountryCode] = useState<CountryCode>({
+    const [countryCodeData, setcountryCodeData] = useState([])
+    const [countryCodeSearchData, setcountryCodeSearchData] = useState([])
+    const [currentCountryCode, setcurrentCountryCode] = useState({
         name: '',
         dial_code: '',
         code: '',
         flag: ''
     })
-    const { register, handleSubmit, formState: { errors } } = useForm<ContactData>()
-    const handleCountryCodeClick = (countryCode: CountryCode) => {
+    const { register, handleSubmit, formState: { errors } } = useForm()
+    const handleCountryCodeClick = (countryCode) => {
         setcurrentCountryCode(countryCode)
         setcountryCodeDropdown(false)
     }
@@ -53,7 +48,7 @@ const EditContactModal = ({ openModal, setopenModal, fetchData, contactData }: E
         }
 
     })
-    const onSubmit = async (formData: ContactData) => {
+    const onSubmit = async (formData) => {
         setisLoading(true)
         const formattedPhone = formatPhoneCode(formData.phone, currentCountryCode.dial_code)
         formData.phone = formattedPhone.replace('+', '')
@@ -89,8 +84,8 @@ const EditContactModal = ({ openModal, setopenModal, fetchData, contactData }: E
         }
     }
     useEffect(() => {
-        setcountryCodeData(getCountryList() as CountryCode[])
-        setcurrentCountryCode(getCountryList('+62') as CountryCode)
+        setcountryCodeData(getCountryList() )
+        setcurrentCountryCode(getCountryList('+62') )
         if (contactData) {
             const newLabelList = contactData.ContactLabel?.map(obj => {
                 return {
@@ -100,7 +95,7 @@ const EditContactModal = ({ openModal, setopenModal, fetchData, contactData }: E
                     }
                 }
             })
-            setlabelList(newLabelList!)
+            setlabelList(newLabelList)
         }
     }, [contactData])
     useEffect(() => {

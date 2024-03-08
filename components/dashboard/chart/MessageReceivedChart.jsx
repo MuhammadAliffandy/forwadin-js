@@ -1,8 +1,7 @@
 import { Doughnut } from 'react-chartjs-2'
-import type { ChartData, ChartOptions } from 'chart.js';
 import { useState, useEffect } from 'react';
 const MessageReceivedChart = () => {
-    const messageData: ChartData<'doughnut'> = {
+    const messageData = {
         labels: ['Total Pesan Keluar', 'Total Pesan Masuk', 'Total Pesan Gagal'],
         datasets: [{
             data: [24, 8, 12],
@@ -13,7 +12,7 @@ const MessageReceivedChart = () => {
             ],
         }]
     }
-    const dataOption: ChartOptions = {
+    const dataOption = {
         maintainAspectRatio: true,
         plugins: {
             legend: {
@@ -22,7 +21,7 @@ const MessageReceivedChart = () => {
             tooltip: {
                 callbacks: {
                     label: (context) => {
-                        let sum: any = 0
+                        let sum = 0
                         context.dataset.data.map(data => {
                             if (data)
                                 sum += data

@@ -11,32 +11,16 @@ import { useSession } from "next-auth/react"
 import { useForm } from "react-hook-form"
 import { toast } from "react-toastify"
 
-interface AddContactModalProps {
-    openModal: boolean,
-    setopenModal: Dispatch<SetStateAction<boolean>>,
-    fetchData: () => void,
-    addContactData: {
-        phone: string
-    }
-}
-interface ContactDataForm {
-    firstName: string,
-    lastName: string,
-    email: string,
-    phone: string,
-    gender: string,
-    dob: string,
-    device: string,
-}
-const MessageAddContact = ({ fetchData, openModal, setopenModal, addContactData }: AddContactModalProps) => {
+
+const MessageAddContact = ({ fetchData, openModal, setopenModal, addContactData }) => {
     const { data: session } = useSession()
     const [isLoaded, setisLoaded] = useState(false)
     const [isLoading, setisLoading] = useState(false)
-    const { handleSubmit, register, reset, setValue, formState: { errors } } = useForm<ContactDataForm>()
-    const [labelList, setlabelList] = useState<Label[]>([
+    const { handleSubmit, register, reset, setValue, formState: { errors } } = useForm()
+    const [labelList, setlabelList] = useState([
     ])
-    const [deviceList, setdeviceList] = useState<DeviceData[]>([])
-    const onSubmit = async (formData: ContactDataForm) => {
+    const [deviceList, setdeviceList] = useState([])
+    const onSubmit = async (formData) => {
         setisLoading(true)
         const bodyForm = {
             firstName: formData.firstName,
