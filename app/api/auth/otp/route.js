@@ -1,4 +1,4 @@
-import { fetchServer } from "@/utils/helper/fetchServer";
+import { fetchServer } from "@/app/utils/helper/fetchServer";
 import { NextRequest, NextResponse } from "next/server";
 
 

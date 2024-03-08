@@ -1,16 +1,16 @@
 'use client'
-import OneStep from '@/components/landing/OneStep'
-import FAQ from '@/components/landing/FAQ'
-import Navbar from '@/components/Navbar'
-import Footer from '@/components/Footer'
+import OneStep from '@/app/components/landing/OneStep'
+import FAQ from '@/app/components/landing/FAQ'
+import Navbar from '@/app/components/Navbar'
+import Footer from '@/app/components/Footer'
 import { Animator, ScrollContainer, ScrollPage, batch, Fade, Move, StickyOut, Sticky } from "react-scroll-motion";
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useSession } from 'next-auth/react'
 import { toast } from 'react-toastify'
 import { useRouter } from 'next/navigation'
-import { fetchClient } from '@/utils/helper/fetchClient'
-import Pricing from '@/components/dashboard/Pricing'
+import { fetchClient } from '@/app/utils/helper/fetchClient'
+import Pricing from '@/app/components/dashboard/Pricing'
 
 export default function Home() {
   // const FadeUp = Sticky()

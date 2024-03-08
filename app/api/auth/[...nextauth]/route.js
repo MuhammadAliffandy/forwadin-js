@@ -1,7 +1,7 @@
 import NextAuth, { DefaultSession } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
-import { DeviceData, DeviceSession, SubscriptionTypes } from "@/utils/types";
+import { DeviceData, DeviceSession, SubscriptionTypes } from "@/app/utils/types";
 
 const getDeviceSession = async (data, token) => {
 

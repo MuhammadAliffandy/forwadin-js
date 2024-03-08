@@ -1,7 +1,7 @@
 import './globals.css'
 import { ToastContainer, toast } from "react-toastify"
 import 'react-toastify/dist/ReactToastify.css';
-import Provider from '@/components/Provider';
+import Provider from '@/app/components/Provider';
 import { NextUIProviders } from './NextUIProvider';
 import { SocketProvider } from './SocketProvider';
 export const metadata = {
