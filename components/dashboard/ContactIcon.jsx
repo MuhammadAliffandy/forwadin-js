@@ -1,14 +1,7 @@
 import { getInitials } from "@/utils/helper"
 
-interface ContactIconProps {
-    contact?: {
-        firstName: string,
-        lastName: string,
-        colorCode: string
-    },
-    phone: string
-}
-const ContactIcon = ({ contact, phone }: ContactIconProps) => {
+
+const ContactIcon = ({ contact, phone }) => {
 
     if (contact) {
         return (

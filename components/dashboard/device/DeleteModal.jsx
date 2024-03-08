@@ -4,14 +4,8 @@ import { fetchClient } from "@/utils/helper/fetchClient"
 import { DeviceData } from "@/utils/types"
 import { Dispatch, SetStateAction, useEffect, useState } from "react"
 import { toast } from "react-toastify"
-interface DeleteModalProps {
-    openModal: boolean,
-    setopenModal: Dispatch<SetStateAction<boolean>>,
-    count: string,
-    deleteFunction: () => void,
-    type: string
-}
-const DeleteModal = ({ openModal, setopenModal, count, deleteFunction, type }: DeleteModalProps) => {
+
+const DeleteModal = ({ openModal, setopenModal, count, deleteFunction, type }) => {
     const [isLoading, setisLoading] = useState(false)
     const handleYesClick = async () => {
         setisLoading(true)

@@ -3,17 +3,12 @@ import { TagsType } from '@/utils/types'
 import { animated, useTransition } from '@react-spring/web'
 import React, { useState, KeyboardEvent, Dispatch, SetStateAction, useEffect } from 'react'
 
-interface TagsInputProps {
-    selectedTags: string[],
-    setselectedTags: Dispatch<SetStateAction<string>>,
-    listTags: TagsType[]
-}
-const TagsInput = ({ listTags, selectedTags, setselectedTags }: TagsInputProps) => {
-    const [tags, setTags] = useState<TagsType[]>([])
-    const [searchedTags, setsearchedTags] = useState<TagsType[]>([])
+const TagsInput = ({ listTags, selectedTags, setselectedTags }) => {
+    const [tags, setTags] = useState([])
+    const [searchedTags, setsearchedTags] = useState([])
     const [isFocused, setisFocused] = useState(false)
     const [inputText, setinputText] = useState('')
-    const handleKeyDown = (e: any) => {
+    const handleKeyDown = (e) => {
 
         if (e.key !== 'Enter' || !inputText.trim()) return
         const findTags = tags.find(tag => tag.title === inputText)
@@ -37,7 +32,7 @@ const TagsInput = ({ listTags, selectedTags, setselectedTags }: TagsInputProps) 
         }
     }
 
-    const toggleTag = (currentTag: TagsType, status: boolean) => {
+    const toggleTag = (currentTag, status) => {
         const newTags = tags.map(tag => {
             if (tag.title === currentTag.title)
                 return {

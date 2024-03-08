@@ -2,11 +2,7 @@
 import ModalTemplate from '@/components/template/ModalTemplate'
 import { Dispatch, SetStateAction } from 'react'
 const DeleteGroupModal = (
-    { openModal, setopenModal, group }:
-        {
-            openModal: boolean, setopenModal: Dispatch<SetStateAction<boolean>>,
-            group: string
-        }
+    { openModal, setopenModal, group }
 ) => {
     return (
         <ModalTemplate outsideClose={true} openModal={openModal} setopenModal={setopenModal}>

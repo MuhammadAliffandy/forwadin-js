@@ -1,11 +1,8 @@
 import { MessageTemplate } from '@/utils/types'
 import React from 'react'
 
-interface TemplateContainerProps {
-    templateList: MessageTemplate[],
-    handleClick: (key: string) => void
-}
-const TemplateContainer = ({ templateList, handleClick }: TemplateContainerProps) => {
+
+const TemplateContainer = ({ templateList, handleClick }) => {
     return (
         <>
             {templateList.length > 0 && (

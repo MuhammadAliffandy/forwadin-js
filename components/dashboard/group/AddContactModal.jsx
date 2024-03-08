@@ -7,18 +7,11 @@ import { Button, Skeleton } from '@nextui-org/react'
 import { fetchClient } from '@/utils/helper/fetchClient'
 import { toast } from 'react-toastify'
 const AddContactModal = (
-    { openModal, setopenModal, fetchGroupData, groupId, activeContactData }:
-        {
-            openModal: boolean,
-            setopenModal: Dispatch<SetStateAction<boolean>>,
-            fetchGroupData: () => void,
-            groupId: string,
-            activeContactData: ContactData[]
-        }
+    { openModal, setopenModal, fetchGroupData, groupId, activeContactData }
 ) => {
     const { data: session } = useSession()
     const [isLoading, setisLoading] = useState(false)
-    const [contactData, setcontactData] = useState<ContactData[]>([
+    const [contactData, setcontactData] = useState([
     ])
     const [isLoaded, setisLoaded] = useState(false)
     const fetchContactData = async () => {
@@ -29,7 +22,7 @@ const AddContactModal = (
             user: session?.user
         })
         if (result && result.ok) {
-            const resultData: ContactData[] = await result.json()
+            const resultData= await result.json()
             setcontactData(resultData.filter(contact => !activeContactData.find(existContact => existContact.id === contact.id)))
         }
         setisLoaded(true)

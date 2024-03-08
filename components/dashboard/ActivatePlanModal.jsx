@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { toast } from "react-toastify"
 
-const ActivatePlanModal = ({ user }: { user: User }) => {
+const ActivatePlanModal = ({ user }) => {
     const { data: session } = useSession()
     const [isLoading, setisLoading] = useState(false)
     const router = useRouter()

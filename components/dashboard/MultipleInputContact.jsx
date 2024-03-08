@@ -2,15 +2,14 @@ import { ContactData } from "@/utils/types"
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react"
 
 const MultipleInputContact = (
-    { contactList, setcontactList }:
-        { contactList: ContactData[], setcontactList: Dispatch<SetStateAction<ContactData[]>>, }
+    { contactList, setcontactList }
 ) => {
     const contactInputRef = useRef<HTMLInputElement>(null)
-    const [searchContactList, setsearchContactList] = useState<ContactData[]>([])
+    const [searchContactList, setsearchContactList] = useState([])
 
     const [inputText, setinputText] = useState('')
-    const handleContactDataClick = (contactId: string, status: boolean) => {
-        const newContactDataList: ContactData[] = contactList.map((list => list.id === contactId ? { ...list, active: status } : list))
+    const handleContactDataClick = (contactId, status) => {
+        const newContactDataList = contactList.map((list => list.id === contactId ? { ...list, active: status } : list))
         // console.log(newContactDataList)
         setcontactList(newContactDataList)
     }

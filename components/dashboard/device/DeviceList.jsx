@@ -1,13 +1,7 @@
 import { MultipleCheckboxRef, DeviceData } from "@/utils/types"
-interface DeviceListProps {
-    deviceData: DeviceData[],
-    handleCheckBoxClick: (event: React.FormEvent<HTMLInputElement>, id: number) => void,
-    deviceCheckboxRef: React.MutableRefObject<MultipleCheckboxRef>,
-    handleOpenQRModal: (item: DeviceData) => void,
-    handleOpenDetailModal: (params: string) => void
-}
-const DeviceList = ({ deviceData, handleCheckBoxClick, deviceCheckboxRef, handleOpenQRModal, handleOpenDetailModal }: DeviceListProps) => {
-    const handleRefChange = (element: HTMLInputElement | null, item: DeviceData) => {
+
+const DeviceList = ({ deviceData, handleCheckBoxClick, deviceCheckboxRef, handleOpenQRModal, handleOpenDetailModal }) => {
+    const handleRefChange = (element, item) => {
         if (deviceCheckboxRef.current && element)
             deviceCheckboxRef.current[`checkbox_${item.pkId}`] = element
     }

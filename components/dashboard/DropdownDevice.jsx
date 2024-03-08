@@ -2,11 +2,7 @@ import { DeviceSession } from "@/utils/types"
 import { Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@nextui-org/react"
 import { Dispatch, SetStateAction, useEffect, useState } from "react"
 
-const DropdownDevice = ({ listDevice, currentDevice, setcurrentDevice }: {
-    listDevice: DeviceSession[] | undefined,
-    currentDevice: DeviceSession | undefined,
-    setcurrentDevice: Dispatch<SetStateAction<DeviceSession | undefined>>
-}) => {
+const DropdownDevice = ({ listDevice, currentDevice, setcurrentDevice }) => {
     const [isLoaded, setisLoaded] = useState(false)
     useEffect(() => {
         if (listDevice && !currentDevice) {
@@ -29,7 +25,7 @@ const DropdownDevice = ({ listDevice, currentDevice, setcurrentDevice }: {
                     </div>
                 </DropdownTrigger>
                 <DropdownMenu items={listDevice} aria-label="device list">
-                    {(item: any) => (
+                    {(item) => (
                         <DropdownItem
                             key={item.id}
                             onClick={() => {

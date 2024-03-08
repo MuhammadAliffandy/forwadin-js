@@ -2,12 +2,7 @@ import YesNoButton from "@/components/YesNoButton"
 import ModalTemplate from "@/components/template/ModalTemplate"
 import { Dispatch, SetStateAction, useState } from "react"
 
-interface ConfirmDeleteAccountModalProps {
-    openModal: boolean,
-    setopenModal: Dispatch<SetStateAction<boolean>>,
-    deleteFunction: () => void
-}
-const ConfirmDeleteAccountModal = ({ deleteFunction, openModal, setopenModal }: ConfirmDeleteAccountModalProps) => {
+const ConfirmDeleteAccountModal = ({ deleteFunction, openModal, setopenModal }) => {
     const [isLoading, setIsLoading] = useState(false)
     const handleYesClick = async () => {
         setIsLoading(true)

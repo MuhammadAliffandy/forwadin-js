@@ -7,21 +7,15 @@ import { User } from 'next-auth'
 import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 const DeleteContactModal = (
-    { openModal, setopenModal, deleteFunction, selectedKeys }:
-        {
-            openModal: boolean,
-            setopenModal: Dispatch<SetStateAction<boolean>>,
-            selectedKeys: Set<string> | 'all',
-            deleteFunction: () => void
-        }
+    { openModal, setopenModal, deleteFunction, selectedKeys }
 ) => {
     const [count, setcount] = useState('')
     useEffect(() => {
-        if ((selectedKeys as Set<string>).size > 0 || selectedKeys === 'all') {
+        if ((selectedKeys ).size > 0 || selectedKeys === 'all') {
             if (selectedKeys === 'all')
                 setcount('semua')
             else
-                setcount((selectedKeys as Set<string>).size as any)
+                setcount((selectedKeys ).size)
         } else {
             setcount('-')
         }

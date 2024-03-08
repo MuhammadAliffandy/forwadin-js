@@ -1,7 +1,5 @@
 import Link from "next/link"
-const NavButton = ({ href, text, currentPage, isDisabled }: {
-    href: string, text: string, currentPage: string, isDisabled?: boolean
-}) => {
+const NavButton = ({ href, text, currentPage, isDisabled }) => {
     const isActive = (text === currentPage)
     if (isDisabled)
         return (

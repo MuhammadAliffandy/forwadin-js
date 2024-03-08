@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import { Dispatch, SetStateAction } from "react";
 import NavButton from "./NavButton";
 import { User } from "next-auth";
-const MessageList = ({ currentPage, isDisabled }: { currentPage: string, isDisabled: boolean }) => {
+const MessageList = ({ currentPage, isDisabled }) => {
     const [isDropdown, setIsDropdown] = useState(false)
     const [isActive, setisActive] = useState(false)
     const listActivePages = [

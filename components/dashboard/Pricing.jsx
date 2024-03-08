@@ -94,7 +94,7 @@ const Pricing = () => {
                     radius='full'
                     color='primary'
                     selectedKey={buttonActive}
-                    onSelectionChange={setButtonActive as any}
+                    onSelectionChange={setButtonActive}
                 >
                     <Tab key={'monthly'} title='monthly' />
                     <Tab key={'yearly'} title='yearly' />

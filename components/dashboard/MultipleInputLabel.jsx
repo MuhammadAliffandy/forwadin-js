@@ -5,19 +5,12 @@ import { useSession } from "next-auth/react";
 import { fetchClient } from "@/utils/helper/fetchClient";
 
 const MultipleInputLabel = (
-    { labelList, setlabelList, placeholder, maxChar, type = null }:
-        {
-            labelList: Label[],
-            setlabelList: Dispatch<SetStateAction<Label[]>>,
-            placeholder?: string,
-            maxChar?: number,
-            type?: 'device' | 'contact' | null,
-        }
+    { labelList, setlabelList, placeholder, maxChar, type = null }
 ) => {
     const { data: session } = useSession()
-    const labelInputRef = useRef<HTMLInputElement>(null)
+    const labelInputRef = useRef(null)
     const [isLabelOpen, setisLabelOpen] = useState(false)
-    const [searchLabelList, setsearchLabelList] = useState<Label[]>([])
+    const [searchLabelList, setsearchLabelList] = useState([])
     const componentTransition = useTransition(isLabelOpen, {
         from: {
             transform: "translateY(50px)",
@@ -34,7 +27,7 @@ const MultipleInputLabel = (
 
     })
     const [inputText, setinputText] = useState('')
-    const handleEnter = (e: React.KeyboardEvent) => {
+    const handleEnter = (e) => {
 
         if (e.key === 'Enter') {
             e.preventDefault()
@@ -42,14 +35,14 @@ const MultipleInputLabel = (
                 setlabelList(old => [...old, { label: { name: inputText, active: true } }])
                 setinputText('')
             } else {
-                const currentLabel: Label[] = labelList.map(item => item.label.name === inputText ? { label: { name: item.label.name, active: true } } : item)
+                const currentLabel= labelList.map(item => item.label.name === inputText ? { label: { name: item.label.name, active: true } } : item)
                 setlabelList(currentLabel)
                 setinputText('')
             }
         }
     }
-    const handleLabelClick = (labelName: string, status: boolean) => {
-        const newLabelList: Label[] = labelList.map((item => item.label.name === labelName ? { label: { name: item.label.name, active: status } } : item))
+    const handleLabelClick = (labelName, status) => {
+        const newLabelList= labelList.map((item => item.label.name === labelName ? { label: { name: item.label.name, active: status } } : item))
         setlabelList(newLabelList)
     }
     const fetchLabel = async () => {
@@ -69,7 +62,7 @@ const MultipleInputLabel = (
             })
         }
         if (result?.ok) {
-            const resultData: string[] = await result.json()
+            const resultData= await result.json()
             console.log('fetch label')
             console.log(resultData)
             setlabelList(resultData.map(item => {

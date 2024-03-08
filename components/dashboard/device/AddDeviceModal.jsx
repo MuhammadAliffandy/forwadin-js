@@ -9,14 +9,13 @@ import { fetchClient } from '../../../utils/helper/fetchClient'
 import { Label } from '@/utils/types'
 
 const AddDeviceModal = (
-    { openModal, setopenModal, fetchData }:
-        { openModal: boolean, setopenModal: Dispatch<SetStateAction<boolean>>, fetchData: () => void }
+    { openModal, setopenModal, fetchData }
 ) => {
     const { data: session } = useSession()
     const [isLoading, setisLoading] = useState(false)
     const [deviceName, setdeviceName] = useState('')
     const [inputError, setinputError] = useState({ error: false, message: '' })
-    const [labelList, setlabelList] = useState<Label[]>([])
+    const [labelList, setlabelList] = useState([])
     const handleSubmit = async () => {
         if (!deviceName) {
             setinputError({ error: true, message: 'tidak boleh kosong' })

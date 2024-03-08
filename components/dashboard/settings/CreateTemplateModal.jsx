@@ -9,22 +9,13 @@ import { Button } from "@nextui-org/react"
 import { fetchClient } from "@/utils/helper/fetchClient"
 import { toast } from "react-toastify"
 
-interface CreateTemplateModalProps {
-  openModal: boolean,
-  setopenModal: Dispatch<SetStateAction<boolean>>,
-  user: User | undefined,
-  refresh: () => void
-}
-interface TemplateForm {
-  name: string,
-  message: string
-}
-const CreateTemplateModal = ({ refresh, openModal, setopenModal, user }: CreateTemplateModalProps) => {
+
+const CreateTemplateModal = ({ refresh, openModal, setopenModal, user }) => {
   const [isLoading, setIsLoading] = useState(false)
   const [isDisabled, setIsDisabled] = useState(true)
-  const { handleSubmit, register, reset, formState: { errors } } = useForm<TemplateForm>()
+  const { handleSubmit, register, reset, formState: { errors } } = useForm()
   const [inputText, setinputText] = useState('')
-  const submitTemplate = async (data: TemplateForm) => {
+  const submitTemplate = async (data) => {
     setIsLoading(true)
     const result = await fetchClient({
       url: '/templates',

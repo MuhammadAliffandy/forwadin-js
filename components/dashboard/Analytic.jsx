@@ -33,15 +33,11 @@ Chart.register(
     zoomPlugin,
     ArcElement
 );
-interface AnalyticProps {
-    user: User | undefined,
-    currentDevice: DeviceSession | undefined,
-    setcurrentDevice: Dispatch<SetStateAction<DeviceSession | undefined>>
-}
-const Analytic = ({ user, currentDevice, setcurrentDevice }: AnalyticProps) => {
+
+const Analytic = ({ user, currentDevice, setcurrentDevice }) => {
     const [isDeviceLoaded, setisDeviceLoaded] = useState(false)
-    const [deviceList, setdeviceList] = useState<DeviceSession[]>([])
-    const [currentDeviceDetail, setcurrentDeviceDetail] = useState<DeviceData>()
+    const [deviceList, setdeviceList] = useState([])
+    const [currentDeviceDetail, setcurrentDeviceDetail] = useState()
     const fetchDetailDevice = async () => {
         const result = await fetchClient({
             url: '/devices/' + currentDevice?.id,
@@ -85,7 +81,7 @@ const Analytic = ({ user, currentDevice, setcurrentDevice }: AnalyticProps) => {
                                 </div>
                             </DropdownTrigger>
                             <DropdownMenu items={deviceList} aria-label="device list">
-                                {(item: any) => (
+                                {(item) => (
                                     <DropdownItem
                                         key={item.id}
                                         onClick={() => {
@@ -105,7 +101,7 @@ const Analytic = ({ user, currentDevice, setcurrentDevice }: AnalyticProps) => {
                             <div>
 
                                 <p className='text-[10px]'>Aktif sejak</p>
-                                <p className='text-sm font-bold'>{getYearMonthDate(currentDeviceDetail?.createdAt!)}</p>
+                                <p className='text-sm font-bold'>{getYearMonthDate(currentDeviceDetail?.createdAt)}</p>
                             </div>
                         </div>
                     </div>

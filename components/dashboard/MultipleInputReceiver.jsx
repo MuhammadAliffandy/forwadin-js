@@ -2,20 +2,16 @@
 import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownSection, DropdownTrigger } from '@nextui-org/react'
 import React, { Dispatch, SetStateAction, useEffect, useState } from 'react'
 
-interface MultipleInputReceiverProps {
-    selectedKeys: any,
-    setselectedKeys: Dispatch<SetStateAction<any>>,
-    listItems: any
-}
-const MultipleInputReceiver = ({ selectedKeys, setselectedKeys, listItems }: MultipleInputReceiverProps) => {
+
+const MultipleInputReceiver = ({ selectedKeys, setselectedKeys, listItems }) => {
     // const selectedValue = React.useMemo(
     //     () => Array.from(selectedKeys).join(", ").replaceAll("_", " "),
     //     [selectedKeys]
     // );
-    const renderSelectedKey = (selectedSet: any) => {
-        const rendered: any = [];
+    const renderSelectedKey = (selectedSet) => {
+        const rendered = [];
 
-        selectedSet.forEach((item: string) => {
+        selectedSet.forEach((item) => {
             // const findItem = listItems.find(i => i.)
             rendered.push(
                 <div key={item} className='flex gap-2 rounded-md px-2 py-[2px] border border-customGray hover:cursor-pointer' onClick={() => { }}>
@@ -60,8 +56,8 @@ const MultipleInputReceiver = ({ selectedKeys, setselectedKeys, listItems }: Mul
                     closeOnSelect={false}
                     // disallowEmptySelection
                     selectionMode="multiple"
-                    selectedKeys={selectedKeys as any}
-                    onSelectionChange={setselectedKeys as any}
+                    selectedKeys={selectedKeys }
+                    onSelectionChange={setselectedKeys }
                     disabledKeys={['search']}
                 // items={listItems}
                 >

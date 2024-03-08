@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { Dispatch, SetStateAction } from "react";
 import NavButton from "./NavButton"
-const ContactList = ({ currentPage, isDisabled }: { currentPage: string, isDisabled: boolean }) => {
+const ContactList = ({ currentPage, isDisabled }) => {
     const [isDropdown, setIsDropdown] = useState(false)
     const [isActive, setisActive] = useState(false)
     useEffect(() => {

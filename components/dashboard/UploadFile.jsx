@@ -8,11 +8,7 @@ import FilePondPluginFileValidateType from 'filepond-plugin-file-validate-type';
 
 registerPlugin(FilePondPluginImageExifOrientation, FilePondPluginImagePreview, FilePondPluginFileValidateType);
 
-const UploadFile = ({ files, setfiles, customFileTypes }: {
-    files: File[] | undefined,
-    setfiles: any,
-    customFileTypes?: string[]
-}) => {
+const UploadFile = ({ files, setfiles, customFileTypes }) => {
     return (
         <>
             <FilePond

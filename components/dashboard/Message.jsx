@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation"
 
 import { getInitials, getNumberFromString } from "@/utils/helper"
 
-const Message = ({ message }: { message: ConversationMessage }) => {
+const Message = ({ message }) => {
 
     if (message.to)
         return (
@@ -27,9 +27,9 @@ const Message = ({ message }: { message: ConversationMessage }) => {
         )
     return (
         <Button as={Link} href="/dashboard/incoming" variant="light" fullWidth className="rounded-md flex justify-between gap-4 text-[10px]">
-            <PrintIcon contact={message.contact} phone={message.from!} />
+            <PrintIcon contact={message.contact} phone={message.from} />
             <div className="w-full">
-                <p className="font-bold">{message.contact ? message.contact.firstName + ' ' + (message.contact.lastName || '') : getNumberFromString(message.from!)}</p>
+                <p className="font-bold">{message.contact ? message.contact.firstName + ' ' + (message.contact.lastName || '') : getNumberFromString(message.from)}</p>
                 <div className="flex items-center gap-1 -mt-1">
                     {message.mediaPath && (
                         <div>
@@ -53,14 +53,7 @@ export default Message
 
 // }
 
-const PrintIcon = ({ contact, phone }: {
-    contact?: {
-        firstName: string,
-        lastName: string,
-        colorCode: string
-    },
-    phone: string
-}) => {
+const PrintIcon = ({ contact, phone }) => {
     if (contact) {
         return (
             <>

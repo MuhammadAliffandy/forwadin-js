@@ -7,20 +7,14 @@ import { useSession } from 'next-auth/react'
 import { Dispatch, SetStateAction, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'react-toastify'
-interface GroupSubmitProps {
-    name: string
-}
+
 const AddGroupModal = (
-    { openModal, setopenModal, fetchData }:
-        {
-            openModal: boolean, setopenModal: Dispatch<SetStateAction<boolean>>,
-            fetchData: () => void
-        }
+    { openModal, setopenModal, fetchData }
 ) => {
     const { data: session } = useSession()
     const [isLoading, setisLoading] = useState(false)
-    const { register, handleSubmit, formState: { errors } } = useForm<GroupSubmitProps>()
-    const onSubmit = async (formData: GroupSubmitProps) => {
+    const { register, handleSubmit, formState: { errors } } = useForm()
+    const onSubmit = async (formData) => {
         setisLoading(true)
 
         const result = await fetchClient({

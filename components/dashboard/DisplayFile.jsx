@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 
-const DisplayFile = ({ fileUrl }: { fileUrl: string }) => {
+const DisplayFile = ({ fileUrl }) => {
     const router = useRouter()
     const [fileName, setfileName] = useState('')
     const finalUrl = process.env.NEXT_PUBLIC_BACKEND_URL + '/' + fileUrl

@@ -8,14 +8,6 @@ const ContactLabel = ({
     isBordered = false,
     radius = "full",
     isDisabled = false
-}: {
-    label: Label,
-    idx: number,
-    onClick?: () => void,
-    color?: 'primary' | 'black' | 'none',
-    radius?: 'md' | 'sm' | 'full',
-    isBordered?: boolean,
-    isDisabled?: boolean
 }) => {
     const border = (isBordered ? 'border border-customGray' : '')
     const textColor = (color === 'none' ? 'text-black' : 'text-white')

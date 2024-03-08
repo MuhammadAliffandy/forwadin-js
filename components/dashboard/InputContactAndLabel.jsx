@@ -6,20 +6,12 @@ import React, { Dispatch, SetStateAction, useEffect, useRef, useState } from "re
 import ContactLabel from "./label/ContactLabel"
 import { CustomerService, User } from "next-auth"
 
-interface InputProps {
-    selectedKeys: string[],
-    setselectedKeys: Dispatch<SetStateAction<string[]>>,
-    isAutoReply?: boolean,
-    isDisabled?: boolean,
-    showDescription?: boolean,
-    user: User | CustomerService | undefined
-}
-const InputContactAndLabel = ({ selectedKeys, setselectedKeys, isAutoReply = false, isDisabled = false, showDescription = true, user }: InputProps) => {
+const InputContactAndLabel = ({ selectedKeys, setselectedKeys, isAutoReply = false, isDisabled = false, showDescription = true, user }) => {
     const [isLoaded, setisLoaded] = useState(false)
     const [isLabelOpen, setisLabelOpen] = useState(false)
-    const [contactLabelList, setcontactLabelList] = useState<Label[]>([])
-    const [groupList, setgroupList] = useState<Label[]>([])
-    const [numberList, setnumberList] = useState<Label[]>([])
+    const [contactLabelList, setcontactLabelList] = useState([])
+    const [groupList, setgroupList] = useState([])
+    const [numberList, setnumberList] = useState([])
     const [inputText, setinputText] = useState('')
     const componentTransition = useTransition(isLabelOpen, {
         from: {
@@ -36,11 +28,11 @@ const InputContactAndLabel = ({ selectedKeys, setselectedKeys, isAutoReply = fal
         }
 
     })
-    const isNumber = (text: string) => {
+    const isNumber = (text) => {
         const nonNumericRegex = /[^0-9]/;
         return !nonNumericRegex.test(text)
     }
-    const handleKeyDown = (e: React.KeyboardEvent) => {
+    const handleKeyDown = (e) => {
         if (e.key !== 'Enter' || !inputText.trim() || !isNumber(inputText)) return
         console.log('masuk')
         const findLabel = numberList.find(item => item.label.name === inputText)
@@ -60,16 +52,16 @@ const InputContactAndLabel = ({ selectedKeys, setselectedKeys, isAutoReply = fal
         setinputText('')
 
     }
-    const handleContactLabelClick = (labelName: string, status: boolean) => {
-        const newLabelList: Label[] = contactLabelList.map((item => item.label.name === labelName ? { label: { name: item.label.name, active: status } } : item))
+    const handleContactLabelClick = (labelName, status) => {
+        const newLabelList = contactLabelList.map((item => item.label.name === labelName ? { label: { name: item.label.name, active: status } } : item))
         setcontactLabelList(newLabelList)
     }
-    const handleGroupLabelList = (labelName: string, status: boolean) => {
-        const newLabelList: Label[] = groupList.map((item => item.label.name === labelName ? { label: { name: item.label.name, active: status } } : item))
+    const handleGroupLabelList = (labelName, status) => {
+        const newLabelList = groupList.map((item => item.label.name === labelName ? { label: { name: item.label.name, active: status } } : item))
         setgroupList(newLabelList)
     }
-    const handleNumberList = (labelName: string, status: boolean) => {
-        const newLabelList: Label[] = numberList.map((item => item.label.name === labelName ? { label: { name: item.label.name, active: status } } : item))
+    const handleNumberList = (labelName, status) => {
+        const newLabelList = numberList.map((item => item.label.name === labelName ? { label: { name: item.label.name, active: status } } : item))
         setnumberList(newLabelList)
     }
     const fetchContactLabelList = async () => {
@@ -79,9 +71,9 @@ const InputContactAndLabel = ({ selectedKeys, setselectedKeys, isAutoReply = fal
             user: user
         })
         if (result?.ok) {
-            const resultData: string[] = await result.json()
+            const resultData  = await result.json()
 
-            const newArr: Label[] = resultData.filter(item => !contactLabelList.some(ele => ele.label.name === item)).map(item => {
+            const newArr = resultData.filter(item => !contactLabelList.some(ele => ele.label.name === item)).map(item => {
                 return {
                     label: {
                         name: item,
@@ -100,7 +92,7 @@ const InputContactAndLabel = ({ selectedKeys, setselectedKeys, isAutoReply = fal
             user: user
         })
         if (result?.ok) {
-            const resultData: GroupData[] = await result.json()
+            const resultData = await result.json()
             const newArr = resultData.filter(item => !groupList.some(ele => ele.label.name === item.name)).map(item => {
                 return {
                     label: {

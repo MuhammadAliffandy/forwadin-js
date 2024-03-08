@@ -1,13 +1,7 @@
 import { getInitials } from '@/utils/helper'
 import React from 'react'
-interface ProfileAvatarProps {
-    profile?: {
-        colorCode: string,
-        firstName: string,
-        lastName: string
-    }
-}
-const ProfileAvatar = ({ profile }: ProfileAvatarProps) => {
+
+const ProfileAvatar = ({ profile }) => {
     if (profile)
         return (
             <div style={{
