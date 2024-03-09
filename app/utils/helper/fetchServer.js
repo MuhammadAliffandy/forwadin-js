@@ -1,21 +1,16 @@
 import { authConfig } from "@/app/api/auth/[...nextauth]/route"
 import { getServerSession } from "next-auth"
 import { NextRequest, NextResponse } from "next/server"
-import type { NextApiRequest, NextApiResponse } from 'next'
-interface FetchParams {
-    url: string,
-    body?: any,
-    method: string
-}
+
 // type FetchServer = (request:NextRequest, response:NextResponse, ) => void
-const fetchServer = async (request: NextRequest, response: NextResponse, { url, body, method }: FetchParams) => {
-    const session: any = await getServerSession(
-        request as unknown as NextApiRequest,
+const fetchServer = async (request, response, { url, body, method }) => {
+    const session = await getServerSession(
+        request,
         {
             ...response,
-            getHeader: (name: string) => response.headers?.get(name),
-            setHeader: (name: string, value: string) => response.headers?.set(name, value),
-        } as unknown as NextApiResponse,
+            getHeader: (name) => response.headers?.get(name),
+            setHeader: (name, value) => response.headers?.set(name, value),
+        } ,
         authConfig
     );
     if (!session?.user) {

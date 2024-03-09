@@ -6,7 +6,7 @@ const imageExt = [
     'svg',
     'raw'
 ]
-export const getFileFromUrl = async (url: string, setfiles: Dispatch<SetStateAction<File[]>>) => {
+export const getFileFromUrl = async (url, setfiles) => {
     console.log(url)
     const image = await fetch(process.env.NEXT_PUBLIC_BACKEND_URL + '/' + url)
     console.log(image.status)
@@ -26,7 +26,7 @@ export const getFileFromUrl = async (url: string, setfiles: Dispatch<SetStateAct
     }
 }
 
-export const getExtensionFromUrl = (url: string) => {
+export const getExtensionFromUrl = (url) => {
     const path = url.split('/')
     const filename = path[path.length - 1]
     const parts = filename.split('.')
@@ -38,7 +38,7 @@ export const getExtensionFromUrl = (url: string) => {
     }
 }
 
-export const isFileImage = (url: string) => {
+export const isFileImage = (url) => {
     const extension = getExtensionFromUrl(url)
     // console.log(extension)
     return imageExt.includes(extension)

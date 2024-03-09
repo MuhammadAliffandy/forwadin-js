@@ -42,7 +42,7 @@ const listVariablesCampaign = [
     'unregistrationSyntax',
     'campaignName'
 ]
-export const parseTextInput = (text: string, isCampaign = false) => {
+export const parseTextInput = (text, isCampaign = false) => {
     if (!isCampaign) {
         return text.replace(/\{\{\$(\w+)}}/g, (match, placeholder) => {
             // @ts-ignore

@@ -1,4 +1,4 @@
-export const storeFile = async (file: File) => {
+export const storeFile = async (file) => {
     const formData = new FormData()
     formData.append('image', file)
     const result = await fetch('/api/upload', {
@@ -7,6 +7,6 @@ export const storeFile = async (file: File) => {
 
     })
 }
-export const deleteFile = (fileName: string) => {
+export const deleteFile = (fileName) => {
 
 }

@@ -4,12 +4,12 @@ import { CountryCode } from '../types'
 
 CountryList.setPhoneNumberUtil(PhoneNumberUtil.getInstance())
 
-const getCountryList = (code?: string): CountryCode[] | CountryCode | undefined => {
+const getCountryList = (code) => {
     if (code)
         return CountryList.findOneByDialCode(code)
     return CountryList.getAll()
 }
-const formatPhoneCode = (phone: string, dial_code: string): string => {
+const formatPhoneCode = (phone, dial_code) => {
     const country = CountryList.findOneByDialCode(dial_code)
     if (country) {
         return country.formatPhoneNumber(phone)

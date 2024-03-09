@@ -3,17 +3,11 @@ import { CustomerService, Session, User } from "next-auth"
 import { signIn, signOut } from "next-auth/react"
 import { toast } from "react-toastify"
 let isRefreshing = false
-interface FetchClientParams {
-    method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH',
-    body?: string | FormData | null,
-    url: string,
-    user: User | CustomerService | undefined,
-    isFormData?: boolean
-}
-const fetchClient = async ({ method, body = null, url, user, isFormData = false }: FetchClientParams): Promise<Response | null> => {
+
+const fetchClient = async ({ method, body = null, url, user, isFormData = false }) => {
     try {
         if (user) {
-            let headers: any = {
+            let headers = {
                 'Content-Type': 'application/json',
                 'Authorization': 'Bearer ' + user.token,
             }

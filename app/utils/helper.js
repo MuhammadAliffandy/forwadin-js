@@ -1,13 +1,13 @@
 import { Label } from "./types"
 
-export const getInitials = (name: string) => {
+export const getInitials = (name) => {
     const words = name.split(' ')
     const initials = words.map((word) => word[0])
     const result = initials.join('').slice(0, 2)
 
     return result.toUpperCase()
 }
-export const formatDate = (inputDate: string) => {
+export const formatDate = (inputDate) => {
 
     const date = new Date(inputDate)
     const formatter = new Intl.DateTimeFormat('en-US', {
@@ -27,21 +27,21 @@ export const formatDate = (inputDate: string) => {
 
     }
 }
-export const formatBirthDate = (inputDate: string) => {
+export const formatBirthDate = (inputDate) => {
     const originalDate = new Date(inputDate)
     const year = originalDate.getFullYear()
     const month = String(originalDate.getMonth() + 1).padStart(2, '0')
     const day = String(originalDate.getDate()).padStart(2, '0')
     return `${month}/${day}/${year}`
 }
-export const formatBackendBirthDate = (inputDate: any) => {
+export const formatBackendBirthDate = (inputDate) => {
     const date = new Date(inputDate)
     const year = date.getFullYear()
     const month = String(date.getMonth() + 1).padStart(2, '0')
     const day = String(date.getDate()).padStart(2, '0')
     return `${year}-${month}-${day}`
 }
-export const formatDateBahasa = (inputDate: string) => {
+export const formatDateBahasa = (inputDate) => {
     const days = [
         "Minggu",
         "Senin",
@@ -114,7 +114,7 @@ export const getTodayDateBahasa = () => {
 
     return result
 }
-export const formatCurrencyIDR = (number: number) => {
+export const formatCurrencyIDR = (number) => {
     if (number) {
         const formattedIDR = new Intl.NumberFormat('id-ID', {
             style: 'currency',
@@ -126,24 +126,24 @@ export const formatCurrencyIDR = (number: number) => {
     }
     return '-'
 }
-export const getFirst2Digits = (text: string) => {
+export const getFirst2Digits = (text) => {
     return text.slice(0, 2)
 }
-export const getNumberFromString = (text: string | undefined) => {
+export const getNumberFromString = (text) => {
     if (text) {
         const parts = text.split('@')
         return parts[0]
     }
     return ''
 }
-export const convertLabelList = (labels: Label[], checked: boolean) => {
+export const convertLabelList = (labels, checked) => {
     return labels.filter(item => item.label.active === checked).map(item => item.label.name)
 }
-export const formatDatetoISO8601 = (date: string) => {
+export const formatDatetoISO8601 = (date) => {
     const dateTime = new Date(date)
     return dateTime.toISOString()
 }
-export const getYearMonthDate = (date: string) => {
+export const getYearMonthDate = (date) => {
     const dateTime = new Date(date)
     const year = dateTime.getFullYear()
     const month = String(dateTime.getMonth() + 1).padStart(2, '0')
@@ -153,7 +153,7 @@ export const getYearMonthDate = (date: string) => {
     return formattedDate
 }
 
-export const formatHoursMinutes = (minutes: number) => {
+export const formatHoursMinutes = (minutes) => {
     if (isNaN(minutes) || minutes < 0 || minutes > 1440) {
         return "Invalid input"
     }
@@ -168,12 +168,12 @@ export const formatHoursMinutes = (minutes: number) => {
     return hoursStr + ":" + minutesStr
 }
 
-export const getArrayFromSet = (currentSet: Set<string> | 'all', itemList: any) => {
+export const getArrayFromSet = (currentSet, itemList) => {
     let deletedList = null
     if (currentSet === 'all') {
-        deletedList = itemList.map((item: any) => item.id)
+        deletedList = itemList.map((item) => item.id)
     }
-    else if ((currentSet as Set<string>).size > 0) {
+    else if ((currentSet).size > 0) {
         deletedList = Array.from(currentSet)
     }
     return deletedList
