@@ -4,6 +4,10 @@ const nextConfig = {
     images: {
         domains: ["lh3.googleusercontent.com"],
     },
+    env:{
+        BASE_URL:process.env.BASE_URL,
+        BASE_URL_DEV:process.env.BASE_URL_DEV
+    },
 }
 
 module.exports = nextConfig
