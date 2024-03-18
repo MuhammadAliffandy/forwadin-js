@@ -17,7 +17,7 @@ const Settings = () => {
     const { data: session } = useSession()
     const searchParams = useSearchParams()
     const [isLoaded, setisLoaded] = useState(false)
-    const [userData, setuserData] = useState<UserProfile>({
+    const [userData, setuserData] = useState({
         firstName: '',
         lastName: '',
         username: '',

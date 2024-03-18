@@ -1,38 +1,38 @@
-import { PROVIDER_DELETE, PROVIDER_GET, PROVIDER_POST, PROVIDER_PUT } from "../provider"
+import { PROVIDER_DELETE, PROVIDER_GET, PROVIDER_PATCH, PROVIDER_POST, PROVIDER_PUT } from "../provider"
 
 const delay = () => new Promise(res => setTimeout(() => res(), 800))
 
-export const userProfile = async ({ userId }) => {
+export const userProfile = async ( token , userId) => {
     await delay()
-    const response = await PROVIDER_GET(`users/${userId}`)
+    const response = await PROVIDER_GET(`users/${userId}`,token )
     return response;
 }
 
-export const profileUser = async () => {
+export const profileUser = async (token) => {
     await delay()
-    const response = await PROVIDER_GET(`users/subscription`)
+    const response = await PROVIDER_GET(`users/subscription`,token)
     return response;
 }
 
-export const customerServicesUser = async ({ userId}) => {
+export const customerServicesUser = async ( token , userId) => {
     await delay()
-    const response = await PROVIDER_GET(`users/customer-services/${userId}`)
+    const response = await PROVIDER_GET(`users/customer-services/${userId}`,token)
     return response;
 }
 
-export const updateProfileUser = async ({ userId ,data}) => {
+export const updateProfileUser = async (token ,  userId ,data ) => {
     await delay()
-    const response = await PROVIDER_PUT(`users/${userId}`,data)
+    const response = await PROVIDER_PATCH(`users/${userId}`,data , token)
     return response;
 }
 
-export const changeEmailUser = async ({ userId ,data}) => {
+export const changeEmailUser = async (token , userId ,data) => {
     await delay()
-    const response = await PROVIDER_PUT(`users/change-email/${userId}`,data)
+    const response = await PROVIDER_PATCH(`users/change-email/${userId}`,data , token)
     return response;
 }
-export const changePasswordUser = async ({ userId ,data}) => {
+export const changePasswordUser = async ( token , userId ,data) => {
     await delay()
-    const response = await PROVIDER_PUT(`users/change-password/${userId}`,data)
+    const response = await PROVIDER_PUT(`users/change-password/${userId}`,data , token)
     return response;
 }

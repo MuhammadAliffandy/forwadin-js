@@ -14,15 +14,15 @@ export const loginAuth = async ( data) => {
     return response;
 }
 
-export const sendVerificationEmailAuth = async ( data) => {
+export const sendVerificationEmailAuth = async (token , data) => {
     await delay()
-    const response = await PROVIDER_POST(`auth/send-verification-email`,data)
+    const response = await PROVIDER_POST(`auth/send-verification-email`, data , token)
     return response;
 }
 
-export const verificationEmailAuth = async ( data) => {
+export const verificationEmailAuth = async ( token ,data) => {
     await delay()
-    const response = await PROVIDER_POST(`auth/send-verify-email`,data)
+    const response = await PROVIDER_POST(`auth/send-verify-email`,data ,token)
     return response;
 }
 
@@ -50,9 +50,9 @@ export const resetPasswordAuth = async ( data) => {
     return response;
 }
 
-export const identifiedAvailabilityAuth = async ( data) => {
+export const identifiedAvailabilityAuth = async ( token , data ) => {
     await delay()
-    const response = await PROVIDER_POST(`auth/identifier-availability`,data)
+    const response = await PROVIDER_POST(`auth/identifier-availability`,data , token)
     return response;
 }
 

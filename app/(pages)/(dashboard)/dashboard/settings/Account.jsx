@@ -7,8 +7,6 @@ import { CountryCode, UserProfile } from "@/app/utils/types"
 import { Button } from "@nextui-org/react"
 import { useTransition, animated } from "@react-spring/web"
 import CountryFlagSvg from "country-list-with-dial-code-and-flag/dist/flag-svg"
-import errors from "formidable/FormidableError"
-import { User } from "next-auth"
 import { signOut, useSession } from "next-auth/react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
@@ -27,8 +25,8 @@ const Account = ({ user, userProfile }) => {
     const [countryCodeSearchText, setcountryCodeSearchText] = useState('')
     const [countryCodeData, setcountryCodeData] = useState([])
     const [countryCodeSearchData, setcountryCodeSearchData] = useState([])
-    const countryCodeInputRef = useRef<HTMLInputElement>(null)
-    const [currentCountryCode, setcurrentCountryCode] = useState<CountryCode>({
+    const countryCodeInputRef = useRef(null)
+    const [currentCountryCode, setcurrentCountryCode] = useState({
         name: '',
         dial_code: '',
         code: '',
