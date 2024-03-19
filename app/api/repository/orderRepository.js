@@ -7,3 +7,20 @@ export const createOrders = async ( token , data ) => {
     const response = await PROVIDER_POST(`orders`, data , token )
     return response;
 }
+
+export const getOrderMessages = async ( token) => {
+    await delay()
+    const response = await PROVIDER_GET(`orders/messages` , token )
+    return response;
+}
+
+export const createOrderMessages = async ( token,  data ) => {
+    await delay()
+    const response = await PROVIDER_POST(`orders/messages` , data ,  token )
+    return response;
+}
+export const updateOrderMessages = async ( token, orderMessageId , data ) => {
+    await delay()
+    const response = await PROVIDER_PUT(`orders/messages/${orderMessageId}` , data ,  token )
+    return response;
+}

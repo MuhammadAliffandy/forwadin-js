@@ -8,6 +8,7 @@ import { Button } from '@nextui-org/react'
 import { Session } from 'next-auth'
 import React, { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
+import { createOrderMessages, getOrderMessages, updateOrderMessages } from '../../../../../api/repository/orderRepository'
 
 const OrderModal = ({ data, openModal, session, setopenModal }) => {
     const [orderTemplate, setorderTemplate] = useState('')
@@ -17,11 +18,9 @@ const OrderModal = ({ data, openModal, session, setopenModal }) => {
     const [keyList, setkeyList] = useState([])
     const [orderMessage, setorderMessage] = useState()
     const fetchOrderMessage = async () => {
-        const result = await fetchClient({
-            url: '/orders/messages',
-            method: 'GET',
-            user: session?.customerService
-        })
+
+        const result = await getOrderMessages(session.customerService.token)
+
         if (result?.ok) {
             console.log('ini get order message')
             setorderMessage(await result.json())
@@ -37,12 +36,7 @@ const OrderModal = ({ data, openModal, session, setopenModal }) => {
         }
         if (orderMessage) {
             // Update
-            const result = await fetchClient({
-                url: '/orders/messages/' + orderMessage.id,
-                method: 'PUT',
-                body: JSON.stringify(body),
-                user: session?.customerService
-            })
+            const result = await updateOrderMessages(session.customerService.token,orderMessage.id,body)
             if (result?.ok) {
                 toast.success('Berhasil ubah template order')
                 setopenModal(false)
@@ -51,12 +45,8 @@ const OrderModal = ({ data, openModal, session, setopenModal }) => {
             }
             return
         }
-        const result = await fetchClient({
-            url: '/orders/messages',
-            method: 'POST',
-            body: JSON.stringify(body),
-            user: session?.customerService
-        })
+
+        const result = await createOrderMessages(session.customerService.token,body)
         if (result?.ok) {
             toast.success('Berhasil buat template order')
             setopenModal(false)
