@@ -14,7 +14,7 @@ export const PROVIDER_GET = async (pathUrl, token) => {
         switch (response.status) {
             case 200:
             case 201:
-                return response.data;
+                return response;
             case 403:
                 throw new Error("forbidden");
             default:
@@ -38,7 +38,7 @@ export const PROVIDER_POST = async (pathUrl, data , token) => {
         switch (response.status) {
             case 200:
             case 201:
-                return response.data;
+                return response;
             default:
                 throw new Error("error");
         }
@@ -48,11 +48,11 @@ export const PROVIDER_POST = async (pathUrl, data , token) => {
             if (errorResponse) {
                 switch (errorResponse.status) {
                     case 401:
-                        throw errorResponse.data;
+                        throw errorResponse;
                     case 403:
                         throw new Error("forbidden");
                     case 404:
-                        throw errorResponse.data;
+                        throw errorResponse;
                     default:
                         throw new Error("error");
                 }
@@ -83,7 +83,7 @@ export const PROVIDER_DELETE = async (pathUrl , data , token ) => {
         switch (response.status) {
             case 200:
             case 201:
-                return response.data;
+                return response;
             default:
                 throw new Error("error");
         }
@@ -93,11 +93,11 @@ export const PROVIDER_DELETE = async (pathUrl , data , token ) => {
             if (errorResponse) {
                 switch (errorResponse.status) {
                     case 401:
-                        throw errorResponse.data;
+                        throw errorResponse;
                     case 403:
                         throw new Error("forbidden");
                     case 404:
-                        throw errorResponse.data;
+                        throw errorResponse;
                     default:
                         throw new Error("error");
                 }
@@ -120,7 +120,7 @@ export const PROVIDER_PUT = async (pathUrl, data , token) => {
         switch (response.status) {
             case 200:
             case 201:
-                return response.data;
+                return response;
             default:
                 throw new Error("error");
         }
@@ -130,11 +130,11 @@ export const PROVIDER_PUT = async (pathUrl, data , token) => {
             if (errorResponse) {
                 switch (errorResponse.status) {
                     case 401:
-                        throw errorResponse.data;
+                        throw errorResponse;
                     case 403:
                         throw new Error("forbidden");
                     case 404:
-                        throw errorResponse.data;
+                        throw errorResponse;
                     default:
                         throw new Error("error");
                 }
@@ -157,7 +157,7 @@ export const PROVIDER_PATCH = async (pathUrl, data , token) => {
         switch (response.status) {
             case 200:
             case 201:
-                return response.data;
+                return response;
             default:
                 throw new Error("error");
         }
@@ -167,11 +167,11 @@ export const PROVIDER_PATCH = async (pathUrl, data , token) => {
             if (errorResponse) {
                 switch (errorResponse.status) {
                     case 401:
-                        throw errorResponse.data;
+                        throw errorResponse;
                     case 403:
                         throw new Error("forbidden");
                     case 404:
-                        throw errorResponse.data;
+                        throw errorResponse;
                     default:
                         throw new Error("error");
                 }

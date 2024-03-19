@@ -14,6 +14,12 @@ export const profileUser = async (token) => {
     return response;
 }
 
+export const getUserSubscriptionById = async (token , userId) => {
+    await delay()
+    const response = await PROVIDER_GET(`users/${userId}/subscription`,token)
+    return response;
+}
+
 export const customerServicesUser = async ( token , userId) => {
     await delay()
     const response = await PROVIDER_GET(`users/customer-services/${userId}`,token)
@@ -29,6 +35,12 @@ export const updateProfileUser = async (token ,  userId ,data ) => {
 export const changeEmailUser = async (token , userId ,data) => {
     await delay()
     const response = await PROVIDER_PATCH(`users/change-email/${userId}`,data , token)
+    return response;
+}
+
+export const changePhoneNumberUser = async (token , userId ,data) => {
+    await delay()
+    const response = await PROVIDER_PATCH(`users/change-phone-number/${userId}`,data , token)
     return response;
 }
 export const changePasswordUser = async ( token , userId ,data) => {

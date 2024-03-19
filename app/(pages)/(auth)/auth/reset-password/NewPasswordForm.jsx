@@ -4,6 +4,7 @@ import { signOut } from "next-auth/react"
 import { Dispatch, SetStateAction, useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { toast } from "react-toastify"
+import { resetPasswordAuth } from "../../../../api/repository/authRepository"
 
 const NewPasswordForm = ({ setCurrentStep, token }) => {
     const { handleSubmit, register, setValue, watch, setError, formState: { errors } } = useForm()
@@ -26,17 +27,14 @@ const NewPasswordForm = ({ setCurrentStep, token }) => {
     const onSubmit = async (formData) => {
         setisLoading(true)
         console.log(token)
+
+        const data = {
+                resetToken: token,
+                password: formData.password
+        }
+
         try {
-            const result = await fetch(process.env.NEXT_PUBLIC_BACKEND_URL + '/auth/reset-password', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    resetToken: token,
-                    password: formData.password
-                })
-            })
+            const result = await resetPasswordAuth(data)
             if (result.status === 200) {
                 setisLoading(false)
                 // await signOut()

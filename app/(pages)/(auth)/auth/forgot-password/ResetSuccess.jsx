@@ -1,19 +1,16 @@
 import { Dispatch, SetStateAction, useState } from "react"
 import { BarLoader } from "react-spinners"
 import { toast } from "react-toastify"
+import { forgotPasswordAuth } from "../../../../api/repository/authRepository"
 
 const ResetSuccess = ({ userEmail, setCurrentStep }) => {
     const [isloading, setisloading] = useState(false)
     const sendOTP = async () => {
         setisloading(true)
         try {
-            const result = await fetch(process.env.NEXT_PUBLIC_BACKEND_URL + '/auth/forgot-password', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ email: userEmail })
-            })
+
+            const data = { email: userEmail };
+            const result = await forgotPasswordAuth(data)
             if (result.status === 200) {
                 setisloading(false)
                 toast.success('Success send verification!')

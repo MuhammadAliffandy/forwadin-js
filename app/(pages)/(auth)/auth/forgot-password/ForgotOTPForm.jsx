@@ -4,6 +4,7 @@ import { Dispatch, SetStateAction } from "react";
 import { toast } from  'react-toastify';
 import ButtonSubmit from "@/app/components/form/ButtonSubmit";
 import { MultipleInputRef, ResetUserData } from "@/app/utils/types";
+import { forgotPasswordAuth } from "../../../../api/repository/authRepository";
 
 const ForgotOTPForm = ({ setCurrentStep, userData, setuserData }) => {
     const [isLoading, setisLoading] = useState(false)
@@ -38,10 +39,10 @@ const ForgotOTPForm = ({ setCurrentStep, userData, setuserData }) => {
     const sendOTP = async () => {
         setisLoading(true)
         try {
-            const result = await fetch(process.env.NEXT_PUBLIC_BACKEND_URL + 'auth/forgot-password', {
-                method: 'POST',
-                body: JSON.stringify({ email: userData.email })
-            })
+
+            const data = { email: userData.email };
+
+            const result = await forgotPasswordAuth(data)
             if (result.status === 200) {
                 setisLoading(false)
                 setCurrentStep('reset')

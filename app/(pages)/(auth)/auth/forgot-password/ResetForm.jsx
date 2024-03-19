@@ -3,6 +3,7 @@ import InputForm from "@/app/components/form/InputForm"
 import { Dispatch, SetStateAction, useState } from "react"
 import { useForm } from "react-hook-form"
 import { toast } from "react-toastify"
+import { forgotPasswordAuth } from "../../../../api/repository/authRepository"
 
 const ResetForm = ({ setCurrentStep, setuserEmail }) => {
     const [isLoading, setisLoading] = useState(false)
@@ -11,13 +12,10 @@ const ResetForm = ({ setCurrentStep, setuserEmail }) => {
         setisLoading(true)
         console.log(formData)
         try {
-            const result = await fetch(process.env.NEXT_PUBLIC_BACKEND_URL + '/auth/forgot-password', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ email: formData.email })
-            })
+
+            const data = { email: formData.email };
+
+            const result = await forgotPasswordAuth(data)
             if (result.status === 200) {
                 setisLoading(false)
                 setuserEmail(formData.email)

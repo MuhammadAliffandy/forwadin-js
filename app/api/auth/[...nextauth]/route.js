@@ -1,19 +1,16 @@
 import NextAuth, { DefaultSession } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
-import { DeviceData, DeviceSession, SubscriptionTypes } from "@/app/utils/types";
+import { getDevice} from '../../repository/deviceRepository'
+import { getUserSubscriptionById} from '../../repository/userRepository'
+import { getAllSession} from '../../repository/sessionRepository'
+import {refreshTokenAuth  , loginAuth , googleAuth} from '../../repository/authRepository'
 
 const getDeviceSession = async (data, token) => {
 
     const newArray = await Promise.all(
         data.map(async (ses) => {
-            const fetchDeviceDetails = await fetch(process.env.BACKEND_URL + '/devices/' + ses.device.id, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' + token
-                },
-            })
+            const fetchDeviceDetails = await getDevice( token , ses.device.id)
 
             if (fetchDeviceDetails.ok) {
                 // console.log('ini get device session ' + ses.device.id)
@@ -63,13 +60,10 @@ export const authConfig= {
                 console.log('refresh session 2')
                 console.log(userData.refreshToken)
                 // todo
-                const result = await fetch(process.env.BACKEND_URL + '/auth/refresh-token', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ refreshToken: userData.refreshToken })
-                })
+
+                const data = { refreshToken: userData.refreshToken }
+
+                const result = await refreshTokenAuth(data)
 
                 console.log('refresh session 3')
                 if (result.ok) {
@@ -78,6 +72,7 @@ export const authConfig= {
                     if (userData.role === 222) {
                         console.log('refresh CS')
                         console.log(resultData)
+
                         const fetchSessionCS = await fetch(process.env.BACKEND_URL + "/customer-services/" + (userData).id, {
                             method: 'GET',
                             headers: {
@@ -99,26 +94,16 @@ export const authConfig= {
                         console.log(csData)
                         return csData
                     }
-                    const userSubscription = await fetch(process.env.BACKEND_URL + '/users/' + userData.id + '/subscription/', {
-                        method: 'GET',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': 'Bearer ' + resultData.accessToken
-                        },
-                    })
+
+                    const userSubscription = await getUserSubscriptionById(resultData.accessToken , (userData).id)
+
                     if (userSubscription.ok) {
                         const userSubscriptionResult = await userSubscription.json()
                         subscription = {
                             status: 1,
                             name: userSubscriptionResult.subscriptionPlan.name
                         }
-                        const fetchSession = await fetch(process.env.BACKEND_URL + '/sessions', {
-                            method: 'GET',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'Authorization': 'Bearer ' + resultData.accessToken
-                            },
-                        })
+                        const fetchSession = await getAllSession(resultData.accessToken) 
                         if (fetchSession.ok) {
                             const fetchSessionData = await fetchSession.json()
                             if (fetchSessionData.length) {
@@ -150,13 +135,10 @@ export const authConfig= {
                 password: {}
             },
             authorize: async (credentials) => {
-                const result = await fetch(process.env.BACKEND_URL + '/auth/login', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ identifier: credentials?.identifier, password: credentials?.password })
-                })
+
+                const data = { identifier: credentials?.identifier, password: credentials?.password };
+
+                const result = await loginAuth(data)
                 if (result.ok) {
                     const resultData = await result.json()
                     console.log('masuk credentials')
@@ -169,26 +151,14 @@ export const authConfig= {
                         subscription: {},
                         device: []
                     }
-                    const userSubscription = await fetch(process.env.BACKEND_URL + '/users/' + user.id + '/subscription/', {
-                        method: 'GET',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': 'Bearer ' + resultData.accessToken
-                        },
-                    })
+                    const userSubscription = await getUserSubscriptionById(resultData.accessToken , user.id)
                     if (userSubscription.ok) {
                         const userSubscriptionResult = await userSubscription.json()
                         user.subscription = {
                             status: 1,
                             name: userSubscriptionResult.subscriptionPlan.name
                         }
-                        const fetchSession = await fetch(process.env.BACKEND_URL + '/sessions', {
-                            method: 'GET',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'Authorization': 'Bearer ' + resultData.accessToken
-                            },
-                        })
+                        const fetchSession = await getAllSession(resultData.accessToken) 
                         if (fetchSession.ok) {
                             const fetchSessionData = await fetchSession.json()
                             if (fetchSessionData.length) {
@@ -294,15 +264,11 @@ export const authConfig= {
         async signIn({ user, account }) {
             if (account?.provider === 'google') {
                 // return null
-                const result = await fetch(process.env.BACKEND_URL + '/auth/google', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        accessToken: account.access_token
-                    })
-                })
+
+                const data = {
+                    accessToken: account.access_token
+                }
+                const result = await googleAuth(data)
                 const resultData = await result.json()
                 if (result.ok) {
                     user.device = []
@@ -310,26 +276,14 @@ export const authConfig= {
                     user.id = resultData.id
                     user.token = resultData.accessToken
                     user.refreshToken = resultData.refreshToken
-                    const userSubscription = await fetch(process.env.BACKEND_URL + '/users/' + user.id + '/subscription/', {
-                        method: 'GET',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': 'Bearer ' + resultData.accessToken
-                        },
-                    })
+                    const userSubscription = await getUserSubscriptionById(resultData.accessToken , user.id)
                     if (userSubscription.ok) {
                         const userSubscriptionResult = await userSubscription.json()
                         user.subscription = {
                             status: 1,
                             name: userSubscriptionResult.subscriptionPlan.name
                         }
-                        const fetchSession = await fetch(process.env.BACKEND_URL + '/sessions', {
-                            method: 'GET',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'Authorization': 'Bearer ' + resultData.accessToken
-                            },
-                        })
+                        const fetchSession = await getAllSession(resultData.accessToken)
                         if (fetchSession.ok) {
                             const fetchSessionData = await fetchSession.json()
                             if (fetchSessionData.length) {
