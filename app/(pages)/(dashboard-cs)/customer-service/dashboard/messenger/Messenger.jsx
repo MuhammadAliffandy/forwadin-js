@@ -14,6 +14,8 @@ import ListChats from './ListChats'
 import Chat from "@/app/(pages)/(dashboard)/dashboard/messenger/Chat"
 import ProfileDetail from "@/app/(pages)/(dashboard)/dashboard/messenger/ProfileDetail"
 import CreateOrderModal from "@/app/components/customer-service/dashboard/CreateOrderModal"
+import { getConversationMessages, getListMessenger, sendMessages } from '../../../../../api/repository/messageRepository'
+import { getContacts, getContactsByDeviceId } from "../../../../../api/repository/contactRepository"
 const Messenger = () => {
     const searchParams = useSearchParams()
     const { data: session } = useSession()
@@ -48,27 +50,19 @@ const Messenger = () => {
     const [listMessage, setlistMessage] = useState([])
     const [orderMessage, setorderMessage] = useState()
     const fetchlistMessenger = async () => {
-        const result = await fetchClient({
-            url: `/messages/${session?.customerService?.sessionId}/messenger-list`,
-            method: 'GET',
-            user: session?.customerService
-        })
-        const result2 = await fetchClient({
-            url: '/contacts?deviceId=' + session?.customerService?.deviceId,
-            method: 'GET',
-            user: session?.customerService
-        })
+
+        const result = await getListMessenger(session.customerService.token , session.customerService.sessionId)
+
+        const result2 = await getContactsByDeviceId(session.customerService.token ,session.customerService.deviceId )
+        
         if (result?.ok && result2?.ok) {
             const resultData= await result.json()
             const result2Data= await result2.json()
             const newArray = []
             const fetchPromises = [];
             const fetchMessage = async (element) => {
-                const response = await fetchClient({
-                    url: `/messages/${session?.customerService?.sessionId}/?phoneNumber=${element}&pageSize=1&sort=asc`,
-                    method: 'GET',
-                    user: session?.customerService
-                })
+                const response = await getConversationMessages(session.customerService.token , `${session?.customerService?.sessionId}/?phoneNumber=${element}&pageSize=1&sort=asc`)
+
                 if (response?.ok) {
                     const data = await response.json();
                     return data;
@@ -144,11 +138,8 @@ const Messenger = () => {
     const fetchChatMessage = async (page) => {
         if (!session?.customerService?.sessionId && !currentMessenger) return
 
-        const result = await fetchClient({
-            url: `/messages/${session?.customerService?.sessionId}/?phoneNumber=${currentMessenger?.phone}&page=${page}&pageSize=${PAGINATION_BATCH}&sort=asc`,
-            method: 'GET',
-            user: session?.customerService
-        })
+        const result = await getConversationMessages(session.customerService.token , `${session?.customerService?.sessionId}/?phoneNumber=${currentMessenger?.phone}&page=${page}&pageSize=${PAGINATION_BATCH}&sort=asc`)
+
         if (result && result.ok) {
             const resultData = await result.json()
             console.log(resultData)
@@ -207,19 +198,17 @@ const Messenger = () => {
 
         else {
             if (session?.customerService?.sessionId && currentMessenger && textInput.length > 0) {
-                const result = await fetchClient({
-                    url: '/messages/' + session?.customerService?.sessionId + '/send',
-                    method: 'POST',
-                    body: JSON.stringify([
+                const result = await sendMessages(session.customerService.token ,
+                    session.customerService.sessionId , 
+                    [
                         {
                             recipient: currentMessenger.phone,
                             message: {
                                 text: textInput
                             }
                         }
-                    ]),
-                    user: session?.customerService
-                })
+                ],)
+
                 if (result && result.ok) {
                     toast.success('Berhasil kirim pesan')
                     fetchChatMessage(1)

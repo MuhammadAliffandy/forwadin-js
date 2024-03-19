@@ -20,6 +20,12 @@ export const getContacts = async (token , contactId) => {
     return response;
 }
 
+export const getContactsByDeviceId = async (token , deviceId) => {
+    await delay()
+    const response = await PROVIDER_GET(`contacts?deviceId=${deviceId}`, token)
+    return response;
+}
+
 export const createContacts = async (token , data) => {
     await delay()
     const response = await PROVIDER_POST(`contacts/create`,data , token)
