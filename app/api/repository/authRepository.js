@@ -14,9 +14,9 @@ export const loginAuth = async ( data) => {
     return response;
 }
 
-export const sendVerificationEmailAuth = async (token , data) => {
+export const sendVerificationEmailAuth = async (token) => {
     await delay()
-    const response = await PROVIDER_POST(`auth/send-verification-email`, data , token)
+    const response = await PROVIDER_POST(`auth/send-verification-email`,token)
     return response;
 }
 

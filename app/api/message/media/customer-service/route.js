@@ -1,7 +1,7 @@
 import { writeFile, unlink } from 'fs/promises'
 import { Session, getServerSession } from 'next-auth'
 import { NextRequest, NextResponse } from 'next/server'
-
+import { sendImageMessages , sendDocumentMessages } from "../../../repository/messageRepository";
 import { join } from 'path'
 import { authConfig } from "@/app/api/auth/[...nextauth]/route"
 // export const config = {
@@ -41,14 +41,7 @@ export const POST = async (request, response) => {
         formdata.append('recipients[0]', recipients)
         if (file.type.includes('image')) {
             formdata.set('image', file, path)
-            const sendMessage = await fetch(process.env.BACKEND_URL + '/messages/' + sessionId + '/send/image', {
-                method: 'POST',
-                headers: {
-                    'Authorization': 'Bearer ' + session.customerService.token,
-                    // 'Content-Type': 'multipart/form-data'
-                },
-                body: formdata
-            })
+            const sendMessage = await sendImageMessages(session.customerService.token , sessionId , formdata )
             console.log(sendMessage.status)
             console.log(await sendMessage.text())
             if (sendMessage.ok) {
@@ -60,14 +53,7 @@ export const POST = async (request, response) => {
             }
         } else {
             formdata.set('document', file, path)
-            const sendMessage = await fetch(process.env.BACKEND_URL + '/messages/' + sessionId + '/send/doc', {
-                method: 'POST',
-                headers: {
-                    'Authorization': 'Bearer ' + session.customerService.token,
-                    // 'Content-Type': 'multipart/form-data'
-                },
-                body: formdata
-            })
+            const sendMessage = await await sendImageMessages(session.customerService.token , sessionId , formdata )
             console.log(sendMessage.status)
             console.log(await sendMessage.text())
             if (sendMessage.ok) {

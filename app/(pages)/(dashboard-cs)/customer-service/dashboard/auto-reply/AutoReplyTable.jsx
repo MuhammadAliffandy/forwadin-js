@@ -8,6 +8,7 @@ import { CustomerService } from 'next-auth'
 import Link from 'next/link'
 import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
+import { deleteAutoReplies, getAutoReplies } from '../../../../../api/repository/autoRepliesRepository'
 
 const AutoReplyTable = ({ settotalAutoReply, customerService }) => {
     const [isChecked, setisChecked] = useState(false)
@@ -17,11 +18,9 @@ const AutoReplyTable = ({ settotalAutoReply, customerService }) => {
     const [searchedAutoReplyData, setsearchedAutoReplyData] = useState([])
     const [selectedAutoReply, setselectedAutoReply] = useState(new Set([]))
     const fetchAutoReply = async () => {
-        const result = await fetchClient({
-            url: '/auto-replies',
-            method: 'GET',
-            user: customerService
-        })
+  
+        const result = await getAutoReplies(customerService)
+
         if (result?.ok) {
             const resultData= await result.json()
             setautoReplyData(resultData)
@@ -57,12 +56,9 @@ const AutoReplyTable = ({ settotalAutoReply, customerService }) => {
         deletedAR = getArrayFromSet(selectedAutoReply, autoReplyData)
         const isConfirm = window.confirm('Anda yakin ingin menghapus ' + deletedAR?.length + ' auto reply?')
         if (deletedAR && isConfirm) {
-            const result = await fetchClient({
-                url: '/auto-replies',
-                body: JSON.stringify({ autoReplyIds: deletedAR }),
-                method: 'DELETE',
-                user: customerService
-            })
+
+            const result = await deleteAutoReplies(customerService,{ autoReplyIds: deletedAR })
+
             if (result?.ok) {
                 toast.success('Berhasil hapus auto reply')
                 fetchAutoReply()

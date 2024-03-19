@@ -19,6 +19,7 @@ import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { toast } from "react-toastify"
+import { getAutoReply, updateAutoReply } from "../../../../../../api/repository/autoRepliesRepository"
 
 const DetailAutoReply = ({ autoReplyId }) => {
     const { push } = useRouter()
@@ -34,7 +35,7 @@ const DetailAutoReply = ({ autoReplyId }) => {
     // change
     const [receiverList, setreceiverList] = useState([])
     const [requestList, setrequestList] = useState([])
-    const [textInput, settextInput] = useState<string>('')
+    const [textInput, settextInput] = useState('')
     const handleTemplateClick = (id) => {
         const findContent = templateList.find(item => item.id === id)?.message
         if (findContent)
@@ -79,13 +80,9 @@ const DetailAutoReply = ({ autoReplyId }) => {
                 formData.append(`recipients[${idx}]`, element)
             })
             formData.append('response', textInput)
-            const result = await fetchClient({
-                url: '/auto-replies/' + autoReplyId,
-                method: 'PUT',
-                isFormData: true,
-                body: formData,
-                user: session?.customerService
-            })
+
+            const result = updateAutoReply(session.customerService ,autoReplyId , formData)
+
             if (result?.ok) {
                 toast.success('Berhasil ubah auto reply')
                 push('/customer-service/dashboard/auto-reply')
@@ -100,11 +97,9 @@ const DetailAutoReply = ({ autoReplyId }) => {
     const fetchAutoReplyData = async () => {
         console.log('autoReplyId')
         console.log(autoReplyId)
-        const result = await fetchClient({
-            url: '/auto-replies/' + autoReplyId,
-            method: 'GET',
-            user: session?.customerService
-        })
+        const result = await getAutoReply(
+            session.customerService ,autoReplyId
+        )
         if (result?.ok) {
             const resultData = await result.json()
             if (resultData.mediaPath) {

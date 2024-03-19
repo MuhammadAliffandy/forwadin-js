@@ -95,7 +95,7 @@ export const authConfig= {
                         return csData
                     }
 
-                    const userSubscription = await getUserSubscriptionById(resultData.accessToken , (userData).id)
+                    const userSubscription = await getUserSubscriptionById(resultData.accessToken , userData.id)
 
                     if (userSubscription.ok) {
                         const userSubscriptionResult = await userSubscription.json()

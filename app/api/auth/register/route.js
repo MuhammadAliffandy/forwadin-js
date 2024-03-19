@@ -1,15 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
+import { registerAuth } from "../../repository/authRepository";
 export const POST = async (request) => {
     const body = await request.json()
 
     try {
-        const result = await fetch(process.env.BACKEND_URL + '/auth/register', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(body)
-        })
+        const result = await registerAuth(body)
         const message = await result.json()
         if (!result.ok) {
             return NextResponse.json({ message: message.error }, { status: 400 })

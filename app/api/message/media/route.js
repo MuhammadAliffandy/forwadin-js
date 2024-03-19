@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth'
 import { NextRequest, NextResponse } from 'next/server'
 import { join } from 'path'
 import { authConfig } from "@/app/api/auth/[...nextauth]/route"
+import { sendImageMessages , sendDocumentMessages } from "../../repository/messageRepository";
 // export const config = {
 //     api: {
 //         bodyParser: false
@@ -41,14 +42,9 @@ export const POST = async (request, response) => {
         formdata.append('recipients[0]', recipients)
         if (file.type.includes('image')) {
             formdata.set('image', file, path)
-            const sendMessage = await fetch(process.env.BACKEND_URL + '/messages/' + sessionId + '/send/image', {
-                method: 'POST',
-                headers: {
-                    'Authorization': 'Bearer ' + session.user.token,
-                    // 'Content-Type': 'multipart/form-data'
-                },
-                body: formdata
-            })
+
+            const sendMessage = await sendImageMessages(session.user.token , sessionId , formdata )
+
             console.log(sendMessage.status)
             console.log(await sendMessage.text())
             if (sendMessage.ok) {
@@ -60,14 +56,7 @@ export const POST = async (request, response) => {
             }
         } else {
             formdata.set('document', file, path)
-            const sendMessage = await fetch(process.env.BACKEND_URL + '/messages/' + sessionId + '/send/doc', {
-                method: 'POST',
-                headers: {
-                    'Authorization': 'Bearer ' + session.user.token,
-                    // 'Content-Type': 'multipart/form-data'
-                },
-                body: formdata
-            })
+            const sendMessage = await sendDocumentMessages(session.user.token , sessionId , formdata)
             console.log(sendMessage.status)
             console.log(await sendMessage.text())
             if (sendMessage.ok) {
