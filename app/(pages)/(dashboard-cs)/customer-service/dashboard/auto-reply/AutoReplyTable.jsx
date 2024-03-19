@@ -19,7 +19,7 @@ const AutoReplyTable = ({ settotalAutoReply, customerService }) => {
     const [selectedAutoReply, setselectedAutoReply] = useState(new Set([]))
     const fetchAutoReply = async () => {
   
-        const result = await getAutoReplies(customerService)
+        const result = await getAutoReplies(customerService.token)
 
         if (result?.ok) {
             const resultData= await result.json()
@@ -57,7 +57,7 @@ const AutoReplyTable = ({ settotalAutoReply, customerService }) => {
         const isConfirm = window.confirm('Anda yakin ingin menghapus ' + deletedAR?.length + ' auto reply?')
         if (deletedAR && isConfirm) {
 
-            const result = await deleteAutoReplies(customerService,{ autoReplyIds: deletedAR })
+            const result = await deleteAutoReplies(customerService.token,{ autoReplyIds: deletedAR })
 
             if (result?.ok) {
                 toast.success('Berhasil hapus auto reply')

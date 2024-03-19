@@ -81,7 +81,7 @@ const DetailAutoReply = ({ autoReplyId }) => {
             })
             formData.append('response', textInput)
 
-            const result = updateAutoReply(session.customerService ,autoReplyId , formData)
+            const result = updateAutoReply(session.customerService.token ,autoReplyId , formData)
 
             if (result?.ok) {
                 toast.success('Berhasil ubah auto reply')
@@ -98,7 +98,7 @@ const DetailAutoReply = ({ autoReplyId }) => {
         console.log('autoReplyId')
         console.log(autoReplyId)
         const result = await getAutoReply(
-            session.customerService ,autoReplyId
+            session.customerService.token ,autoReplyId
         )
         if (result?.ok) {
             const resultData = await result.json()
