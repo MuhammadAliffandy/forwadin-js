@@ -8,6 +8,12 @@ export const getIncomeMessages = async ( token , sessionId) => {
     return response;
 }
 
+export const getIncomeMessagesByQuery = async ( token , sessionId , customQuery) => {
+    await delay()
+    const response = await PROVIDER_GET(`messages/${sessionId}/incoming${customQuery}`,token)
+    return response;
+}
+
 export const getOutgoingMessages = async ( token , sessionId) => {
     await delay()
     const response = await PROVIDER_GET(`messages/${sessionId}/outgoing`,token)
@@ -29,6 +35,12 @@ export const getListMessenger = async ( token , sessionId) => {
 export const sendMessages = async ( token , sessionId , data ) => {
     await delay()
     const response = await PROVIDER_POST(`messages/${sessionId}/send`, data , token)
+    return response;
+}
+
+export const sendMessagesMedia = async ( token ,data ) => {
+    await delay()
+    const response = await PROVIDER_POST(`messages/send`, data , token)
     return response;
 }
 

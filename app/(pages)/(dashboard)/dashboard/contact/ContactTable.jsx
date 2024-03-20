@@ -17,6 +17,7 @@ import SyncModal from '@/app/components/dashboard/contact/SyncModal';
 import { User } from 'next-auth';
 import DeleteModal from '@/app/components/dashboard/device/DeleteModal';
 import { Router } from 'next/router'
+import { deleteContacts } from '../../../../api/repository/contactRepository';
 const ContactTable = ({ setcontactCount, currentDevice, user }) => {
     const { push } = useRouter()
     const pathName = usePathname()
@@ -92,12 +93,9 @@ const ContactTable = ({ setcontactCount, currentDevice, user }) => {
             deletedContact = Array.from(selectedKeys)
         }
         if (deletedContact) {
-            const result = await fetchClient({
-                url: '/contacts/',
-                body: JSON.stringify({ contactIds: deletedContact }),
-                method: 'DELETE',
-                user: user
-            })
+
+            const result = await deleteContacts(user.token,{ contactIds: deletedContact } )
+
             if (result?.ok) {
                 toast.success('Berhasil hapus contact')
                 fetchData()

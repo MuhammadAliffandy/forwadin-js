@@ -6,7 +6,7 @@ import DropdownDevice from "@/app/components/dashboard/DropdownDevice"
 import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem } from "@nextui-org/react"
 import { useSession } from "next-auth/react"
 import { fetchClient } from "@/app/utils/helper/fetchClient"
-import { DeviceData } from "@/app/utils/types"
+import { getAllDevice } from "../../../../api/repository/deviceRepository"
 
 const Contacts = () => {
     const { data: session } = useSession()
@@ -22,11 +22,9 @@ const Contacts = () => {
         id: '*'
     })
     const fetchDevice = async () => {
-        const result = await fetchClient({
-            url: '/devices',
-            method: 'GET',
-            user: session?.user
-        })
+
+        const result = await getAllDevice(session.user.token)
+
         if (result?.ok) {
             const resultData = await result.json()
             const newArrDevice = resultData.map(device => {

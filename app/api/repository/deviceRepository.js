@@ -4,7 +4,7 @@ const delay = () => new Promise(res => setTimeout(() => res(), 800))
 
 export const getAllDevice = async ( token) => {
     await delay()
-    const response = await PROVIDER_GET(`devices/`,token )
+    const response = await PROVIDER_GET(`devices`,token )
     return response;
 }
 

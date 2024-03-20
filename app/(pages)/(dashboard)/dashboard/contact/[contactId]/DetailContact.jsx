@@ -13,6 +13,8 @@ import BubbleChat from '@/app/components/dashboard/chat/BubbleChat'
 import TextAreaInput from '@/app/components/dashboard/chat/TextAreaInput'
 import UploadFile from '@/app/components/dashboard/UploadFile'
 import { useRouter } from 'next/navigation'
+import { getContacts } from '../../../../../api/repository/contactRepository'
+import { getIncomeMessagesByQuery, sendMessagesMedia } from '../../../../../api/repository/messageRepository'
 
 const DetailContact = ({ contactId }) => {
     const router = useRouter()
@@ -31,13 +33,12 @@ const DetailContact = ({ contactId }) => {
     const [isChecked, setisChecked] = useState(false)
     const [currentDevice, setcurrentDevice] = useState()
     const [mobileDropdown, setmobileDropdown] = useState(false)
+    
 
     const fetchDetailContact = async () => {
-        const result = await fetchClient({
-            method: 'GET',
-            url: '/contacts/' + contactId,
-            user: session?.user
-        })
+
+        const result = await getContacts(session.user.token, contactId)
+
         if (result) {
             const data = await result.json()
             if (result.status === 200) {
@@ -60,11 +61,9 @@ const DetailContact = ({ contactId }) => {
     const fetchContactMessage = async () => {
         const contactSession = session?.user?.device.find(item => item.id === contactData?.contactDevices[0].device.id)
         if (contactSession?.sessionId) {
-            const result = await fetchClient({
-                url: `/messages/${contactSession?.sessionId}/incoming?phoneNumber=${contactData?.phone}`,
-                method: 'GET',
-                user: session?.user
-            })
+
+            const result = await getIncomeMessagesByQuery(session.user.token,contactSession.sessionId ,`?phoneNumber=${contactData?.phone}` )
+
             if (result && result.ok) {
                 const resultData  = await result.json()
                 setmessage(resultData.data)
@@ -87,10 +86,9 @@ const DetailContact = ({ contactId }) => {
                 formdata.append("recipients[0]", contactData.phone)
                 formdata.append("sessionId", currentDevice.sessionId)
                 try {
-                    const result = await fetch('/api/message/media', {
-                        method: 'POST',
-                        body: formdata
-                    })
+
+                    const result = await sendMessagesMedia(session.user.token, formdata )
+
                     if (result?.ok) {
                         const resultData = await result.json()
                         console.log(resultData)
