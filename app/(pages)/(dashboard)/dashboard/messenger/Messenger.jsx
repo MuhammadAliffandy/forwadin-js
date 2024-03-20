@@ -13,6 +13,8 @@ import DropdownDevice from "@/app/components/dashboard/DropdownDevice"
 import UploadFile from "@/app/components/dashboard/UploadFile"
 import { useSearchParams } from 'next/navigation'
 import { PAGINATION_BATCH } from "@/app/utils/constant"
+import { getConversationMessages, getListMessenger2 } from "../../../../api/repository/messageRepository"
+import { getContactsByDeviceId } from "../../../../api/repository/contactRepository"
 const Messenger = () => {
     const searchParams = useSearchParams()
     const { data: session } = useSession()
@@ -33,27 +35,19 @@ const Messenger = () => {
 
     const fetchlistMessenger = async () => {
 
-        const result = await fetchClient({
-            url: `/messages/${currentDevice?.sessionId}/messenger-list`,
-            method: 'GET',
-            user: session?.user
-        })
-        const result2 = await fetchClient({
-            url: '/contacts?deviceId=' + currentDevice?.id,
-            method: 'GET',
-            user: session?.user
-        })
+        const result = await getListMessenger2(session.user.token,currentDevice.sessionId)
+
+        const result2 = await getContactsByDeviceId(session.user.token , currentDevice.id)
+
         if (result?.ok && result2?.ok) {
             const resultData= await result.json()
             const result2Data= await result2.json()
             const newArray = []
             const fetchPromises = [];
             const fetchMessage = async (element) => {
-                const response = await fetchClient({
-                    url: `/messages/${currentDevice?.sessionId}/?phoneNumber=${element}&pageSize=1&sort=asc`,
-                    method: 'GET',
-                    user: session?.user
-                })
+
+                const response = await getConversationMessages(session.user.token , `${currentDevice?.sessionId}/?phoneNumber=${element}&pageSize=1&sort=asc`)
+
                 if (response?.ok) {
                     const data = await response.json();
                     return data;
@@ -111,11 +105,9 @@ const Messenger = () => {
         if (!currentDevice && !currentMessenger) return
         console.log(`/messages/${currentDevice?.sessionId}/?phoneNumber=${currentMessenger?.phone}&page=${messageMetadata?.currentPage}&pageSize=${PAGINATION_BATCH}&sort=asc`)
         console.log('ini fetch chat')
-        const result = await fetchClient({
-            url: `/messages/${currentDevice?.sessionId}/?phoneNumber=${currentMessenger?.phone}&page=${page}&pageSize=${PAGINATION_BATCH}&sort=asc`,
-            method: 'GET',
-            user: session?.user
-        })
+
+        const result = await getConversationMessages(session.user.token , `${currentDevice?.sessionId}/?phoneNumber=${element}&pageSize=1&sort=asc`)
+
         if (result && result.ok) {
             const resultData = await result.json()
             console.log(resultData)

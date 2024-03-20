@@ -32,6 +32,12 @@ export const getListMessenger = async ( token , sessionId) => {
     return response;
 }
 
+export const getListMessenger2 = async ( token , sessionId) => {
+    await delay()
+    const response = await PROVIDER_GET(`messages/${sessionId}/messenger-list`,token)
+    return response;
+}
+
 export const sendMessages = async ( token , sessionId , data ) => {
     await delay()
     const response = await PROVIDER_POST(`messages/${sessionId}/send`, data , token)
