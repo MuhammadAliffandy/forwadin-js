@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 import EditCampaignMessage from './EditCampaignMessage'
 import { BreadcrumbItem, Breadcrumbs } from "@nextui-org/breadcrumbs"
-import { getCampaignDetail } from '@/app/api/repository/campaignRepository'
+import { getCampaignDetail, getCampaignMessagesByMsgId } from '@/app/api/repository/campaignRepository'
 
 const EditCampaignMessagePage = ({ campaignId, messageId }) => {
     const router = useRouter()
@@ -18,12 +18,8 @@ const EditCampaignMessagePage = ({ campaignId, messageId }) => {
 
         const campaignResult = await getCampaignDetail(session.user.token , campaignId)
 
-        const messageResult = await fetchClient({
-            url: '/campaigns/messages/' + messageId,
-            method: 'GET',
-            user: session?.user
-        })
-        
+        const messageResult = await getCampaignMessagesByMsgId(session.user.token, messageId)
+
         if (campaignResult?.ok && messageResult?.ok) {
             const campaignResultData = await campaignResult.json()
             const messageResultData = await messageResult.json()

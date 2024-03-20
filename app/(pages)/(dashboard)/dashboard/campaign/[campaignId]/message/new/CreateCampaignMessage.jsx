@@ -1,4 +1,5 @@
 'use client'
+import { createCampaignMessages, getCampaignDetail } from "@/app/api/repository/campaignRepository"
 import DisabledForm from "@/app/components/DisabledForm"
 import InputContactAndLabel from "@/app/components/dashboard/InputContactAndLabel"
 import TemplateContainer from "@/app/components/dashboard/TemplateContainer"
@@ -18,31 +19,29 @@ import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { toast } from "react-toastify"
 
-const CreateCampaignMessage = ({ campaignId }: {
-    campaignId: string
-}) => {
+const CreateCampaignMessage = ({ campaignId }) => {
     const { push } = useRouter()
     const { data: session } = useSession()
     const { loading, templateList } = useTemplate(session?.user)
     const [isLoading, setisLoading] = useState(false)
     const [isLoaded, setisLoaded] = useState(false)
     const [isDisabled, setisDisabled] = useState(true)
-    const { handleSubmit, register, formState: { errors } } = useForm<CampaignMessageForm>()
-    const [files, setfiles] = useState<File[]>([])
+    const { handleSubmit, register, formState: { errors } } = useForm()
+    const [files, setfiles] = useState([])
     const [inputText, setinputText] = useState('')
-    const [receiverList, setreceiverList] = useState<string[]>([])
-    const [campaignData, setcampaignData] = useState<CampaignData>()
+    const [receiverList, setreceiverList] = useState([])
+    const [campaignData, setcampaignData] = useState()
 
-    const handleTemplateClick = (id: string) => {
+    const handleTemplateClick = (id) => {
         const findContent = templateList.find(item => item.id === id)?.message
         if (findContent) {
             setinputText(findContent)
         }
     }
-    const handleInsertVariable = (text: string) => {
+    const handleInsertVariable = (text) => {
         setinputText(prev => prev + '{{$' + text + '}}')
     }
-    const onSubmit = async (CampaignMessageFormData: CampaignMessageForm) => {
+    const onSubmit = async (CampaignMessageFormData) => {
         setisLoading(true)
         let mark = true
         if (inputText.length === 0) {
@@ -62,13 +61,9 @@ const CreateCampaignMessage = ({ campaignId }: {
             formData.append('campaignId', campaignId)
             formData.append('schedule', formatDatetoISO8601(CampaignMessageFormData.schedule))
             formData.append('delay', delay.toString())
-            const result = await fetchClient({
-                url: '/campaigns/messages',
-                method: 'POST',
-                body: formData,
-                isFormData: true,
-                user: session?.user
-            })
+
+            const result = await createCampaignMessages(session.user.token,  formData)
+
             if (result?.ok) {
                 toast.success('Berhasil buat campaign message!')
                 push('/dashboard/campaign/' + campaignId + '/message')
@@ -80,13 +75,11 @@ const CreateCampaignMessage = ({ campaignId }: {
         setisLoading(false)
     }
     const fetchCampaignData = async () => {
-        const result = await fetchClient({
-            url: "/campaigns/" + campaignId,
-            method: 'GET',
-            user: session?.user
-        })
+
+        const result = await getCampaignDetail(token, campaignId)
+
         if (result?.ok) {
-            const resultData: CampaignData = await result.json()
+            const resultData = await result.json()
             setcampaignData(resultData)
             console.log(resultData)
         }

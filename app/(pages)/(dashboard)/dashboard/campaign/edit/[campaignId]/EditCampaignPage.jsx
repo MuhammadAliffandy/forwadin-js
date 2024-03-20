@@ -7,17 +7,16 @@ import { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 import EditCampaign from './EditCampaign'
 import { BreadcrumbItem, Breadcrumbs } from "@nextui-org/breadcrumbs"
+import { getCampaignDetail } from '../../../../../../api/repository/campaignRepository'
 
 const EditCampaignPage = ({ campaignId }) => {
     const router = useRouter()
     const { data: session } = useSession()
     const [campaignData, setcampaignData] = useState()
     const fetchCampaignData = async () => {
-        const result = await fetchClient({
-            url: '/campaigns/' + campaignId,
-            method: 'GET',
-            user: session?.user
-        })
+
+        const result = await getCampaignDetail(session.user.token , campaignId)
+
         if (result?.ok) {
             const resultData = await result.json()
             setcampaignData(resultData)

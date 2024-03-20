@@ -1,12 +1,10 @@
 import { formatDate } from '@/app/utils/helper'
 import { fetchClient } from '@/app/utils/helper/fetchClient'
-import { DeviceSession, GetCampaign } from '@/app/utils/types'
 import { Table, Button, TableHeader, TableColumn, TableBody, TableRow, TableCell, Switch, Skeleton } from '@nextui-org/react'
-import { User } from 'next-auth'
-import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
+import { updateCampaignStatus } from '../../../../api/repository/campaignRepository'
 
 const CampaignTable = ({ settotalCampaign, totalCampaign, user }) => {
     // const { data: session } = useSession()
@@ -31,12 +29,9 @@ const CampaignTable = ({ settotalCampaign, totalCampaign, user }) => {
         setisLoaded(true)
     }
     const handleToggleCampaign = async (id, status) => {
-        const result = await fetchClient({
-            url: '/campaigns/' + id + '/status',
-            method: 'PATCH',
-            body: JSON.stringify({ status: status }),
-            user: user,
-        })
+
+        const result = await updateCampaignStatus(user.token , id , { status: status }  )
+
         if (result?.ok) {
             // toast.success('Ber')
             fetchCampaign()
