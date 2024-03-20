@@ -9,6 +9,7 @@ import { Button, Skeleton } from "@nextui-org/react"
 import { PulseLoader } from "react-spinners"
 import { toast } from "react-toastify"
 import { signIn, useSession } from "next-auth/react"
+import { deleteDevice, generateAPIKEYDevice, getDevice , updateDevice } from "../../../../../api/repository/deviceRepository"
 const DetailDevice = ({ device }) => {
     const router = useRouter()
     const { data: session } = useSession()
@@ -18,11 +19,9 @@ const DetailDevice = ({ device }) => {
     const [deviceData, setdeviceData] = useState()
     const [labelList, setlabelList] = useState([])
     const fetchDetailDevice = async () => {
-        const result = await fetchClient({
-            method: 'GET',
-            url: '/devices/' + device,
-            user: session?.user
-        })
+
+        const result = await getDevice(session.user.token,device)
+
         if (result) {
             const data = await result.json()
             if (result.status === 200) {
@@ -47,11 +46,9 @@ const DetailDevice = ({ device }) => {
     }
     const generateAPIKey = async () => {
         if (!deviceData) return
-        const result = await fetchClient({
-            url: '/devices/api-key/' + deviceData?.id,
-            method: 'GET',
-            user: session?.user
-        })
+
+        const result = await generateAPIKEYDevice(session.user.token , deviceData.id)
+
         if (result?.ok) {
             toast.success('Berhasil generate API Key baru')
             fetchDetailDevice()
@@ -60,12 +57,10 @@ const DetailDevice = ({ device }) => {
         }
     }
     const handleDeleteDevice = async () => {
-        const result = await fetchClient({
-            url: '/devices/',
-            body: JSON.stringify({ deviceIds: [deviceData?.id] }),
-            method: 'DELETE',
-            user: session?.user
-        })
+  
+        const result = await deleteDevice(session.user.token, { deviceIds: [deviceData?.id] })
+
+
         if (result?.ok) {
             toast.success('Berhasil hapus device')
             const refresh = await signIn('refresh', {
@@ -83,15 +78,12 @@ const DetailDevice = ({ device }) => {
     const handleUpdateDevice = async () => {
         setisLoading(true)
         const newLabel = labelList.filter(obj => obj.label.active).map(obj => obj.label.name)
-        const updateDevice = await fetchClient({
-            method: 'PUT',
-            body: JSON.stringify({
-                name: deviceName,
-                label: newLabel
-            }),
-            url: '/devices/' + deviceData?.id,
-            user: session?.user
-        })
+
+        const updateDevice = updateDevice(session.user.token , deviceData.id,{
+            name: deviceName,
+            label: newLabel
+        } )
+
         if (updateDevice) {
             if (updateDevice.status === 200) {
                 toast.success('Device berhasil diubah!')

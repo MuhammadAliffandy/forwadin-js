@@ -12,6 +12,7 @@ import { Button, Skeleton, Table, TableBody, TableCell, TableColumn, TableHeader
 import DeleteModal from '@/app/components/dashboard/device/DeleteModal';
 import { useSocket } from '@/app/SocketProvider';
 import { getArrayFromSet } from '@/app/utils/helper';
+import { getAllDevice } from "../../../../api/repository/deviceRepository"
 
 const DeviceTable = ({ setcountDevice }) => {
     const { data: session } = useSession()
@@ -57,6 +58,10 @@ const DeviceTable = ({ setcountDevice }) => {
             url: '/devices',
             user: session?.user
         })
+
+        const fetchDeviceData = await getAllDevice(session.user.token)
+        
+
         if (fetchDeviceData) {
             const data= await fetchDeviceData.json()
             if (fetchDeviceData.status === 200) {
