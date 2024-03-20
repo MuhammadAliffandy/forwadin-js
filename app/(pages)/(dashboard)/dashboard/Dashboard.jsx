@@ -10,6 +10,8 @@ import { formatDateBahasa, getTodayDateBahasa } from '@/app/utils/helper';
 import { Button, Progress, Link as UILink } from '@nextui-org/react';
 import { useSession } from 'next-auth/react';
 import ActivatePlanModal from '@/app/components/dashboard/ActivatePlanModal';
+import { getUserSubscriptionById, userProfile } from '@/app/api/repository/userRepository';
+import { getIncomeMessagesByQuery } from '@/app/api/repository/messageRepository';
 const DynamicAnalytic = dynamic(() => import('@/app/components/dashboard/Analytic'), { ssr: false })
 const Dashboard = () => {
     const { data: session } = useSession()
@@ -36,7 +38,9 @@ const Dashboard = () => {
         color: 'success'
     })
     const fetchProfile = async () => {
-        const result = await fetchClient({ url: '/users/' + session?.user?.id, method: 'GET', user: session?.user })
+        
+        const result = await userProfile(session.user.token,session.user.id)
+
         if (result) {
             const data = await result.json()
             if (result.status === 200) {
@@ -48,11 +52,9 @@ const Dashboard = () => {
         }
     }
     const fetchSubscription = async () => {
-        const result = await fetchClient({
-            url: '/users/' + session?.user?.id + '/subscription',
-            method: 'GET',
-            user: session?.user
-        })
+    
+        const result = await getUserSubscriptionById(session.user.token,session.user.id)
+
         if (result && result.ok) {
             const resultData = await result.json()
             setuserSubscription(resultData)
@@ -94,11 +96,9 @@ const Dashboard = () => {
     }
 
     const fetchLatestMessage = async () => {
-        const result = await fetchClient({
-            url: '/messages/' + currentDevice?.sessionId + '/incoming?pageSize=3',
-            method: 'GET',
-            user: session?.user
-        })
+
+        const result = await getIncomeMessagesByQuery(session.user.token,currentDevice.sessionId,`?pageSize=3`)
+
         if (result?.ok) {
             const resultData = await result.json()
             setlatestMessage(resultData.data)

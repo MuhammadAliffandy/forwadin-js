@@ -10,6 +10,7 @@ import { fetchClient } from "@/app/utils/helper/fetchClient";
 import { useRouter } from "next/navigation";
 import Notification from "./dashboard/Notification";
 import { useSocket } from "../../SocketProvider";
+import { userProfile } from "@/app/api/repository/userRepository";
 const DashboardTemplate = ({ currentPage, children }) => {
     const { data: session } = useSession()
     const { socket, isConnected } = useSocket()
@@ -31,16 +32,16 @@ const DashboardTemplate = ({ currentPage, children }) => {
     }
     const fetchUserProfile = async () => {
 
-        const result = await fetchClient({
-            url: '/users/' + session?.user?.id,
-            method: 'GET',
-            user: session?.user
-        })
+        const result = await userProfile(session.user.token,session.user.id)
+
         if (result && result.ok) {
             const body = await result.json()
             setuser(body)
         }
     }
+
+
+    
     useEffect(() => {
         if (session?.user?.token) {
             fetchUserProfile()
