@@ -17,6 +17,7 @@ import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { toast } from "react-toastify"
+import { updateBroadcast } from "../../../../../../api/repository/broadcastRepository"
 
 
 const EditBroadcast = ({ broadcastData }) => {
@@ -74,14 +75,8 @@ const EditBroadcast = ({ broadcastData }) => {
             formData.append('delay', delay.toString())
             formData.append('schedule', formatDatetoISO8601(broadcastFormData.schedule))
 
+            const result = await updateBroadcast(session.user.token , broadcastData.id , formData)
 
-            const result = await fetchClient({
-                url: '/broadcasts/' + broadcastData.id,
-                method: 'PUT',
-                body: formData,
-                isFormData: true,
-                user: session?.user
-            })
             if (result?.ok) {
                 toast.success('Berhasil update broadcast')
                 router.push('/dashboard/broadcast/' + broadcastData.id)

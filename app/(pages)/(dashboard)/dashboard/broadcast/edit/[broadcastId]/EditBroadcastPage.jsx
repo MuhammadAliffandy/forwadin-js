@@ -6,17 +6,16 @@ import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 import EditBroadcast from './EditBroadcast'
+import { getBroadcastDetail } from '../../../../../../api/repository/broadcastRepository'
 
 const EditBroadcastPage = ({ broadcastId }) => {
     const router = useRouter()
     const { data: session } = useSession()
     const [broadcastData, setbroadcastData] = useState()
     const fetchBroadcastData = async () => {
-        const result = await fetchClient({
-            url: '/broadcasts/' + broadcastId,
-            method: 'GET',
-            user: session?.user
-        })
+
+        const result = await getBroadcastDetail(session.user.token , broadcastId)
+
         if (result?.ok) {
             const resultData = await result.json()
             setbroadcastData(resultData)
