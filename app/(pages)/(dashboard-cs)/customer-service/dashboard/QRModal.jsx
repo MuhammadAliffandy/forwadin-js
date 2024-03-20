@@ -9,20 +9,17 @@ import { signIn, useSession } from 'next-auth/react';
 import { Socket, io } from "socket.io-client";
 import { useSocket } from '@/app/SocketProvider';
 import ModalTemplate from '@/app/components/template/ModalTemplate';
+import { createSession } from '../../../../api/repository/sessionRepository'
 
 const QRModal = ({ openModal, setopenModal, session, socket, refresh }) => {
     const [isLoaded, setisLoaded] = useState(false)
     const [qrData, setqrData] = useState('')
     const generateQR = async () => {
-        const result = await fetchClient({
-            method: 'POST',
-            body: JSON.stringify({
-                deviceId: session?.customerService?.deviceId,
-            }),
-            url: '/sessions/create',
-            user: session?.customerService
 
+        const result = await createSession(session.customerService.token , {
+            deviceId: session.customerService.deviceId,
         })
+
         console.log(result?.status)
         if (result && result.ok) {
             const resultData = await result.json()
@@ -38,7 +35,7 @@ const QRModal = ({ openModal, setopenModal, session, socket, refresh }) => {
         generateQR()
 
         const refreshSession = async () => {
-            if (session?.customerService) {
+            if (session.customerService) {
                 console.log('masuk refresh')
                 const refresh = await signIn('refresh', {
                     redirect: false,
@@ -61,7 +58,7 @@ const QRModal = ({ openModal, setopenModal, session, socket, refresh }) => {
     }, [])
 
     useEffect(() => {
-        const channel = `device:${session?.customerService?.deviceId}:status`
+        const channel = `device:${session.customerService.deviceId}:status`
         console.log(channel)
         if (socket) {
             socket.on(channel, (status) => {
