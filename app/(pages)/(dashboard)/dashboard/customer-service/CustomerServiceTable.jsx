@@ -10,6 +10,7 @@ import { Button, Skeleton, Table, TableBody, TableCell, TableColumn, TableHeader
 import { useSession } from "next-auth/react"
 import { useState, useEffect } from "react"
 import { toast } from "react-toastify"
+import { customerServiceUser } from "../../../../api/repository/userRepository"
 
 const CustomerServiceTable = () => {
 
@@ -54,11 +55,9 @@ const CustomerServiceTable = () => {
         }
     }
     const fetchCSData = async () => {
-        const result = await fetchClient({
-            url: '/users/customer-services/' + session?.user?.id,
-            method: 'GET',
-            user: session?.user
-        })
+   
+        const result = await customerServiceUser(session.user.token,session.user.id)
+
         if (result?.ok) {
             const resultData = await result.json()
             setCSData(resultData)
