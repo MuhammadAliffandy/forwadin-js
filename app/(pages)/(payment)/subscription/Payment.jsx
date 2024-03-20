@@ -8,6 +8,7 @@ import { useEffect, useState } from "react"
 import { toast } from "react-toastify"
 import BasicPlan from "./Plans"
 import { formatCurrencyIDR } from "@/app/utils/helper"
+import { createPayment, getPaymentSubscription } from "../../../api/repository/paymentRepository"
 
 
 const Payment = () => {
@@ -74,11 +75,8 @@ const Payment = () => {
 		api: '/assets/icons/subscription/api.svg',
 	}
 	const fetchSubscriptionPlans = async () => {
-		const result = await fetchClient({
-			url: '/payment/subscriptions',
-			method: 'GET',
-			user: session?.user
-		})
+
+		const result = await getPaymentSubscription(session.user.token)
 		if (result) {
 			const resultData = await result.json()
 			if (result.ok) {
@@ -99,15 +97,12 @@ const Payment = () => {
 	}
 	const handleClick = async () => {
 		setisLoading(true)
-		const result = await fetchClient({
-			url: '/payment/pay',
-			method: 'POST',
-			body: JSON.stringify({
-				subscriptionPlanId: currentPlan?.id,
-				subscriptionPlanType: durationPlan.toLowerCase()
-			}),
-			user: session?.user
+
+		const result = await createPayment(session.user.token, {
+			subscriptionPlanId: currentPlan?.id,
+			subscriptionPlanType: durationPlan.toLowerCase()
 		})
+
 		if (result) {
 			const resultData = await result.json()
 			if (result.ok) {
