@@ -14,6 +14,7 @@ import ProfileAvatar from '@/app/components/dashboard/ProfileAvatar';
 import BubbleChat from '@/app/components/dashboard/chat/BubbleChat';
 import MessageAddContact from '@/app/components/dashboard/contact/MessageAddContact';
 import { useSearchParams } from 'next/navigation';
+import { getIncomeMessages, getIncomeMessagesByQuery } from '../../../../api/repository/messageRepository';
 
 
 const IncomingTable = ({ settotalMessage, totalMessage, sessionId, user }) => {
@@ -50,11 +51,9 @@ const IncomingTable = ({ settotalMessage, totalMessage, sessionId, user }) => {
     }, [phoneSearch])
     const fetchIncomingMessage = async (query = '') => {
         setisLoaded(false)
-        const result = await fetchClient({
-            url: `/messages/${sessionId}/incoming?page=${currentPage}&pageSize=${PAGINATION_BATCH}` + (query && '&' + query),
-            method: 'GET',
-            user: user
-        })
+
+        const result = await getIncomeMessagesByQuery(user.token,sessionId , `?page=${currentPage}&pageSize=${PAGINATION_BATCH}` + (query && '&' + query))
+
         if (result) {
             const resultData = await result.json()
             if (result.ok) {
