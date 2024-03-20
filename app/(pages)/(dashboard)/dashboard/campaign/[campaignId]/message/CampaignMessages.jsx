@@ -9,30 +9,27 @@ import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { toast } from "react-toastify"
 import { BreadcrumbItem, Breadcrumbs } from "@nextui-org/breadcrumbs"
+import { deleteCampaign, getCampaignDetail, getCampaignsMessages } from "@/app/api/repository/campaignRepository"
 
-const CampaignMessages = ({ campaignId }: {
-    campaignId: string
-}) => {
+const CampaignMessages = ({ campaignId }) => {
     const router = useRouter()
     const { data: session } = useSession()
-    const [campaignMessages, setcampaignMessages] = useState<CampaignMessage[]>([])
-    const [campaignData, setcampaignData] = useState<CampaignData>()
+    const [campaignMessages, setcampaignMessages] = useState([])
+    const [campaignData, setcampaignData] = useState()
     const [isLoaded, setisLoaded] = useState(false)
     const [isChecked, setisChecked] = useState(false)
     const [deleteModal, setdeleteModal] = useState(false)
-    const [selectedMessage, setselectedMessage] = useState<Set<string> | 'all'>(new Set([]))
+    const [selectedMessage, setselectedMessage] = useState(new Set([]))
     const [searchText, setsearchText] = useState('')
     const fetchCampaignMessages = async () => {
-        const result = await fetchClient({
-            url: '/campaigns/' + campaignId + '/messages',
-            method: 'GET',
-            user: session?.user,
-        })
+
+        const result = await getCampaignsMessages(session.user.token , campaignId)
+
         if (result?.ok) {
             const resultData = await result.json()
             console.log(resultData)
             setcampaignMessages(resultData)
-        } else if (result?.status === 404) {
+        } else if (result.status === 404) {
             toast.error('Campaign Message tidak ditemukan')
             router.push('/dashboard/campaign')
         } else {
@@ -41,11 +38,9 @@ const CampaignMessages = ({ campaignId }: {
         setisLoaded(true)
     }
     const fetchcampaignData = async () => {
-        const result = await fetchClient({
-            url: '/campaigns/' + campaignId,
-            method: 'GET',
-            user: session?.user
-        })
+    
+        const result = await getCampaignDetail(session.user.token , campaignId)
+
         if (result?.ok) {
             const resultData = await result.json()
             setcampaignData(resultData)
@@ -59,17 +54,13 @@ const CampaignMessages = ({ campaignId }: {
         if (selectedMessage === 'all') {
             deletedMessage = campaignMessages.map(item => item.id)
         }
-        else if ((selectedMessage as Set<string>).size > 0) {
+        else if ((selectedMessage).size > 0) {
             deletedMessage = Array.from(selectedMessage)
         }
         const isConfirm = window.confirm('Anda yakin ingin menghapus ' + deletedMessage?.length + ' campaign message?')
         if (deletedMessage && isConfirm) {
-            const result = await fetchClient({
-                url: '/campaigns/messages/',
-                body: JSON.stringify({ campaignMessageIds: deletedMessage }),
-                method: 'DELETE',
-                user: session?.user
-            })
+            const result = await deleteCampaign(session.user.token , { campaignMessageIds: deletedMessage }  )
+
             if (result?.ok) {
                 toast.success('Berhasil hapus campaign message')
                 fetchCampaignMessages()
@@ -87,7 +78,7 @@ const CampaignMessages = ({ campaignId }: {
         }
     }, [session?.user?.token])
     useEffect(() => {
-        if ((selectedMessage as Set<string>).size > 0 || selectedMessage === 'all')
+        if ((selectedMessage).size > 0 || selectedMessage === 'all')
             setisChecked(true)
         else
             setisChecked(false)
@@ -137,8 +128,8 @@ const CampaignMessages = ({ campaignId }: {
                             wrapper: 'rounded-md'
                         }}
                         radius='md'
-                        selectedKeys={selectedMessage as any}
-                        onSelectionChange={setselectedMessage as any}
+                        selectedKeys={selectedMessage }
+                        onSelectionChange={setselectedMessage }
                     >
                         <TableHeader>
                             <TableColumn
@@ -161,7 +152,7 @@ const CampaignMessages = ({ campaignId }: {
                             items={campaignMessages}
                         // className='font-nunito'
                         >
-                            {(item: CampaignMessage) => (
+                            {(item) => (
                                 <TableRow key={item.id}>
                                     <TableCell >{item.name}</TableCell>
                                     <TableCell>

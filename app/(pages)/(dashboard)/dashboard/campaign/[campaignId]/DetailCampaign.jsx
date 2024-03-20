@@ -16,6 +16,7 @@ import TabTitle from "@/app/components/tabs/TabTitle"
 import { BreadcrumbItem, Breadcrumbs } from "@nextui-org/breadcrumbs"
 import DisplayFile from "@/app/components/dashboard/DisplayFile"
 import { isFileImage } from "@/app/utils/helper/fileHelper"
+import { getCampaignDetail, getCampaignReplies , getOutgoingCampaignsByQuery  } from "../../../../../api/repository/campaignRepository"
 
 const DetailCampaign = ({ campaignId }) => {
     const { data: session } = useSession()
@@ -34,11 +35,8 @@ const DetailCampaign = ({ campaignId }) => {
     })
     const [currentPage, setcurrentPage] = useState<MessageTableStatus>('Terkirim')
     const fetchCampaign = async () => {
-        const result = await fetchClient({
-            url: "/campaigns/" + campaignId,
-            method: 'GET',
-            user: session?.user
-        })
+        const result = await getCampaignDetail(session.user.token, campaignId)
+
         if (result?.ok) {
             const resultData = await result.json()
             setcampaignData(resultData)
@@ -72,26 +70,15 @@ const DetailCampaign = ({ campaignId }) => {
     ]
 
     const fetchDetailCampaign = async () => {
-        const fetchSent = await fetchClient({
-            url: '/campaigns/' + campaignId + '/outgoing?status=server_ack',
-            method: 'GET',
-            user: session?.user
-        })
-        const fetchReceived = await fetchClient({
-            url: '/campaigns/' + campaignId + '/outgoing?status=delivery_ack',
-            method: 'GET',
-            user: session?.user
-        })
-        const fetchRead = await fetchClient({
-            url: '/campaigns/' + campaignId + '/outgoing?status=read',
-            method: 'GET',
-            user: session?.user
-        })
-        const fetchReply = await fetchClient({
-            url: '/campaigns/' + campaignId + '/replies',
-            method: 'GET',
-            user: session?.user
-        })
+
+        const fetchSent = await getOutgoingCampaignsByQuery(session.user.token , campaignId , '?status=server_ack' )
+        
+        const fetchReceived = await getOutgoingCampaignsByQuery(session.user.token , campaignId , '?status=delivery_ack' )
+
+        const fetchRead = await getOutgoingCampaignsByQuery(session.user.token , campaignId , '?status=read' )
+
+        const fetchReply = await getCampaignReplies(session.user.token , campaignId , '/replies' )
+
         if (fetchSent?.ok && fetchRead?.ok && fetchReceived?.ok && fetchReply?.ok) {
             setcampaignDetail({
                 Terkirim: (await fetchSent.json()).outgoingCampaigns,

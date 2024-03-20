@@ -16,15 +16,16 @@ import DetailCampaignTable from "../../DetailCampaignTable"
 import { BreadcrumbItem, Breadcrumbs } from "@nextui-org/breadcrumbs"
 import { isFileImage } from "@/app/utils/helper/fileHelper"
 import DisplayFile from "@/app/components/dashboard/DisplayFile"
+import { getCampaignDetail, getCampaignMessagesByMsgId, getCampaignReplies, getOutgoingCampaignsByQuery } from "@/app/api/repository/campaignRepository"
 
-const DetailCampaignMessage = ({ campaignId, messageId }: { campaignId: string, messageId: string }) => {
+const DetailCampaignMessage = ({ campaignId, messageId }) => {
     const { data: session } = useSession()
     const { push } = useRouter()
     const [isCampaignLoaded, setisCampaignLoaded] = useState(false)
     const [isDetailCampaignTableLoaded, setisDetailCampaignTableLoaded] = useState(false)
-    const [campaignData, setcampaignData] = useState<CampaignData>()
-    const [campaignMessage, setcampaignMessage] = useState<CampaignMessage>()
-    const [selectedKeys, setselectedKeys] = useState<Set<string>>(new Set())
+    const [campaignData, setcampaignData] = useState()
+    const [campaignMessage, setcampaignMessage] = useState()
+    const [selectedKeys, setselectedKeys] = useState(new Set())
     const [messageDetail, setmessageDetail] = useState({
         Terkirim: [],
         Diterima: [],
@@ -43,22 +44,20 @@ const DetailCampaignMessage = ({ campaignId, messageId }: { campaignId: string, 
         },
     })
     const fetchCampaignData = async () => {
-        const result = await fetchClient({
-            url: "/campaigns/" + campaignId,
-            method: 'GET',
-            user: session?.user
-        })
+
+        const result = await getCampaignDetail(session.token.user , campaignId )
+
         if (result?.ok) {
-            const resultData: CampaignData = await result.json()
+            const resultData = await result.json()
             setcampaignData(resultData)
         }
     }
+
+    
     const fetchCampaignMessage = async () => {
-        const result = await fetchClient({
-            url: "/campaigns/messages/" + messageId,
-            method: 'GET',
-            user: session?.user
-        })
+
+        const result = await getCampaignMessagesByMsgId(messageId)
+
         if (result?.ok) {
             const resultData = await result.json()
             setcampaignMessage(resultData)
@@ -73,26 +72,15 @@ const DetailCampaignMessage = ({ campaignId, messageId }: { campaignId: string, 
 
 
     const fetchDetailCampaignTable = async () => {
-        const fetchSent = await fetchClient({
-            url: '/campaigns/' + campaignId + '/outgoing?status=server_ack',
-            method: 'GET',
-            user: session?.user
-        })
-        const fetchReceived = await fetchClient({
-            url: '/campaigns/' + campaignId + '/outgoing?status=delivery_ack',
-            method: 'GET',
-            user: session?.user
-        })
-        const fetchRead = await fetchClient({
-            url: '/campaigns/' + campaignId + '/outgoing?status=read',
-            method: 'GET',
-            user: session?.user
-        })
-        const fetchReply = await fetchClient({
-            url: '/campaigns/' + campaignId + '/replies',
-            method: 'GET',
-            user: session?.user
-        })
+
+        const fetchSent = await getOutgoingCampaignsByQuery(session.user.token , campaignId , '?status=server_ack' )
+        
+        const fetchReceived = await getOutgoingCampaignsByQuery(session.user.token , campaignId , '?status=delivery_ack' )
+
+        const fetchRead = await getOutgoingCampaignsByQuery(session.user.token , campaignId , '?status=read' )
+
+        const fetchReply = await getCampaignReplies(session.user.token , campaignId , '/replies' )
+
         if (fetchSent?.ok && fetchRead?.ok && fetchReceived?.ok && fetchReply?.ok) {
             setmessageDetail({
                 Terkirim: (await fetchSent.json()).outgoingCampaigns,
@@ -140,7 +128,7 @@ const DetailCampaignMessage = ({ campaignId, messageId }: { campaignId: string, 
                                 </tr>
                                 <tr>
                                     <th className='font-bold whitespace-pre '>Schedule</th>
-                                    <td className="break-all">{formatDate(campaignMessage?.schedule!)}</td>
+                                    <td className="break-all">{formatDate(campaignMessage?.schedule)}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -190,7 +178,7 @@ const DetailCampaignMessage = ({ campaignId, messageId }: { campaignId: string, 
                         <div className="flex gap-2">
                             <Tabs aria-label="Options" variant="light" color="primary" radius="md" size="lg"
                                 selectedKey={currentPage}
-                                onSelectionChange={setcurrentPage as any}>
+                                onSelectionChange={setcurrentPage}>
                                 <Tab key="Terkirim" title={<TabTitle text="Terkirim" count={messageDetail.Terkirim.length} />} />
                                 <Tab key="Diterima" title={<TabTitle text="Diterima" count={messageDetail.Diterima.length} />} />
                                 <Tab key="Terbaca" title={<TabTitle text="Terbaca" count={messageDetail.Terbaca.length} />} />
@@ -202,8 +190,8 @@ const DetailCampaignMessage = ({ campaignId, messageId }: { campaignId: string, 
                             {componentTransition((style, item) => item && (
                                 <animated.div style={style}>
                                     <DetailCampaignTable
-                                        selectedKeys={selectedKeys as any}
-                                        setSelectedKeys={setselectedKeys as any}
+                                        selectedKeys={selectedKeys}
+                                        setSelectedKeys={setselectedKeys}
                                         type={item}
                                         data={messageDetail[item]}
                                     />

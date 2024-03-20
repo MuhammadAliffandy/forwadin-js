@@ -7,23 +7,23 @@ import { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 import EditCampaignMessage from './EditCampaignMessage'
 import { BreadcrumbItem, Breadcrumbs } from "@nextui-org/breadcrumbs"
+import { getCampaignDetail } from '@/app/api/repository/campaignRepository'
 
-const EditCampaignMessagePage = ({ campaignId, messageId }: { campaignId: string, messageId: string }) => {
+const EditCampaignMessagePage = ({ campaignId, messageId }) => {
     const router = useRouter()
-    const { data: session } = useSession()
-    const [campaignData, setcampaignData] = useState<CampaignData>()
-    const [messageData, setmessageData] = useState<CampaignMessage>()
+    const { data } = useSession()
+    const [campaignData, setcampaignData] = useState()
+    const [messageData, setmessageData] = useState()
     const fetchCampaignData = async () => {
-        const campaignResult = await fetchClient({
-            url: '/campaigns/' + campaignId,
-            method: 'GET',
-            user: session?.user
-        })
+
+        const campaignResult = await getCampaignDetail(session.user.token , campaignId)
+
         const messageResult = await fetchClient({
             url: '/campaigns/messages/' + messageId,
             method: 'GET',
             user: session?.user
         })
+        
         if (campaignResult?.ok && messageResult?.ok) {
             const campaignResultData = await campaignResult.json()
             const messageResultData = await messageResult.json()

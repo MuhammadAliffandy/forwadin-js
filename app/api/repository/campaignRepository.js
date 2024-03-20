@@ -56,6 +56,13 @@ export const createCampaignMessages = async ( token, data ) => {
     return response;
 }
 
+export const getCampaignMessagesByMsgId = async ( token, messageId) => {
+    await delay()
+    const response = await PROVIDER_GET(`campaigns/messages${messageId}` ,token )
+    return response;
+}
+
+
 export const updateCampaignMessages = async ( token , campaignMessageId , data ) => {
     await delay()
     const response = await PROVIDER_PUT(`campaigns/messages/${campaignMessageId}` , data ,token )
@@ -77,6 +84,12 @@ export const getCampaignsMessagesDetail = async ( token , campaignId  , campaign
 export const getOutgoingCampaignsMessages = async ( token , campaignId  , campaignMessageId ) => {
     await delay()
     const response = await PROVIDER_GET(`campaigns/${campaignId}/messages/${campaignMessageId}/outgoing` , token )
+    return response;
+}
+
+export const getOutgoingCampaignsByQuery = async ( token, campaignId , customQuery) => {
+    await delay()
+    const response = await PROVIDER_GET(`campaigns/${campaignId}/outgoing${customQuery}` ,token )
     return response;
 }
 

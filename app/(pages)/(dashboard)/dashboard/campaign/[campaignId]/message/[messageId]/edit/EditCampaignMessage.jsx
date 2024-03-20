@@ -18,32 +18,30 @@ import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { toast } from "react-toastify"
+import { updateCampaignMessages } from '../../../../../../../../api/repository/campaignRepository'
 
-const EditCampaignMessage = ({ campaignData, messageData }: {
-    campaignData: CampaignData,
-    messageData: CampaignMessage
-}) => {
+const EditCampaignMessage = ({ campaignData, messageData }) => {
     const { push } = useRouter()
     const { data: session } = useSession()
     const { loading, templateList } = useTemplate(session?.user)
     const [isLoading, setisLoading] = useState(false)
     const [isLoaded, setisLoaded] = useState(false)
     const [isDisabled, setisDisabled] = useState(true)
-    const { handleSubmit, register, setValue, formState: { errors } } = useForm<CampaignMessageForm>()
-    const [files, setfiles] = useState<File[]>([])
+    const { handleSubmit, register, setValue, formState: { errors } } = useForm()
+    const [files, setfiles] = useState([])
     const [inputText, setinputText] = useState('')
-    const [receiverList, setreceiverList] = useState<string[]>([])
-    const handleTemplateClick = (id: string) => {
-        const findContent = templateList.find(item => item.id === id)?.message
+    const [receiverList, setreceiverList] = useState([])
+    const handleTemplateClick = (id) => {
+        const findContent = templateList.find(item => item.id === id).message
         if (findContent) {
             setinputText(findContent)
 
         }
     }
-    const handleInsertVariable = (text: string) => {
+    const handleInsertVariable = (text) => {
         setinputText(prev => prev + '{{$' + text + '}}')
     }
-    const onSubmit = async (CampaignMessageFormData: CampaignMessageForm) => {
+    const onSubmit = async (CampaignMessageFormData) => {
         setisLoading(true)
         let mark = true
         if (inputText.length === 0) {
@@ -63,13 +61,9 @@ const EditCampaignMessage = ({ campaignData, messageData }: {
             formData.append('campaignId', campaignData.id)
             formData.append('schedule', formatDatetoISO8601(CampaignMessageFormData.schedule))
             formData.append('delay', delay.toString())
-            const result = await fetchClient({
-                url: '/campaigns/messages/' + messageData.id,
-                method: 'PUT',
-                body: formData,
-                isFormData: true,
-                user: session?.user
-            })
+    
+            const result = await updateCampaignMessages(session.user.token , messageData.id , formData) 
+
             if (result?.ok) {
                 toast.success('Berhasil ubah campaign message!')
                 push('/dashboard/campaign/' + campaignData.id + '/message')
@@ -162,8 +156,7 @@ const EditCampaignMessage = ({ campaignData, messageData }: {
                             <div className="mt-2" />
                             <UploadFile
                                 files={files}
-                                setfiles={setfiles}
-                            />
+                                setfiles={setfiles} customFileTypes={undefined}                            />
 
                         </div>
                         <div className="flex gap-2 flex-wrap mt-2">
