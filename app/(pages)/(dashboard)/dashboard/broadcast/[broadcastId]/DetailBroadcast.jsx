@@ -13,6 +13,7 @@ import { toast } from "react-toastify"
 import { useRouter } from "next/navigation"
 import { isFileImage } from "@/app/utils/helper/fileHelper"
 import DisplayFile from "@/app/components/dashboard/DisplayFile"
+import { deleteBroadcast, getBroadcastDetail, getOutgoingBroadcastsByQuery, getOutgoingReplies } from "../../../../../api/repository/broadcastRepository"
 
 const DetailBroadcast = ({ broadcastId }) => {
 	const { data } = useSession()
@@ -29,11 +30,9 @@ const DetailBroadcast = ({ broadcastId }) => {
 	const [selectedKeys, setselectedKeys] = useState(new Set())
 	const [currentPage, setcurrentPage] = useState<'Terkirim' | 'Diterima' | 'Terbaca' | 'Balasan'>('Terkirim')
 	const fetchBroadcast = async () => {
-		const result = await fetchClient({
-			url: '/broadcasts/' + broadcastId,
-			method: 'GET',
-			user: session?.user
-		})
+
+		const result = await getBroadcastDetail(session.user.token , broadcastId)
+
 		if (result?.ok) {
 			const resultData = await result.json()
 			setbroadcastData(resultData)
@@ -54,12 +53,9 @@ const DetailBroadcast = ({ broadcastId }) => {
 	const handleDeleteBroadcast = async () => {
 		const isConfirm = window.confirm('Anda yakin ingin menghapus broadcast ' + broadcastData?.name + '?')
 		if (isConfirm) {
-			const result = await fetchClient({
-				url: '/broadcasts/',
-				body: JSON.stringify({ broadcastIds: [broadcastData?.id] }),
-				method: 'DELETE',
-				user: session?.user
-			})
+
+			const result = await deleteBroadcast(session.user.token ,{ broadcastIds: [broadcastData.id] } )
+
 			if (result?.ok) {
 				toast.success('Berhasil hapus broadcast')
 				router.push('/dashboard/broadcast')
@@ -70,26 +66,14 @@ const DetailBroadcast = ({ broadcastId }) => {
 	}
 	const fetchAllBroadcast = async () => {
 		// server_ack, read, delivery_ack
-		const fetchSent = await fetchClient({
-			url: '/broadcasts/' + broadcastId + '/outgoing?status=server_ack',
-			method: 'GET',
-			user: session?.user
-		})
-		const fetchReceived = await fetchClient({
-			url: '/broadcasts/' + broadcastId + '/outgoing?status=delivery_ack',
-			method: 'GET',
-			user: session?.user
-		})
-		const fetchRead = await fetchClient({
-			url: '/broadcasts/' + broadcastId + '/outgoing?status=read',
-			method: 'GET',
-			user: session?.user
-		})
-		const fetchReply = await fetchClient({
-			url: '/broadcasts/' + broadcastId + '/replies',
-			method: 'GET',
-			user: session?.user
-		})
+	
+		const fetchSent = await getOutgoingBroadcastsByQuery(session.user.token , broadcastId , '?status=server_ack')
+
+		const fetchReceived = await getOutgoingBroadcastsByQuery(session.user.token , broadcastId , '?status=delivery_ack')
+
+		const fetchRead = await getOutgoingBroadcastsByQuery(session.user.token , broadcastId , '?status=read')
+
+		const fetchReply = await getOutgoingReplies(session.user.token , broadcastId)
 
 		if (fetchSent?.ok && fetchRead?.ok && fetchReceived?.ok && fetchReply?.ok) {
 			setbroadcastDetail({

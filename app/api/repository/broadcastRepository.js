@@ -26,6 +26,12 @@ export const getOutgoingBroadcasts = async ( token , broadcastId ) => {
     return response;
 }
 
+export const getOutgoingBroadcastsByQuery = async ( token , broadcastId , customQuery ) => {
+    await delay()
+    const response = await PROVIDER_GET(`broadcasts/${broadcastId}/outgoing${customQuery}` , token )
+    return response;
+}
+
 export const getOutgoingReplies = async ( token , broadcastId ) => {
     await delay()
     const response = await PROVIDER_GET(`broadcasts/${broadcastId}/replies` , token )
