@@ -9,6 +9,9 @@ import { User } from "next-auth"
 import { Message } from "postcss"
 import { useEffect, useState } from "react"
 import { toast } from "react-toastify"
+import { getLabelsDevice } from "../../../../api/repository/deviceRepository"
+import { getAllContactsLabels } from "../../../../api/repository/contactRepository"
+import { deleteTemplates, getTemplates } from "../../../../api/repository/templateRepository"
 
 const System = ({ user }) => {
     const [deviceLabel, setdeviceLabel] = useState([])
@@ -19,22 +22,17 @@ const System = ({ user }) => {
     const [selectedTemplate, setselectedTemplate] = useState(new Set([]))
     const [isChecked, setisChecked] = useState(false)
     const fetchDeviceLabel = async () => {
-        const result = await fetchClient({
-            url: '/devices/labels',
-            method: 'GET',
-            user: user
-        })
+        const result = await getLabelsDevice(user.token)
         if (result?.ok) {
             const resultData = await result.json()
             setdeviceLabel(resultData)
         }
     }
+
+
     const fetchContactLabel = async () => {
-        const result = await fetchClient({
-            url: '/contacts/labels',
-            method: 'GET',
-            user: user
-        })
+    
+        const result = await getAllContactsLabels(user.token)
         if (result?.ok) {
             const resultData = await result.json()
             setcontactLabel(resultData)
@@ -43,12 +41,9 @@ const System = ({ user }) => {
     const deleteTemplate = async () => {
         const deletedTemplate = getArrayFromSet(selectedTemplate, templateList)
         if (deletedTemplate) {
-            const result = await fetchClient({
-                url: '/templates/',
-                body: JSON.stringify({ templateIds: deletedTemplate }),
-                method: 'DELETE',
-                user: user
-            })
+
+            const result = await deleteTemplates(user.token , { templateIds: deletedTemplate })
+
             if (result?.ok) {
                 toast.success('Berhasil hapus template')
                 fetchTemplate()
@@ -59,11 +54,9 @@ const System = ({ user }) => {
         }
     }
     const fetchTemplate = async () => {
-        const result = await fetchClient({
-            url: '/templates',
-            method: 'GET',
-            user: user
-        })
+
+        const result = await getTemplates(user.token)
+
         if (result?.ok) {
             const resultData = await result.json()
             console.log('ini template')

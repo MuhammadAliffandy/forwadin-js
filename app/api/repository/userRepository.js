@@ -43,8 +43,14 @@ export const changePhoneNumberUser = async (token , userId ,data) => {
     const response = await PROVIDER_PATCH(`users/change-phone-number/${userId}`,data , token)
     return response;
 }
-export const changePasswordUser = async ( token , userId ,data) => {
+export const changePasswordUser = async ( token ,data) => {
     await delay()
-    const response = await PROVIDER_PUT(`users/change-password/${userId}`,data , token)
+    const response = await PROVIDER_PUT(`users/change-password`,data , token)
+    return response;
+}
+
+export const deleteUser = async ( token , userId) => {
+    await delay()
+    const response = await PROVIDER_PUT(`users/${userId}/delete`, token)
     return response;
 }

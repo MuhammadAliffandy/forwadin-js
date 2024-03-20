@@ -13,6 +13,7 @@ import { PAGINATION_BATCH } from '@/app/utils/constant';
 import ProfileAvatar from '@/app/components/dashboard/ProfileAvatar'
 import BubbleChat from '@/app/components/dashboard/chat/BubbleChat'
 import MessageAddContact from '@/app/components/dashboard/contact/MessageAddContact'
+import { getOutgoingMessagesByQuery } from "../../../../api/repository/messageRepository"
 
 const OutgoingTable = ({ settotalMessage, totalMessage, sessionId, user }) => {
     const router = useRouter()
@@ -52,11 +53,8 @@ const OutgoingTable = ({ settotalMessage, totalMessage, sessionId, user }) => {
     const fetchOutgoingMessage = async (query = '') => {
         setisLoading(true)
 
-        const result = await fetchClient({
-            url: `/messages/${sessionId}/outgoing?page=${currentPage}&pageSize=${PAGINATION_BATCH}` + (query && '&' + query),
-            method: 'GET',
-            user: user
-        })
+        const result = await getOutgoingMessagesByQuery(user.token,sessionId, `?page=${currentPage}&pageSize=${PAGINATION_BATCH}` + (query && '&' + query))
+
         if (result && result.ok) {
             const resultData = await result.json()
             console.log(resultData)

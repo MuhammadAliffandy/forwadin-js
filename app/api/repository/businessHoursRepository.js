@@ -19,3 +19,4 @@ export const getBusinessHours = async ( token , deviceId) => {
     const response = await PROVIDER_GET(`business-hours/${deviceId}`, token )
     return response;
 }
+        

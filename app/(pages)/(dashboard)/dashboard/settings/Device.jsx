@@ -9,6 +9,9 @@ import { Dispatch, SetStateAction, useEffect, useState } from "react"
 import { Controller, useForm } from "react-hook-form"
 import TimezoneSelect from 'react-timezone-select'
 import { toast } from "react-toastify"
+import { getAllDevice } from "../../../../api/repository/deviceRepository"
+import { createBusinessHours, getBusinessHours, updateBusinessHours } from "../../../../api/repository/businessHoursRepository"
+import { getProfileSession, updateProfileSession } from "../../../../api/repository/sessionRepository"
 
 
 const Device = ({ user }) => {
@@ -35,22 +38,18 @@ const Device = ({ user }) => {
     const [hoursSunday, sethoursSunday] = useState<SliderValue>([0, 1440])
     const [isBHEmpty, setisBHEmpty] = useState(true)
     const fetchListDevice = async () => {
-        const result = await fetchClient({
-            url: '/devices/',
-            method: 'GET',
-            user: user
-        })
+
+        const result = await getAllDevice(user.token)
+
         if (result?.ok) {
             const resultData = await result.json()
             setlistDevice(resultData)
         }
     }
     const fetchBusinessHours = async () => {
-        const result = await fetchClient({
-            url: '/business-hours/' + currentDevice?.id,
-            method: 'GET',
-            user: user,
-        })
+
+        const result = getBusinessHours(user.token,currentDevice.id)
+
         if (result?.ok) {
             const resultData = await result.json()
             console.log('businesshours')
@@ -95,24 +94,18 @@ const Device = ({ user }) => {
             deviceId: currentDevice?.id
         }
         if (isBHEmpty) {
-            const result = await fetchClient({
-                url: "/business-hours/",
-                method: 'POST',
-                body: JSON.stringify(body),
-                user: user
-            })
+ 
+            const result =await  createBusinessHours(user.token,body)
+
             if (result?.ok) {
                 toast.success('Berhasil set business hours')
             } else if (result?.status === 400) {
                 toast.error('Gagal set business hours')
             }
         } else {
-            const result = await fetchClient({
-                url: "/business-hours/",
-                method: 'PUT',
-                body: JSON.stringify(body),
-                user: user
-            })
+     
+            const result = await updateBusinessHours(user.token, body)
+
             if (result?.ok) {
                 toast.success('Berhasil update business hours')
             } else if (result?.status === 400) {
@@ -123,11 +116,9 @@ const Device = ({ user }) => {
     }
     const fetchSessionProfile = async () => {
         if (!currentDevice) return
-        const result = await fetchClient({
-            url: '/sessions/' + currentDevice?.id + '/profile',
-            method: 'GET',
-            user: user
-        })
+
+        const result = await getProfileSession(user.token,currentDevice.id)
+
         if (result?.ok) {
             const resultData = await result.json()
             if (!resultData) return
@@ -141,16 +132,13 @@ const Device = ({ user }) => {
     const submitSessionProfile = async (data) => {
         setprofileIsLoading(true)
         if (!currentDevice) return
-        const result = await fetchClient({
-            url: '/sessions/' + currentDevice.id + '/profile',
-            method: 'PUT',
-            body: JSON.stringify({
-                name: data.profileName,
-                presence: data.presence,
-                status: data.status
-            }),
-            user: user
+
+        const result = await updateProfileSession(user.token,currentDevice.id,{
+            name: data.profileName,
+            presence: data.presence,
+            status: data.status
         })
+
         if (result?.ok) {
             toast.success('berhasil update profile device')
         } else {

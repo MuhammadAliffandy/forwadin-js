@@ -1,4 +1,4 @@
-import { BASE_URL } from "@/app/utils/constants";
+import { BASE_URL } from "@/app/utils/constant";
 import axios from "axios";
 
 export const PROVIDER_GET = async (pathUrl, token) => {

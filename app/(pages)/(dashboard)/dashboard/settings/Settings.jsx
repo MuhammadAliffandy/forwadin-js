@@ -12,6 +12,7 @@ import { Tab, Tabs } from "@nextui-org/react"
 import { useSession } from "next-auth/react"
 import dynamic from "next/dynamic"
 import { useSearchParams } from "next/navigation"
+import { userProfile } from "../../../../api/repository/userRepository"
 const Account = dynamic(() => import('./Account'), { ssr: false, })
 const Settings = () => {
     const { data: session } = useSession()
@@ -39,10 +40,9 @@ const Settings = () => {
         },
     })
     const fetchUser = async () => {
-        const result = await fetchClient({
-            url: '/users/' + session?.user?.id, method: 'GET',
-            user: session?.user
-        })
+
+        const result = await userProfile(session.user.id , session.user.id)
+
         if (result?.ok) {
             const data = await result.json()
             setuserData(data)

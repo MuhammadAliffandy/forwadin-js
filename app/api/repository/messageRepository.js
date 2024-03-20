@@ -19,6 +19,11 @@ export const getOutgoingMessages = async ( token , sessionId) => {
     const response = await PROVIDER_GET(`messages/${sessionId}/outgoing`,token)
     return response;
 }
+export const getOutgoingMessagesByQuery = async ( token , sessionId , customQuery) => {
+    await delay()
+    const response = await PROVIDER_GET(`messages/${sessionId}/outgoing${customQuery}`,token)
+    return response;
+}
 
 export const getConversationMessages = async ( token , sessionId) => {
     await delay()

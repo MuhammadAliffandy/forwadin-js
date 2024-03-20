@@ -14,9 +14,9 @@ export const getTemplates = async (token ) => {
     return response;
 }
 
-export const deleteTemplates = async (token ) => {
+export const deleteTemplates = async (token ,data) => {
     await delay()
-    const response = await PROVIDER_DELETE(`templates`,token)
+    const response = await PROVIDER_DELETE(`templates`,token , data)
     return response;
 }
 

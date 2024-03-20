@@ -13,6 +13,7 @@ import { useRouter } from "next/navigation"
 import { useEffect, useRef, useState } from "react"
 import { useForm } from "react-hook-form"
 import { toast } from "react-toastify"
+import { deleteUser , changeEmailUser, changePhoneNumberUser, changePasswordUser } from '../../../../api/repository/userRepository'
 
 const Account = ({ user, userProfile }) => {
     const router = useRouter()
@@ -81,11 +82,9 @@ const Account = ({ user, userProfile }) => {
         // specialChar: new RegExp("^(?=.*[!@#$%^&*])")
     }
     const handleDeleteAccount = async () => {
-        const result = await fetchClient({
-            url: '/users/' + user?.id + '/delete',
-            method: 'DELETE',
-            user: user
-        })
+
+        const result = await deleteUser(user.token,user.id)
+
         if (result?.ok) {
             await signOut()
             router.push('/')
@@ -93,15 +92,15 @@ const Account = ({ user, userProfile }) => {
             toast.error('Gagal hapus akun')
         }
     }
+
+
+
     const onSubmitEmail = async (data) => {
         setemailIsLoading(true)
         if (data.email === userProfile.email) return
-        const result = await fetchClient({
-            url: '/users/change-email/' + user?.id,
-            method: 'PATCH',
-            body: JSON.stringify({ email: data.email }),
-            user: user
-        })
+
+        const result = await changeEmailUser(user.token,user.id,{ email: data.email })
+
         if (result?.ok) {
             toast.success('Berhasil ubah email')
             await signOut()
@@ -111,17 +110,17 @@ const Account = ({ user, userProfile }) => {
         }
         setemailIsLoading(false)
     }
+
+
+
     const onSubmitPhone = async (data) => {
         console.log(currentCountryCode)
         setphoneIsLoading(true)
         const formattedPhone = formatPhoneCode(data.phone, currentCountryCode.dial_code)
         if (formattedPhone === userProfile.phone) return
-        const result = await fetchClient({
-            url: '/users/change-phone-number/' + user?.id,
-            method: 'PATCH',
-            body: JSON.stringify({ phoneNumber: formattedPhone }),
-            user: user
-        })
+ 
+        const result = changePhoneNumberUser(user.token,user.id , { phoneNumber: formattedPhone })
+
         if (result?.ok) {
             toast.success('Berhasil ubah nomor')
         } else {
@@ -131,12 +130,9 @@ const Account = ({ user, userProfile }) => {
     }
     const onSubmitPassword = async (data) => {
         setisPasswordLoading(true)
-        const result = await fetchClient({
-            url: '/auth/change-password',
-            method: 'PUT',
-            body: JSON.stringify(data),
-            user: user
-        })
+
+        const result = await changePasswordUser(user.token,data)
+
         console.log(await result?.json())
         if (result?.ok) {
             toast.success('password berhasil diubah')

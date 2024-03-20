@@ -7,6 +7,7 @@ import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { toast } from "react-toastify"
 import EmailVerifyModal from "./EmailVerifyModal"
+import { updateProfileUser } from "../../../../api/repository/userRepository"
 
 const Profile = ({ profileData, user, fetchUser }) => {
     const [isLoading, setIsLoading] = useState(false)
@@ -22,16 +23,13 @@ const Profile = ({ profileData, user, fetchUser }) => {
 
     const onSubmit = async (data) => {
         setIsLoading(true)
-        const result = await fetchClient({
-            url: '/users/' + user?.id,
-            method: 'PATCH',
-            body: JSON.stringify({
-                firstName: data.firstName,
-                lastName: data.lastName,
-                username: data.username,
-            }),
-            user: user
+
+        const result = await updateProfileUser(user.token,user.id,{
+            firstName: data.firstName,
+            lastName: data.lastName,
+            username: data.username,
         })
+
         if (result?.ok) {
             toast.success('Berhasil update profile!')
 
