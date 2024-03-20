@@ -2,13 +2,11 @@
 
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { GetBroadcast, DeviceSession } from '@/app/utils/types';
 import { Button, Link, Skeleton, Switch, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@nextui-org/react';
 import { fetchClient } from '@/app/utils/helper/fetchClient';
-import { useSession } from 'next-auth/react';
-import { User } from 'next-auth';
 import { toast } from 'react-toastify';
 import { formatDate } from '@/app/utils/helper';
+import { getBroadcast , deleteBroadcast , updateBroadcastStatus } from '../../../../api/repository/broadcastRepository';
 
 const BroadcastTable = ({ settotalBroadcast, totalBroadcast, user }) => {
     const { push } = useRouter()
@@ -42,12 +40,9 @@ const BroadcastTable = ({ settotalBroadcast, totalBroadcast, user }) => {
         }
         const isConfirm = window.confirm('Anda yakin ingin menghapus ' + deletedBroadcast?.length + ' broadcast?')
         if (deletedBroadcast && isConfirm) {
-            const result = await fetchClient({
-                url: '/broadcasts/',
-                body: JSON.stringify({ broadcastIds: deletedBroadcast }),
-                method: 'DELETE',
-                user: user
-            })
+    
+            const result = await deleteBroadcast(user.token , { broadcastIds: deletedBroadcast })
+
             if (result?.ok) {
                 toast.success('Berhasil hapus broadcast')
                 fetchBroadcast()
@@ -59,23 +54,17 @@ const BroadcastTable = ({ settotalBroadcast, totalBroadcast, user }) => {
         }
     }
     const handleToggleBroadcast = async (id, status) => {
-        const result = await fetchClient({
-            url: '/broadcasts/' + id + '/status',
-            method: 'PATCH',
-            body: JSON.stringify({ status: status }),
-            user: user,
-        })
+
+        const result = await updateBroadcastStatus(user.token, id , {status:status})
+
         if (result?.ok) {
             // toast.success('Ber')
             fetchBroadcast()
         }
     }
     const fetchBroadcast = async () => {
-        const result = await fetchClient({
-            url: '/broadcasts/',
-            method: 'GET',
-            user: user
-        })
+        const result = await getBroadcast(user.token)
+
         if (result?.ok) {
             const resultData = await result.json()
             console.log(resultData)
