@@ -12,6 +12,7 @@ import { toast } from 'react-toastify';
 import { Button, Skeleton, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@nextui-org/react';
 import ContactIcon from '@/app/components/dashboard/ContactIcon';
 import { formatDate } from '@/app/utils/helper';
+import { deleteMemberGroup, getGroup, updateGroup } from '../../../../../api/repository/groupRepository';
 
 const DetailGroup = ({ groupId, groupName, setcountContact, setgroupName }) => {
     const { data: session } = useSession()
@@ -63,15 +64,11 @@ const DetailGroup = ({ groupId, groupName, setcountContact, setgroupName }) => {
             deletedContact = Array.from(selectedMember)
         }
         if (deletedContact) {
-            const result = await fetchClient({
-                url: '/groups/remove',
-                body: JSON.stringify({
-                    groupId: groupId,
-                    contactIds: deletedContact
-                }),
-                method: 'DELETE',
-                user: session?.user
+            const result = await deleteMemberGroup(session.user.token ,  {
+                groupId: groupId,
+                contactIds: deletedContact
             })
+
             if (result?.ok) {
                 toast.success('Berhasil hapus member')
                 fetchGroupData()
@@ -84,15 +81,12 @@ const DetailGroup = ({ groupId, groupName, setcountContact, setgroupName }) => {
     }
     const handleUpdateGroup = async () => {
         setIsLoading(true)
-        const result = await fetchClient({
-            url: '/groups/' + groupId + '/update',
-            method: 'PUT',
-            body: JSON.stringify({
-                name: currentGroupName,
-                isCampaign: false
-            }),
-            user: session?.user
+
+        const result = await updateGroup(session.user.token , groupId , {
+            name: currentGroupName,
+            isCampaign: false
         })
+
         if (result) {
             if (result.ok) {
                 toast.success('Berhasil update group')
@@ -104,11 +98,9 @@ const DetailGroup = ({ groupId, groupName, setcountContact, setgroupName }) => {
         setIsLoading(false)
     }
     const fetchGroupData = async () => {
-        const result = await fetchClient({
-            url: '/groups/' + groupId,
-            method: 'GET',
-            user: session?.user
-        })
+
+        const result = await getGroup(session.user.token,groupId)
+
         if (result) {
             const resultData = await result.json()
             if (result.ok) {

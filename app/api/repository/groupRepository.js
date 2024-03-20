@@ -20,7 +20,7 @@ export const createGroup = async (token , data) => {
     return response;
 }
 
-export const updateGroup = async (token , data) => {
+export const updateGroup = async (token , groupId ,data) => {
     await delay()
     const response = await PROVIDER_PUT(`groups/${groupId}/update`,token , data)
     return response;
