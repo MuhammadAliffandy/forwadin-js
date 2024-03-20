@@ -8,6 +8,7 @@ import { User } from 'next-auth'
 import Link from 'next/link'
 import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
+import { getAutoReplies } from '../../../../api/repository/autoRepliesRepository'
 
 const AutoReplyTable = ({ settotalAutoReply, user }) => {
     const [isChecked, setisChecked] = useState(false)
@@ -18,11 +19,9 @@ const AutoReplyTable = ({ settotalAutoReply, user }) => {
     const [selectedAutoReply, setselectedAutoReply] = useState(new Set([]))
 
     const fetchAutoReply = async () => {
-        const result = await fetchClient({
-            url: '/auto-replies',
-            method: 'GET',
-            user: user
-        })
+
+        const result = await getAutoReplies(user.token)
+
         if (result?.ok) {
             const resultData = await result.json()
             setautoReplyData(resultData)
@@ -39,6 +38,8 @@ const AutoReplyTable = ({ settotalAutoReply, user }) => {
             body: JSON.stringify({ status: status }),
             user: user
         })
+
+        
         if (result?.ok) {
             console.log('sukses')
             const newArr = autoReplyData.map(item => {

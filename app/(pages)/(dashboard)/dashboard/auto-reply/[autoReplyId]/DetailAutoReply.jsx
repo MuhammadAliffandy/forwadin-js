@@ -20,6 +20,7 @@ import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { toast } from "react-toastify"
+import { getAutoReply, updateAutoReplyStatus } from "../../../../../api/repository/autoRepliesRepository"
 
 const DetailAutoReply = ({ autoReplyId }) => {
     const { push } = useRouter()
@@ -83,13 +84,8 @@ const DetailAutoReply = ({ autoReplyId }) => {
                 formData.append(`recipients[${idx}]`, element)
             })
             formData.append('response', textInput)
-            const result = await fetchClient({
-                url: '/auto-replies/' + autoReplyId,
-                method: 'PUT',
-                isFormData: true,
-                body: formData,
-                user: session?.user
-            })
+    
+            const result = await updateAutoReplyStatus(session.user.token , autoReplyId , formData)
             if (result?.ok) {
                 toast.success('Berhasil ubah auto reply')
                 push('/dashboard/auto-reply')
@@ -102,11 +98,9 @@ const DetailAutoReply = ({ autoReplyId }) => {
     }
 
     const fetchAutoReplyData = async () => {
-        const result = await fetchClient({
-            url: '/auto-replies/' + autoReplyId,
-            method: 'GET',
-            user: session?.user
-        })
+
+        const result = await getAutoReply(session.user.token, autoReplyId)
+
         if (result?.ok) {
             const resultData = await result.json()
             console.log(resultData)

@@ -16,6 +16,8 @@ import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { toast } from "react-toastify"
+import { createAutoReply } from "../../../../../api/repository/autoRepliesRepository"
+import { getAllContacts } from "../../../../../api/repository/contactRepository"
 
 const CreateAutoReply = () => {
     const { push } = useRouter()
@@ -74,13 +76,9 @@ const CreateAutoReply = () => {
                 formData.append(`recipients[${idx}]`, element)
             })
             formData.append('response', textInput)
-            const result = await fetchClient({
-                url: '/auto-replies/',
-                method: 'POST',
-                isFormData: true,
-                body: formData,
-                user: session?.user
-            })
+
+            const result = await createAutoReply(session.user.token, formData)
+
             if (result?.ok) {
                 toast.success('Berhasil buat auto reply')
                 push('/dashboard/auto-reply')
@@ -92,11 +90,7 @@ const CreateAutoReply = () => {
         setisLoading(false)
     }
     const fetchContactData = async () => {
-        const result = await fetchClient({
-            url: '/contacts',
-            method: 'GET',
-            user: session?.user
-        })
+        const result = await getAllContacts(session.user.token)
         if (result?.ok) {
             const resultData = await result.json()
             const updatedReceiverList = [...receiverList, ...resultData]
