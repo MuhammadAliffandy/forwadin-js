@@ -18,9 +18,9 @@ const Navbar = () => {
         }
     }
     const handleClickDashboard = () => {
-        if (session?.user)
+        if (session.user)
             router.push('/dashboard')
-        if (session?.customerService)
+        if (session.customerService)
             router.push('/customer-service/dashboard')
     }
     const featureTransition = useTransition(featureDropdown, {
@@ -123,6 +123,7 @@ const Navbar = () => {
                         {buttonTransition((style, item) => item && (
                             <animated.div style={style} className="absolute bg-white px-8 py-4 -left-10 top-16 flex flex-col text-center gap-4 rounded-md shadow-xl">
                                 <Link href={'/signin'} className=" hover:text-primary">Admin</Link >
+                                <Link href={'/super-admin/signin'} className=" hover:text-primary whitespace-pre">Super Admin</Link >
                                 <Link href={'/customer-service/signin'} className=" hover:text-primary whitespace-pre">Customer Service</Link >
                             </animated.div>
                         ))}

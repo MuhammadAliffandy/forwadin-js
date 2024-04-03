@@ -34,7 +34,7 @@ const SignIn = () => {
                 password: formData.password,
                 redirect: false
             })
-            if (!login?.error) {
+            if (!login.error) {
                 push('/dashboard')
             } else if (login.error === 'fetch failed') {
                 toast.error('check your credentials or network connections')
@@ -119,7 +119,6 @@ const SignIn = () => {
                     </div> */}
                 </div>
                 <div className='text-center text-sm'>
-                    <p>Butuh buat akun? <Link href={'/signup'} className='text-primary'>Daftar di sini</Link> </p>
                     <p className='mt-2'>Login sebagai Customer Service? <Link href={'/customer-service/signin'} className='text-primary'>Klik di sini</Link> </p>
                 </div>
             </form >

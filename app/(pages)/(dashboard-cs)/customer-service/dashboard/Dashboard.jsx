@@ -195,7 +195,6 @@ const Dashboard = () => {
                         </div>
                     </div>
                 </div>
-
                 <div className={'bg-white rounded-md px-4 pt-4 pb-2 grow-0 w-full xl:max-w-sm flex flex-col justify-between ' + (!session?.customerService?.sessionId && "opacity-50 pointer-events-none")}>
                     <p className='font-nunito font-bold text-[16px]'>Pesan terakhir</p>
                     <div className='flex flex-col gap-2 mt-2 h-full'>
