@@ -30,7 +30,7 @@ const CreateAutoReply = () => {
     const { handleSubmit, register, reset, setValue, formState: { errors } } = useForm()
     const [files, setfiles] = useState([])
     const [receiverList, setreceiverList] = useState([])
-    const [requestList, setrequestList] = useState<([])
+    const [requestList, setrequestList] = useState([])
     const [textInput, settextInput] = useState('')
     const handleTemplateClick = (id) => {
         const findContent = templateList.find(item => item.id === id)?.message

@@ -1,6 +1,4 @@
-'use client'
-import { fetchClient } from '@/app/utils/helper/fetchClient'
-import { CampaignData } from '@/app/utils/types'
+'use client';
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'

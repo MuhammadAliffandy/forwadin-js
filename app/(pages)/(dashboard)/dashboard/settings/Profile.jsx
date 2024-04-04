@@ -1,8 +1,5 @@
 import InputForm from "@/app/components/form/InputForm"
-import { fetchClient } from "@/app/utils/helper/fetchClient"
-import { UserProfile } from "@/app/utils/types"
 import { Button } from "@nextui-org/react"
-import { User } from "next-auth"
 import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { toast } from "react-toastify"

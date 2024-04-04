@@ -1,12 +1,17 @@
-import ContactIcon from '@/app/components/dashboard/ContactIcon'
-import { getNumberFromString, formatDate } from '@/app/utils/helper'
 import { fetchClient } from '@/app/utils/helper/fetchClient'
-import { AutoReply } from '@/app/utils/types'
-import { Button, Pagination, Skeleton, Switch, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@nextui-org/react'
-import { IncomingMessage } from 'http'
-import { User } from 'next-auth'
+import {
+    Button,
+    Skeleton,
+    Switch,
+    Table,
+    TableBody,
+    TableCell,
+    TableColumn,
+    TableHeader,
+    TableRow,
+} from '@nextui-org/react';
 import Link from 'next/link'
-import { Dispatch, SetStateAction, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify'
 import { getAutoReplies } from '../../../../api/repository/autoRepliesRepository'
 
@@ -62,7 +67,7 @@ const AutoReplyTable = ({ settotalAutoReply, user }) => {
         else if ((selectedAutoReply).size > 0) {
             deletedAR = Array.from(selectedAutoReply)
         }
-        const isConfirm = window.confirm('Anda yakin ingin menghapus ' + deletedAR?.length + ' auto reply?')
+        const isConfirm = window !== undefined ? window.confirm('Anda yakin ingin menghapus ' + deletedAR.length + ' auto reply?') : null
         if (deletedAR && isConfirm) {
             const result = await fetchClient({
                 url: '/auto-replies',

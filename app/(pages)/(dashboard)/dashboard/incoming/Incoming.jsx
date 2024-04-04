@@ -1,8 +1,6 @@
-'use client'
-
+'use client';
 import { useEffect, useState } from "react"
 import IncomingTable from "./IncomingTable"
-import { DeviceSession } from "@/app/utils/types"
 import { useSession } from "next-auth/react"
 import DropdownDevice from "@/app/components/dashboard/DropdownDevice"
 import { useSearchParams } from "next/navigation"

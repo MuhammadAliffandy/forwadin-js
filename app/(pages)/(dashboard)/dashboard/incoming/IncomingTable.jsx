@@ -1,11 +1,7 @@
-'use client';
-
-import { ChangeEvent, Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
+'use client';;
+import { useEffect, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
-import { GetMessage, IncomingMessage, MultipleCheckboxRef } from '@/app/utils/types';
 import { Button, Pagination, Popover, PopoverContent, PopoverTrigger, Skeleton, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@nextui-org/react';
-import { User } from 'next-auth';
-import { fetchClient } from '@/app/utils/helper/fetchClient';
 import { toast } from 'react-toastify';
 import { formatDate, getNumberFromString } from '@/app/utils/helper';
 import ContactIcon from '@/app/components/dashboard/ContactIcon';
@@ -14,7 +10,7 @@ import ProfileAvatar from '@/app/components/dashboard/ProfileAvatar';
 import BubbleChat from '@/app/components/dashboard/chat/BubbleChat';
 import MessageAddContact from '@/app/components/dashboard/contact/MessageAddContact';
 import { useSearchParams } from 'next/navigation';
-import { getIncomeMessages, getIncomeMessagesByQuery } from '../../../../api/repository/messageRepository';
+import { getIncomeMessagesByQuery } from '../../../../api/repository/messageRepository';
 
 
 const IncomingTable = ({ settotalMessage, totalMessage, sessionId, user }) => {

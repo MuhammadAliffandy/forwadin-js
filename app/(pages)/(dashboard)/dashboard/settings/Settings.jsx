@@ -1,13 +1,10 @@
-'use client'
-
-import { fetchClient } from "@/app/utils/helper/fetchClient"
+'use client';
 import { useEffect, useState } from "react"
 import { toast } from "react-toastify"
 import { animated, useTransition } from "@react-spring/web"
 import Profile from "./Profile"
 import Device from "./Device"
 import System from "./System"
-import { UserProfile } from "@/app/utils/types"
 import { Tab, Tabs } from "@nextui-org/react"
 import { useSession } from "next-auth/react"
 import dynamic from "next/dynamic"

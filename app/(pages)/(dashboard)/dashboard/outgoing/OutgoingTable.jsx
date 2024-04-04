@@ -1,14 +1,23 @@
-'use client';
-
-import React, { ChangeEvent, Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
+'use client';;
+import { useEffect, useState } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { GetMessage, OutgoingMessage } from '@/app/utils/types';
-import { Button, Link, Pagination, Popover, PopoverContent, PopoverTrigger, Skeleton, Spinner, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@nextui-org/react';
+import {
+    Button,
+    Pagination,
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+    Skeleton,
+    Spinner,
+    Table,
+    TableBody,
+    TableCell,
+    TableColumn,
+    TableHeader,
+    TableRow,
+} from '@nextui-org/react';
 import ContactIcon from '@/app/components/dashboard/ContactIcon';
-import { getNumberFromString, formatDate, getInitials } from '@/app/utils/helper';
-import { useSession } from 'next-auth/react';
-import { fetchClient } from '@/app/utils/helper/fetchClient';
-import { User } from 'next-auth';
+import { getNumberFromString, formatDate } from '@/app/utils/helper';
 import { PAGINATION_BATCH } from '@/app/utils/constant';
 import ProfileAvatar from '@/app/components/dashboard/ProfileAvatar'
 import BubbleChat from '@/app/components/dashboard/chat/BubbleChat'
@@ -32,7 +41,7 @@ const OutgoingTable = ({ settotalMessage, totalMessage, sessionId, user }) => {
     const [totalPage, settotalPage] = useState(1)
     const [hasMore, sethasMore] = useState(false)
     const [selectedMessage, setselectedMessage] = useState(new Set())
-    const [messagePhone, setmessagePhone] = useState<string>('')
+    const [messagePhone, setmessagePhone] = useState('')
     const [addContactModal, setaddContactModal] = useState(false)
     const currentDate = new Date()
     const filterMessage = (text) => {

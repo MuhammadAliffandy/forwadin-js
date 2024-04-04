@@ -1,7 +1,6 @@
 import ButtonSubmit from '@/app/components/form/ButtonSubmit'
 import ModalTemplate from '@/app/components/template/ModalTemplate'
-import { MultipleInputRef } from '@/app/utils/types'
-import React, { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react';
 import { BarLoader } from 'react-spinners'
 import { toast } from 'react-toastify'
 

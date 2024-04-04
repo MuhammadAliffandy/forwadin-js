@@ -1,5 +1,3 @@
-import { Metadata } from "next"
-import Link from "next/link"
 import CampaignMessages from "./CampaignMessages"
 
 export const metadata = {

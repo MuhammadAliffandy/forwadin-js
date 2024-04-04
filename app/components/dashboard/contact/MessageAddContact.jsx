@@ -1,12 +1,10 @@
 import ButtonSubmit from "@/app/components/form/ButtonSubmit"
 import ModalTemplate from "@/app/components/template/ModalTemplate"
 import { Skeleton } from "@nextui-org/react"
-import { Dispatch, SetStateAction, useEffect, useRef, useState, useTransition } from "react"
+import { useEffect, useState } from "react";
 import MultipleInputLabel from "../MultipleInputLabel"
 import InputForm from "@/app/components/form/InputForm"
-import { formatPhoneCode } from "@/app/utils/helper/countryCode"
 import { fetchClient } from "@/app/utils/helper/fetchClient"
-import { DeviceData, CountryCode, Label } from "@/app/utils/types"
 import { useSession } from "next-auth/react"
 import { useForm } from "react-hook-form"
 import { toast } from "react-toastify"
@@ -186,7 +184,7 @@ const MessageAddContact = ({ fetchData, openModal, setopenModal, addContactData 
                 </div>
             )}
         </ModalTemplate>
-    )
+    );
 }
 
 export default MessageAddContact

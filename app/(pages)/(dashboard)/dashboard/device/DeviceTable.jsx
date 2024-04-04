@@ -1,10 +1,8 @@
-'use client';
-import DeviceList from '@/app/components/dashboard/device/DeviceList';
+'use client';;
 import QRModal from '@/app/components/dashboard/device/QRModal';
-import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import AddDeviceModal from '@/app/components/dashboard/device/AddDeviceModal';
-import { MultipleCheckboxRef, DeviceData } from '@/app/utils/types'
 import { signIn, useSession } from 'next-auth/react';
 import { fetchClient } from '@/app/utils/helper/fetchClient';
 import { toast } from 'react-toastify';

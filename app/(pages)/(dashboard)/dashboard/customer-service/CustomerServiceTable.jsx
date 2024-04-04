@@ -1,16 +1,14 @@
-'use client'
-
+'use client';
 import CreateCSModal from "@/app/components/customer-service/CreateCSModal"
 import UpdateCSModal from "@/app/components/customer-service/UpdateCSModal"
 import DeleteModal from "@/app/components/dashboard/device/DeleteModal"
 import { formatDate, getArrayFromSet } from "@/app/utils/helper"
 import { fetchClient } from "@/app/utils/helper/fetchClient"
-import { CustomerService, DeviceData } from "@/app/utils/types"
 import { Button, Skeleton, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from "@nextui-org/react"
 import { useSession } from "next-auth/react"
 import { useState, useEffect } from "react"
 import { toast } from "react-toastify"
-import { customerServiceUser } from "../../../../api/repository/userRepository"
+import { customerServicesUser } from "../../../../api/repository/userRepository"
 
 const CustomerServiceTable = () => {
 

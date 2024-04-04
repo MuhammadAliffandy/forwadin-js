@@ -31,7 +31,7 @@ const CreateBroadcast = () => {
     const { handleSubmit, register, reset, formState: { errors } } = useForm()
     const [receiverList, setreceiverList] = useState([])
     const [files, setfiles] = useState([])
-    const [textInput, settextInput] = useState<string>('')
+    const [textInput, settextInput] = useState('')
     const handleTemplateClick = (id) => {
         const findContent = templateList.find(item => item.id === id)?.message
         if (findContent)

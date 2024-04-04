@@ -5,12 +5,11 @@ const DynamicRegisterForm = dynamic(() => import('@/app/components/auth/Register
 import OTPForm from '@/app/components/auth/OTPForm'
 import React, { useEffect, useState } from 'react';
 import { animated, useTransition } from '@react-spring/web';
-import { UserRegisterData } from '@/app/utils/types';
 import SuccessForm from '@/app/components/auth/SuccessForm';
 import PolicyForm from '@/app/components/auth/PolicyForm';
 const SignUp = () => {
     const [currentStep, setCurrentStep] = useState('register')
-    const [userData, setUserData] = useState<UserRegisterData>({
+    const [userData, setUserData] = useState({
         firstName: '',
         lastName: '',
         email: '',

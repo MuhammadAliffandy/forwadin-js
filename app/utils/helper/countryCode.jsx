@@ -1,6 +1,6 @@
 import CountryList from 'country-list-with-dial-code-and-flag'
-import { PhoneNumberUtil, PhoneNumberFormat } from 'google-libphonenumber'
-import { CountryCode } from '../types'
+import { PhoneNumberUtil} from 'google-libphonenumber'
+
 
 CountryList.setPhoneNumberUtil(PhoneNumberUtil.getInstance())
 

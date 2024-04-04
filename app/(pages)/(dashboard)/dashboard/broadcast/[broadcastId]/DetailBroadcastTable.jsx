@@ -8,7 +8,7 @@ import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Button
 import { Dispatch, SetStateAction, useState } from "react"
 const DetailBroadcastTable = ({ selectedKeys, setSelectedKeys, data, type }) => {
     const currentDate = new Date()
-    const [messagePhone, setmessagePhone] = useState<string>('')
+    const [messagePhone, setmessagePhone] = useState('')
 
     const [addContactModal, setaddContactModal] = useState(false)
     const handleAddContactClick = (phone) => {

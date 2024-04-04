@@ -1,7 +1,6 @@
-'use client'
+'use client';
 import { useEffect, useState } from "react"
 
-import { ContactData, ConversationMessage, DeviceSession, MessageMetadata, ContactLatestMessage, GetMessage, MessengerList, OrderMessage } from "@/app/utils/types"
 import TextAreaInput from "@/app/components/dashboard/chat/TextAreaInput"
 import { signIn, signOut, useSession } from "next-auth/react"
 import { fetchClient } from "@/app/utils/helper/fetchClient"
@@ -15,7 +14,7 @@ import Chat from "@/app/(pages)/(dashboard)/dashboard/messenger/Chat"
 import ProfileDetail from "@/app/(pages)/(dashboard)/dashboard/messenger/ProfileDetail"
 import CreateOrderModal from "@/app/components/customer-service/dashboard/CreateOrderModal"
 import { getConversationMessages, getListMessenger, sendMessages } from '../../../../../api/repository/messageRepository'
-import { getContacts, getContactsByDeviceId } from "../../../../../api/repository/contactRepository"
+import { getContactsByDeviceId } from "../../../../../api/repository/contactRepository";
 const Messenger = () => {
     const searchParams = useSearchParams()
     const { data: session } = useSession()

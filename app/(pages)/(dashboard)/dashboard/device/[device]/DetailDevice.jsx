@@ -1,15 +1,12 @@
-'use client'
+'use client';
 import MultipleInputLabel from "@/app/components/dashboard/MultipleInputLabel"
-import { fetchClient } from "@/app/utils/helper/fetchClient"
-import { DeviceData, Label } from "@/app/utils/types"
 import { useRouter } from "next/navigation"
 
-import React, { useEffect, useState } from "react"
+import { useEffect, useState } from "react";
 import { Button, Skeleton } from "@nextui-org/react"
-import { PulseLoader } from "react-spinners"
 import { toast } from "react-toastify"
 import { signIn, useSession } from "next-auth/react"
-import { deleteDevice, generateAPIKEYDevice, getDevice , updateDevice } from "../../../../../api/repository/deviceRepository"
+import { deleteDevice, generateAPIKEYDevice, getDevice } from "../../../../../api/repository/deviceRepository";
 const DetailDevice = ({ device }) => {
     const router = useRouter()
     const { data: session } = useSession()

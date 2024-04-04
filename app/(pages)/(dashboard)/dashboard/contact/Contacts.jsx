@@ -17,7 +17,7 @@ const Contacts = () => {
             id: '*',
         }
     ])
-    const [currentDevice, setcurrentDevice] = useState<DropdownDeviceProps>({
+    const [currentDevice, setcurrentDevice] = useState({
         name: 'all device',
         id: '*'
     })

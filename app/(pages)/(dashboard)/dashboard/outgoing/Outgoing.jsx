@@ -1,10 +1,8 @@
-'use client'
-
+'use client';
 import { useEffect, useState } from "react"
 import OutgoingTable from "./OutgoingTable"
 import DropdownDevice from "@/app/components/dashboard/DropdownDevice"
 import { useSession } from "next-auth/react"
-import { DeviceSession } from "@/app/utils/types"
 
 const Outgoing = () => {
     const { data: session } = useSession()

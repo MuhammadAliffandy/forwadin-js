@@ -1,7 +1,5 @@
-'use client'
+'use client';
 import InputContactAndLabel from "@/app/components/dashboard/InputContactAndLabel"
-import MultipleInputContact from "@/app/components/dashboard/MultipleInputContact"
-import MultipleInputLabel from "@/app/components/dashboard/MultipleInputLabel"
 import UploadFile from "@/app/components/dashboard/UploadFile"
 import DisplayImage from "@/app/components/dashboard/auto-reply/DisplayImage"
 import TextAreaInput from "@/app/components/dashboard/chat/TextAreaInput"
@@ -12,7 +10,6 @@ import { formatDatetoISO8601 } from "@/app/utils/helper"
 import { fetchClient } from "@/app/utils/helper/fetchClient"
 import { getFileFromUrl } from "@/app/utils/helper/fileHelper"
 import { getMessageVariables, parseTextInput } from "@/app/utils/helper/messageUtils"
-import { CampaignData, CampaignForm, ContactData, DeviceSession, Label, MessageTypes } from "@/app/utils/types"
 import { Button, Tab, Tabs } from "@nextui-org/react"
 import { animated, useTransition } from "@react-spring/web"
 import { useSession } from "next-auth/react"

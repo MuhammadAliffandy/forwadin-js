@@ -1,6 +1,5 @@
 import Link from 'next/link'
 import DetailDevice from './DetailDevice'
-import { Metadata } from 'next'
 
 export const metadata= {
     title: 'Detail Device',
