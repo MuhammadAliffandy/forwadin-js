@@ -74,8 +74,8 @@ const ListChats = ({ listMessenger, currentMessenger, setcurrentMessenger, setli
                         {searchedMessenger.map(item => (
                             <MessengerCard
                                 currentMessenger={currentMessenger}
-                                handleClick={handleClickMessenger}
                                 item={item}
+                                handleClick={handleClickMessenger}
                                 key={item.messenger.phone} />
                         ))}
                     </>
@@ -111,11 +111,7 @@ const ListChats = ({ listMessenger, currentMessenger, setcurrentMessenger, setli
 export default ListChats
 
 
-const MessengerCard = ({ item, handleClick, currentMessenger } ,{
-    item,
-    currentMessenger,
-    handleClick,
-}) => {
+const MessengerCard = ({ item, handleClick, currentMessenger }) => {
     return (
         <div key={item.messenger.phone} className={"rounded-md p-3 " + (currentMessenger?.phone === item.messenger.phone ? 'bg-white' : 'hover:cursor-pointer ')} onClick={() => handleClick(item.messenger)}>
             <div className="flex gap-2 items-center w-full">

@@ -1,13 +1,11 @@
 import { Metadata } from "next"
 import Link from "next/link"
 import EditCampaignMessagePage from "./EditCampaignMessagePage"
-type Params = {
-    params: { campaignId: string, messageId: string }
-}
-export const metadata: Metadata = {
+
+export const metadata = {
     title: 'Edit Campaign Message'
 }
-const page = ({ params }: Params) => {
+const page = ({ params }) => {
 
     return (
         <>

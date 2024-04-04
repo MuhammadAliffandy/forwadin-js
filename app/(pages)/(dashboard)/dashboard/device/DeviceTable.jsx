@@ -53,11 +53,6 @@ const DeviceTable = ({ setcountDevice }) => {
     }
 
     const fetchData = async () => {
-        const fetchDeviceData = await fetchClient({
-            method: 'GET',
-            url: '/devices',
-            user: session?.user
-        })
 
         const fetchDeviceData = await getAllDevice(session.user.token)
         

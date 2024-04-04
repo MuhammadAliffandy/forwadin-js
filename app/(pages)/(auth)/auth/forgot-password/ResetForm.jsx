@@ -1,3 +1,5 @@
+'use client'
+
 import ButtonSubmit from "@/app/components/form/ButtonSubmit"
 import InputForm from "@/app/components/form/InputForm"
 import { Dispatch, SetStateAction, useState } from "react"

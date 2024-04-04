@@ -2,15 +2,12 @@
 import Link from "next/link"
 import { useRef, useState, useEffect } from "react"
 import { useForm } from "react-hook-form"
-import { Dispatch, SetStateAction } from "react";
 import { toast } from "react-toastify"
-import { UserRegisterData, CountryCode } from "@/app/utils/types"
 import { animated, useTransition } from "@react-spring/web";
 import { formatPhoneCode, getCountryList } from "@/app/utils/helper/countryCode";
 import CountryFlagSvg from 'country-list-with-dial-code-and-flag/dist/flag-svg'
 import InputForm from "../form/InputForm";
 import ButtonSubmit from "../form/ButtonSubmit";
-import { text } from "stream/consumers";
 import { signIn } from "next-auth/react";
 
 const Register = ({ setCurrentStep, setUserData, userData }) => {
