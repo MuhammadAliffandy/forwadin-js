@@ -29,15 +29,18 @@ const config: Config = {
   },
   darkMode: "class",
   // plugins: [ nextui()],
-  plugins: [require("flowbite/plugin"), nextui({
-    layout: {
-      borderWidth: {
-        small: '1px',
-        medium: '1px',
-        large: '1px',
+  plugins: [
+    require("flowbite/plugin"), 
+    nextui({
+      layout: {
+        borderWidth: {
+          small: '1px',
+          medium: '1px',
+          large: '1px',
+        },
       },
-    },
-
-  })],
+    }),
+    require('tailwind-scrollbar')({ preferredStrategy: 'pseudoelements' , nocompatible: true}),
+  ],
 }
 export default config
