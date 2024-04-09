@@ -2,12 +2,12 @@ import { useState } from "react";
 import AppModal from "../modal";
 import DropDown from '../dropdown'
 
-const EditModalUser = (props) => {
+const EditModalSubscription = (props) => {
 
-    const [subscription , setSubscription ] = useState([])
+    const [available , setAvailable ] = useState([])
 
-    const handleChangeSubscription = (event) => {
-        setSubscription(event.target.value)
+    const handleChangeAvailable = (event) => {
+        setAvailable(event.target.value)
     }
 
     return (
@@ -18,64 +18,54 @@ const EditModalUser = (props) => {
                 width={'w-[25%]'}
             >
                 <div className="w-[100%] h-[80vh] flex flex-col gap-[20px] overflow-y-scroll pb-[10px] overflow-x-hidden scrollbar scrollbar-w-[8px] scrollbar-track-transparent scrollbar-thumb-gray-300 scrollbar-thumb-rounded-full">
-                    <p className='font-bold text-[24px]'>Edit Subscription</p>
+                <p className='font-bold text-[24px]'>Add Subscription</p>
                     <div className="flex flex-col gap-[10px]">
                         <label className="text-black font-bold">
-                            First Name
+                            Name
                         </label>
-                        <input placeholder="First Name" className='px-[20px] rounded-[6px] py-[12px] border-[1px] border-customNeutral' />
+                        <input placeholder="Name" className='px-[20px] rounded-[6px] py-[12px] border-[1px] border-customNeutral' />
                     </div>
                     <div className="flex flex-col gap-[10px]">
                         <label className="text-black font-bold">
-                            Last Name
+                            Monthly Price
                         </label>
-                        <input placeholder="Last Name" className='px-[20px] rounded-[6px] py-[12px] border-[1px] border-customNeutral' />
+                        <input placeholder="Monthly Price" className='px-[20px] rounded-[6px] py-[12px] border-[1px] border-customNeutral' />
                     </div>
                     <div className="flex flex-col gap-[10px]">
                         <label className="text-black font-bold">
-                            Phone
+                            Yearly Discount
                         </label>
-                        <input placeholder="Phone" className='px-[20px] rounded-[6px] py-[12px] border-[1px] border-customNeutral' />
+                        <input placeholder="Yearly Discount" className='px-[20px] rounded-[6px] py-[12px] border-[1px] border-customNeutral' />
                     </div>
                     <div className="flex flex-col gap-[10px]">
                         <label className="text-black font-bold">
-                            Email
+                            Yearly Price
                         </label>
-                        <input placeholder="Email" className='px-[20px] rounded-[6px] py-[12px] border-[1px] border-customNeutral' />
+                        <input placeholder="Yearly Price" className='px-[20px] rounded-[6px] py-[12px] border-[1px] border-customNeutral' />
                     </div>
                     <div className="flex flex-col gap-[10px]">
                         <label className="text-black font-bold">
-                            Google ID
-                        </label>
-                        <input placeholder="-" className='px-[20px] rounded-[6px] py-[12px] border-[1px] border-customNeutral' />
-                    </div>
-                    <div className="flex flex-col gap-[10px]">
-                        <label className="text-black font-bold">
-                            Subscription
+                            Available
                         </label>
                         <DropDown
-                            value={subscription}
-                            placeholder={'Pilih Subcription '}
+                            value={available}
+                            placeholder={'available'}
                             listItem = {[
                                 {
-                                    value : 'pro' , text : 'Pro', 
+                                    value : 'available' , text : 'Available', 
                                 },
                                 {
-                                    value : 'unlimited' , text : 'Unlimited', 
+                                    value : 'non-available' , text : 'Non Available', 
                                 },
-                                {
-                                    value : 'star' , text : 'Star', 
-                                }
                             ]}
-                            onChange={handleChangeSubscription}
+                            onChange={handleChangeAvailable}
                         />
                     </div>
                     <button onClick={()=>{props.onSaveButton}} className='w-[100%] text-[14px] bg-primary text-white rounded-[6px] px-[20px] py-[16px]'>Simpan</button>
                     <button onClick={()=>{props.onDeleteButton}} className='w-[100%] text-[14px] bg-danger text-white rounded-[6px] px-[20px] py-[16px]'>Hapus</button>
-                    <button onClick={()=>{props.onDisableButton}} className='w-[100%] text-[14px] border-customGray border-[1px] text-black rounded-[6px] px-[20px] py-[16px]'>Disable User</button>
                 </div>
         </AppModal>
     )
 }
 
-export default EditModalUser
+export default EditModalSubscription

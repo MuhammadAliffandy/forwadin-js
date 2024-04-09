@@ -15,16 +15,16 @@ import EditModalUser from '@/app/components/super-admin/user/editModal'
 
 const DynamicAnalytic = dynamic(() => import('@/app/components/dashboard/Analytic'), { ssr: false })
 
-function createData(time, contentTitle, productName, contentTypes, platform) {
-    return { time, contentTitle, productName, contentTypes, platform };
+function createData(id, firstName, lastName, phone,  email , googleId, subscription , createdAt) {
+    return { id, firstName, lastName, phone,  email , googleId, subscription , createdAt };
 }
 
 const rows = [
-    createData('17.00', 'Manfaat cuci muka pagi hari', 'Skincaremoe', 'Unlimited', 'facebook'),
-    createData('17.00', 'Manfaat Bakso Aci ', 'BaksoAci', 'Starter', 'instagram'),
-    createData('17.00', 'Skincare ini bagus bgt', 'Skinku', 'Pro', 'twitter'),
-    createData('17.00', 'Burger Murah Meriah', 'Burgar', 'Unlimited', 'facebook'),
-    createData('17.00', 'Sate Taichan Mantap', 'Taichan','Pro', 'twitter'),
+    createData('1', 'Alif', 'Rizki', '+6283845678765', 'alifrizky@gmail.com','-', 'Unlimited', '11.9.23, 2:43 PM'),
+    createData('2', 'Alif', 'Rizki', '+6283845678765', 'alifrizky@gmail.com','-', 'Starter', '11.9.23, 2:43 PM'),
+    createData('3', 'Alif', 'Rizki', '+6283845678765', 'alifrizky@gmail.com','-',  'Pro', '11.9.23, 2:43 PM'),
+    createData('4', 'Alif', 'Rizki', '+6283845678765', 'alifrizky@gmail.com','-',  'Unlimited', '11.9.23, 2:43 PM'),
+    createData('5', 'Alif', 'Rizki', '+6283845678765', 'alifrizky@gmail.com','-', 'Pro', '11.9.23, 2:43 PM'),
 ];
 
 

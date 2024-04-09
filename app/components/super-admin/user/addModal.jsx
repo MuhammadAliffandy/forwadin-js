@@ -1,6 +1,6 @@
 import { useState } from "react";
-import AppModal from "./modal";
-import DropDown from './dropdown'
+import AppModal from "../modal";
+import DropDown from '../dropdown'
 
 const AddModalUser = (props) => {
 
