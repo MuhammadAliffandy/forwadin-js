@@ -2,7 +2,7 @@ import { Tab, Tabs } from '@nextui-org/react'
 import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
 
-const Pricing = () => {
+const Pricing = (props) => {
     const router = useRouter()
     const [selected, setSelected] = useState(1)
     const [buttonActive, setButtonActive] = useState('monthly')
@@ -84,23 +84,31 @@ const Pricing = () => {
     ]
     return (
         <div className=' overflow-x-scroll h-[100vh]'>
-            <div className='px-6 container mx-auto pt-12'>
-                <p className='text-center text-xl'>Our Pricing</p>
-                <p className='text-center text-4xl font-bold mt-2'>Subscription</p>
-            </div>
-            <div className="flex justify-center my-8 text-sm">
-                <Tabs
-                    variant='light'
-                    radius='full'
-                    color='primary'
-                    selectedKey={buttonActive}
-                    onSelectionChange={setButtonActive}
-                >
-                    <Tab key={'monthly'} title='monthly' />
-                    <Tab key={'yearly'} title='yearly' />
-                </Tabs>
+            {
+                props.isSuperAdmin ? 
+                null : 
+                <div className='px-6 container mx-auto pt-12'>
+                    <p className='text-center text-xl'>Our Pricing</p>
+                    <p className='text-center text-4xl font-bold mt-2'>Subscription</p>
+                </div>
+            }
+            {
+                props.isSuperAdmin ? 
+                null : 
+                <div className="flex justify-center my-8 text-sm">
+                    <Tabs
+                        variant='light'
+                        radius='full'
+                        color='primary'
+                        selectedKey={buttonActive}
+                        onSelectionChange={setButtonActive}
+                    >
+                        <Tab key={'monthly'} title='monthly' />
+                        <Tab key={'yearly'} title='yearly' />
+                    </Tabs>
 
-            </div>
+                </div>
+            }
             {buttonActive === 'yearly' && (
                 <div className='flex justify-center'>
                     <div className='bg-[#E6E8F0] rounded-md p-2 text-primary text-xs'>
@@ -109,12 +117,15 @@ const Pricing = () => {
                 </div>
             )}
 
-            <div className='w-full flex overflow-x-scroll gap-4 lg:gap-12 flex-wrap px-2 lg:justify-start text-xs mx-auto pb-12 lg:pl-32'>
+            <div className={`w-full flex overflow-x-scroll gap-4 lg:gap-12 flex-wrap px-2 lg:justify-start text-xs mx-auto ${ props.isSuperAdmin ? '' : 'pb-12 lg:pl-32' }`}>
                 {subscriptionContent.map((data, i) => (
                     <div className={"relative w-full max-w-[280px] flex-none flex"} key={i}>
                         <div className={(selected === i ? 'bg-white shadow-xl ' : 'shadow-xl md:shadow-none') + ' px-8 pt-16 pb-4 rounded-xl flex flex-col justify-between'} onMouseEnter={() => setSelected(i)}>
                             <div>
-                                {data.isFavorite && (
+                                {
+                                props.isSuperAdmin ? 
+                                    null :  
+                                data.isFavorite && (
                                     <div className="absolute top-6 w-full flex">
                                         <div className="bg-[#FFB020] rounded-lg px-2 py-[2px] font-semibold">
                                             Most Popular
@@ -144,7 +155,7 @@ const Pricing = () => {
                                         )}
                                     </>
                                 )}
-                                <div id={'plan_' + i} className={(data.isFavorite ? 'bg-[#FFB020] border-[#FFB020]' : 'bg-primary border-primary') + ' border rounded-md px-6 py-2 text-center whitespace-nowrap text-white w-full block mt-2 hover:cursor-pointer'} onClick={() => {
+                                <div id={'plan_' + i} className={( props.isSuperAdmin ? 'bg-black' :  data.isFavorite ? 'bg-[#FFB020] border-[#FFB020]' : 'bg-primary border-primary') + ' border rounded-md px-6 py-2 text-center whitespace-nowrap text-white w-full block mt-2 hover:cursor-pointer'} onClick={() => {
                                     if (data.isStarter)
                                         router.push('/signup')
                                     else

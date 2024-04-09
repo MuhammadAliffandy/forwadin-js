@@ -12,6 +12,7 @@ import 'chart.js/auto';
 import SubscriptionTable from '@/app/components/super-admin/subscription/table'
 import AddModalSubscription from '../../../../../components/super-admin/subscription/addModal';
 import EditModalSubscription from '../../../../../components/super-admin/subscription/editModal';
+import Pricing from '@/app/components/dashboard/Pricing';
 
 const DynamicAnalytic = dynamic(() => import('@/app/components/dashboard/Analytic'), { ssr: false })
 
@@ -172,6 +173,16 @@ const DashboardSuperAdminSubscription = () => {
                         }}
                     />
                 </div>  
+            </div>
+            <div>
+                <p className='font-lexend mt-8   text-2xl font-bold'>Preview</p>
+            </div>
+            <div className='flex gap-4 mt-8 flex-col xl:flex-row '>
+                <div className='bg-white rounded-md px-4 lg:px-8 pt-8 pb-12 grow flex flex-col justify-between gap-[20px] relative'>
+                    <Pricing
+                        isSuperAdmin = {true}
+                    />
+                </div>
             </div>
             <AddModalSubscription
                 open = {addModal}
