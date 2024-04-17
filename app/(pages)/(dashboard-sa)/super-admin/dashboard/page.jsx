@@ -12,6 +12,7 @@ import { useSession } from 'next-auth/react';
 import ActivatePlanModal from '@/app/components/dashboard/ActivatePlanModal';
 import { getUserSubscriptionById, userProfile } from '@/app/api/repository/userRepository';
 import { getIncomeMessagesByQuery } from '@/app/api/repository/messageRepository';
+import { getUserProfile } from '@/app/api/repository/userRepository';
 import 'chart.js/auto';
 import { Doughnut } from 'react-chartjs-2';
 
@@ -63,7 +64,7 @@ const DashboardSuperAdmin = () => {
     })
     const fetchProfile = async () => {
         
-        const result = await getUserProfile(session.user.token,session.user.id)
+        const result = await getUserProfile(session.superAdmin.token,session.superAdmin.id)
 
         if (result) {
             const data = result.data
@@ -77,7 +78,7 @@ const DashboardSuperAdmin = () => {
     }
     const fetchSubscription = async () => {
     
-        const result = await getUserSubscriptionById(session.user.token,session.user.id)
+        const result = await getUserSubscriptionById(session.superAdmin.token,session.superAdmin.id)
 
         if (result && result.status === 200) {
             const resultData = result.data
@@ -119,52 +120,18 @@ const DashboardSuperAdmin = () => {
         }
     }
 
-    const fetchLatestMessage = async () => {
 
-        const result = await getIncomeMessagesByQuery(session.user.token,currentDevice.sessionId,`?pageSize=3`)
-
-        if (result.status === 200) {
-            const resultData = result.data
-            setlatestMessage(resultData.data)
-            console.log(resultData)
-        }
-    }
     useEffect(() => {
-        if (session?.user?.token) {
+        if (session?.superAdmin?.token) {
             fetchProfile()
-            fetchSubscription()
+            // fetchSubscription()
             // testRefresh()
         }
-    }, [session?.user?.token])
-    useEffect(() => {
-        if (currentDevice)
-            fetchLatestMessage()
-    }, [currentDevice])
+    }, [session?.superAdmin?.token])
+
     return (
         <>
-            {session?.user?.subscription.status === 0 && <ActivatePlanModal user={session.user} />}
-
-            <div className='flex flex-col-reverse lg:flex-row lg:justify-between items-center '>
-                <div>
-                    <p className='font-lexend text-2xl font-bold'>Selamat Siang Superadmin</p>
-                </div>
-            </div>
-            {session?.user?.device?.length === 0 && (
-                <div className='border-2 border-danger rounded-md px-4 py-3 flex justify-between mt-4'>
-                    <div className='flex gap-4 items-center'>
-                        <div className='flex-none'>
-                            <img src="/assets/icons/dashboard/assignment_late.svg" alt="" />
-                        </div>
-                        <p className='font-bold text-md'>Tambahkan device Anda terlebih dahulu dan mulai jelajahi fitur-fitur unggulan Forwardin</p>
-                    </div>
-                    <div className='flex-none'>
-                        <Button as={Link} href='/dashboard/device' color='primary' className='rounded-md'>
-                            Tambah Device
-                        </Button>
-                    </div>
-                </div>
-            )}
-             <div className='flex gap-4 mt-8 flex-col xl:flex-row '>
+            <div className='flex gap-4 mt-8 flex-col xl:flex-row '>
                 <div className='bg-white rounded-md px-4 lg:px-8 pt-8 pb-12 grow flex flex-col justify-between gap-2 relative'>
                     <div className='flex lg:flex-row flex-col justify-between w-full basis-1/3 items-end lg:items-center'>
                         <div className='flex justify-between w-full gap-10'>
@@ -172,7 +139,7 @@ const DashboardSuperAdmin = () => {
                                 <p>Host <br /> Server</p>
                             </div>
                             <div className='flex gap-2 items-center flex-1 justify-end lg:justify-start'>
-                               <p className='font-bold text-[24px]'>mainserver</p>
+                                <p className='font-bold text-[24px]'>mainserver</p>
                             </div>
                         </div>
                         <div className='text-right whitespace-nowrap'>
@@ -216,7 +183,7 @@ const DashboardSuperAdmin = () => {
                         </div>
                     </div>
                 </div>
-                <div className={'bg-white rounded-md px-4 pt-4 pb-2 grow-0 w-full xl:max-w-sm flex flex-col justify-between ' + (session?.user?.device?.length === 0 && "opacity-50 pointer-events-none")}>
+                <div className={'bg-white rounded-md px-4 pt-4 pb-2 grow-0 w-full xl:max-w-sm flex flex-col justify-between ' + (session?.superAdmin?.device?.length === 0 && "opacity-50 pointer-events-none")}>
                     <div className='flex justify-between w-[100%] items-center'>
                         <p className='font-nunito font-bold text-[16px]'>Storage</p>
                         <p className='font-nunito font-bold text-[18px]'>8278MB</p>

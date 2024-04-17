@@ -7,7 +7,9 @@ const Template = ({ children }) => {
     const [currentPage, setCurrentPage] = useState('')
     const pathName = usePathname()
     useEffect(() => {
-        if (pathName.includes('/super-admin/dashboard'))
+        console.log(pathName.includes('/super-admin/dashboard/user'))
+
+        if (pathName === '/super-admin/dashboard')
             setCurrentPage('Dashboard')
         else if (pathName.includes('/super-admin/dashboard/user'))
             setCurrentPage('User')

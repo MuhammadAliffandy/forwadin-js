@@ -169,12 +169,12 @@ const Pricing = (props) => {
                                     <div className="flex gap-2" key={i + '' + j}>
 
                                         {feature.available ? (
-                                            <img src={'assets/icons/checklist.svg'}
+                                            <img src={'/assets/icons/checklist.svg'}
                                                 width={20}
                                                 height={20}
                                                 alt="checklist" />
                                         ) : (
-                                            <img src={'assets/icons/no sign.svg'}
+                                            <img src={'/assets/icons/no sign.svg'}
                                                 width={20}
                                                 height={20}
                                                 alt="checklist" />)}

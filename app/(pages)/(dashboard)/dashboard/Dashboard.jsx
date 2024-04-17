@@ -100,7 +100,7 @@ const Dashboard = () => {
 
         if (result.status == 200) {
             const resultData = result.data
-            setlatestMessage(resultData)
+            setlatestMessage(resultData.data)
 
         }
     }
@@ -116,8 +116,7 @@ const Dashboard = () => {
     }, [session?.user?.token])
     useEffect(() => {
         if (currentDevice)
-            console.log('test')
-            // fetchLatestMessage()
+            fetchLatestMessage()
 
     }, [currentDevice])
     return (

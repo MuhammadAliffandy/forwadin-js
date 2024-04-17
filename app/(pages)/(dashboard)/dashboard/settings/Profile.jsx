@@ -32,7 +32,6 @@ const Profile = ({ profileData, user, fetchUser }) => {
 
         } else {
             toast.error('Gagal update profile!')
-
         }
 
 

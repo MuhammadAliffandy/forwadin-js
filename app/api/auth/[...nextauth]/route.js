@@ -74,7 +74,7 @@ export const authConfig = {
                 if (result.ok) {
                     console.log('refresh')
                     const resultData = await result.json()
-                    if (userData.role === 222) {
+                    if (userData.role === 3) {
                         console.log('refresh CS')
                         console.log(resultData)
                         const fetchSessionCS = await fetch(process.env.BACKEND_URL + "/customer-services/" + (userData).id, {
@@ -210,6 +210,74 @@ export const authConfig = {
             }
         }),
         CredentialsProvider({
+            id: 'superadmin',
+            name: "Superadmin",
+            credentials: {
+                identifier: {},
+                password: {}
+            },
+            authorize: async (credentials) => {
+                const result = await fetch(process.env.BACKEND_URL + '/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ identifier: credentials?.identifier, password: credentials?.password })
+                })
+                if (result.ok) {
+                    const resultData = await result.json()
+                    console.log('masuk credentials')
+                    console.log(resultData)
+                    const user = {
+                        id: resultData.id,
+                        role: resultData.role,
+                        token: resultData.accessToken,
+                        refreshToken: resultData.refreshToken,
+                        subscription: {},
+                        device: []
+                    }
+                    const userSubscription = await fetch(process.env.BACKEND_URL + '/users/' + user.id + '/subscription/', {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': 'Bearer ' + resultData.accessToken
+                        },
+                    })
+                    if (userSubscription.ok) {
+                        const userSubscriptionResult = await userSubscription.json()
+                        user.subscription = {
+                            status: 1,
+                            name: userSubscriptionResult.subscriptionPlan.name
+                        }
+                        const fetchSession = await fetch(process.env.BACKEND_URL + '/sessions', {
+                            method: 'GET',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': 'Bearer ' + resultData.accessToken
+                            },
+                        })
+                        if (fetchSession.ok) {
+                            const fetchSessionData = await fetchSession.json()
+                            if (fetchSessionData.length) {
+                                user.device = await getDeviceSession(fetchSessionData, resultData.accessToken)
+                            } else {
+                                user.device = []
+                            }
+                        } else {
+                            user.device = []
+                        }
+                    } else {
+                        user.subscription = {
+                            status: 0
+                        }
+                    }
+                    return user
+                } else {
+                    return null
+                }
+            }
+        }),
+        CredentialsProvider({
             id: 'customerService',
             name: 'CustomerService',
             credentials: {
@@ -269,9 +337,6 @@ export const authConfig = {
     },
     callbacks: {
         async jwt({ token, user, trigger, session }) {
-
-            console.log('update' + trigger)
-
             
             if (trigger === 'update') {
                 token.user = session.user
@@ -282,6 +347,8 @@ export const authConfig = {
                 }
                 else if (user.role === 2 || user.role === 9) {
                     token.user = user;
+                }else if(user.role === 1){
+                    token.superAdmin = user
                 }
             }
             return token;
@@ -291,8 +358,11 @@ export const authConfig = {
                 session.user = token.user
             if (token.customerService)
                 session.customerService = token.customerService
+            if(token.superAdmin)
+                session.superAdmin = token.superAdmin
             return session;
         },
+
         // async signIn({ user, account }) {
         //     if (account?.provider === 'google') {
         //         // return null

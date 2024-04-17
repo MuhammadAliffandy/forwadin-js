@@ -28,7 +28,7 @@ const DashboardTemplate = ({ currentPage, children }) => {
     }
     const fetchUserProfile = async () => {
 
-        const result = await getUserProfile(session.user.token,session.user.id)
+        const result = await getUserProfile(session.superAdmin.token,session.superAdmin.id)
 
         if (result && result.status === 200) {
             const body = result.data
@@ -37,62 +37,14 @@ const DashboardTemplate = ({ currentPage, children }) => {
     }
 
     useEffect(() => {
-        if (session?.user?.token) {
+
+        if (session?.superAdmin?.token) {
             fetchUserProfile()
-            console.log(session.user)
+            console.log(session.superAdmin)
         }
 
-    }, [session?.user?.token])
-    useEffect(() => {
-        const channels = {
-            session: new Set(),
-            device: new Set()
-        }
-        if (session?.user?.device && session.user.device.length > 0)
-            setisDisabled(false)
-        else
-            setisDisabled(true)
+    }, [session?.superAdmin?.token])
 
-        if (socket && session?.user?.device) {
-            session.user.device.forEach(device => {
-                channels.session.add(`message:${device.sessionId}`)
-                channels.device.add(`device:${device.id}:status`)
-            })
-            channels.session.forEach(session => {
-                socket.on(session, (message) => {
-                    console.log('ini message dari session ' + session)
-                    console.log(message)
-                    setnotification(prev => [...prev, message])
-                })
-            })
-            channels.device.forEach(device => {
-                socket.on(device, async (message) => {
-                    console.log('ini message dari session ' + device)
-                    console.log(message)
-                    if (message === 'closed') {
-                        const result = await signIn('refresh', {
-                            redirect: false,
-                            user: JSON.stringify(session.customerService)
-                        })
-                        if (result?.error) {
-                            signOut()
-                        } else {
-                            router.refresh()
-                        }
-                    }
-                })
-            })
-        }
-
-        return () => {
-            channels.session.forEach(channel => {
-                socket.off(channel)
-            })
-            channels.device.forEach(channel => {
-                socket.off(channel)
-            })
-        }
-    }, [session?.user?.device])
     return (
         <>
             <div className={(sideNavDropdown ? 'block' : 'hidden') + " h-full w-[200px] lg:w-[250px] z-10 top-0 left-0 overflow-y-auto bg-white fixed lg:block pb-12"} id="side_nav">
@@ -128,7 +80,7 @@ const DashboardTemplate = ({ currentPage, children }) => {
                                     <p>{user?.username}</p>
                                 </div>
                                 {session?.user?.image ? (
-                                    <img src={session.user.image} alt="" className="rounded-full" width={33} />
+                                    <img src={session.superAdmin.image} alt="" className="rounded-full" width={33} />
                                 ) : (
                                     <div className='flex-none bg-primary rounded-full p-2 hover:cursor-pointer flex items-center justify-center'>
                                         <img src="/assets/icons/dashboard/user.svg" alt="" />
@@ -148,7 +100,7 @@ const DashboardTemplate = ({ currentPage, children }) => {
                                     <div className="flex justify-center">
                                         {session?.user?.image ? (
                                             <img
-                                                src={session.user.image} alt="profile"
+                                                src={session.superAdmin.image} alt="profile"
                                                 width={54}
                                                 height={54}
                                                 className="rounded-full" />
@@ -198,7 +150,7 @@ const DashboardTemplate = ({ currentPage, children }) => {
                                         <p>{user?.username}</p>
                                     </div>
                                     {session?.user?.image ? (
-                                        <img src={session.user.image} alt="" className="rounded-full" width={33} />
+                                        <img src={session.superAdmin.image} alt="" className="rounded-full" width={33} />
                                     ) : (
                                         <div className='flex-none bg-primary rounded-full p-2 hover:cursor-pointer flex items-center justify-center'>
                                             <img src="/assets/icons/dashboard/user.svg" alt="" />
@@ -219,7 +171,7 @@ const DashboardTemplate = ({ currentPage, children }) => {
                                         <div className="flex justify-center">
                                             {session?.user?.image ? (
                                                 <img
-                                                    src={session.user.image} alt="profile"
+                                                    src={session.superAdmin.image} alt="profile"
                                                     width={54}
                                                     height={54}
                                                     className="rounded-full" />

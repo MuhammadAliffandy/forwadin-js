@@ -29,13 +29,13 @@ const SignIn = () => {
     const onSubmit = async (formData) => {
         setisLoading(true)
         try {
-            const login = await signIn('credentials', {
+            const login = await signIn('superadmin', {
                 identifier: formData.userEmail,
                 password: formData.password,
                 redirect: false
             })
             if (!login.error) {
-                push('/dashboard')
+                push('/super-admin/dashboard')
             } else if (login.error === 'fetch failed') {
                 toast.error('check your credentials or network connections')
                 setError('userEmail', {

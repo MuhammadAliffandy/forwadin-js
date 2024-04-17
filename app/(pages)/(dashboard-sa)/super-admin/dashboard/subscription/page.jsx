@@ -59,7 +59,7 @@ const DashboardSuperAdminSubscription = () => {
     })
     const fetchProfile = async () => {
         
-        const result = await getUserProfile(session.user.token,session.user.id)
+        const result = await getUserProfile(session.superAdmin.token,session.superAdmin.id)
 
         if (result) {
             const data = result.data
@@ -73,7 +73,7 @@ const DashboardSuperAdminSubscription = () => {
     }
     const fetchSubscription = async () => {
     
-        const result = await getUserSubscriptionById(session.user.token,session.user.id)
+        const result = await getUserSubscriptionById(session.superAdmin.token,session.superAdmin.id)
 
         if (result && result.status === 200) {
             const resultData = result.data
@@ -117,7 +117,7 @@ const DashboardSuperAdminSubscription = () => {
 
     const fetchLatestMessage = async () => {
 
-        const result = await getIncomeMessagesByQuery(session.user.token,currentDevice.sessionId,`?pageSize=3`)
+        const result = await getIncomeMessagesByQuery(session.superAdmin.token,currentDevice.sessionId,`?pageSize=3`)
 
         if (result.status === 200) {
             const resultData = result.data
@@ -138,28 +138,6 @@ const DashboardSuperAdminSubscription = () => {
     }, [currentDevice])
     return (
         <>
-            {session?.user?.subscription.status === 0 && <ActivatePlanModal user={session.user} />}
-
-            <div className='flex flex-col-reverse lg:flex-row lg:justify-between items-center '>
-                <div>
-                    <p className='font-lexend text-2xl font-bold'>Subscription</p>
-                </div>
-            </div>
-            {session?.user?.device?.length === 0 && (
-                <div className='border-2 border-danger rounded-md px-4 py-3 flex justify-between mt-4'>
-                    <div className='flex gap-4 items-center'>
-                        <div className='flex-none'>
-                            <img src="/assets/icons/dashboard/assignment_late.svg" alt="" />
-                        </div>
-                        <p className='font-bold text-md'>Tambahkan device Anda terlebih dahulu dan mulai jelajahi fitur-fitur unggulan Forwardin</p>
-                    </div>
-                    <div className='flex-none'>
-                        <Button as={Link} href='/dashboard/device' color='primary' className='rounded-md'>
-                            Tambah Device
-                        </Button>
-                    </div>
-                </div>
-            )}
             <div className='flex gap-4 mt-8 flex-col xl:flex-row '>
                 <div className='bg-white rounded-md px-4 lg:px-8 pt-8 pb-12 grow flex flex-col justify-between gap-[20px] relative'>
                     <div className='flex justify-between'>

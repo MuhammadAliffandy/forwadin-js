@@ -18,7 +18,7 @@ import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { toast } from "react-toastify"
-import { createBroadcast } from "../../../../../api/repository/broadcastRepository"
+import { createBroadcast } from "@/app/api/repository/broadcastRepository"
 
 
 const CreateBroadcast = () => {
@@ -74,7 +74,11 @@ const CreateBroadcast = () => {
             formData.append('delay', delay.toString())
             formData.append('schedule', formatDatetoISO8601(broadcastFormData.schedule))
 
-            const result = await createBroadcast(session.user.token , formData)
+            console.log('----------')
+            console.log(formData)
+            console.log('----------')
+
+            const result = await createBroadcast(session?.user.token , formData)
             if (result.status === 200) {
                 toast.success('Berhasil buat broadcast')
                 push('/dashboard/broadcast')

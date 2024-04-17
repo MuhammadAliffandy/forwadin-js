@@ -11,7 +11,7 @@ import TimezoneSelect from 'react-timezone-select'
 import { toast } from "react-toastify"
 import { getAllDevice } from "../../../../api/repository/deviceRepository"
 import { createBusinessHours, getBusinessHours, updateBusinessHours } from "../../../../api/repository/businessHoursRepository"
-import { getProfileSession, updateProfileSession } from "../../../../api/repository/sessionRepository"
+import { getProfileSession, updateProfileSession } from "@/app/api/repository/sessionRepository"
 
 
 const Device = ({ user }) => {
@@ -117,6 +117,8 @@ const Device = ({ user }) => {
     const fetchSessionProfile = async () => {
         if (!currentDevice) return
 
+
+        
         const result = await getProfileSession(user.token,currentDevice.id)
 
         if (result.status === 200) {

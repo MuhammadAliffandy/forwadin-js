@@ -20,6 +20,7 @@ import { DeviceData, DeviceSession } from "@/app/utils/types";
 import { Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@nextui-org/react";
 import { fetchClient } from "@/app/utils/helper/fetchClient";
 import { formatDate, getYearMonthDate } from "@/app/utils/helper";
+import { getDevice } from '@/app/api/repository/deviceRepository'
 
 Chart.register(
     CategoryScale,
@@ -39,11 +40,9 @@ const Analytic = ({ user, currentDevice, setcurrentDevice }) => {
     const [deviceList, setdeviceList] = useState([])
     const [currentDeviceDetail, setcurrentDeviceDetail] = useState()
     const fetchDetailDevice = async () => {
-        const result = await fetchClient({
-            url: '/devices/' + currentDevice?.id,
-            method: 'GET',
-            user: user
-        })
+    
+        const result = await getDevice(user.token,currentDevice?.id)
+        
         if (result.status === 200) {
             const resultData = result.data
             console.log(resultData)
