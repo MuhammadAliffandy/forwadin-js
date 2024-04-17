@@ -2,6 +2,12 @@ import { PROVIDER_DELETE, PROVIDER_GET, PROVIDER_PATCH, PROVIDER_POST, PROVIDER_
 
 const delay = () => new Promise(res => setTimeout(() => res(), 800))
 
+export const getAllOrders = async ( token  ) => {
+    await delay()
+    const response = await PROVIDER_GET(`orders`, token )
+    return response;
+}
+
 export const createOrders = async ( token , data ) => {
     await delay()
     const response = await PROVIDER_POST(`orders`, data , token )

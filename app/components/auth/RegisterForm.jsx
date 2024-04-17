@@ -58,9 +58,9 @@ const Register = ({ setCurrentStep, setUserData, userData }) => {
                 })
             })
 
-            const body = result.data
+            const body = await result.json()
 
-            if (result.status === 200) {
+            if (result.ok) {
                 const userStatus = body
                 console.log(userStatus)
                 if (!userStatus.email || !userStatus.phone || !userStatus.username) {

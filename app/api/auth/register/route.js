@@ -9,7 +9,7 @@ export const POST = async (request) => {
             },
             body: JSON.stringify(body)
         })
-        const message = result.data
+        const message = await result.json()
 
         if (!result.ok) {
             return NextResponse.json({ message: message.error }, { status: 400 })

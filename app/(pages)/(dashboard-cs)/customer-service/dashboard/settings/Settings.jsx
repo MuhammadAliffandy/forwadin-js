@@ -31,8 +31,11 @@ const Settings = () => {
             method: 'GET',
             user: session?.customerService
         })
-        if (result.status === 200) {
-            setcsProfile(result.data)
+        if (result.ok) {
+            const res = await result.json()
+
+            console.log(res)
+            setcsProfile(res)
             setisLoaded(true)
         }
     }

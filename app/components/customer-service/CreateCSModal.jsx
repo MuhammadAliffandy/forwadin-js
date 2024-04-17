@@ -9,6 +9,7 @@ import { fetchClient } from "@/app/utils/helper/fetchClient"
 import { toast } from "react-toastify"
 import ButtonSubmit from "../form/ButtonSubmit"
 import SelectDevice from "../form/SelectDevice"
+import { getAllDevice } from "@/app/api/repository/deviceRepository"
 
 const CreateCSModal = ({ openModal, refresh, setopenModal, user }) => {
     const [isLoading, setisLoading] = useState(false)
@@ -30,11 +31,9 @@ const CreateCSModal = ({ openModal, refresh, setopenModal, user }) => {
         // specialChar: new RegExp("^(?=.*[!@#$%^&*])")
     }
     const fetchDevice = async () => {
-        const result = await fetchClient({
-            method: 'GET',
-            url: '/devices',
-            user: user
-        })
+
+        const result = await getAllDevice(user.token)
+
         if (result && result.status === 200) {
             const body = result.data
             setdeviceList(body)
@@ -59,7 +58,7 @@ const CreateCSModal = ({ openModal, refresh, setopenModal, user }) => {
             body: JSON.stringify(body),
             user: user
         })
-        if (result.status === 200) {
+        if (result.ok) {
             toast.success('Berhasil tambah CS')
             refresh()
             setopenModal(false)

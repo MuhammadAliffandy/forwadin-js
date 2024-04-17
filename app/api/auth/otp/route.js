@@ -16,7 +16,7 @@ export const POST = async (request, response) => {
     const result = await fetchServer(request, response, { url: '/auth/verify-email', body: { otpToken: body.token }, method: 'POST' })
     if (!result)
         return NextResponse.json({ message: 'Session not found' }, { status: 500 })
-    const data = result.data
+    const data = await result.json()
     if (!result.ok)
         return NextResponse.json({ message: data.message }, { status: 500 })
     return NextResponse.json({ message: 'Success send OTP' }, { status: result.status })

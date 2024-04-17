@@ -11,6 +11,8 @@ import ActivatePlanModal from '@/app/components/dashboard/ActivatePlanModal';
 import QRModal from './QRModal';
 import { useSocket } from '@/app/SocketProvider';
 import { useRouter } from 'next/navigation';
+import { getAllOrders } from '../../../../api/repository/orderRepository';
+import { getIncomeMessagesByQuery  , getIncomeMessages} from '@/app/api/repository/messageRepository';
 // const DynamicAnalytic = dynamic(() => import('./Analytic'), { ssr: false })
 const Dashboard = () => {
     const router = useRouter()
@@ -34,29 +36,22 @@ const Dashboard = () => {
         color: 'primary'
     })
     const fetchLatestMessage = async () => {
-        const result = await fetchClient({
-            url: '/messages/' + session?.customerService?.sessionId + '/incoming?pageSize=3',
-            method: 'GET',
-            user: session?.customerService
-        })
+
+        const result = await getIncomeMessagesByQuery(session.customerService.token,session?.customerService?.sessionId ,'?pageSize=3')
+
         if (result.status === 200) {
             const resultData = result.data
             setlatestMessage(resultData.data)
         }
     }
     const fetchOrderData = async () => {
-        const result = await fetchClient({
-            url: '/orders',
-            method: 'GET',
-            user: session?.customerService
-        })
-        const incoming = await fetchClient({
-            url: `/messages/${session?.customerService?.sessionId}/incoming`,
-            method: 'GET',
-            user: session?.customerService
-        })
-        if (result.status === 200 && incoming?.ok) {
-            const incomingMessage = await incoming.json()
+
+        const result = await getAllOrders( session.customerService.token )
+
+        const incoming = await getIncomeMessages(session.customerService.token,session.customerService.sessionId) 
+
+        if (result.status === 200 && incoming.status === 200) {
+            const incomingMessage = incoming.data
             const orderData = result.data
             console.log(orderData)
             const completedOrder = orderData.filter(order => order.status === 'completed')

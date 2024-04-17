@@ -43,7 +43,7 @@ const CustomerServiceTable = () => {
                 body: JSON.stringify({ csIds: deletedCS }),
                 user: session?.user
             })
-            if (result.status === 200) {
+            if (result.ok) {
                 toast.success('Berhasil hapus Customer Service')
                 fetchCSData()
                 setselectedCS(new Set([]))

@@ -54,9 +54,9 @@ const Messenger = () => {
 
         const result2 = await getContactsByDeviceId(session.customerService.token ,session.customerService.deviceId )
         
-        if (result.status === 200 && result2?.ok) {
+        if (result.status === 200 && result2.status === 200) {
             const resultData= result.data
-            const result2Data= await result2.json()
+            const result2Data= result2.data
             const newArray = []
             const fetchPromises = [];
             const fetchMessage = async (element) => {

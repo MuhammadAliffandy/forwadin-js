@@ -38,8 +38,8 @@ const OTPForm = ({ setCurrentStep }) => {
                 method: 'POST',
                 body: JSON.stringify({ token: otp })
             })
-            const body = result.data
-            if (result.status === 200) {
+            const body = await result.json()
+            if (result.ok) {
                 setCurrentStep('success')
             }
             else

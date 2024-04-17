@@ -1,4 +1,4 @@
-import { DeviceData, DeviceSession } from '@/app/utils/types'
+
 import React from 'react'
 
 const SelectDevice = ({ listDevice, register, name }) => {
