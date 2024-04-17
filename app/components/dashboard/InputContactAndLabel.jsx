@@ -5,6 +5,8 @@ import { useSession } from "next-auth/react"
 import React, { Dispatch, SetStateAction, useEffect, useRef, useState } from "react"
 import ContactLabel from "./label/ContactLabel"
 import { CustomerService, User } from "next-auth"
+import { getAllContactsLabels } from '@/app/api/repository/contactRepository'
+import { getAllGroups } from '@/app/api/repository/groupRepository'
 
 const InputContactAndLabel = ({ selectedKeys, setselectedKeys, isAutoReply = false, isDisabled = false, showDescription = true, user }) => {
     const [isLoaded, setisLoaded] = useState(false)
@@ -65,13 +67,11 @@ const InputContactAndLabel = ({ selectedKeys, setselectedKeys, isAutoReply = fal
         setnumberList(newLabelList)
     }
     const fetchContactLabelList = async () => {
-        const result = await fetchClient({
-            url: '/contacts/labels',
-            method: 'GET',
-            user: user
-        })
-        if (result?.ok) {
-            const resultData  = await result.json()
+
+        const result = await getAllContactsLabels(user.token)
+
+        if (result.status === 200) {
+            const resultData  = result.data
 
             const newArr = resultData.filter(item => !contactLabelList.some(ele => ele.label.name === item)).map(item => {
                 return {
@@ -86,13 +86,11 @@ const InputContactAndLabel = ({ selectedKeys, setselectedKeys, isAutoReply = fal
         }
     }
     const fetchGroupList = async () => {
-        const result = await fetchClient({
-            url: '/groups',
-            method: 'GET',
-            user: user
-        })
-        if (result?.ok) {
-            const resultData = await result.json()
+
+        const result = await getAllGroups(user.token)
+
+        if (result.status === 200) {
+            const resultData = result.data
             const newArr = resultData.filter(item => !groupList.some(ele => ele.label.name === item.name)).map(item => {
                 return {
                     label: {

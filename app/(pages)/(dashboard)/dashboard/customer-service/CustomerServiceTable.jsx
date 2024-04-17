@@ -43,7 +43,7 @@ const CustomerServiceTable = () => {
                 body: JSON.stringify({ csIds: deletedCS }),
                 user: session?.user
             })
-            if (result?.ok) {
+            if (result.status === 200) {
                 toast.success('Berhasil hapus Customer Service')
                 fetchCSData()
                 setselectedCS(new Set([]))
@@ -54,10 +54,10 @@ const CustomerServiceTable = () => {
     }
     const fetchCSData = async () => {
    
-        const result = await customerServiceUser(session.user.token,session.user.id)
+        const result = await customerServicesUser(session.user.token,session.user.id)
 
-        if (result?.ok) {
-            const resultData = await result.json()
+        if (result.status === 200) {
+            const resultData = result.data
             setCSData(resultData)
             console.log(resultData)
         }

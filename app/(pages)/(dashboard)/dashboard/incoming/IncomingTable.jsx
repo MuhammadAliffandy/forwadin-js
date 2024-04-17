@@ -51,8 +51,8 @@ const IncomingTable = ({ settotalMessage, totalMessage, sessionId, user }) => {
         const result = await getIncomeMessagesByQuery(user.token,sessionId , `?page=${currentPage}&pageSize=${PAGINATION_BATCH}` + (query && '&' + query))
 
         if (result) {
-            const resultData = await result.json()
-            if (result.ok) {
+            const resultData = result.data
+            if (result.status === 200) {
                 setmessageData(resultData.data)
                 settotalMessage(resultData.metadata.totalMessages)
                 settotalPage(resultData.metadata.totalPages)

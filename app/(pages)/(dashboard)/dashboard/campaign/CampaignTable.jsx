@@ -20,7 +20,7 @@ const CampaignTable = ({ settotalCampaign, totalCampaign, user }) => {
             method: 'GET',
             user: user
         })
-        if (result?.ok) {
+        if (result.ok) {
             const resultData = await result.json()
             console.log(resultData)
             setcampaignData(resultData)
@@ -32,7 +32,7 @@ const CampaignTable = ({ settotalCampaign, totalCampaign, user }) => {
 
         const result = await updateCampaignStatus(user.token , id , { status: status }  )
 
-        if (result?.ok) {
+        if (result.status === 200) {
             // toast.success('Ber')
             fetchCampaign()
         }
@@ -54,7 +54,7 @@ const CampaignTable = ({ settotalCampaign, totalCampaign, user }) => {
                 method: 'DELETE',
                 user: user
             })
-            if (result?.ok) {
+            if (result.status === 200) {
                 toast.success('Berhasil hapus campaign')
                 fetchCampaign()
                 setselectedCampaign(new Set([]))

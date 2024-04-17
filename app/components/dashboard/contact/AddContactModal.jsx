@@ -1,6 +1,5 @@
 import InputForm from "@/app/components/form/InputForm"
 import ModalTemplate from "@/app/components/template/ModalTemplate"
-import { ContactData, CountryCode, DeviceData, Label } from "@/app/utils/types"
 import { useState, Dispatch, SetStateAction, useEffect, useRef, } from "react"
 import { useForm } from "react-hook-form"
 import MultipleInputLabel from "../MultipleInputLabel"
@@ -12,6 +11,7 @@ import CountryFlagSvg from "country-list-with-dial-code-and-flag/dist/flag-svg"
 import { formatPhoneCode, getCountryList } from "@/app/utils/helper/countryCode"
 import { Skeleton } from "@nextui-org/react"
 import { useSession } from "next-auth/react"
+import { createContacts } from "@/app/api/repository/contactRepository"
 
 
 
@@ -29,7 +29,7 @@ const AddContactModal = ({ openModal, setopenModal, fetchData }) => {
         code: '',
         flag: ''
     })
-    const countryCodeInputRef = useRef<HTMLInputElement>(null)
+    const countryCodeInputRef = useRef(null)
     const [countryCodeDropdown, setcountryCodeDropdown] = useState(false)
     const [countryCodeSearchText, setcountryCodeSearchText] = useState('')
     const [countryCodeData, setcountryCodeData] = useState([])
@@ -67,14 +67,12 @@ const AddContactModal = ({ openModal, setopenModal, fetchData }) => {
             deviceId: deviceList.find(device => device.id === formData.device)?.id,
             labels: (labelList ? labelList.filter(item => item.label.active).map(item => item.label.name) : null)
         }
-        const result = await fetchClient({
-            method: 'POST',
-            body: JSON.stringify(bodyForm),
-            url: '/contacts/create',
-            user: session?.user
-        })
-        const response = await result?.json()
-        if (result && result.ok) {
+
+        console.log('session token' + session.user.token)
+
+        const result = await createContacts(session.user.token , bodyForm)
+        const response = result.data
+        if (result && result.status == 200) {
             toast.success('Kontak berhasil ditambahkan')
             fetchData()
             setisLoading(false)

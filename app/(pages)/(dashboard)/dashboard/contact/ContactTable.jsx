@@ -96,7 +96,7 @@ const ContactTable = ({ setcontactCount, currentDevice, user }) => {
 
             const result = await deleteContacts(user.token,{ contactIds: deletedContact } )
 
-            if (result?.ok) {
+            if (result.status === 200) {
                 toast.success('Berhasil hapus contact')
                 fetchData()
                 setSelectedKeys(new Set([]))

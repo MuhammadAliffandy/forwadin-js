@@ -85,7 +85,7 @@ const Account = ({ user, userProfile }) => {
 
         const result = await deleteUser(user.token,user.id)
 
-        if (result?.ok) {
+        if (result.status === 200) {
             await signOut()
             router.push('/')
         } else {
@@ -101,7 +101,7 @@ const Account = ({ user, userProfile }) => {
 
         const result = await changeEmailUser(user.token,user.id,{ email: data.email })
 
-        if (result?.ok) {
+        if (result.status === 200) {
             toast.success('Berhasil ubah email')
             await signOut()
             router.push('/signin')
@@ -121,7 +121,7 @@ const Account = ({ user, userProfile }) => {
  
         const result = changePhoneNumberUser(user.token,user.id , { phoneNumber: formattedPhone })
 
-        if (result?.ok) {
+        if (result.status === 200) {
             toast.success('Berhasil ubah nomor')
         } else {
             toast.error('Gagal ubah nomor')
@@ -134,7 +134,7 @@ const Account = ({ user, userProfile }) => {
         const result = await changePasswordUser(user.token,data)
 
         console.log(await result?.json())
-        if (result?.ok) {
+        if (result.status === 200) {
             toast.success('password berhasil diubah')
             signOut()
         } else {

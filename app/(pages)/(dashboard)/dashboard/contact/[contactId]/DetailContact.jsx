@@ -40,7 +40,7 @@ const DetailContact = ({ contactId }) => {
         const result = await getContacts(session.user.token, contactId)
 
         if (result) {
-            const data = await result.json()
+            const data = result.data
             if (result.status === 200) {
                 data.dob = formatBirthDate(data.dob)
                 setcontactData(data)
@@ -64,8 +64,8 @@ const DetailContact = ({ contactId }) => {
 
             const result = await getIncomeMessagesByQuery(session.user.token,contactSession.sessionId ,`?phoneNumber=${contactData?.phone}` )
 
-            if (result && result.ok) {
-                const resultData  = await result.json()
+            if (result && result.status === 200) {
+                const resultData  = result.data
                 setmessage(resultData.data)
                 setmessageCount(resultData.data.length)
                 console.log(resultData)
@@ -89,8 +89,8 @@ const DetailContact = ({ contactId }) => {
 
                     const result = await sendMessagesMedia(session.user.token, formdata )
 
-                    if (result?.ok) {
-                        const resultData = await result.json()
+                    if (result.status === 200) {
+                        const resultData = result.data
                         console.log(resultData)
                         setinputFile([])
                         settextInput('')
@@ -124,7 +124,7 @@ const DetailContact = ({ contactId }) => {
                     ]),
                     user: session?.user
                 })
-                if (result && result.ok) {
+                if (result && result.status === 200) {
                     toast.success('Berhasil kirim pesan')
                     settextInput('')
                     router.push('/dashboard/messenger?phone=' + contactData.phone)

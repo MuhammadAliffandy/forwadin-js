@@ -25,8 +25,8 @@ const CampaignMessages = ({ campaignId }) => {
 
         const result = await getCampaignsMessages(session.user.token , campaignId)
 
-        if (result?.ok) {
-            const resultData = await result.json()
+        if (result.status === 200) {
+            const resultData = result.data
             console.log(resultData)
             setcampaignMessages(resultData)
         } else if (result.status === 404) {
@@ -41,8 +41,8 @@ const CampaignMessages = ({ campaignId }) => {
     
         const result = await getCampaignDetail(session.user.token , campaignId)
 
-        if (result?.ok) {
-            const resultData = await result.json()
+        if (result.status === 200) {
+            const resultData = result.data
             setcampaignData(resultData)
         } else if (result?.status === 404) {
             toast.error('Campaign tidak ditemukan')
@@ -61,7 +61,7 @@ const CampaignMessages = ({ campaignId }) => {
         if (deletedMessage && isConfirm) {
             const result = await deleteCampaign(session.user.token , { campaignMessageIds: deletedMessage }  )
 
-            if (result?.ok) {
+            if (result.status === 200) {
                 toast.success('Berhasil hapus campaign message')
                 fetchCampaignMessages()
                 setselectedMessage(new Set([]))

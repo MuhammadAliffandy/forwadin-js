@@ -76,7 +76,7 @@ const EditContactModal = ({ openModal, setopenModal, fetchData, contactData }) =
                 setisLoading(false)
                 setopenModal(false)
             } else {
-                const body = await result.json()
+                const body = result.data
                 console.log(body)
                 toast.error('Gagal menyimpan kontak')
                 setisLoading(false)

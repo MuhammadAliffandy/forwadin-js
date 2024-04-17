@@ -64,8 +64,8 @@ const OutgoingTable = ({ settotalMessage, totalMessage, sessionId, user }) => {
 
         const result = await getOutgoingMessagesByQuery(user.token,sessionId, `?page=${currentPage}&pageSize=${PAGINATION_BATCH}` + (query && '&' + query))
 
-        if (result && result.ok) {
-            const resultData = await result.json()
+        if (result && result.status === 200) {
+            const resultData = result.data
             console.log(resultData)
             setmessageData(resultData.data)
             setcurrentPage(resultData.metadata.currentPage)

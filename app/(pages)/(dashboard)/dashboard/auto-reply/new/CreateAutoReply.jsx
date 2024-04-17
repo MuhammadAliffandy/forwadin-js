@@ -79,7 +79,7 @@ const CreateAutoReply = () => {
 
             const result = await createAutoReply(session.user.token, formData)
 
-            if (result?.ok) {
+            if (result.status === 200) {
                 toast.success('Berhasil buat auto reply')
                 push('/dashboard/auto-reply')
             } else {
@@ -91,8 +91,8 @@ const CreateAutoReply = () => {
     }
     const fetchContactData = async () => {
         const result = await getAllContacts(session.user.token)
-        if (result?.ok) {
-            const resultData = await result.json()
+        if (result.status === 200) {
+            const resultData = result.data
             const updatedReceiverList = [...receiverList, ...resultData]
             setreceiverList(updatedReceiverList)
         }

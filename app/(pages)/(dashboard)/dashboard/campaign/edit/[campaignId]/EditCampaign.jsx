@@ -118,7 +118,7 @@ const CreateCampaign = ({ campaignData }) => {
                 isFormData: true,
                 user: session?.user
             })
-            if (result?.ok) {
+            if (result.status === 200) {
                 toast.success('Berhasil ubah campaign')
                 push('/dashboard/campaign')
             } else {

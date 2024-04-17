@@ -34,6 +34,7 @@ const SignIn = () => {
                 password: formData.password,
                 redirect: false
             })
+
             if (!login?.error) {
                 push('/dashboard')
             } else if (login.error === 'fetch failed') {

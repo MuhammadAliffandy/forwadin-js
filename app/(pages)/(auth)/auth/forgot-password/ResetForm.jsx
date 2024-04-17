@@ -23,7 +23,7 @@ const ResetForm = ({ setCurrentStep, setuserEmail }) => {
                 setuserEmail(formData.email)
                 setCurrentStep('success')
             } else {
-                const body = await result.json()
+                const body = result.data
                 toast.error(body.message)
                 setisLoading(false)
             }

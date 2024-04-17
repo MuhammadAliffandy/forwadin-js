@@ -53,7 +53,7 @@ const OrderTable = ({ setcountOrder }) => {
                 user: session?.customerService
             })
             const body = await result?.json()
-            if (result?.ok) {
+            if (result.status === 200) {
                 fetchData()
                 toast.success('Berhasil update order')
 
@@ -72,7 +72,7 @@ const OrderTable = ({ setcountOrder }) => {
                 user: session?.customerService
             })
             const body = await result?.json()
-            if (result?.ok) {
+            if (result.status === 200) {
                 fetchData()
                 toast.success('Berhasil update order')
 

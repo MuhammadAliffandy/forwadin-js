@@ -24,7 +24,7 @@ const Register = ({ setCurrentStep, setUserData, userData }) => {
         code: '',
         flag: ''
     })
-    const countryCodeInputRef = useRef<HTMLInputElement>(null)
+    const countryCodeInputRef = useRef(null)
     const componentTransition = useTransition(countryCodeDropdown, {
         from: {
             transform: "translateY(-50px)",
@@ -57,8 +57,10 @@ const Register = ({ setCurrentStep, setUserData, userData }) => {
                     phone: formData.phone,
                 })
             })
-            const body = await result.json()
-            if (result.ok) {
+
+            const body = result.data
+
+            if (result.status === 200) {
                 const userStatus = body
                 console.log(userStatus)
                 if (!userStatus.email || !userStatus.phone || !userStatus.username) {
@@ -230,7 +232,7 @@ const Register = ({ setCurrentStep, setUserData, userData }) => {
                         {componentTransition((style, item) => item && (
                             <animated.div style={style} className="absolute bg-white rounded-md border border-customGray w-full mt-16 z-10 shadow-lg text-sm">
                                 <div className="flex items-center gap-2 border-b border-customGray px-6 py-2">
-                                    <div className="hover:cursor-pointer" onClick={() => countryCodeInputRef.current?.focus()} >
+                                    <div className="hover:cursor-pointer" onClick={() => countryCodeInputRef.current.focus()} >
                                         <img src="/assets/icons/search_grey.png" alt="" />
                                     </div>
                                     <input ref={countryCodeInputRef} type="text" placeholder="Cari kode negara" className=" flex-1 w-full text-sm outline-none border-none focus:ring-0 focus:outline-none focus:border-transparent" value={countryCodeSearchText} onChange={(e) => setcountryCodeSearchText(e.target.value)} />
@@ -295,12 +297,12 @@ const Register = ({ setCurrentStep, setUserData, userData }) => {
                     <div>
                         <ButtonSubmit isLoading={isLoading} text='Sign Up' />
                     </div>
-                    <div className='flex justify-center items-center gap-6 md:px-6'>
+                    {/* <div className='flex justify-center items-center gap-6 md:px-6'>
                         <hr className='border border-[#B0B4C5] h-px basis-1/3' />
                         <p className='whitespace-nowrap text-[10px]'>Atau sign up dengan Google</p>
                         <hr className='border border-[#B0B4C5] h-px basis-1/3' />
-                    </div>
-                    <div className="">
+                    </div> */}
+                    {/* <div className="">
                         <div onClick={() => signIn('google', {
                             callbackUrl: "/dashboard"
                         })} className="px-4 py-3 flex items-center justify-center gap-2 rounded-md w-full text-primary bg-white border border-primary text-center hover:cursor-pointer">
@@ -309,7 +311,7 @@ const Register = ({ setCurrentStep, setUserData, userData }) => {
                             </div>
                             <p>Masuk dengan Google</p>
                         </div>
-                    </div>
+                    </div> */}
                 </div>
                 <p className="text-center text-sm">Sudah punya akun? <Link href={'/signin'} className='text-primary'>Masuk di sini</Link></p>
             </form>

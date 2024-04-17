@@ -19,7 +19,7 @@ const DetailGroup = ({ groupId, groupName, setcountContact, setgroupName }) => {
     const { push } = useRouter()
     const [isLoaded, setisLoaded] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
-    const mainCheckboxRef = useRef<HTMLInputElement>(null)
+    const mainCheckboxRef = useRef(null)
     const [currentGroupName, setcurrentGroupName] = useState(groupName)
     const groupCheckboxRef = useRef({})
     const [isChecked, setisChecked] = useState(false)
@@ -69,7 +69,7 @@ const DetailGroup = ({ groupId, groupName, setcountContact, setgroupName }) => {
                 contactIds: deletedContact
             })
 
-            if (result?.ok) {
+            if (result.status === 200) {
                 toast.success('Berhasil hapus member')
                 fetchGroupData()
                 setselectedMember(new Set([]))
@@ -88,7 +88,7 @@ const DetailGroup = ({ groupId, groupName, setcountContact, setgroupName }) => {
         })
 
         if (result) {
-            if (result.ok) {
+            if (result.status === 200) {
                 toast.success('Berhasil update group')
                 fetchGroupData()
             } else {
@@ -102,8 +102,8 @@ const DetailGroup = ({ groupId, groupName, setcountContact, setgroupName }) => {
         const result = await getGroup(session.user.token,groupId)
 
         if (result) {
-            const resultData = await result.json()
-            if (result.ok) {
+            const resultData = result.data
+            if (result.status === 200) {
                 setgroupData(resultData)
                 setcontactData(resultData.contactGroups.map(item => item.contact))
                 console.log(resultData.contactGroups)

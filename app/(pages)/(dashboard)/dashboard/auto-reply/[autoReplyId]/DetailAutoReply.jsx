@@ -86,7 +86,7 @@ const DetailAutoReply = ({ autoReplyId }) => {
             formData.append('response', textInput)
     
             const result = await updateAutoReplyStatus(session.user.token , autoReplyId , formData)
-            if (result?.ok) {
+            if (result.status === 200) {
                 toast.success('Berhasil ubah auto reply')
                 push('/dashboard/auto-reply')
             } else {
@@ -101,8 +101,8 @@ const DetailAutoReply = ({ autoReplyId }) => {
 
         const result = await getAutoReply(session.user.token, autoReplyId)
 
-        if (result?.ok) {
-            const resultData = await result.json()
+        if (result.status === 200) {
+            const resultData = result.data
             console.log(resultData)
             if (resultData.mediaPath) {
                 getFileFromUrl(resultData.mediaPath, setfiles)

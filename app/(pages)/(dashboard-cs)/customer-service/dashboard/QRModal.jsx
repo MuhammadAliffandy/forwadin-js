@@ -21,8 +21,8 @@ const QRModal = ({ openModal, setopenModal, session, socket, refresh }) => {
         })
 
         console.log(result?.status)
-        if (result && result.ok) {
-            const resultData = await result.json()
+        if (result && result.status === 200) {
+            const resultData = result.data
             setqrData(resultData.qr)
             setisLoaded(true)
         } else {

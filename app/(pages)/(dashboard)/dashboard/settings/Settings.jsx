@@ -9,7 +9,7 @@ import { Tab, Tabs } from "@nextui-org/react"
 import { useSession } from "next-auth/react"
 import dynamic from "next/dynamic"
 import { useSearchParams } from "next/navigation"
-import { userProfile } from "../../../../api/repository/userRepository"
+import { getUserProfile } from "@/app/api/repository/userRepository"
 const Account = dynamic(() => import('./Account'), { ssr: false, })
 const Settings = () => {
     const { data: session } = useSession()
@@ -38,10 +38,12 @@ const Settings = () => {
     })
     const fetchUser = async () => {
 
-        const result = await userProfile(session.user.id , session.user.id)
+        console.log(session.user.id)
 
-        if (result?.ok) {
-            const data = await result.json()
+        const result = await getUserProfile(session.user.token , session.user.id)
+
+        if (result.status === 200) {
+            const data = result.data
             setuserData(data)
         } else {
             toast.error('Failed to fetch user!')

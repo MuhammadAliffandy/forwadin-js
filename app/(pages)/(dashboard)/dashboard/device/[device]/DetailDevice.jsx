@@ -20,7 +20,7 @@ const DetailDevice = ({ device }) => {
         const result = await getDevice(session.user.token,device)
 
         if (result) {
-            const data = await result.json()
+            const data = result.data
             if (result.status === 200) {
                 document.title = data.name + "'s Detail"
                 setdeviceData(data)
@@ -46,7 +46,7 @@ const DetailDevice = ({ device }) => {
 
         const result = await generateAPIKEYDevice(session.user.token , deviceData.id)
 
-        if (result?.ok) {
+        if (result.status === 200) {
             toast.success('Berhasil generate API Key baru')
             fetchDetailDevice()
         } else {
@@ -58,7 +58,7 @@ const DetailDevice = ({ device }) => {
         const result = await deleteDevice(session.user.token, { deviceIds: [deviceData?.id] })
 
 
-        if (result?.ok) {
+        if (result.status === 200) {
             toast.success('Berhasil hapus device')
             const refresh = await signIn('refresh', {
                 redirect: false,

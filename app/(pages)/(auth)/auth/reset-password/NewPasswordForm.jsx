@@ -40,7 +40,7 @@ const NewPasswordForm = ({ setCurrentStep, token }) => {
                 // await signOut()
                 setCurrentStep('success')
             } else {
-                const body = await result.json()
+                const body = result.data
                 toast.error(body.message)
                 console.log(body)
                 setisLoading(false)

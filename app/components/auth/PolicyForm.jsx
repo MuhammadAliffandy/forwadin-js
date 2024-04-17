@@ -6,37 +6,44 @@ import { toast } from "react-toastify";
 const PolicyForm = ({ setCurrentStep, setUserData, userData }) => {
     const [isLoading, setisLoading] = useState(false)
     const [isChecked, setisChecked] = useState(false)
-    const checkboxRef = useRef<HTMLInputElement>(null)
-    const buttonRef = useRef<HTMLButtonElement>(null)
+    const checkboxRef = useRef(null)
+    const buttonRef = useRef(null)
 
     const handleClick = async () => {
         if (!isLoading) {
             setisLoading(true)
-            // TODO Perform backend
-            const result = await fetch('/api/auth/register', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(userData)
-            })
-            const message = await result.json()
-            if (result.ok) {
-                const login = await signIn('credentials', {
-                    identifier: userData.email,
-                    password: userData.password,
-                    redirect: false,
+            try {
+                // TODO Perform backend
+                const result = await fetch('/api/auth/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(userData)
                 })
-                if (!login?.error) {
-                    setCurrentStep('otp')
-                }
-                else
+        
+                console.log(result)
+
+                const message = result.data
+                if (result.status === 200) {
+                    const login = await signIn('credentials', {
+                        identifier: userData.email,
+                        password: userData.password,
+                        redirect: false,
+                    })
+                    if (!login?.error) {
+                        setCurrentStep('otp')
+                    }
+                    else
+                        toast.error(message.message)
+                } else {
                     toast.error(message.message)
-            } else {
-                toast.error(message.message)
-                console.log(result.status)
+                    console.log(result.status)
+                }
+                setisLoading(false)
+            } catch (error) {
+                console.log(error)
             }
-            setisLoading(false)
         }
     }
     const handleCheckbox = () => {

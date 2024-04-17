@@ -47,7 +47,7 @@ const GroupTable = ({ setcountGroup }) => {
   
             const result = await deleteGroup(session.user.token, { groupIds: deletedGroup })
 
-            if (result?.ok) {
+            if (result.status === 200) {
                 toast.success('Berhasil hapus grup')
                 fetchData()
                 setselectedGroup(new Set([]))
@@ -61,8 +61,8 @@ const GroupTable = ({ setcountGroup }) => {
 
         const result = await getAllGroups(session.user.token)
 
-        if (result?.ok) {
-            const resultData = await result.json()
+        if (result.status === 200) {
+            const resultData = result.data
 
             setgroupData(resultData)
             setcountGroup(resultData.length)

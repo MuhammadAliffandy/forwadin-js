@@ -27,8 +27,8 @@ const AutoReplyTable = ({ settotalAutoReply, user }) => {
 
         const result = await getAutoReplies(user.token)
 
-        if (result?.ok) {
-            const resultData = await result.json()
+        if (result.status === 200) {
+            const resultData = result.data
             setautoReplyData(resultData)
             settotalAutoReply(resultData.length)
         }
@@ -45,7 +45,7 @@ const AutoReplyTable = ({ settotalAutoReply, user }) => {
         })
 
         
-        if (result?.ok) {
+        if (result.status === 200) {
             console.log('sukses')
             const newArr = autoReplyData.map(item => {
                 if (item.id === id)
@@ -75,7 +75,7 @@ const AutoReplyTable = ({ settotalAutoReply, user }) => {
                 method: 'DELETE',
                 user: user
             })
-            if (result?.ok) {
+            if (result.status === 200) {
                 toast.success('Berhasil hapus auto reply')
                 fetchAutoReply()
                 setselectedAutoReply(new Set())

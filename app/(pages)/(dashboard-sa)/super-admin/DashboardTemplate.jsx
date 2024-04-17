@@ -6,7 +6,7 @@ import { Badge, Button, Dropdown, DropdownItem, DropdownMenu, DropdownSection, D
 import { useRouter } from "next/navigation";
 import Notification from "../../(dashboard)/dashboard/Notification";
 import { useSocket } from "../../../SocketProvider";
-import { userProfile } from "@/app/api/repository/userRepository";
+import { getUserProfile } from "@/app/api/repository/userRepository";
 const DashboardTemplate = ({ currentPage, children }) => {
     const { data: session } = useSession()
     const { socket, isConnected } = useSocket()
@@ -28,10 +28,10 @@ const DashboardTemplate = ({ currentPage, children }) => {
     }
     const fetchUserProfile = async () => {
 
-        const result = await userProfile(session.user.token,session.user.id)
+        const result = await getUserProfile(session.user.token,session.user.id)
 
-        if (result && result.ok) {
-            const body = await result.json()
+        if (result && result.status === 200) {
+            const body = result.data
             setuser(body)
         }
     }

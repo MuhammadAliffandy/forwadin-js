@@ -77,7 +77,7 @@ const EditBroadcast = ({ broadcastData }) => {
 
             const result = await updateBroadcast(session.user.token , broadcastData.id , formData)
 
-            if (result?.ok) {
+            if (result.status === 200) {
                 toast.success('Berhasil update broadcast')
                 router.push('/dashboard/broadcast/' + broadcastData.id)
             } else {

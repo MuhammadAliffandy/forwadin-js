@@ -15,7 +15,7 @@ const ResetSuccess = ({ userEmail, setCurrentStep }) => {
                 setisloading(false)
                 toast.success('Success send verification!')
             } else {
-                const body = await result.json()
+                const body = result.data
                 toast.error(body.message)
                 setisloading(false)
             }

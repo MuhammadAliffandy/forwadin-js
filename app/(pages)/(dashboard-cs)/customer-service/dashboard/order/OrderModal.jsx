@@ -21,9 +21,9 @@ const OrderModal = ({ data, openModal, session, setopenModal }) => {
 
         const result = await getOrderMessages(session.customerService.token)
 
-        if (result?.ok) {
+        if (result.status === 200) {
             console.log('ini get order message')
-            setorderMessage(await result.json())
+            setorderMessage(result.data)
         }
     }
     const handleSubmit = async () => {
@@ -37,7 +37,7 @@ const OrderModal = ({ data, openModal, session, setopenModal }) => {
         if (orderMessage) {
             // Update
             const result = await updateOrderMessages(session.customerService.token,orderMessage.id,body)
-            if (result?.ok) {
+            if (result.status === 200) {
                 toast.success('Berhasil ubah template order')
                 setopenModal(false)
             } else {
@@ -47,7 +47,7 @@ const OrderModal = ({ data, openModal, session, setopenModal }) => {
         }
 
         const result = await createOrderMessages(session.customerService.token,body)
-        if (result?.ok) {
+        if (result.status === 200) {
             toast.success('Berhasil buat template order')
             setopenModal(false)
         } else {

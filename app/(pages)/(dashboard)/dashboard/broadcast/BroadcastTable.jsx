@@ -43,7 +43,7 @@ const BroadcastTable = ({ settotalBroadcast, totalBroadcast, user }) => {
     
             const result = await deleteBroadcast(user.token , { broadcastIds: deletedBroadcast })
 
-            if (result?.ok) {
+            if (result.status === 200) {
                 toast.success('Berhasil hapus broadcast')
                 fetchBroadcast()
                 setselectedBroadcast(new Set([]))
@@ -57,7 +57,7 @@ const BroadcastTable = ({ settotalBroadcast, totalBroadcast, user }) => {
 
         const result = await updateBroadcastStatus(user.token, id , {status:status})
 
-        if (result?.ok) {
+        if (result.status === 200) {
             // toast.success('Ber')
             fetchBroadcast()
         }
@@ -65,8 +65,8 @@ const BroadcastTable = ({ settotalBroadcast, totalBroadcast, user }) => {
     const fetchBroadcast = async () => {
         const result = await getBroadcast(user.token)
 
-        if (result?.ok) {
-            const resultData = await result.json()
+        if (result.status === 200) {
+            const resultData = result.data
             console.log(resultData)
             setbroadcastData(resultData)
             settotalBroadcast(resultData.length)

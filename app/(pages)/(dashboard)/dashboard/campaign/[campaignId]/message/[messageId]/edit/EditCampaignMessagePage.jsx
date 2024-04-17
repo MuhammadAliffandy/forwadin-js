@@ -20,7 +20,7 @@ const EditCampaignMessagePage = ({ campaignId, messageId }) => {
 
         const messageResult = await getCampaignMessagesByMsgId(session.user.token, messageId)
 
-        if (campaignResult?.ok && messageResult?.ok) {
+        if (campaignresult.status === 200 && messageresult.status === 200) {
             const campaignResultData = await campaignResult.json()
             const messageResultData = await messageResult.json()
             setcampaignData(campaignResultData)

@@ -64,7 +64,7 @@ const EditCampaignMessage = ({ campaignData, messageData }) => {
     
             const result = await updateCampaignMessages(session.user.token , messageData.id , formData) 
 
-            if (result?.ok) {
+            if (result.status === 200) {
                 toast.success('Berhasil ubah campaign message!')
                 push('/dashboard/campaign/' + campaignData.id + '/message')
             } else {

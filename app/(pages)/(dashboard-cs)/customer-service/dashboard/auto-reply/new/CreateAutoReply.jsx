@@ -78,7 +78,7 @@ const CreateAutoReply = () => {
                 body: formData,
                 user: session?.customerService
             })
-            if (result?.ok) {
+            if (result.status === 200) {
                 toast.success('Berhasil buat auto reply')
                 push('/customer-service/dashboard/auto-reply')
             } else {

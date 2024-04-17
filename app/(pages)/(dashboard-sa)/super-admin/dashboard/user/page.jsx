@@ -8,6 +8,7 @@ import { useSession } from 'next-auth/react';
 import ActivatePlanModal from '@/app/components/dashboard/ActivatePlanModal';
 import { getUserSubscriptionById } from '@/app/api/repository/userRepository';
 import { getIncomeMessagesByQuery } from '@/app/api/repository/messageRepository';
+import { getUserProfile } from '@/app/api/repository/userRepository';
 import 'chart.js/auto';
 import UserTable from '@/app/components/super-admin/user/table'
 import AddModalUser from '@/app/components/super-admin/user/addModal'
@@ -58,10 +59,10 @@ const DashboardSuperAdminUser = () => {
     })
     const fetchProfile = async () => {
         
-        const result = await userProfile(session.user.token,session.user.id)
+        const result = await getUserProfile(session.user.token,session.user.id)
 
         if (result) {
-            const data = await result.json()
+            const data = result.data
             if (result.status === 200) {
                 setuserProfile(data)
                 setisLoaded(true)
@@ -74,8 +75,8 @@ const DashboardSuperAdminUser = () => {
     
         const result = await getUserSubscriptionById(session.user.token,session.user.id)
 
-        if (result && result.ok) {
-            const resultData = await result.json()
+        if (result && result.status === 200) {
+            const resultData = result.data
             setuserSubscription(resultData)
             const deviceProgress = (resultData.deviceUsed / resultData.deviceMax) * 100
             const contactProgress = (resultData.contactUsed / resultData.contactMax) * 100
@@ -118,8 +119,8 @@ const DashboardSuperAdminUser = () => {
 
         const result = await getIncomeMessagesByQuery(session.user.token,currentDevice.sessionId,`?pageSize=3`)
 
-        if (result?.ok) {
-            const resultData = await result.json()
+        if (result.status === 200) {
+            const resultData = result.data
             setlatestMessage(resultData.data)
             console.log(resultData)
         }

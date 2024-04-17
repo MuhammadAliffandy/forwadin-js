@@ -45,8 +45,8 @@ const DetailCampaignMessage = ({ campaignId, messageId }) => {
 
         const result = await getCampaignDetail(session.token.user , campaignId )
 
-        if (result?.ok) {
-            const resultData = await result.json()
+        if (result.status === 200) {
+            const resultData = result.data
             setcampaignData(resultData)
         }
     }
@@ -56,8 +56,8 @@ const DetailCampaignMessage = ({ campaignId, messageId }) => {
 
         const result = await getCampaignMessagesByMsgId(messageId)
 
-        if (result?.ok) {
-            const resultData = await result.json()
+        if (result.status === 200) {
+            const resultData = result.data
             setcampaignMessage(resultData)
             setisCampaignLoaded(true)
             console.log(resultData)

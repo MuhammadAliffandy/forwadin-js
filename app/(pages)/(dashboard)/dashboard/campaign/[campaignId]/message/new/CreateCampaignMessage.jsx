@@ -64,7 +64,7 @@ const CreateCampaignMessage = ({ campaignId }) => {
 
             const result = await createCampaignMessages(session.user.token,  formData)
 
-            if (result?.ok) {
+            if (result.status === 200) {
                 toast.success('Berhasil buat campaign message!')
                 push('/dashboard/campaign/' + campaignId + '/message')
             } else {
@@ -78,8 +78,8 @@ const CreateCampaignMessage = ({ campaignId }) => {
 
         const result = await getCampaignDetail(token, campaignId)
 
-        if (result?.ok) {
-            const resultData = await result.json()
+        if (result.status === 200) {
+            const resultData = result.data
             setcampaignData(resultData)
             console.log(resultData)
         }

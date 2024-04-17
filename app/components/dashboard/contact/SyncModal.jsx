@@ -28,14 +28,14 @@ const SyncModal = ({ openModal, setopenModal, user, refresh }) => {
                 body: JSON.stringify(body),
                 user: user
             })
-            if (result?.ok) {
+            if (result.status === 200) {
                 toast.success('Berhasil sync kontak')
                 refresh()
                 setopenModal(false)
             } else {
                 toast.error('Gagal sync kontak')
                 if (result) {
-                    console.log(await result.json())
+                    console.log(result.data)
                 }
             }
         }

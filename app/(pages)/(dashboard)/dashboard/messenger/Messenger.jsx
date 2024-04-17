@@ -39,17 +39,18 @@ const Messenger = () => {
 
         const result2 = await getContactsByDeviceId(session.user.token , currentDevice.id)
 
-        if (result?.ok && result2?.ok) {
-            const resultData= await result.json()
-            const result2Data= await result2.json()
+        if (result.status === 200) {
+            const resultData= result.data
+            const result2Data= await result2.data
+          
             const newArray = []
             const fetchPromises = [];
             const fetchMessage = async (element) => {
 
                 const response = await getConversationMessages(session.user.token , `${currentDevice?.sessionId}/?phoneNumber=${element}&pageSize=1&sort=asc`)
 
-                if (response?.ok) {
-                    const data = await response.json();
+                if (response.status === 200) {
+                    const data = response.data;
                     return data;
                 }
                 throw new Error(`Failed to fetch data for element ${element}`);
@@ -58,6 +59,7 @@ const Messenger = () => {
                 if (element.phone)
                     fetchPromises.push(async () => {
                         try {
+
                             const message = await fetchMessage(element.phone);
                             console.log(`Fetched message for phone ${element.phone}`, message);
                             if (message.data.length > 0) {
@@ -106,10 +108,10 @@ const Messenger = () => {
         console.log(`/messages/${currentDevice?.sessionId}/?phoneNumber=${currentMessenger?.phone}&page=${messageMetadata?.currentPage}&pageSize=${PAGINATION_BATCH}&sort=asc`)
         console.log('ini fetch chat')
 
-        const result = await getConversationMessages(session.user.token , `${currentDevice?.sessionId}/?phoneNumber=${element}&pageSize=1&sort=asc`)
+        const result = await getConversationMessages(session.user.token , `${currentDevice?.sessionId}/?phoneNumber=${currentMessenger?.phone}&page=${page}&pageSize=${PAGINATION_BATCH}&sort=asc`)
 
-        if (result && result.ok) {
-            const resultData = await result.json()
+        if (result && result.status === 200) {
+            const resultData = result.data
             console.log(resultData)
             setlistMessage(prev => [...prev, ...resultData.data])
             setmessageMetadata(resultData.metadata)
@@ -144,8 +146,8 @@ const Messenger = () => {
                         }
                     }
                     // console.log(result.body)
-                    if (result?.ok) {
-                        const resultData = await result.json()
+                    if (result.status === 200) {
+                        const resultData = result.data
                         console.log(resultData)
                         setinputFile([])
                         settextInput('')
@@ -180,7 +182,7 @@ const Messenger = () => {
                     ]),
                     user: session?.user
                 })
-                if (result && result.ok) {
+                if (result && result.status === 200) {
                     toast.success('Berhasil kirim pesan')
                     fetchChatMessage(1)
                     settextInput('')

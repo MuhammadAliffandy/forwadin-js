@@ -35,8 +35,8 @@ const CreateCSModal = ({ openModal, refresh, setopenModal, user }) => {
             url: '/devices',
             user: user
         })
-        if (result && result.ok) {
-            const body = await result.json()
+        if (result && result.status === 200) {
+            const body = result.data
             setdeviceList(body)
         } else {
             toast.error('Tidak dapat fetching data device')
@@ -59,7 +59,7 @@ const CreateCSModal = ({ openModal, refresh, setopenModal, user }) => {
             body: JSON.stringify(body),
             user: user
         })
-        if (result?.ok) {
+        if (result.status === 200) {
             toast.success('Berhasil tambah CS')
             refresh()
             setopenModal(false)

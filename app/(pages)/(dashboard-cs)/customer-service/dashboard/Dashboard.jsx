@@ -39,8 +39,8 @@ const Dashboard = () => {
             method: 'GET',
             user: session?.customerService
         })
-        if (result?.ok) {
-            const resultData = await result.json()
+        if (result.status === 200) {
+            const resultData = result.data
             setlatestMessage(resultData.data)
         }
     }
@@ -55,9 +55,9 @@ const Dashboard = () => {
             method: 'GET',
             user: session?.customerService
         })
-        if (result?.ok && incoming?.ok) {
+        if (result.status === 200 && incoming?.ok) {
             const incomingMessage = await incoming.json()
-            const orderData = await result.json()
+            const orderData = result.data
             console.log(orderData)
             const completedOrder = orderData.filter(order => order.status === 'completed')
             const pendingOrder = orderData.filter(order => order.status === 'pending')

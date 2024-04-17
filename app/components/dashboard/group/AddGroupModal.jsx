@@ -23,7 +23,7 @@ const AddGroupModal = (
             body: JSON.stringify({ name: formData.name }),
             user: session?.user
         })
-        if (result && result.ok) {
+        if (result && result.status === 200) {
             toast.success('Group berhasil ditambahkan')
             fetchData()
             setopenModal(false)

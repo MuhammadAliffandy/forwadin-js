@@ -78,8 +78,8 @@ const Payment = () => {
 
 		const result = await getPaymentSubscription(session.user.token)
 		if (result) {
-			const resultData = await result.json()
-			if (result.ok) {
+			const resultData = result.data
+			if (result.status === 200) {
 				console.log(resultData)
 				setplans(resultData.filter(item => item.name.toLowerCase() !== 'starter').map(item => {
 					item.monthlyPrice = parseInt(item.monthlyPrice )
@@ -104,8 +104,8 @@ const Payment = () => {
 		})
 
 		if (result) {
-			const resultData = await result.json()
-			if (result.ok) {
+			const resultData = result.data
+			if (result.status === 200) {
 				console.log(resultData)
 				window.location.assign(resultData.redirect_url)
 			} else {

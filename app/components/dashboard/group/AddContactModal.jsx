@@ -21,8 +21,8 @@ const AddContactModal = (
             method: 'GET',
             user: session?.user
         })
-        if (result && result.ok) {
-            const resultData= await result.json()
+        if (result && result.status === 200) {
+            const resultData= result.data
             setcontactData(resultData.filter(contact => !activeContactData.find(existContact => existContact.id === contact.id)))
         }
         setisLoaded(true)
@@ -40,7 +40,7 @@ const AddContactModal = (
             user: session?.user
         })
         const resultData = await result?.json()
-        if (result && result.ok) {
+        if (result && result.status === 200) {
             toast.success('Berhasil menambah member!')
             fetchGroupData()
             setopenModal(false)

@@ -39,14 +39,14 @@ const ImportContactModal = ({ openModal, setopenModal, user, refresh }) => {
                 isFormData: true,
                 user: user
             })
-            if (result?.ok) {
+            if (result.status === 200) {
                 toast.success('Berhasil import kontak')
                 refresh()
                 setopenModal(false)
             } else {
                 toast.error('Gagal import kontak')
                 if (result) {
-                    console.log(await result.json())
+                    console.log(result.data)
                 }
 
             }

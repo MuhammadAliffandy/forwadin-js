@@ -27,7 +27,7 @@ const Profile = ({ profileData, user, fetchUser }) => {
             username: data.username,
         })
 
-        if (result?.ok) {
+        if (result.status === 200) {
             toast.success('Berhasil update profile!')
 
         } else {

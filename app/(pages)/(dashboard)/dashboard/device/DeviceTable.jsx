@@ -56,7 +56,7 @@ const DeviceTable = ({ setcountDevice }) => {
         
 
         if (fetchDeviceData) {
-            const data= await fetchDeviceData.json()
+            const data = await fetchDeviceData.data
             if (fetchDeviceData.status === 200) {
                 setcountDevice(data.length)
                 setdeviceData(data)
@@ -76,7 +76,7 @@ const DeviceTable = ({ setcountDevice }) => {
                 method: 'DELETE',
                 user: session?.user
             })
-            if (result?.ok) {
+            if (result.status === 200) {
                 toast.success('Berhasil hapus device')
                 const refresh = await signIn('refresh', {
                     redirect: false,

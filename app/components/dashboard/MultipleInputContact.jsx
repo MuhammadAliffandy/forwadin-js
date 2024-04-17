@@ -4,7 +4,7 @@ import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react"
 const MultipleInputContact = (
     { contactList, setcontactList }
 ) => {
-    const contactInputRef = useRef<HTMLInputElement>(null)
+    const contactInputRef = useRef(null)
     const [searchContactList, setsearchContactList] = useState([])
 
     const [inputText, setinputText] = useState('')

@@ -3,15 +3,14 @@ import Message from '@/app/components/dashboard/Message'
 import Link from 'next/link'
 import dynamic from 'next/dynamic';
 import { useEffect, useState } from 'react';
-import { DeviceSession, IncomingMessage, SubscriptionTypes, UserProfile } from '@/app/utils/types';
-import { fetchClient } from '@/app/utils/helper/fetchClient';
 import { toast } from 'react-toastify';
 import { formatDateBahasa, getTodayDateBahasa } from '@/app/utils/helper';
 import { Button, Progress, Link as UILink } from '@nextui-org/react';
 import { useSession } from 'next-auth/react';
 import ActivatePlanModal from '@/app/components/dashboard/ActivatePlanModal';
-import { getUserSubscriptionById, userProfile } from '@/app/api/repository/userRepository';
+import { getUserSubscriptionById} from '@/app/api/repository/userRepository';
 import { getIncomeMessagesByQuery } from '@/app/api/repository/messageRepository';
+import { getUserProfile } from "@/app/api/repository/userRepository";
 const DynamicAnalytic = dynamic(() => import('@/app/components/dashboard/Analytic'), { ssr: false })
 const Dashboard = () => {
     const { data: session } = useSession()
@@ -39,10 +38,10 @@ const Dashboard = () => {
     })
     const fetchProfile = async () => {
         
-        const result = await userProfile(session.user.token,session.user.id)
+        const result = await getUserProfile(session.user.token,session.user.id)
 
         if (result) {
-            const data = await result.json()
+            const data = result.data
             if (result.status === 200) {
                 setuserProfile(data)
                 setisLoaded(true)
@@ -55,8 +54,8 @@ const Dashboard = () => {
     
         const result = await getUserSubscriptionById(session.user.token,session.user.id)
 
-        if (result && result.ok) {
-            const resultData = await result.json()
+        if (result && result.status == 200) {
+            const resultData = result.data
             setuserSubscription(resultData)
             const deviceProgress = (resultData.deviceUsed / resultData.deviceMax) * 100
             const contactProgress = (resultData.contactUsed / resultData.contactMax) * 100
@@ -99,13 +98,16 @@ const Dashboard = () => {
 
         const result = await getIncomeMessagesByQuery(session.user.token,currentDevice.sessionId,`?pageSize=3`)
 
-        if (result?.ok) {
-            const resultData = await result.json()
-            setlatestMessage(resultData.data)
-            console.log(resultData)
+        if (result.status == 200) {
+            const resultData = result.data
+            setlatestMessage(resultData)
+
         }
     }
+
     useEffect(() => {
+    
+
         if (session?.user?.token) {
             fetchProfile()
             fetchSubscription()
@@ -114,7 +116,9 @@ const Dashboard = () => {
     }, [session?.user?.token])
     useEffect(() => {
         if (currentDevice)
-            fetchLatestMessage()
+            console.log('test')
+            // fetchLatestMessage()
+
     }, [currentDevice])
     return (
         <>

@@ -23,8 +23,8 @@ const System = ({ user }) => {
     const [isChecked, setisChecked] = useState(false)
     const fetchDeviceLabel = async () => {
         const result = await getLabelsDevice(user.token)
-        if (result?.ok) {
-            const resultData = await result.json()
+        if (result.status === 200) {
+            const resultData = result.data
             setdeviceLabel(resultData)
         }
     }
@@ -33,8 +33,8 @@ const System = ({ user }) => {
     const fetchContactLabel = async () => {
     
         const result = await getAllContactsLabels(user.token)
-        if (result?.ok) {
-            const resultData = await result.json()
+        if (result.status === 200) {
+            const resultData = result.data
             setcontactLabel(resultData)
         }
     }
@@ -44,7 +44,7 @@ const System = ({ user }) => {
 
             const result = await deleteTemplates(user.token , { templateIds: deletedTemplate })
 
-            if (result?.ok) {
+            if (result.status === 200) {
                 toast.success('Berhasil hapus template')
                 fetchTemplate()
                 setselectedTemplate(new Set([]))
@@ -57,8 +57,8 @@ const System = ({ user }) => {
 
         const result = await getTemplates(user.token)
 
-        if (result?.ok) {
-            const resultData = await result.json()
+        if (result.status === 200) {
+            const resultData = result.data
             console.log('ini template')
             console.log(resultData)
             settemplateList(resultData)

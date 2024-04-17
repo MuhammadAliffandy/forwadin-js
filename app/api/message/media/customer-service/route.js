@@ -44,7 +44,7 @@ export const POST = async (request, response) => {
             const sendMessage = await sendImageMessages(session.customerService.token , sessionId , formdata )
             console.log(sendMessage.status)
             console.log(await sendMessage.text())
-            if (sendMessage.ok) {
+            if (sendMessage.status == 200) {
                 unlink(path)
                 return NextResponse.json({ message: 'success send data' }, { status: 200 })
             }
@@ -53,10 +53,10 @@ export const POST = async (request, response) => {
             }
         } else {
             formdata.set('document', file, path)
-            const sendMessage = await await sendImageMessages(session.customerService.token , sessionId , formdata )
+            const sendMessage = await sendImageMessages(session.customerService.token , sessionId , formdata )
             console.log(sendMessage.status)
             console.log(await sendMessage.text())
-            if (sendMessage.ok) {
+            if (sendMessage.status == 200) {
                 unlink(path)
                 return NextResponse.json({ message: 'success send data' }, { status: 200 })
             }

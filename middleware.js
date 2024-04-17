@@ -21,42 +21,42 @@ export default withAuth(
         console.log('isAuthenticated')
         console.log(isAuthenticated)
         if (isAuthenticated) {
-            const user = token.user 
-            const customerService = token.customerService 
-            if (adminPath.protectedUrl.some(path => pathName.startsWith(path)) && !user) {
-                if (customerService)
-                    return NextResponse.redirect(new URL('/customer-service/dashboard', req.url))
-                return NextResponse.redirect(new URL('/', req.url))
-            }
-            if (csPath.protectedUrl.some(path => pathName.startsWith(path)) && !customerService) {
-                if (user)
-                    return NextResponse.redirect(new URL('/dashboard', req.url))
-                return NextResponse.redirect(new URL('/', req.url))
-            }
-            if (user) {
-                if (signUrl.some(path => pathName.startsWith(path))) {
-                    return NextResponse.redirect(new URL("/dashboard", req.url))
-                }
-                if (adminPath.paidUrl.some(path => pathName.startsWith(path)) && user.subscription.name === 'starter') {
-                    return NextResponse.redirect(new URL('/dashboard', req.url))
-                }
-                if (!adminPath.subscriptionUrl.some(path => pathName.startsWith(path)) && user.subscription.status === 0) return NextResponse.redirect(new URL('/dashboard', req.url))
-                if (adminPath.requireDevice.some(path => pathName.startsWith('/dashboard' + path))
-                    && user.device.length === 0)
-                    return NextResponse.redirect(new URL('/customer-service/dashboard', req.url))
-                return NextResponse.next()
-            }
-            if (customerService) {
-                if (csPath.requiredDevice.some(path => pathName.startsWith('/customer-service/dashboard' + path))
-                    && !customerService.sessionId)
-                    return NextResponse.redirect(new URL('/dashboard/device', req.url))
-                return NextResponse.next()
-            }
+            const user = token.user
+            // const customerService = token.customerService 
+            // if (adminPath.protectedUrl.some(path => pathName.startsWith(path)) && !user) {
+            //     if (customerService)
+            //         return NextResponse.redirect(new URL('/customer-service/dashboard', req.url))
+            //     return NextResponse.redirect(new URL('/', req.url))
+            // }
+            // if (csPath.protectedUrl.some(path => pathName.startsWith(path)) && !customerService) {
+            //     if (user)
+            //         return NextResponse.redirect(new URL('/dashboard', req.url))
+            //     return NextResponse.redirect(new URL('/', req.url))
+            // }
+            // if (user) {
+            //     if (signUrl.some(path => pathName.startsWith(path))) {
+            //         return NextResponse.redirect(new URL("/dashboard", req.url))
+            //     }
+            //     if (adminPath.paidUrl.some(path => pathName.startsWith(path)) && user.subscription.name === 'starter') {
+            //         return NextResponse.redirect(new URL('/dashboard', req.url))
+            //     }
+            //     if (!adminPath.subscriptionUrl.some(path => pathName.startsWith(path)) && user.subscription.status === 0) return NextResponse.redirect(new URL('/dashboard', req.url))
+            //     if (adminPath.requireDevice.some(path => pathName.startsWith('/dashboard' + path))
+            //         && user.device.length === 0)
+            //         return NextResponse.redirect(new URL('/customer-service/dashboard', req.url))
+            //     return NextResponse.next()
+            // }
+            // if (customerService) {
+            //     if (csPath.requiredDevice.some(path => pathName.startsWith('/customer-service/dashboard' + path))
+            //         && !customerService.sessionId)
+            //         return NextResponse.redirect(new URL('/dashboard/device', req.url))
+            //     return NextResponse.next()
+            // }
         } else {
             if (adminPath.protectedUrl.some(path => pathName.startsWith(path)))
-                // return NextResponse.redirect(new URL('/signin?callbackUrl=' + encodeURIComponent(req.url), req.url))
+                return NextResponse.redirect(new URL('/signin?callbackUrl=' + encodeURIComponent(req.url), req.url))
             if (csPath.protectedUrl.some(path => pathName.startsWith(path)))
-                // return NextResponse.redirect(new URL('/customer-service/signin?callbackUrl=' + encodeURIComponent(req.url), req.url))
+                return NextResponse.redirect(new URL('/customer-service/signin?callbackUrl=' + encodeURIComponent(req.url), req.url))
             return NextResponse.next()
         }
     },

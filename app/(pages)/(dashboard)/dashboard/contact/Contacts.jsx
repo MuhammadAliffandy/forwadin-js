@@ -25,8 +25,8 @@ const Contacts = () => {
 
         const result = await getAllDevice(session.user.token)
 
-        if (result?.ok) {
-            const resultData = await result.json()
+        if (result.status === 200) {
+            const resultData = result.data
             const newArrDevice = resultData.map(device => {
                 return {
                     id: device.id,

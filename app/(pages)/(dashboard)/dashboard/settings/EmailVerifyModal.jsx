@@ -37,8 +37,8 @@ const EmailVerifyModal = ({ openModal, setopenModal, refresh }) => {
                 method: 'POST',
                 body: JSON.stringify({ token: otp })
             })
-            const body = await result.json()
-            if (result.ok) {
+            const body = result.data
+            if (result.status === 200) {
                 // Sukses TODO
                 toast.success('Berhasil verifikasi email')
                 refresh()
@@ -57,8 +57,8 @@ const EmailVerifyModal = ({ openModal, setopenModal, refresh }) => {
             const result = await fetch('/api/auth/otp', {
                 method: 'GET',
             })
-            const body = await result.json()
-            if (result.ok)
+            const body = result.data
+            if (result.status === 200)
                 toast.success('otp sent! please check your email')
             else
                 toast.error(body.message)

@@ -2,7 +2,7 @@ import { PROVIDER_DELETE, PROVIDER_GET, PROVIDER_PATCH, PROVIDER_POST, PROVIDER_
 
 const delay = () => new Promise(res => setTimeout(() => res(), 800))
 
-export const userProfile = async ( token , userId) => {
+export const getUserProfile = async ( token , userId) => {
     await delay()
     const response = await PROVIDER_GET(`users/${userId}`,token )
     return response;

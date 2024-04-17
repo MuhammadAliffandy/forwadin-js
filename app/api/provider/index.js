@@ -5,7 +5,6 @@ export const PROVIDER_GET = async (pathUrl, token) => {
     const headers = {
         'Content-Type': 'application/json',
         "Authorization": `Bearer ${token || ''}`,
-        'X-Forwadin-Key': ''
     }
 
     try {
@@ -13,6 +12,7 @@ export const PROVIDER_GET = async (pathUrl, token) => {
         
         switch (response.status) {
             case 200:
+                return response;
             case 201:
                 return response;
             case 403:
@@ -29,14 +29,16 @@ export const PROVIDER_POST = async (pathUrl, data , token) => {
     const headers = {
         'Content-Type': typeof data == 'object' ? 'application/json' : 'multipart/form-data',
         "Authorization": `Bearer ${token || ''}`,
-        'X-Forwadin-Key': ''
     }
 
     try {
-        const response = await axios.post(`${BASE_URL}/${pathUrl}`, data, { headers });
+        const response = await axios.post(`${BASE_URL}/${pathUrl}`, data, { headers } ,  {
+            responseType: 'json'
+        });
 
         switch (response.status) {
             case 200:
+                return response;
             case 201:
                 return response;
             default:
@@ -66,7 +68,6 @@ export const PROVIDER_DELETE = async (pathUrl , data , token ) => {
     const headers = {
         'Content-Type': 'application/json' ,
         "Authorization": `Bearer ${token || ''}`,
-        'X-Forwadin-Key': ''
     }
 
     try {
@@ -82,6 +83,7 @@ export const PROVIDER_DELETE = async (pathUrl , data , token ) => {
 
         switch (response.status) {
             case 200:
+                return response;
             case 201:
                 return response;
             default:
@@ -111,7 +113,6 @@ export const PROVIDER_PUT = async (pathUrl, data , token) => {
     const headers = {
         'Content-Type': typeof data == 'object' ? 'application/json' : 'multipart/form-data',
         "Authorization": `Bearer ${token || ''}`,
-        'X-Forwadin-Key': ''
     }
 
     try {
@@ -119,6 +120,7 @@ export const PROVIDER_PUT = async (pathUrl, data , token) => {
 
         switch (response.status) {
             case 200:
+                return response;
             case 201:
                 return response;
             default:
@@ -148,7 +150,6 @@ export const PROVIDER_PATCH = async (pathUrl, data , token) => {
     const headers = {
         'Content-Type': typeof data == 'object' ? 'application/json' : 'multipart/form-data',
         "Authorization": `Bearer ${token || ''}`,
-        'X-Forwadin-Key': ''
     }
 
     try {

@@ -21,7 +21,7 @@ const ActivatePlanModal = ({ user }) => {
                 user: session?.user
             })
             if (result) {
-                if (result.ok) {
+                if (result.status === 200) {
                     console.log('berhasil')
                     const refresh = await signIn('refresh', {
                         redirect: false,

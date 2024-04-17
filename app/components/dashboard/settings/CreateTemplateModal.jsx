@@ -27,7 +27,7 @@ const CreateTemplateModal = ({ refresh, openModal, setopenModal, user }) => {
       }),
       user: user
     })
-    if (result?.ok) {
+    if (result.status === 200) {
       refresh()
       toast.success('berhasil simpan template')
       setopenModal(false)

@@ -47,7 +47,7 @@ export const POST = async (request, response) => {
 
             console.log(sendMessage.status)
             console.log(await sendMessage.text())
-            if (sendMessage.ok) {
+            if (sendMessage.status == 200) {
                 unlink(path)
                 return NextResponse.json({ message: 'success send data' }, { status: 200 })
             }
@@ -59,7 +59,7 @@ export const POST = async (request, response) => {
             const sendMessage = await sendDocumentMessages(session.user.token , sessionId , formdata)
             console.log(sendMessage.status)
             console.log(await sendMessage.text())
-            if (sendMessage.ok) {
+            if (sendMessage.status == 200) {
                 unlink(path)
                 return NextResponse.json({ message: 'success send data' }, { status: 200 })
             }

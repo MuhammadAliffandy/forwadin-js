@@ -16,8 +16,8 @@ const EditBroadcastPage = ({ broadcastId }) => {
 
         const result = await getBroadcastDetail(session.user.token , broadcastId)
 
-        if (result?.ok) {
-            const resultData = await result.json()
+        if (result.status === 200) {
+            const resultData = result.data
             setbroadcastData(resultData)
             console.log(resultData)
         } else if (result?.status === 404) {

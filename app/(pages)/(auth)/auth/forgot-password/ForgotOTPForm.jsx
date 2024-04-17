@@ -8,7 +8,7 @@ import { forgotPasswordAuth } from "../../../../api/repository/authRepository";
 
 const ForgotOTPForm = ({ setCurrentStep, userData, setuserData }) => {
     const [isLoading, setisLoading] = useState(false)
-    const multipleInputRef = useRef<MultipleInputRef>({})
+    const multipleInputRef = useRef({})
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         const [fieldName, index] = name.split('_')
@@ -47,7 +47,7 @@ const ForgotOTPForm = ({ setCurrentStep, userData, setuserData }) => {
                 setisLoading(false)
                 setCurrentStep('reset')
             } else {
-                const body = await result.json()
+                const body = result.data
                 toast.error(body.message)
                 setisLoading(false)
             }

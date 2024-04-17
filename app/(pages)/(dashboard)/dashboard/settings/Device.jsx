@@ -29,20 +29,20 @@ const Device = ({ user }) => {
         Intl.DateTimeFormat().resolvedOptions().timeZone
     )
     const [text, settext] = useState('')
-    const [hoursMonday, sethoursMonday] = useState<SliderValue>([0, 1440])
-    const [hoursTuesday, sethoursTuesday] = useState<SliderValue>([0, 1440])
-    const [hoursThursday, sethoursThursday] = useState<SliderValue>([0, 1440])
-    const [hoursWednesday, sethoursWednesday] = useState<SliderValue>([0, 1440])
-    const [hoursFriday, sethoursFriday] = useState<SliderValue>([0, 1440])
-    const [hoursSaturday, sethoursSaturday] = useState<SliderValue>([0, 1440])
-    const [hoursSunday, sethoursSunday] = useState<SliderValue>([0, 1440])
+    const [hoursMonday, sethoursMonday] = useState([0, 1440])
+    const [hoursTuesday, sethoursTuesday] = useState([0, 1440])
+    const [hoursThursday, sethoursThursday] = useState([0, 1440])
+    const [hoursWednesday, sethoursWednesday] = useState([0, 1440])
+    const [hoursFriday, sethoursFriday] = useState([0, 1440])
+    const [hoursSaturday, sethoursSaturday] = useState([0, 1440])
+    const [hoursSunday, sethoursSunday] = useState([0, 1440])
     const [isBHEmpty, setisBHEmpty] = useState(true)
     const fetchListDevice = async () => {
 
         const result = await getAllDevice(user.token)
 
-        if (result?.ok) {
-            const resultData = await result.json()
+        if (result.status === 200) {
+            const resultData = result.data
             setlistDevice(resultData)
         }
     }
@@ -50,8 +50,8 @@ const Device = ({ user }) => {
 
         const result = getBusinessHours(user.token,currentDevice.id)
 
-        if (result?.ok) {
-            const resultData = await result.json()
+        if (result.status === 200) {
+            const resultData = result.data
             console.log('businesshours')
             console.log(resultData)
             if (!resultData) {
@@ -97,7 +97,7 @@ const Device = ({ user }) => {
  
             const result =await  createBusinessHours(user.token,body)
 
-            if (result?.ok) {
+            if (result.status === 200) {
                 toast.success('Berhasil set business hours')
             } else if (result?.status === 400) {
                 toast.error('Gagal set business hours')
@@ -106,7 +106,7 @@ const Device = ({ user }) => {
      
             const result = await updateBusinessHours(user.token, body)
 
-            if (result?.ok) {
+            if (result.status === 200) {
                 toast.success('Berhasil update business hours')
             } else if (result?.status === 400) {
                 toast.error('Gagal update business hours')
@@ -119,8 +119,8 @@ const Device = ({ user }) => {
 
         const result = await getProfileSession(user.token,currentDevice.id)
 
-        if (result?.ok) {
-            const resultData = await result.json()
+        if (result.status === 200) {
+            const resultData = result.data
             if (!resultData) return
             console.log(resultData)
             setprofileAddress((resultData.address ? resultData.address : '-'))
@@ -139,7 +139,7 @@ const Device = ({ user }) => {
             status: data.status
         })
 
-        if (result?.ok) {
+        if (result.status === 200) {
             toast.success('berhasil update profile device')
         } else {
             toast.error('gagal update profile device')

@@ -3,7 +3,6 @@ import React, { ChangeEvent, FormEvent, useEffect, useRef, useState } from "reac
 import { Dispatch, SetStateAction } from "react";
 import { toast } from "react-toastify";
 import ButtonSubmit from "../form/ButtonSubmit";
-import { MultipleInputRef } from "@/app/utils/types";
 import { BarLoader } from "react-spinners";
 
 const OTPForm = ({ setCurrentStep }) => {
@@ -20,7 +19,7 @@ const OTPForm = ({ setCurrentStep }) => {
                 multipleInputRef.current[`otp_${current + 1}`].focus()
             }
     }
-    const handleRefChange = (element) => {
+    const handleRefChange = (element , id) => {
         if (multipleInputRef.current && element) {
             multipleInputRef.current[`otp_${id}`] = element
         }
@@ -39,8 +38,8 @@ const OTPForm = ({ setCurrentStep }) => {
                 method: 'POST',
                 body: JSON.stringify({ token: otp })
             })
-            const body = await result.json()
-            if (result.ok) {
+            const body = result.data
+            if (result.status === 200) {
                 setCurrentStep('success')
             }
             else
@@ -56,8 +55,8 @@ const OTPForm = ({ setCurrentStep }) => {
             const result = await fetch('/api/auth/otp', {
                 method: 'GET',
             })
-            const body = await result.json()
-            if (result.ok)
+            const body = result.data
+            if (result.status === 200)
                 toast.success('otp sent! please check your email')
             else
                 toast.error(body.message)

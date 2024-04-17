@@ -5,12 +5,10 @@ import MessageList from '../../components/dashboard/MessageList'
 import ContactList from '@/app/components/dashboard/ContactList'
 import { signIn, signOut, useSession } from "next-auth/react";
 import { Badge, Button, Dropdown, DropdownItem, DropdownMenu, DropdownSection, DropdownTrigger, Popover, PopoverContent, PopoverTrigger } from "@nextui-org/react";
-import { ConversationMessage, IncomingMessage, OutgoingMessage, UserProfile } from "@/app/utils/types";
-import { fetchClient } from "@/app/utils/helper/fetchClient";
 import { useRouter } from "next/navigation";
 import Notification from "./dashboard/Notification";
 import { useSocket } from "../../SocketProvider";
-import { userProfile } from "@/app/api/repository/userRepository";
+import { getUserProfile } from "@/app/api/repository/userRepository";
 const DashboardTemplate = ({ currentPage, children }) => {
     const { data: session } = useSession()
     const { socket, isConnected } = useSocket()
@@ -32,16 +30,14 @@ const DashboardTemplate = ({ currentPage, children }) => {
     }
     const fetchUserProfile = async () => {
 
-        const result = await userProfile(session.user.token,session.user.id)
-
-        if (result && result.ok) {
-            const body = await result.json()
+        const result = await getUserProfile(session.user.token,session.user.id)
+        console.log(result)
+        if (result && result.status == 200) {
+            const body = await result.data
             setuser(body)
         }
     }
 
-
-    
     useEffect(() => {
         if (session?.user?.token) {
             fetchUserProfile()
@@ -124,7 +120,7 @@ const DashboardTemplate = ({ currentPage, children }) => {
                         <NavButton text='Campaign' href='/dashboard/campaign' currentPage={currentPage} isDisabled={isDisabled} />
                         <NavButton text='Auto Reply' href='/dashboard/auto-reply' currentPage={currentPage} isDisabled={isDisabled} />
                         <NavButton text="Customer Service" href="/dashboard/customer-service" currentPage={currentPage} isDisabled={isDisabled} />
-                        <NavButton text="Forwardin API" href="/dashboard/api-reference/" currentPage={currentPage} isDisabled={(session?.user?.subscription.name === 'Starter' ? true : false)} />
+                        <NavButton text="Forwardin API" href="/dashboard/api-reference/" currentPage={currentPage} isDisabled={(session?.user?.subscription?.name === 'Starter' ? true : false)} />
                         <p className='text-sm mt-2'>Others</p>
                         <NavButton text='Settings' href='/dashboard/settings' currentPage={currentPage} />
                     </div>

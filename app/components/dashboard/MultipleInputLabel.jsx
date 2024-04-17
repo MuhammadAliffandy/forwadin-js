@@ -61,7 +61,7 @@ const MultipleInputLabel = (
                 user: session?.user
             })
         }
-        if (result?.ok) {
+        if (result.ok) {
             const resultData= await result.json()
             console.log('fetch label')
             console.log(resultData)

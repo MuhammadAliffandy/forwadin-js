@@ -83,7 +83,7 @@ const DetailAutoReply = ({ autoReplyId }) => {
 
             const result = updateAutoReply(session.customerService.token ,autoReplyId , formData)
 
-            if (result?.ok) {
+            if (result.status === 200) {
                 toast.success('Berhasil ubah auto reply')
                 push('/customer-service/dashboard/auto-reply')
             } else {
@@ -100,8 +100,8 @@ const DetailAutoReply = ({ autoReplyId }) => {
         const result = await getAutoReply(
             session.customerService.token ,autoReplyId
         )
-        if (result?.ok) {
-            const resultData = await result.json()
+        if (result.status === 200) {
+            const resultData = result.data
             if (resultData.mediaPath) {
                 getFileFromUrl(resultData.mediaPath, setfiles)
             }
@@ -127,11 +127,11 @@ const DetailAutoReply = ({ autoReplyId }) => {
     //         method: 'GET',
     //         user: session.customerService
     //     })
-    //     if (result?.ok) {
-    //         setdeviceData(await result.json())
+    //     if (result.status === 200) {
+    //         setdeviceData(result.data)
     //     } else {
     //         if (result) {
-    //             const body = await result.json()
+    //             const body = result.data
     //             toast.error(body.message)
     //         }
     //     }
