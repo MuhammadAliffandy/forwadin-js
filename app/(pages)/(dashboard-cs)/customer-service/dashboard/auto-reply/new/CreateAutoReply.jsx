@@ -17,6 +17,7 @@ import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { toast } from "react-toastify"
+import { createAutoReply } from '@/app/api/repository/autoRepliesRepository'
 
 const CreateAutoReply = () => {
     const { push } = useRouter()
@@ -31,6 +32,7 @@ const CreateAutoReply = () => {
     const [receiverList, setreceiverList] = useState([])
     const [requestList, setrequestList] = useState([])
     const [textInput, settextInput] = useState('')
+    const [createAutoRplyMsg, setCreateAutoRplyMsg] = useState('')
     const handleTemplateClick = (id) => {
         const findContent = templateList.find(item => item.id === id)?.message
         if (findContent)
@@ -71,19 +73,20 @@ const CreateAutoReply = () => {
                 formData.append(`recipients[${idx}]`, element)
             })
             formData.append('response', textInput)
-            const result = await fetchClient({
-                url: '/auto-replies/',
-                method: 'POST',
-                isFormData: true,
-                body: formData,
-                user: session?.customerService
-            })
-            if (result.status === 200) {
-                toast.success('Berhasil buat auto reply')
-                push('/customer-service/dashboard/auto-reply')
-            } else {
+       
+            try {
+                const result = await createAutoReply(session.customerService.token,formData)
+
+                if (result.status === 201) {
+                    toast.success('Berhasil buat auto reply')
+                    push('/customer-service/dashboard/auto-reply')
+                }
+                else {
+                    toast.error('Gagal buat auto reply')
+                }
+
+            } catch (error) {
                 toast.error('Gagal buat auto reply')
-                console.log(await result?.json())
             }
         }
         setisLoading(false)

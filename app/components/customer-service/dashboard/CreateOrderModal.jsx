@@ -7,6 +7,7 @@ import { Button } from "@nextui-org/react"
 import { CustomerService } from "next-auth"
 import { Dispatch, SetStateAction, useEffect, useState } from "react"
 import { toast } from "react-toastify"
+import { createOrders } from '@/app/api/repository/orderRepository'
 
 const CreateOrderModal = ({ customerService, openModal, setopenModal, contact }) => {
     const [isLoading, setIsLoading] = useState(false)
@@ -18,17 +19,14 @@ const CreateOrderModal = ({ customerService, openModal, setopenModal, contact })
             setIsLoading(false)
             return
         }
-        const result = await fetchClient({
-            url: '/orders',
-            method: 'POST',
-            body: JSON.stringify({
-                name: (contact?.firstName + ' ' + (contact?.lastName || '')),
-                phone: contact.phone,
-                orderData: text
-            }),
-            user: customerService
-        })
-        const resultData = await result?.json()
+
+        const result = await createOrders(customerService.token, {
+            name: (contact?.firstName + ' ' + (contact?.lastName || '')),
+            phone: contact.phone,
+            orderData: text
+        } )
+
+        const resultData = await result.data
         if (result.status === 200) {
             toast.success('Berhasil buat order')
             setopenModal(false)

@@ -13,8 +13,9 @@ import ListChats from './ListChats'
 import Chat from "@/app/(pages)/(dashboard)/dashboard/messenger/Chat"
 import ProfileDetail from "@/app/(pages)/(dashboard)/dashboard/messenger/ProfileDetail"
 import CreateOrderModal from "@/app/components/customer-service/dashboard/CreateOrderModal"
-import { getConversationMessages, getListMessenger, sendMessages } from '../../../../../api/repository/messageRepository'
-import { getContactsByDeviceId } from "../../../../../api/repository/contactRepository";
+import { getConversationMessages, getListMessenger2, sendMessages } from '@/app/api/repository/messageRepository'
+import { getContactsByDeviceId } from "@/app/api/repository/contactRepository";
+import { getOrderMessages } from "@/app/api/repository/orderRepository";
 const Messenger = () => {
     const searchParams = useSearchParams()
     const { data: session } = useSession()
@@ -50,7 +51,7 @@ const Messenger = () => {
     const [orderMessage, setorderMessage] = useState()
     const fetchlistMessenger = async () => {
 
-        const result = await getListMessenger(session.customerService.token , session.customerService.sessionId)
+        const result = await getListMessenger2(session.customerService.token , session.customerService.sessionId)
 
         const result2 = await getContactsByDeviceId(session.customerService.token ,session.customerService.deviceId )
         
@@ -62,8 +63,8 @@ const Messenger = () => {
             const fetchMessage = async (element) => {
                 const response = await getConversationMessages(session.customerService.token , `${session?.customerService?.sessionId}/?phoneNumber=${element}&pageSize=1&sort=asc`)
 
-                if (response?.ok) {
-                    const data = await response.json();
+                if (response.status === 200) {
+                    const data = await response.data;
                     return data;
                 }
                 throw new Error(`Failed to fetch data for element ${element}`);
@@ -125,11 +126,9 @@ const Messenger = () => {
 
     }
     const fetchTemplate = async () => {
-        const result = await fetchClient({
-            url: '/orders/messages',
-            method: 'GET',
-            user: session?.customerService
-        })
+
+        const result = await getOrderMessages(session.customerService.token)
+
         if (result.status === 200) {
             setorderMessage(result.data)
         }
@@ -174,7 +173,7 @@ const Messenger = () => {
                             window.location = window.location
                         }
                     }
-                    if (result.status === 200) {
+                    if (result?.ok) {
                         const resultData = result.data
                         // console.log(resultData)
                         setinputFile([])

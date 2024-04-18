@@ -93,17 +93,19 @@ const ContactTable = ({ setcontactCount, currentDevice, user }) => {
             deletedContact = Array.from(selectedKeys)
         }
         if (deletedContact) {
-
-            const result = await deleteContacts(user.token,{ contactIds: deletedContact } )
-
-            if (result.status === 200) {
+            const result = await fetchClient({
+                url: '/contacts/',
+                body: JSON.stringify({ contactIds: deletedContact }),
+                method: 'DELETE',
+                user: user
+            })
+            if (result?.ok) {
                 toast.success('Berhasil hapus contact')
                 fetchData()
                 setSelectedKeys(new Set([]))
             } else {
                 toast.error('Gagal hapus contact')
             }
-            deletedContact = null
         }
     }
     useEffect(() => {

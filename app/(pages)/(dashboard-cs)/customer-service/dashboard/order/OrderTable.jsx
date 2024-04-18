@@ -10,6 +10,7 @@ import OrderModal from './OrderModal';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Result } from 'postcss';
+import { getAllOrders } from '@/app/api/repository/orderRepository'
 
 const OrderTable = ({ setcountOrder }) => {
     const { data: session } = useSession()
@@ -20,13 +21,11 @@ const OrderTable = ({ setcountOrder }) => {
     const [searchedOrder, setsearchedOrder] = useState([])
     const [isChecked, setisChecked] = useState(false)
     const fetchData = async () => {
-        const fetchOrder = await fetchClient({
-            method: 'GET',
-            url: '/orders',
-            user: session?.customerService
-        })
+
+        const fetchOrder = await getAllOrders(session.customerService.token)
+
         if (fetchOrder) {
-            const data = await fetchOrder.json()
+            const data = await fetchOrder.data
             if (fetchOrder.status === 200) {
                 setcountOrder(data.length)
                 setorderData(data)
@@ -53,7 +52,7 @@ const OrderTable = ({ setcountOrder }) => {
                 user: session?.customerService
             })
             const body = await result?.json()
-            if (result.status === 200) {
+            if (result.ok) {
                 fetchData()
                 toast.success('Berhasil update order')
 
@@ -72,7 +71,7 @@ const OrderTable = ({ setcountOrder }) => {
                 user: session?.customerService
             })
             const body = await result?.json()
-            if (result.status === 200) {
+            if (result.ok) {
                 fetchData()
                 toast.success('Berhasil update order')
 

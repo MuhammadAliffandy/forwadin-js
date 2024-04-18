@@ -6,6 +6,8 @@ import { useSession } from 'next-auth/react'
 import { Button, Skeleton } from '@nextui-org/react'
 import { fetchClient } from '@/app/utils/helper/fetchClient'
 import { toast } from 'react-toastify'
+import { addMemberGroup } from '@/app/api/repository/groupRepository'
+import { getAllContacts } from '@/app/api/repository/contactRepository'
 const AddContactModal = (
     { openModal, setopenModal, fetchGroupData, groupId, activeContactData }
 ) => {
@@ -16,13 +18,10 @@ const AddContactModal = (
     const [isLoaded, setisLoaded] = useState(false)
     const fetchContactData = async () => {
 
-        const result = await fetchClient({
-            url: '/contacts',
-            method: 'GET',
-            user: session?.user
-        })
+        const result = await getAllContacts(session.user.token)
+
         if (result && result.status === 200) {
-            const resultData= result.data
+            const resultData = result.data
             setcontactData(resultData.filter(contact => !activeContactData.find(existContact => existContact.id === contact.id)))
         }
         setisLoaded(true)
@@ -30,16 +29,11 @@ const AddContactModal = (
     const handleAddContact = async () => {
         setisLoading(true)
         // console.log(contactData)
-        const result = await fetchClient({
-            url: '/groups/add',
-            method: 'POST',
-            body: JSON.stringify({
-                groupId: groupId,
-                contactIds: contactData.filter(item => item.active).map(item => item.id)
-            }),
-            user: session?.user
-        })
-        const resultData = await result?.json()
+        const result = await addMemberGroup(session.user.token,{
+            groupId: groupId,
+            contactIds: contactData.filter(item => item.active).map(item => item.id)
+        } )
+        const resultData = await result.data
         if (result && result.status === 201) {
             toast.success('Berhasil menambah member!')
             fetchGroupData()

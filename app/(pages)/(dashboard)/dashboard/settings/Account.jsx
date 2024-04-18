@@ -83,9 +83,12 @@ const Account = ({ user, userProfile }) => {
     }
     const handleDeleteAccount = async () => {
 
-        const result = await deleteUser(user.token,user.id)
-
-        if (result.status === 200) {
+        const result = await fetchClient({
+            url: '/users/' + user?.id + '/delete',
+            method: 'DELETE',
+            user: user
+        })
+        if (result?.ok) {
             await signOut()
             router.push('/')
         } else {
@@ -119,7 +122,7 @@ const Account = ({ user, userProfile }) => {
         const formattedPhone = formatPhoneCode(data.phone, currentCountryCode.dial_code)
         if (formattedPhone === userProfile.phone) return
  
-        const result = changePhoneNumberUser(user.token,user.id , { phoneNumber: formattedPhone })
+        const result = await changePhoneNumberUser(user.token,user.id , { phoneNumber: formattedPhone })
 
         if (result.status === 200) {
             toast.success('Berhasil ubah nomor')

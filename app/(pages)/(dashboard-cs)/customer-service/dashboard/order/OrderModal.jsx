@@ -8,7 +8,7 @@ import { Button } from '@nextui-org/react'
 import { Session } from 'next-auth'
 import React, { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
-import { createOrderMessages, getOrderMessages, updateOrderMessages } from '../../../../../api/repository/orderRepository'
+import { createOrderMessages, getOrderMessages, updateOrderMessages } from '@/app/api/repository/orderRepository'
 
 const OrderModal = ({ data, openModal, session, setopenModal }) => {
     const [orderTemplate, setorderTemplate] = useState('')

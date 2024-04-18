@@ -9,7 +9,7 @@ import { fetchClient } from '@/app/utils/helper/fetchClient';
 import { toast } from 'react-toastify';
 import { useSession } from 'next-auth/react';
 import { formatDate } from '@/app/utils/helper';
-import { deleteGroup, getAllGroups } from '../../../../api/repository/groupRepository';
+import { deleteGroup, getAllGroups } from '@/app/api/repository/groupRepository';
 
 const GroupTable = ({ setcountGroup }) => {
     const { data: session } = useSession()
@@ -45,9 +45,13 @@ const GroupTable = ({ setcountGroup }) => {
         const isConfirm = window.confirm('Anda yakin ingin menghapus ' + deletedGroup?.length + ' grup?')
         if (deletedGroup && isConfirm) {
   
-            const result = await deleteGroup(session.user.token, { groupIds: deletedGroup })
-
-            if (result.status === 200) {
+            const result = await fetchClient({
+                url: '/groups/',
+                body: JSON.stringify({ groupIds: deletedGroup }),
+                method: 'DELETE',
+                user: session?.user
+            })
+            if (result?.ok) {
                 toast.success('Berhasil hapus grup')
                 fetchData()
                 setselectedGroup(new Set([]))
@@ -59,7 +63,7 @@ const GroupTable = ({ setcountGroup }) => {
     }
     const fetchData = async () => {
 
-        const result = await getAllGroups(session.user.token)
+        const result = await getAllGroups(session?.user.token)
 
         if (result.status === 200) {
             const resultData = result.data
