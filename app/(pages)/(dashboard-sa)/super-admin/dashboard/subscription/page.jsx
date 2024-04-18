@@ -9,7 +9,7 @@ import ActivatePlanModal from '@/app/components/dashboard/ActivatePlanModal';
 import { getUserSubscriptionById } from '@/app/api/repository/userRepository';
 import { getIncomeMessagesByQuery } from '@/app/api/repository/messageRepository';
 import 'chart.js/auto';
-import SubscriptionTable from '@/app/components/super-admin/subscription/table'
+import SubscriptionTable from './subsctriptionTable'
 import AddModalSubscription from '../../../../../components/super-admin/subscription/addModal';
 import EditModalSubscription from '../../../../../components/super-admin/subscription/editModal';
 import Pricing from '@/app/components/dashboard/Pricing';
@@ -138,20 +138,23 @@ const DashboardSuperAdminSubscription = () => {
             fetchLatestMessage()
     }, [currentDevice])
     return (
-        <>
-            <div className='flex gap-4 mt-8 flex-col xl:flex-row '>
-                <div className='bg-white rounded-md px-4 lg:px-8 pt-8 pb-12 grow flex flex-col justify-between gap-[20px] relative'>
-                    <div className='flex justify-between'>
-                        <input placeholder='Cari User' className='px-[20px] rounded-[6px] py-[12px] border-[1px] border-customNeutral' />
-                        <button onClick={()=>{setAddModal(!addModal)}} className='text-[16px] bg-primary text-white rounded-[6px] px-[20px] py-[12px]'>Tambah Subscription</button>
-                    </div>
-                    <SubscriptionTable
-                        setTotalSubscription={setSubscriptionCount}
-                        totalSubscription={subscriptionCount}
-                        user={session?.superAdmin}
-                    />
-                </div>  
+        <>  
+            <div className='flex flex-col-reverse lg:flex-row lg:justify-between items-center '>
+                <div>
+                    <p className='font-lexend text-2xl font-bold'>Subscription</p>
+                </div>
             </div>
+            <SubscriptionTable
+                setTotalSubscription={setSubscriptionCount}
+                totalSubscription={subscriptionCount}
+                user={session?.superAdmin}
+                onEdit = {(value)=>{
+                    setEditModal(!editModal)
+                }}
+                onAdd = {()=>{
+                    setAddModal(!addModal)
+                }}
+            />
             <div>
                 <p className='font-lexend mt-8   text-2xl font-bold'>Preview</p>
             </div>

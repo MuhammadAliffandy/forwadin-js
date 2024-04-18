@@ -8,7 +8,7 @@ import { toast } from 'react-toastify';
 import { formatDate } from '@/app/utils/helper';
 import { getBroadcast , deleteBroadcast , updateBroadcastStatus } from '@/app/api/repository/broadcastRepository';
 
-const SubscriptionTable = ({ setTotalUser, totalUser, user }) => {
+const SubscriptionTable = ({ setTotalSubscription, totalSubscription, user , onEdit , onAdd }) => {
     const { push } = useRouter()
     const [isChecked, setisChecked] = useState(false)
     const [isLoaded, setisLoaded] = useState(false)
@@ -29,7 +29,7 @@ const SubscriptionTable = ({ setTotalUser, totalUser, user }) => {
     const handleSearch = (e) => {
         setsearchText(e.target.value)
     }
-    const handleDeleteBroadcast = async () => {
+    const handleDelete = async () => {
         // tambah konfirmasi delete
         let deletedBroadcast = null
         if (selectedBroadcast === 'all') {
@@ -73,7 +73,7 @@ const SubscriptionTable = ({ setTotalUser, totalUser, user }) => {
             const resultData = result.data
             console.log(resultData)
             setbroadcastData(resultData)
-            setTotalUser(resultData.length)
+            setTotalSubscription(resultData.length)
             setisLoaded(true)
         } else {
             toast.error(result?.statusText)
@@ -108,12 +108,14 @@ const SubscriptionTable = ({ setTotalUser, totalUser, user }) => {
                     </div>
                     <div className='flex lg:justify-end justify-between gap-2 w-full max-w-xs'>
                         {isChecked ? (
-                            <Button color='danger' onClick={handleDeleteBroadcast} className="bg-danger rounded-md w-full lg:w-auto px-8 text-white text-center items-center flex hover:cursor-pointer justify-center p-2">
+                            <Button color='danger' onClick={handleDelete} className="bg-danger rounded-md w-full lg:w-auto px-8 text-white text-center items-center flex hover:cursor-pointer justify-center p-2">
                                 Hapus
                             </Button>
                         ) : (
-                            <Button className='rounded-md text-sm' color='primary' as={Link} href='/dashboard/broadcast/new'>
-                                Buat Broadcast Baru
+                            <Button  onClick = {
+                                onAdd
+                            } className='rounded-md text-sm' color='primary'>
+                                Tambah Subscription
                             </Button>
                         )}
                     </div>
@@ -139,13 +141,11 @@ const SubscriptionTable = ({ setTotalUser, totalUser, user }) => {
                         onSelectionChange={setselectedBroadcast}
                     >
                         <TableHeader>
-                            <TableColumn>FirstName</TableColumn>
-                            <TableColumn>LastName</TableColumn>
-                            <TableColumn>Phone</TableColumn>
-                            <TableColumn>Email</TableColumn>
-                            <TableColumn>Paid</TableColumn>
-                            <TableColumn>Subscription</TableColumn>
-                            <TableColumn>Terakhir Update</TableColumn>
+                            <TableColumn>Name</TableColumn>
+                            <TableColumn>Monthly Price</TableColumn>
+                            <TableColumn>Yearly Discount</TableColumn>
+                            <TableColumn>Yearly Price</TableColumn>
+                            <TableColumn>Available</TableColumn>
                             <TableColumn>Dibuat Pada</TableColumn>
                             <TableColumn>Edit</TableColumn>
                         </TableHeader>
@@ -166,17 +166,12 @@ const SubscriptionTable = ({ setTotalUser, totalUser, user }) => {
                                     <TableCell>
                                         <Switch size='sm' isSelected={item.status} onClick={() => handleToggleBroadcast(item.id, !item.status)} />
                                     </TableCell>
-                                    <TableCell>
-                                        {item.device.name}
-                                    </TableCell>
-                                    <TableCell>
-                                        <p className={`text-[10px] text-center text-white w-auto px-[12px] py-[4px] ${ 'bg-primary'} rounded-[30px]`} >subscription</p>  {/* data.subscription == 'Unlimited' ? 'bg-black ' : */}
-                                    </TableCell>
+    
                                     <TableCell>
                                         {formatDate(item.updatedAt)}
                                     </TableCell>
                                     <TableCell>
-                                        <Button variant='bordered' onClick={() => push('/dashboard/broadcast/' + item.id)}>
+                                        <Button variant='bordered' onClick={() => {onEdit(item)}}>
                                             Edit
                                         </Button>
                                     </TableCell>

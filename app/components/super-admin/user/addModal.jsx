@@ -15,7 +15,7 @@ const AddModalUser = (props) => {
                 withClose = {true}
                 open = {props.open}
                 onCloseButton = {props.onCloseButton}
-                width={'w-[25%]'}
+                width={'w-[30%]'}
             >
                 <div className="w-[100%] flex flex-col gap-[20px]">
                     <p className='font-bold text-[24px]'>Add User</p>
@@ -42,12 +42,6 @@ const AddModalUser = (props) => {
                             Email
                         </label>
                         <input placeholder="Email" className='px-[20px] rounded-[6px] py-[12px] border-[1px] border-customNeutral' />
-                    </div>
-                    <div className="flex flex-col gap-[10px]">
-                        <label className="text-black font-bold">
-                            Google ID
-                        </label>
-                        <input placeholder="-" className='px-[20px] rounded-[6px] py-[12px] border-[1px] border-customNeutral' />
                     </div>
                     <div className="flex flex-col gap-[10px]">
                         <label className="text-black font-bold">

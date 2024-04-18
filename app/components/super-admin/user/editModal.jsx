@@ -15,10 +15,10 @@ const EditModalUser = (props) => {
                 withClose = {true}
                 open = {props.open}
                 onCloseButton = {props.onCloseButton}
-                width={'w-[25%]'}
+                width={'w-[30%]'}
             >
                 <div className="w-[100%] h-[80vh] flex flex-col gap-[20px] overflow-y-scroll pb-[10px] overflow-x-hidden scrollbar scrollbar-w-[8px] scrollbar-track-transparent scrollbar-thumb-gray-300 scrollbar-thumb-rounded-full">
-                    <p className='font-bold text-[24px]'>Edit Subscription</p>
+                    <p className='font-bold text-[24px]'>Edit User</p>
                     <div className="flex flex-col gap-[10px]">
                         <label className="text-black font-bold">
                             First Name
@@ -42,12 +42,6 @@ const EditModalUser = (props) => {
                             Email
                         </label>
                         <input placeholder="Email" className='px-[20px] rounded-[6px] py-[12px] border-[1px] border-customNeutral' />
-                    </div>
-                    <div className="flex flex-col gap-[10px]">
-                        <label className="text-black font-bold">
-                            Google ID
-                        </label>
-                        <input placeholder="-" className='px-[20px] rounded-[6px] py-[12px] border-[1px] border-customNeutral' />
                     </div>
                     <div className="flex flex-col gap-[10px]">
                         <label className="text-black font-bold">

@@ -155,7 +155,7 @@ const Pricing = (props) => {
                                         )}
                                     </>
                                 )}
-                                <div id={'plan_' + i} className={( props.isSuperAdmin ? 'bg-black' :  data.isFavorite ? 'bg-[#FFB020] border-[#FFB020]' : 'bg-primary border-primary') + ' border rounded-md px-6 py-2 text-center whitespace-nowrap text-white w-full block mt-2 hover:cursor-pointer'} onClick={() => {
+                                <div id={'plan_' + i} className={( props.isSuperAdmin ? 'bg-primary' :  data.isFavorite ? 'bg-[#FFB020] border-[#FFB020]' : 'bg-primary border-primary') + ' border rounded-md px-6 py-2 text-center whitespace-nowrap text-white w-full block mt-2 hover:cursor-pointer'} onClick={() => {
                                     if (data.isStarter)
                                         router.push('/signup')
                                     else

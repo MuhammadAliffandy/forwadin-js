@@ -32,6 +32,8 @@ const DashboardSuperAdminUser = () => {
     const [isLoaded, setisLoaded] = useState(false)
     const [isChecked, setisChecked] = useState(false)
     const [userCount, setUserCount] = useState(0)
+    const [addModal  , setAddModal] = useState(false)
+    const [editModal  , setEditModal] = useState(false)
     // 
 
     const [userProfile, setuserProfile] = useState({
@@ -136,23 +138,31 @@ const DashboardSuperAdminUser = () => {
     // }, [currentDevice])
     return (
         <>
-            <div className='flex gap-4 mt-8 flex-col xl:flex-row '>
-                <div className='bg-white rounded-md px-4 pb-12 grow flex flex-col justify-between gap-[20px] relative'>
-                    <UserTable
-                        setTotalUser={setUserCount}
-                        totalUser={userCount}
-                        user={session?.superAdmin}
-                    />
-                </div>  
+            <div className='flex flex-col-reverse lg:flex-row lg:justify-between items-center '>
+                <div>
+                    <p className='font-lexend text-2xl font-bold'>User</p>
+                </div>
             </div>
-            {/* <AddModalUser
+            <UserTable
+                setTotalUser={setUserCount}
+                totalUser={userCount}
+                user={session?.superAdmin}
+                onEdit = {(value)=>{
+                    setEditModal(!editModal)
+                }}
+                onAdd = {()=>{
+                    setAddModal(!addModal)
+                }}
+            />
+            <AddModalUser
                 open = {addModal}
                 onCloseButton = {()=>{setAddModal(false)}}
             />
+            
             <EditModalUser
                 open = {editModal}
                 onCloseButton = {()=>{setEditModal(false)}}
-            /> */}
+            />
         </>
     )
 }

@@ -15,7 +15,7 @@ const AddModalSubscription = (props) => {
                 withClose = {true}
                 open = {props.open}
                 onCloseButton = {props.onCloseButton}
-                width={'w-[25%]'}
+                width={'w-[30%]'}
             >
                 <div className="w-[100%] flex flex-col gap-[20px]">
                     <p className='font-bold text-[24px]'>Add Subscription</p>

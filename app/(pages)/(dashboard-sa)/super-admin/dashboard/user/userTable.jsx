@@ -8,7 +8,7 @@ import { toast } from 'react-toastify';
 import { formatDate } from '@/app/utils/helper';
 import { getBroadcast , deleteBroadcast , updateBroadcastStatus } from '@/app/api/repository/broadcastRepository';
 
-const UserTable = ({ setTotalUser, totalUser, user }) => {
+const UserTable = ({ setTotalUser, totalUser, user , onEdit , onAdd}) => {
     const { push } = useRouter()
     const [isChecked, setisChecked] = useState(false)
     const [isLoaded, setisLoaded] = useState(false)
@@ -112,7 +112,7 @@ const UserTable = ({ setTotalUser, totalUser, user }) => {
                                 Hapus
                             </Button>
                         ) : (
-                            <Button className='rounded-md text-sm' color='primary' as={Link} href='/dashboard/broadcast/new'>
+                            <Button onClick={onAdd} className='rounded-md text-sm' color='primary' >
                                 Tambah User
                             </Button>
                         )}
@@ -145,7 +145,6 @@ const UserTable = ({ setTotalUser, totalUser, user }) => {
                             <TableColumn>Email</TableColumn>
                             <TableColumn>Paid</TableColumn>
                             <TableColumn>Subscription</TableColumn>
-                            <TableColumn>Terakhir Update</TableColumn>
                             <TableColumn>Dibuat Pada</TableColumn>
                             <TableColumn>Edit</TableColumn>
                         </TableHeader>
@@ -167,16 +166,15 @@ const UserTable = ({ setTotalUser, totalUser, user }) => {
                                         <Switch size='sm' isSelected={item.status} onClick={() => handleToggleBroadcast(item.id, !item.status)} />
                                     </TableCell>
                                     <TableCell>
-                                        {item.device.name}
-                                    </TableCell>
-                                    <TableCell>
                                         <p className={`text-[10px] text-center text-white w-auto px-[12px] py-[4px] ${ 'bg-primary'} rounded-[30px]`} >subscription</p>  {/* data.subscription == 'Unlimited' ? 'bg-black ' : */}
                                     </TableCell>
                                     <TableCell>
                                         {formatDate(item.updatedAt)}
                                     </TableCell>
                                     <TableCell>
-                                        <Button variant='bordered' onClick={() => push('/dashboard/broadcast/' + item.id)}>
+                                        <Button variant='bordered' onClick={() => {
+                                            onEdit(item)
+                                        }}>
                                             Edit
                                         </Button>
                                     </TableCell>

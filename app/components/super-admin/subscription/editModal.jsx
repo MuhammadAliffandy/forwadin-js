@@ -15,10 +15,10 @@ const EditModalSubscription = (props) => {
                 withClose = {true}
                 open = {props.open}
                 onCloseButton = {props.onCloseButton}
-                width={'w-[25%]'}
+                width={'w-[30%]'}
             >
                 <div className="w-[100%] h-[80vh] flex flex-col gap-[20px] overflow-y-scroll pb-[10px] overflow-x-hidden scrollbar scrollbar-w-[8px] scrollbar-track-transparent scrollbar-thumb-gray-300 scrollbar-thumb-rounded-full">
-                <p className='font-bold text-[24px]'>Add Subscription</p>
+                <p className='font-bold text-[24px]'>Edit Subscription</p>
                     <div className="flex flex-col gap-[10px]">
                         <label className="text-black font-bold">
                             Name

@@ -131,7 +131,13 @@ const DashboardSuperAdmin = () => {
 
     return (
         <>
+            <div className='flex flex-col-reverse lg:flex-row lg:justify-between items-center '>
+                <div>
+                    <p className='font-lexend text-2xl font-bold'>Selamat Siang, {userProfile.firstName} {userProfile.lastName}</p>
+                </div>
+            </div>
             <div className='flex gap-4 mt-8 flex-col xl:flex-row '>
+       
                 <div className='bg-white rounded-md px-4 lg:px-8 pt-8 pb-12 grow flex flex-col justify-between gap-2 relative'>
                     <div className='flex lg:flex-row flex-col justify-between w-full basis-1/3 items-end lg:items-center'>
                         <div className='flex justify-between w-full gap-10'>
