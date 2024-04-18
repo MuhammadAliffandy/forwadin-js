@@ -40,7 +40,7 @@ const AddContactModal = (
             user: session?.user
         })
         const resultData = await result?.json()
-        if (result && result.status === 200) {
+        if (result && result.status === 201) {
             toast.success('Berhasil menambah member!')
             fetchGroupData()
             setopenModal(false)

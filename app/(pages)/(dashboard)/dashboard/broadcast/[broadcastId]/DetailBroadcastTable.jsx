@@ -5,7 +5,7 @@ import MessageAddContact from "@/app/components/dashboard/contact/MessageAddCont
 import { formatDate, getNumberFromString } from "@/app/utils/helper"
 import { ContactBroadcast, ContactData, MessageTableStatus } from "@/app/utils/types"
 import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Button, Popover, PopoverContent, PopoverTrigger } from "@nextui-org/react"
-import { Dispatch, SetStateAction, useState } from "react"
+import { Dispatch, SetStateAction, useEffect, useState } from "react"
 const DetailBroadcastTable = ({ selectedKeys, setSelectedKeys, data, type }) => {
     const currentDate = new Date()
     const [messagePhone, setmessagePhone] = useState('')
@@ -15,6 +15,7 @@ const DetailBroadcastTable = ({ selectedKeys, setSelectedKeys, data, type }) => 
         setmessagePhone(getNumberFromString(phone))
         setaddContactModal(true)
     }
+
     return (
         <>
             {addContactModal &&

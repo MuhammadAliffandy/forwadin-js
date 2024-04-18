@@ -36,6 +36,7 @@ const DashboardSuperAdminSubscription = () => {
     const [latestMessage, setlatestMessage] = useState([])
     const [addModal, setAddModal] = useState(false)
     const [editModal, setEditModal] = useState(false)
+    const [subscriptionCount, setSubscriptionCount] = useState(0)
 
 
     const [userProfile, setuserProfile] = useState({
@@ -145,10 +146,9 @@ const DashboardSuperAdminSubscription = () => {
                         <button onClick={()=>{setAddModal(!addModal)}} className='text-[16px] bg-primary text-white rounded-[6px] px-[20px] py-[12px]'>Tambah Subscription</button>
                     </div>
                     <SubscriptionTable
-                        data={rows}
-                        onEditButton = {(value)=>{
-                            setEditModal(!editModal)
-                        }}
+                        setTotalSubscription={setSubscriptionCount}
+                        totalSubscription={subscriptionCount}
+                        user={session?.superAdmin}
                     />
                 </div>  
             </div>

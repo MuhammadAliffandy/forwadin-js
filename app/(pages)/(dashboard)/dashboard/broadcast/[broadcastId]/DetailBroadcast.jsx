@@ -16,7 +16,7 @@ import DisplayFile from "@/app/components/dashboard/DisplayFile"
 import { deleteBroadcast, getBroadcastDetail, getOutgoingBroadcastsByQuery, getOutgoingReplies } from "../../../../../api/repository/broadcastRepository"
 
 const DetailBroadcast = ({ broadcastId }) => {
-	const { data } = useSession()
+	const { data: session } = useSession()
 	const router = useRouter()
 	const [isbroadcastLoaded, setisbroadcastLoaded] = useState(false)
 	const [broadcastData, setbroadcastData] = useState()
@@ -28,7 +28,7 @@ const DetailBroadcast = ({ broadcastId }) => {
 		Balasan: []
 	})
 	const [selectedKeys, setselectedKeys] = useState(new Set())
-	const [currentPage, setcurrentPage] = useState<'Terkirim' | 'Diterima' | 'Terbaca' | 'Balasan'>('Terkirim')
+	const [currentPage, setcurrentPage] = useState('Terkirim')
 	const fetchBroadcast = async () => {
 
 		const result = await getBroadcastDetail(session.user.token , broadcastId)
@@ -75,13 +75,15 @@ const DetailBroadcast = ({ broadcastId }) => {
 
 		const fetchReply = await getOutgoingReplies(session.user.token , broadcastId)
 
-		if (fetchSent?.ok && fetchRead?.ok && fetchReceived?.ok && fetchReply?.ok) {
+		if (fetchSent?.status === 200 && fetchRead?.status === 200 && fetchReceived?.status === 200 && fetchReply?.status === 200) {
 			setbroadcastDetail({
-				Terkirim: (await fetchSent.json()).outgoingBroadcasts,
-				Terbaca: (await fetchRead.json()).outgoingBroadcasts,
-				Diterima: (await fetchReceived.json()).outgoingBroadcasts,
-				Balasan: (await fetchReply.json()).broadcastReplies
+				Terkirim: (fetchSent.data).outgoingBroadcasts,
+				Terbaca: (fetchRead.data).outgoingBroadcasts,
+				Diterima: (fetchReceived.data).outgoingBroadcasts,
+				Balasan: (fetchReply.data).broadcastReplies
 			})
+
+
 		}
 		setisDetailBroadcastLoaded(true)
 	}
@@ -89,6 +91,7 @@ const DetailBroadcast = ({ broadcastId }) => {
 		if (session?.user?.token && !broadcastData) {
 			fetchBroadcast()
 			fetchAllBroadcast()
+		
 		}
 	}, [session?.user?.token])
 

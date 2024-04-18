@@ -2,8 +2,6 @@
 
 import { useEffect, useState } from "react"
 import BroadcastTable from "./BroadcastTable"
-import DropdownDevice from "@/app/components/dashboard/DropdownDevice"
-import { DeviceSession } from "@/app/utils/types"
 import { useSession } from "next-auth/react"
 
 const Broadcast = () => {

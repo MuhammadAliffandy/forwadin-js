@@ -46,7 +46,7 @@ export const updateBroadcast = async ( token , broadcastId , data ) => {
 
 export const deleteBroadcast = async ( token , data ) => {
     await delay()
-    const response = await PROVIDER_DELETE(`broadcasts` ,data , token )
+    const response = await PROVIDER_DELETE(`broadcasts/`, data , token )
     return response;
 }
 

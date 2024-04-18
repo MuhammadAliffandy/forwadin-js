@@ -6,9 +6,9 @@ import { Button, Link, Skeleton, Switch, Table, TableBody, TableCell, TableColum
 import { fetchClient } from '@/app/utils/helper/fetchClient';
 import { toast } from 'react-toastify';
 import { formatDate } from '@/app/utils/helper';
-import { getBroadcast , deleteBroadcast , updateBroadcastStatus } from '../../../../api/repository/broadcastRepository';
+import { getBroadcast , deleteBroadcast , updateBroadcastStatus } from '@/app/api/repository/broadcastRepository';
 
-const BroadcastTable = ({ settotalBroadcast, totalBroadcast, user }) => {
+const UserTable = ({ setTotalUser, totalUser, user }) => {
     const { push } = useRouter()
     const [isChecked, setisChecked] = useState(false)
     const [isLoaded, setisLoaded] = useState(false)
@@ -16,7 +16,6 @@ const BroadcastTable = ({ settotalBroadcast, totalBroadcast, user }) => {
     const [searchText, setsearchText] = useState('')
     const [searchedGetBroadcast, setsearchedGetBroadcast] = useState([])
     const [selectedBroadcast, setselectedBroadcast] = useState(new Set([]))
-    
     const handleOpenDetailModal = (params) => {
         push('/dashboard/contact/' + params)
     }
@@ -74,7 +73,7 @@ const BroadcastTable = ({ settotalBroadcast, totalBroadcast, user }) => {
             const resultData = result.data
             console.log(resultData)
             setbroadcastData(resultData)
-            settotalBroadcast(resultData.length)
+            setTotalUser(resultData.length)
             setisLoaded(true)
         } else {
             toast.error(result?.statusText)
@@ -114,7 +113,7 @@ const BroadcastTable = ({ settotalBroadcast, totalBroadcast, user }) => {
                             </Button>
                         ) : (
                             <Button className='rounded-md text-sm' color='primary' as={Link} href='/dashboard/broadcast/new'>
-                                Buat Broadcast Baru
+                                Tambah User
                             </Button>
                         )}
                     </div>
@@ -140,12 +139,15 @@ const BroadcastTable = ({ settotalBroadcast, totalBroadcast, user }) => {
                         onSelectionChange={setselectedBroadcast}
                     >
                         <TableHeader>
-                            <TableColumn>Nama</TableColumn>
-                            <TableColumn>Status</TableColumn>
-                            <TableColumn>Device</TableColumn>
-                            <TableColumn>Dibuat Pada</TableColumn>
+                            <TableColumn>FirstName</TableColumn>
+                            <TableColumn>LastName</TableColumn>
+                            <TableColumn>Phone</TableColumn>
+                            <TableColumn>Email</TableColumn>
+                            <TableColumn>Paid</TableColumn>
+                            <TableColumn>Subscription</TableColumn>
                             <TableColumn>Terakhir Update</TableColumn>
-                            <TableColumn>Detail</TableColumn>
+                            <TableColumn>Dibuat Pada</TableColumn>
+                            <TableColumn>Edit</TableColumn>
                         </TableHeader>
                         <TableBody emptyContent={<div className='w-full bg-white p-12'>
                             <div className='w-full max-w-md mx-auto flex flex-col gap-4'>
@@ -158,6 +160,9 @@ const BroadcastTable = ({ settotalBroadcast, totalBroadcast, user }) => {
                             {(item) => (
                                 <TableRow key={item.id}>
                                     <TableCell >{item.name}</TableCell>
+                                    <TableCell >{item.name}</TableCell>
+                                    <TableCell >{item.name}</TableCell>
+                                    <TableCell >{item.name}</TableCell>
                                     <TableCell>
                                         <Switch size='sm' isSelected={item.status} onClick={() => handleToggleBroadcast(item.id, !item.status)} />
                                     </TableCell>
@@ -165,14 +170,14 @@ const BroadcastTable = ({ settotalBroadcast, totalBroadcast, user }) => {
                                         {item.device.name}
                                     </TableCell>
                                     <TableCell>
-                                        {formatDate(item.createdAt)}
+                                        <p className={`text-[10px] text-center text-white w-auto px-[12px] py-[4px] ${ 'bg-primary'} rounded-[30px]`} >subscription</p>  {/* data.subscription == 'Unlimited' ? 'bg-black ' : */}
                                     </TableCell>
                                     <TableCell>
                                         {formatDate(item.updatedAt)}
                                     </TableCell>
                                     <TableCell>
                                         <Button variant='bordered' onClick={() => push('/dashboard/broadcast/' + item.id)}>
-                                            Detail
+                                            Edit
                                         </Button>
                                     </TableCell>
                                 </TableRow>
@@ -194,4 +199,4 @@ const BroadcastTable = ({ settotalBroadcast, totalBroadcast, user }) => {
     )
 }
 
-export default BroadcastTable
+export default UserTable

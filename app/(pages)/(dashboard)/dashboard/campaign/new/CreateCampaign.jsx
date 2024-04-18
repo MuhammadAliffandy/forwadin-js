@@ -119,7 +119,7 @@ const CreateCampaign = () => {
                 user: session?.user
             })
 
-            if (result.status === 200) {
+            if (result.status === 201) {
                 toast.success('Berhasil buat campaign')
                 push('/dashboard/campaign')
             } else {

@@ -1,4 +1,5 @@
 'use client';
+import { updateCampaign } from "@/app/api/repository/campaignRepository";
 import InputContactAndLabel from "@/app/components/dashboard/InputContactAndLabel"
 import UploadFile from "@/app/components/dashboard/UploadFile"
 import DisplayImage from "@/app/components/dashboard/auto-reply/DisplayImage"
@@ -34,7 +35,7 @@ const CreateCampaign = ({ campaignData }) => {
     const [successMessage, setsuccessMessage] = useState('')
     const [failedMessage, setfailedMessage] = useState('')
     const [unregisteredMessage, setunregisteredMessage] = useState('')
-    const [currentMessage, setcurrentMessage] = useState<MessageTypes>('registrationMessage')
+    const [currentMessage, setcurrentMessage] = useState('registrationMessage')
     const [campaignImage, setcampaignImage] = useState(null)
     const [isLabelLoaded, setisLabelLoaded] = useState(false)
 
@@ -111,18 +112,17 @@ const CreateCampaign = ({ campaignData }) => {
             formData.append('unregistrationSyntax', campaignFormData.unregistrationSyntax)
             formData.append('schedule', formatDatetoISO8601(campaignFormData.schedule))
             formData.append('delay', delay.toString())
-            const result = await fetchClient({
-                url: '/campaigns/' + campaignData.id,
-                method: 'PUT',
-                body: formData,
-                isFormData: true,
-                user: session?.user
-            })
-            if (result.status === 200) {
-                toast.success('Berhasil ubah campaign')
-                push('/dashboard/campaign')
-            } else {
-                toast.error('Gagal ubah campaign')
+            
+            try {
+                const result = await updateCampaign(session?.user.token, campaignData.id ,formData)
+                if (result.status === 201 ) {
+                    toast.success('Berhasil ubah campaign')
+                    push('/dashboard/campaign')
+                } else {
+                    toast.error('Gagal ubah campaign')
+                }
+            } catch (error) {
+                console.log(error)
             }
 
         }

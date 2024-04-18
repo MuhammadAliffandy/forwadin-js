@@ -31,7 +31,7 @@ const DetailCampaign = ({ campaignId }) => {
         Terbaca: [],
         Balasan: []
     })
-    const [currentPage, setcurrentPage] = useState<MessageTableStatus>('Terkirim')
+    const [currentPage, setcurrentPage] = useState('Terkirim')
     const fetchCampaign = async () => {
         const result = await getCampaignDetail(session.user.token, campaignId)
 
@@ -77,12 +77,12 @@ const DetailCampaign = ({ campaignId }) => {
 
         const fetchReply = await getCampaignReplies(session.user.token , campaignId , '/replies' )
 
-        if (fetchSent?.ok && fetchRead?.ok && fetchReceived?.ok && fetchReply?.ok) {
+        if (fetchSent?.status === 200 && fetchRead?.status === 200 && fetchReceived?.status === 200 && fetchReply?.status === 200) {
             setcampaignDetail({
-                Terkirim: (await fetchSent.json()).outgoingCampaigns,
-                Terbaca: (await fetchRead.json()).outgoingCampaigns,
-                Diterima: (await fetchReceived.json()).outgoingCampaigns,
-                Balasan: (await fetchReply.json()).campaignReplies
+                Terkirim: (fetchSent.data).outgoingCampaigns,
+                Terbaca: (fetchRead.data).outgoingCampaigns,
+                Diterima: (fetchReceived.data).outgoingCampaigns,
+                Balasan: (fetchReply.data).campaignReplies
             })
         }
         setisDetailCampaignLoaded(true)

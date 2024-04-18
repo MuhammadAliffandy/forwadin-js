@@ -10,7 +10,7 @@ import { getUserSubscriptionById } from '@/app/api/repository/userRepository';
 import { getIncomeMessagesByQuery } from '@/app/api/repository/messageRepository';
 import { getUserProfile } from "@/app/api/repository/userRepository";
 import 'chart.js/auto';
-import UserTable from '@/app/components/super-admin/user/table'
+import UserTable from './userTable'
 import AddModalUser from '@/app/components/super-admin/user/addModal'
 import EditModalUser from '@/app/components/super-admin/user/editModal'
 
@@ -30,11 +30,9 @@ const rows = [
 const DashboardSuperAdminUser = () => {
     const { data: session } = useSession()
     const [isLoaded, setisLoaded] = useState(false)
-    const [currentDevice, setcurrentDevice] = useState()
-    const [latestMessage, setlatestMessage] = useState([])
-    const [addModal, setAddModal] = useState(false)
-    const [editModal, setEditModal] = useState(false)
-
+    const [isChecked, setisChecked] = useState(false)
+    const [userCount, setUserCount] = useState(0)
+    // 
 
     const [userProfile, setuserProfile] = useState({
         firstName: '',
@@ -69,6 +67,7 @@ const DashboardSuperAdminUser = () => {
             }
         }
     }
+
     const fetchSubscription = async () => {
     
         const result = await getUserSubscriptionById(session.superAdmin.token,session.superAdmin.id)
@@ -130,34 +129,30 @@ const DashboardSuperAdminUser = () => {
             // testRefresh()
         }
     }, [session?.user?.token])
-    useEffect(() => {
-        if (currentDevice)
-            fetchLatestMessage()
-    }, [currentDevice])
+
+    // useEffect(() => {
+    //     if (currentDevice)
+    //         fetchLatestMessage()
+    // }, [currentDevice])
     return (
         <>
-             <div className='flex gap-4 mt-8 flex-col xl:flex-row '>
-                <div className='bg-white rounded-md px-4 lg:px-8 pt-8 pb-12 grow flex flex-col justify-between gap-[20px] relative'>
-                    <div className='flex justify-between'>
-                        <input placeholder='Cari User' className='px-[20px] rounded-[6px] py-[12px] border-[1px] border-customNeutral' />
-                        <button onClick={()=>{setAddModal(!addModal)}} className='text-[16px] bg-primary text-white rounded-[6px] px-[20px] py-[12px]'>Tambah User</button>
-                    </div>
+            <div className='flex gap-4 mt-8 flex-col xl:flex-row '>
+                <div className='bg-white rounded-md px-4 pb-12 grow flex flex-col justify-between gap-[20px] relative'>
                     <UserTable
-                        data={rows}
-                        onEditButton = {(value)=>{
-                            setEditModal(!editModal)
-                        }}
+                        setTotalUser={setUserCount}
+                        totalUser={userCount}
+                        user={session?.superAdmin}
                     />
                 </div>  
             </div>
-            <AddModalUser
+            {/* <AddModalUser
                 open = {addModal}
                 onCloseButton = {()=>{setAddModal(false)}}
             />
             <EditModalUser
                 open = {editModal}
                 onCloseButton = {()=>{setEditModal(false)}}
-            />
+            /> */}
         </>
     )
 }

@@ -79,7 +79,7 @@ const CreateAutoReply = () => {
 
             const result = await createAutoReply(session.user.token, formData)
 
-            if (result.status === 200) {
+            if (result.status === 201) {
                 toast.success('Berhasil buat auto reply')
                 push('/dashboard/auto-reply')
             } else {
