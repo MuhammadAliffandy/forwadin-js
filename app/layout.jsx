@@ -21,7 +21,7 @@ export default function RootLayout({
       </head>
       <body className={`font-inter text-neutral-900 font-medium overflow-x-hidden`}>
         <Provider>
-          <SocketProvider>
+        
             <ToastContainer position="top-right"
               autoClose={3000}
               hideProgressBar
@@ -36,7 +36,7 @@ export default function RootLayout({
 
               {children}
             </NextUIProviders>
-          </SocketProvider>
+         
         </Provider>
       </body>
     </html>
