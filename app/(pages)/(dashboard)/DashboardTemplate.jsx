@@ -39,6 +39,7 @@ const DashboardTemplate = ({ currentPage, children }) => {
     }
 
     useEffect(() => {
+        console.log( 'test' + session.user)
         if (session?.user?.token) {
             fetchUserProfile()
             console.log(session.user)
