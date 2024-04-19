@@ -8,7 +8,7 @@ import { useEffect, useState } from "react"
 import { toast } from "react-toastify"
 import BasicPlan from "./Plans"
 import { formatCurrencyIDR } from "@/app/utils/helper"
-import { createPayment, getPaymentSubscription } from "../../../api/repository/paymentRepository"
+import { createPayment, getPaymentSubscription } from "@/app/api/repository/paymentRepository"
 
 
 const Payment = () => {
@@ -76,7 +76,7 @@ const Payment = () => {
 	}
 	const fetchSubscriptionPlans = async () => {
 
-		const result = await getPaymentSubscription(session.user.token)
+		const result = await getPaymentSubscription(session?.user?.token)
 		if (result) {
 			const resultData = result.data
 			if (result.status === 200) {
@@ -98,7 +98,7 @@ const Payment = () => {
 	const handleClick = async () => {
 		setisLoading(true)
 
-		const result = await createPayment(session.user.token, {
+		const result = await createPayment(session?.user.token, {
 			subscriptionPlanId: currentPlan?.id,
 			subscriptionPlanType: durationPlan.toLowerCase()
 		})
@@ -116,9 +116,9 @@ const Payment = () => {
 		}
 	}
 	useEffect(() => {
-		if (!isLoaded)
+		if (session?.user?.token){
 			fetchSubscriptionPlans()
-
+		}
 	}, [session?.user?.token])
 	useEffect(() => {
 		const find = plans.find(item => item.name.toLowerCase() === selectedPlan.toLowerCase())

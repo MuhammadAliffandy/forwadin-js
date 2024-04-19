@@ -10,7 +10,7 @@ export const createPayment = async (token ,data ) => {
 
 export const getPaymentSubscription = async (token, ) => {
     await delay()
-    const response = await PROVIDER_GET(`payment/subscription`,token)
+    const response = await PROVIDER_GET(`payment/subscriptions`,token)
     return response;
 }
 
