@@ -217,7 +217,7 @@ export const authConfig = {
                 password: {}
             },
             authorize: async (credentials) => {
-                const result = await fetch(process.env.BACKEND_URL + '/auth/login', {
+                const result = await fetch(process.env.BACKEND_URL + '/super-admin/login', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'

@@ -7,12 +7,14 @@ import { fetchClient } from '@/app/utils/helper/fetchClient';
 import { toast } from 'react-toastify';
 import { formatDate } from '@/app/utils/helper';
 import { getBroadcast , deleteBroadcast , updateBroadcastStatus } from '@/app/api/repository/broadcastRepository';
+import { getAllSubscriptionPlans } from '@/app/api/repository/subscriptionRepository';
 
 const SubscriptionTable = ({ setTotalSubscription, totalSubscription, user , onEdit , onAdd }) => {
     const { push } = useRouter()
     const [isChecked, setisChecked] = useState(false)
     const [isLoaded, setisLoaded] = useState(false)
     const [broadcastData, setbroadcastData] = useState([])
+    const [subscriptionData, setSubscriptionData] = useState([])
     const [searchText, setsearchText] = useState('')
     const [searchedGetBroadcast, setsearchedGetBroadcast] = useState([])
     const [selectedBroadcast, setselectedBroadcast] = useState(new Set([]))
@@ -66,13 +68,14 @@ const SubscriptionTable = ({ setTotalSubscription, totalSubscription, user , onE
             fetchBroadcast()
         }
     }
-    const fetchBroadcast = async () => {
-        const result = await getBroadcast(user.token)
+
+    const fetchSubscriptionPlan = async () => {
+        const result = await getAllSubscriptionPlans(user.token)
 
         if (result.status === 200) {
             const resultData = result.data
             console.log(resultData)
-            setbroadcastData(resultData)
+            setSubscriptionData(resultData)
             setTotalSubscription(resultData.length)
             setisLoaded(true)
         } else {
@@ -86,7 +89,7 @@ const SubscriptionTable = ({ setTotalSubscription, totalSubscription, user , onE
     }, [searchText])
     useEffect(() => {
         if (user?.token) {
-            fetchBroadcast()
+            fetchSubscriptionPlan()
         }
     }, [user?.token])
     useEffect(() => {
@@ -155,16 +158,16 @@ const SubscriptionTable = ({ setTotalSubscription, totalSubscription, user , onE
                                 <p className='text-xs text-[#777C88]'>Lorem Ipsum</p>
                             </div>
                         </div>}
-                            items={broadcastData}
+                            items={subscriptionData}
                         >
                             {(item) => (
                                 <TableRow key={item.id}>
                                     <TableCell >{item.name}</TableCell>
-                                    <TableCell >{item.name}</TableCell>
-                                    <TableCell >{item.name}</TableCell>
-                                    <TableCell >{item.name}</TableCell>
+                                    <TableCell >{item.monthlyPrice}</TableCell>
+                                    <TableCell >{'0%'}</TableCell>
+                                    <TableCell >{item.yearlyPrice}</TableCell>
                                     <TableCell>
-                                        <Switch size='sm' isSelected={item.status} onClick={() => handleToggleBroadcast(item.id, !item.status)} />
+                                        <Switch size='sm' isSelected={item.isAvailable} onClick={() => handleToggleBroadcast(item.id, item.isAvailable)} />
                                     </TableCell>
     
                                     <TableCell>

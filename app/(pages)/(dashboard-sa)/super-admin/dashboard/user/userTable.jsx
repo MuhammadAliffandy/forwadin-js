@@ -7,12 +7,15 @@ import { fetchClient } from '@/app/utils/helper/fetchClient';
 import { toast } from 'react-toastify';
 import { formatDate } from '@/app/utils/helper';
 import { getBroadcast , deleteBroadcast , updateBroadcastStatus } from '@/app/api/repository/broadcastRepository';
+import { getAllUser } from '@/app/api/repository/superadminRepository'
+
 
 const UserTable = ({ setTotalUser, totalUser, user , onEdit , onAdd}) => {
     const { push } = useRouter()
     const [isChecked, setisChecked] = useState(false)
     const [isLoaded, setisLoaded] = useState(false)
     const [broadcastData, setbroadcastData] = useState([])
+    const [userData, setUserData] = useState([])
     const [searchText, setsearchText] = useState('')
     const [searchedGetBroadcast, setsearchedGetBroadcast] = useState([])
     const [selectedBroadcast, setselectedBroadcast] = useState(new Set([]))
@@ -79,6 +82,19 @@ const UserTable = ({ setTotalUser, totalUser, user , onEdit , onAdd}) => {
             toast.error(result?.statusText)
         }
     }
+    const fetchAllUser = async () => {
+        const result = await getAllUser(user.token)
+
+        if (result.status === 200) {
+            const resultData = result.data
+            console.log(resultData)
+            setUserData(resultData)
+            setTotalUser(resultData.length)
+            setisLoaded(true)
+        } else {
+            toast.error(result?.statusText)
+        }
+    }
 
     useEffect(() => {
         const searchResult = filterMessage(searchText)
@@ -86,7 +102,7 @@ const UserTable = ({ setTotalUser, totalUser, user , onEdit , onAdd}) => {
     }, [searchText])
     useEffect(() => {
         if (user?.token) {
-            fetchBroadcast()
+            fetchAllUser()
         }
     }, [user?.token])
     useEffect(() => {
@@ -154,22 +170,24 @@ const UserTable = ({ setTotalUser, totalUser, user , onEdit , onAdd}) => {
                                 <p className='text-xs text-[#777C88]'>Lorem Ipsum</p>
                             </div>
                         </div>}
-                            items={broadcastData}
+                            items={userData}
                         >
                             {(item) => (
                                 <TableRow key={item.id}>
-                                    <TableCell >{item.name}</TableCell>
-                                    <TableCell >{item.name}</TableCell>
-                                    <TableCell >{item.name}</TableCell>
-                                    <TableCell >{item.name}</TableCell>
+                                    <TableCell >{item.firstName}</TableCell>
+                                    <TableCell >{item.lastName}</TableCell>
+                                    <TableCell >{`+${item.phone}`}</TableCell>
+                                    <TableCell >{item.email}</TableCell>
                                     <TableCell>
-                                        <Switch size='sm' isSelected={item.status} onClick={() => handleToggleBroadcast(item.id, !item.status)} />
+                                        <Switch size='sm' isSelected={item.Subscription.length == 0 ? false : true} onClick={() => handleToggleBroadcast(item.id, item.Subscription.length == 0 ? false : true)} />
                                     </TableCell>
                                     <TableCell>
-                                        <p className={`text-[10px] text-center text-white w-auto px-[12px] py-[4px] ${ 'bg-primary'} rounded-[30px]`} >subscription</p>  {/* data.subscription == 'Unlimited' ? 'bg-black ' : */}
+                                        <p className={`text-[10px] text-center text-white w-auto px-[12px] py-[4px] ${ item.Subscription.length == 0 ? 'bg-primary' :  item.Subscription[0].subscriptionPlan.name == 'pro' ? 'bg-black ' : 'bg-primary'} rounded-[30px]`} >
+                                            {item.Subscription.length == 0 ?  '-' : item.Subscription[0].subscriptionPlan.name}
+                                        </p> 
                                     </TableCell>
                                     <TableCell>
-                                        {formatDate(item.updatedAt)}
+                                        {formatDate(item.createdAt)}
                                     </TableCell>
                                     <TableCell>
                                         <Button variant='bordered' onClick={() => {
