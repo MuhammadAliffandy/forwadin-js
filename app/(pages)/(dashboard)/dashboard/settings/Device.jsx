@@ -48,7 +48,7 @@ const Device = ({ user }) => {
     }
     const fetchBusinessHours = async () => {
 
-        const result = getBusinessHours(user.token,currentDevice.id)
+        const result = await getBusinessHours(user.token,currentDevice.id)
 
         if (result.status === 200) {
             const resultData = result.data
@@ -97,7 +97,7 @@ const Device = ({ user }) => {
  
             const result =await  createBusinessHours(user.token,body)
 
-            if (result.status === 200) {
+            if (result.status === 201) {
                 toast.success('Berhasil set business hours')
             } else if (result?.status === 400) {
                 toast.error('Gagal set business hours')
@@ -117,8 +117,6 @@ const Device = ({ user }) => {
     const fetchSessionProfile = async () => {
         if (!currentDevice) return
 
-
-        
         const result = await getProfileSession(user.token,currentDevice.id)
 
         if (result.status === 200) {

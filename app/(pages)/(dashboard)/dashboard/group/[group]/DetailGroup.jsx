@@ -54,6 +54,23 @@ const DetailGroup = ({ groupId, groupName, setcountContact, setgroupName }) => {
     const handleSearch = (e) => {
         setsearchText(e.target.value)
     }
+
+    const handleDeleteGroup = async () => {
+        const result = await fetchClient({
+            url: '/groups/',
+            body: JSON.stringify([{ groupIds: groupId }]),
+            method: 'DELETE',
+            user: session?.user
+        })
+        if (result?.ok) {
+            toast.success('Berhasil hapus grup')
+            push('/dashboard/group')
+            setselectedGroup(new Set([]))
+        } else {
+            toast.error('Gagal hapus grup')
+        }
+    }
+
     const handleDeleteMember = async () => {
         // tambah konfirmasi delete
         let deletedContact = null
@@ -64,12 +81,16 @@ const DetailGroup = ({ groupId, groupName, setcountContact, setgroupName }) => {
             deletedContact = Array.from(selectedMember)
         }
         if (deletedContact) {
-            const result = await deleteMemberGroup(session.user.token ,  {
-                groupId: groupId,
-                contactIds: deletedContact
+            const result = await fetchClient({
+                url: '/groups/remove',
+                body: JSON.stringify({
+                    groupId: groupId,
+                    contactIds: deletedContact
+                }),
+                method: 'DELETE',
+                user: session?.user
             })
-
-            if (result.status === 200) {
+            if (result?.ok) {
                 toast.success('Berhasil hapus member')
                 fetchGroupData()
                 setselectedMember(new Set([]))
@@ -82,7 +103,7 @@ const DetailGroup = ({ groupId, groupName, setcountContact, setgroupName }) => {
     const handleUpdateGroup = async () => {
         setIsLoading(true)
 
-        const result = await updateGroup(session.user.token , groupId , {
+        const result = await updateGroup(session?.user.token , groupId , {
             name: currentGroupName,
             isCampaign: false
         })
@@ -138,7 +159,7 @@ const DetailGroup = ({ groupId, groupName, setcountContact, setgroupName }) => {
             {isLoaded &&
                 <AddContactModal openModal={addContactModal} setopenModal={setaddContactModal} fetchGroupData={fetchGroupData} groupId={groupId} activeContactData={contactData} />
             }
-            <DeleteGroupModal openModal={deleteGroupModal} setopenModal={setDeleteGroupModal} group={groupId} />
+            <DeleteGroupModal openModal={deleteGroupModal} setopenModal={setDeleteGroupModal} deleteFunction={handleDeleteGroup} group={groupName} />
             {selectedMember && (
                 <DeleteContactModal
                     openModal={deleteContactModal}

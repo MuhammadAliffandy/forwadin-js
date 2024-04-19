@@ -21,14 +21,15 @@ const System = ({ user }) => {
     const [deleteTemplateModal, setdeleteTemplateModal] = useState(false)
     const [selectedTemplate, setselectedTemplate] = useState(new Set([]))
     const [isChecked, setisChecked] = useState(false)
+
     const fetchDeviceLabel = async () => {
-        const result = await getLabelsDevice(user.token)
+        const result = await getLabelsDevice(user?.token)
+
         if (result.status === 200) {
             const resultData = result.data
             setdeviceLabel(resultData)
         }
     }
-
 
     const fetchContactLabel = async () => {
     
@@ -42,9 +43,13 @@ const System = ({ user }) => {
         const deletedTemplate = getArrayFromSet(selectedTemplate, templateList)
         if (deletedTemplate) {
 
-            const result = await deleteTemplates(user.token , { templateIds: deletedTemplate })
-
-            if (result.status === 200) {
+            const result = await fetchClient({
+                url: '/templates/',
+                body: JSON.stringify({ templateIds: deletedTemplate }),
+                method: 'DELETE',
+                user: user
+            })
+            if (result?.ok) {
                 toast.success('Berhasil hapus template')
                 fetchTemplate()
                 setselectedTemplate(new Set([]))

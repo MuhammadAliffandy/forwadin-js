@@ -8,6 +8,7 @@ import ButtonSubmit from "@/app/components/form/ButtonSubmit"
 import { Button } from "@nextui-org/react"
 import { fetchClient } from "@/app/utils/helper/fetchClient"
 import { toast } from "react-toastify"
+import { createTemplates } from "../../../api/repository/templateRepository"
 
 
 const CreateTemplateModal = ({ refresh, openModal, setopenModal, user }) => {
@@ -17,17 +18,14 @@ const CreateTemplateModal = ({ refresh, openModal, setopenModal, user }) => {
   const [inputText, setinputText] = useState('')
   const submitTemplate = async (data) => {
     setIsLoading(true)
-    const result = await fetchClient({
-      url: '/templates',
-      method: 'POST',
-      body: JSON.stringify({
-        name: data.name,
-        message: inputText,
-        userId: user?.id
-      }),
-      user: user
+
+    const result = await createTemplates(user.token , {
+      name: data.name,
+      message: inputText,
+      userId: user?.id
     })
-    if (result.status === 200) {
+
+    if (result.status === 201) {
       refresh()
       toast.success('berhasil simpan template')
       setopenModal(false)

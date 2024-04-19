@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { Button, Skeleton } from "@nextui-org/react"
 import { toast } from "react-toastify"
 import { signIn, useSession } from "next-auth/react"
-import { deleteDevice, generateAPIKEYDevice, getDevice } from "../../../../../api/repository/deviceRepository";
+import { deleteDevice, generateAPIKEYDevice, getDevice , updateDevice} from "@/app/api/repository/deviceRepository";
 const DetailDevice = ({ device }) => {
     const router = useRouter()
     const { data: session } = useSession()
@@ -17,7 +17,7 @@ const DetailDevice = ({ device }) => {
     const [labelList, setlabelList] = useState([])
     const fetchDetailDevice = async () => {
 
-        const result = await getDevice(session.user.token,device)
+        const result = await getDevice(session?.user?.token,device)
 
         if (result) {
             const data = result.data
@@ -44,7 +44,7 @@ const DetailDevice = ({ device }) => {
     const generateAPIKey = async () => {
         if (!deviceData) return
 
-        const result = await generateAPIKEYDevice(session.user.token , deviceData.id)
+        const result = await generateAPIKEYDevice(session?.user?.token , deviceData?.id)
 
         if (result.status === 200) {
             toast.success('Berhasil generate API Key baru')
@@ -54,11 +54,13 @@ const DetailDevice = ({ device }) => {
         }
     }
     const handleDeleteDevice = async () => {
-  
-        const result = await deleteDevice(session.user.token, { deviceIds: [deviceData?.id] })
-
-
-        if (result.status === 200) {
+        const result = await fetchClient({
+            url: '/devices/',
+            body: JSON.stringify({ deviceIds: [deviceData?.id] }),
+            method: 'DELETE',
+            user: session?.user
+        })
+        if (result?.ok) {
             toast.success('Berhasil hapus device')
             const refresh = await signIn('refresh', {
                 redirect: false,
@@ -76,13 +78,13 @@ const DetailDevice = ({ device }) => {
         setisLoading(true)
         const newLabel = labelList.filter(obj => obj.label.active).map(obj => obj.label.name)
 
-        const updateDevice = updateDevice(session.user.token , deviceData.id,{
+        const result = await updateDevice(session.user.token , deviceData.id,{
             name: deviceName,
             label: newLabel
         } )
 
-        if (updateDevice) {
-            if (updateDevice.status === 200) {
+        if (result) {
+            if (result.status === 200) {
                 toast.success('Device berhasil diubah!')
                 fetchDetailDevice()
             } else {
@@ -92,7 +94,9 @@ const DetailDevice = ({ device }) => {
         setisLoading(false)
     }
     useEffect(() => {
-        fetchDetailDevice()
+        if(session?.user?.token){
+            fetchDetailDevice()
+        }
     }, [])
     return (
         <>

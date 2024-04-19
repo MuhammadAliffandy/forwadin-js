@@ -34,7 +34,7 @@ const AddContactModal = (
             contactIds: contactData.filter(item => item.active).map(item => item.id)
         } )
         const resultData = await result.data
-        if (result && result.status === 201) {
+        if (result && result.status === 200) {
             toast.success('Berhasil menambah member!')
             fetchGroupData()
             setopenModal(false)

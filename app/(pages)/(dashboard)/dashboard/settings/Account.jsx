@@ -83,16 +83,21 @@ const Account = ({ user, userProfile }) => {
     }
     const handleDeleteAccount = async () => {
 
-        const result = await fetchClient({
-            url: '/users/' + user?.id + '/delete',
-            method: 'DELETE',
-            user: user
-        })
-        if (result?.ok) {
-            await signOut()
-            router.push('/')
-        } else {
-            toast.error('Gagal hapus akun')
+        try {
+            const result = await fetchClient({
+                url: '/users/' + user?.id + '/delete',
+                method: 'DELETE',
+                user: user
+            })
+            if (result?.ok) {
+                await signOut()
+                router.push('/')
+            } else {
+                toast.error('Gagal hapus akun')
+            }
+        } catch (error) {
+            toast.error('Hanya Boleh untuk SuperAdmin')
+            
         }
     }
 
@@ -134,15 +139,19 @@ const Account = ({ user, userProfile }) => {
     const onSubmitPassword = async (data) => {
         setisPasswordLoading(true)
 
-        const result = await changePasswordUser(user.token,data)
+        try {    
+            const result = await changePasswordUser(user.token,data)
 
-        console.log(await result?.json())
-        if (result.status === 200) {
-            toast.success('password berhasil diubah')
-            signOut()
-        } else {
-            toast.error('Gagal ubah password')
+            if (result.status === 200) {
+                toast.success('password berhasil diubah')
+                signOut()
+            } else {
+                toast.error('Gagal ubah password')
+            }
+        } catch (error) {
+            toast.error('Hanya Boleh untuk SuperAdmin')
         }
+
         setisPasswordLoading(false)
     }
     const handleCountryCodeClick = (countryCode) => {
