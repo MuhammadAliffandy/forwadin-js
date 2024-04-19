@@ -3,6 +3,7 @@ import { fetchClient } from "@/app/utils/helper/fetchClient"
 import { Button, Card, CardBody, Checkbox, Skeleton, select } from "@nextui-org/react"
 import { Tabs, Tab } from "@nextui-org/tabs"
 import { useSession } from "next-auth/react"
+import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { useEffect, useState } from "react"
 import { toast } from "react-toastify"
@@ -13,6 +14,7 @@ import { createPayment, getPaymentSubscription } from "@/app/api/repository/paym
 
 const Payment = () => {
 	const { data: session } = useSession()
+	const { push } = useRouter()
 	const [isLoaded, setisLoaded] = useState(false)
 	const [isLoading, setisLoading] = useState(false)
 	const [durationPlan, setdurationPlan] = useState('Monthly')
@@ -98,7 +100,7 @@ const Payment = () => {
 	const handleClick = async () => {
 		setisLoading(true)
 
-		const result = await createPayment(session?.user.token, {
+		const result = await createPayment(session?.user?.token, {
 			subscriptionPlanId: currentPlan?.id,
 			subscriptionPlanType: durationPlan.toLowerCase()
 		})
@@ -107,7 +109,9 @@ const Payment = () => {
 			const resultData = result.data
 			if (result.status === 200) {
 				console.log(resultData)
-				window.location.assign(resultData.redirect_url)
+				// window.location.assign(resultData.redirect_url)
+				push('/dashboard')
+
 			} else {
 				toast.error('failed to pay')
 				console.log(resultData)
