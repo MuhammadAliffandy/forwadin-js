@@ -9,7 +9,7 @@ import { formatDate } from '@/app/utils/helper';
 import { getBroadcast , deleteBroadcast , updateBroadcastStatus } from '@/app/api/repository/broadcastRepository';
 import { getAllSubscriptionPlans } from '@/app/api/repository/subscriptionRepository';
 
-const SubscriptionTable = ({ setTotalSubscription, totalSubscription, user , onEdit , onAdd }) => {
+const SubscriptionTable = ({statusAction ,setTotalSubscription, totalSubscription, user , onEdit , onAdd }) => {
     const { push } = useRouter()
     const [isChecked, setisChecked] = useState(false)
     const [isLoaded, setisLoaded] = useState(false)
@@ -18,6 +18,7 @@ const SubscriptionTable = ({ setTotalSubscription, totalSubscription, user , onE
     const [searchText, setsearchText] = useState('')
     const [searchedGetBroadcast, setsearchedGetBroadcast] = useState([])
     const [selectedBroadcast, setselectedBroadcast] = useState(new Set([]))
+    const sessionSuperAdmin = sessionStorage.getItem('tokenSuperAdmin')
     const handleOpenDetailModal = (params) => {
         push('/dashboard/contact/' + params)
     }
@@ -31,46 +32,10 @@ const SubscriptionTable = ({ setTotalSubscription, totalSubscription, user , onE
     const handleSearch = (e) => {
         setsearchText(e.target.value)
     }
-    const handleDelete = async () => {
-        // tambah konfirmasi delete
-        let deletedBroadcast = null
-        if (selectedBroadcast === 'all') {
-            deletedBroadcast = broadcastData.map(item => item.id)
-        }
-        else if ((selectedBroadcast).size > 0) {
-            deletedBroadcast = Array.from(selectedBroadcast)
-        }
-        const isConfirm = window.confirm('Anda yakin ingin menghapus ' + deletedBroadcast?.length + ' broadcast?')
-        
-        if (deletedBroadcast && isConfirm) {
-            const result = await fetchClient({
-                url: '/broadcasts/',
-                body: JSON.stringify({ broadcastIds: deletedBroadcast }),
-                method: 'DELETE',
-                user: user
-            })
-            if (result?.ok) {
-                toast.success('Berhasil hapus broadcast')
-                fetchBroadcast()
-                setselectedBroadcast(new Set([]))
-            } else {
-                toast.error('Gagal hapus broadcast')
-            }
-            deletedBroadcast = null
-        }
-    }
-    const handleToggleBroadcast = async (id, status) => {
-
-        const result = await updateBroadcastStatus(user.token, id , {status:status})
-
-        if (result.status === 200) {
-            // toast.success('Ber')
-            fetchBroadcast()
-        }
-    }
+    
 
     const fetchSubscriptionPlan = async () => {
-        const result = await getAllSubscriptionPlans(user.token)
+        const result = await getAllSubscriptionPlans(sessionSuperAdmin)
 
         if (result.status === 200) {
             const resultData = result.data
@@ -79,7 +44,7 @@ const SubscriptionTable = ({ setTotalSubscription, totalSubscription, user , onE
             setTotalSubscription(resultData.length)
             setisLoaded(true)
         } else {
-            toast.error(result?.statusText)
+            toast.error(result.statusText)
         }
     }
 
@@ -99,6 +64,11 @@ const SubscriptionTable = ({ setTotalSubscription, totalSubscription, user , onE
             setisChecked(false)
 
     }, [selectedBroadcast])
+    useEffect(()=>{
+        if(statusAction){
+            fetchSubscriptionPlan()
+        }
+    },[statusAction])
     return (
         <>
             <div className="mt-8 p-4 bg-white rounded-md">
@@ -111,7 +81,7 @@ const SubscriptionTable = ({ setTotalSubscription, totalSubscription, user , onE
                     </div>
                     <div className='flex lg:justify-end justify-between gap-2 w-full max-w-xs'>
                         {isChecked ? (
-                            <Button color='danger' onClick={handleDelete} className="bg-danger rounded-md w-full lg:w-auto px-8 text-white text-center items-center flex hover:cursor-pointer justify-center p-2">
+                            <Button color='danger' onClick={()=>{}} className="bg-danger rounded-md w-full lg:w-auto px-8 text-white text-center items-center flex hover:cursor-pointer justify-center p-2">
                                 Hapus
                             </Button>
                         ) : (
@@ -167,7 +137,7 @@ const SubscriptionTable = ({ setTotalSubscription, totalSubscription, user , onE
                                     <TableCell >{'0%'}</TableCell>
                                     <TableCell >{item.yearlyPrice}</TableCell>
                                     <TableCell>
-                                        <Switch size='sm' isSelected={item.isAvailable} onClick={() => handleToggleBroadcast(item.id, item.isAvailable)} />
+                                        <Switch size='sm' isSelected={item.isAvailable} onClick={() => {}} />
                                     </TableCell>
     
                                     <TableCell>

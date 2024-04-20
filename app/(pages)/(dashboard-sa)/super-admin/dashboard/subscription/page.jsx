@@ -13,6 +13,7 @@ import SubscriptionTable from './subsctriptionTable'
 import AddModalSubscription from '../../../../../components/super-admin/subscription/addModal';
 import EditModalSubscription from '../../../../../components/super-admin/subscription/editModal';
 import Pricing from '@/app/components/dashboard/Pricing';
+import {getUserProfile} from '@/app/api/repository/userRepository'
 
 const DynamicAnalytic = dynamic(() => import('@/app/components/dashboard/Analytic'), { ssr: false })
 
@@ -33,10 +34,11 @@ const DashboardSuperAdminSubscription = () => {
     const { data: session } = useSession()
     const [isLoaded, setisLoaded] = useState(false)
     const [currentDevice, setcurrentDevice] = useState()
-    const [latestMessage, setlatestMessage] = useState([])
+    const [subscription, setSubscription] = useState([])
     const [addModal, setAddModal] = useState(false)
     const [editModal, setEditModal] = useState(false)
     const [subscriptionCount, setSubscriptionCount] = useState(0)
+    const [statusAction, setStatusAction] = useState([])
 
 
     const [userProfile, setuserProfile] = useState({
@@ -145,10 +147,12 @@ const DashboardSuperAdminSubscription = () => {
                 </div>
             </div>
             <SubscriptionTable
+                statusAction = {statusAction}
                 setTotalSubscription={setSubscriptionCount}
                 totalSubscription={subscriptionCount}
                 user={session?.superAdmin}
                 onEdit = {(value)=>{
+                    setSubscription(value)
                     setEditModal(!editModal)
                 }}
                 onAdd = {()=>{
@@ -167,10 +171,19 @@ const DashboardSuperAdminSubscription = () => {
             </div>
             <AddModalSubscription
                 open = {addModal}
+                onload = {(value)=>{
+                    setAddModal(value)
+                    setStatusAction(value)
+                }}
                 onCloseButton = {()=>{setAddModal(false)}}
             />
             <EditModalSubscription
                 open = {editModal}
+                subscription = {subscription}
+                onload = {(value)=>{
+                    setEditModal(value)
+                    setStatusAction(value)
+                }}
                 onCloseButton = {()=>{setEditModal(false)}}
             />
         </>

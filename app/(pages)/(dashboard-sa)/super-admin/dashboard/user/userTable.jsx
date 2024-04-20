@@ -1,16 +1,15 @@
 'use client';
 
-import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
+import { Dispatch, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button, Link, Skeleton, Switch, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@nextui-org/react';
 import { fetchClient } from '@/app/utils/helper/fetchClient';
 import { toast } from 'react-toastify';
 import { formatDate } from '@/app/utils/helper';
-import { getBroadcast , deleteBroadcast , updateBroadcastStatus } from '@/app/api/repository/broadcastRepository';
 import { getAllUser } from '@/app/api/repository/superadminRepository'
 
 
-const UserTable = ({ setTotalUser, totalUser, user , onEdit , onAdd}) => {
+const UserTable = ({ statusAction ,setTotalUser, totalUser, user , onEdit , onAdd}) => {
     const { push } = useRouter()
     const [isChecked, setisChecked] = useState(false)
     const [isLoaded, setisLoaded] = useState(false)
@@ -19,6 +18,7 @@ const UserTable = ({ setTotalUser, totalUser, user , onEdit , onAdd}) => {
     const [searchText, setsearchText] = useState('')
     const [searchedGetBroadcast, setsearchedGetBroadcast] = useState([])
     const [selectedBroadcast, setselectedBroadcast] = useState(new Set([]))
+    const sessionSuperAdmin = sessionStorage.getItem('tokenSuperAdmin')
     const handleOpenDetailModal = (params) => {
         push('/dashboard/contact/' + params)
     }
@@ -32,58 +32,9 @@ const UserTable = ({ setTotalUser, totalUser, user , onEdit , onAdd}) => {
     const handleSearch = (e) => {
         setsearchText(e.target.value)
     }
-    const handleDeleteBroadcast = async () => {
-        // tambah konfirmasi delete
-        let deletedBroadcast = null
-        if (selectedBroadcast === 'all') {
-            deletedBroadcast = broadcastData.map(item => item.id)
-        }
-        else if ((selectedBroadcast).size > 0) {
-            deletedBroadcast = Array.from(selectedBroadcast)
-        }
-        const isConfirm = window.confirm('Anda yakin ingin menghapus ' + deletedBroadcast?.length + ' broadcast?')
-        
-        if (deletedBroadcast && isConfirm) {
-            const result = await fetchClient({
-                url: '/broadcasts/',
-                body: JSON.stringify({ broadcastIds: deletedBroadcast }),
-                method: 'DELETE',
-                user: user
-            })
-            if (result?.ok) {
-                toast.success('Berhasil hapus broadcast')
-                fetchBroadcast()
-                setselectedBroadcast(new Set([]))
-            } else {
-                toast.error('Gagal hapus broadcast')
-            }
-            deletedBroadcast = null
-        }
-    }
-    const handleToggleBroadcast = async (id, status) => {
 
-        const result = await updateBroadcastStatus(user.token, id , {status:status})
-
-        if (result.status === 200) {
-            // toast.success('Ber')
-            fetchBroadcast()
-        }
-    }
-    const fetchBroadcast = async () => {
-        const result = await getBroadcast(user.token)
-
-        if (result.status === 200) {
-            const resultData = result.data
-            console.log(resultData)
-            setbroadcastData(resultData)
-            setTotalUser(resultData.length)
-            setisLoaded(true)
-        } else {
-            toast.error(result?.statusText)
-        }
-    }
     const fetchAllUser = async () => {
-        const result = await getAllUser(user.token)
+        const result = await getAllUser(sessionSuperAdmin)
 
         if (result.status === 200) {
             const resultData = result.data
@@ -101,10 +52,10 @@ const UserTable = ({ setTotalUser, totalUser, user , onEdit , onAdd}) => {
         setsearchedGetBroadcast(searchResult)
     }, [searchText])
     useEffect(() => {
-        if (user?.token) {
+        if (sessionSuperAdmin) {
             fetchAllUser()
         }
-    }, [user?.token])
+    }, [sessionSuperAdmin])
     useEffect(() => {
         if ((selectedBroadcast ).size > 0 || selectedBroadcast === 'all')
             setisChecked(true)
@@ -112,6 +63,12 @@ const UserTable = ({ setTotalUser, totalUser, user , onEdit , onAdd}) => {
             setisChecked(false)
 
     }, [selectedBroadcast])
+
+    useEffect(()=>{
+        if(statusAction){
+            fetchAllUser()
+        }
+    },[statusAction])
     return (
         <>
             <div className="mt-8 p-4 bg-white rounded-md">
@@ -124,7 +81,7 @@ const UserTable = ({ setTotalUser, totalUser, user , onEdit , onAdd}) => {
                     </div>
                     <div className='flex lg:justify-end justify-between gap-2 w-full max-w-xs'>
                         {isChecked ? (
-                            <Button color='danger' onClick={handleDeleteBroadcast} className="bg-danger rounded-md w-full lg:w-auto px-8 text-white text-center items-center flex hover:cursor-pointer justify-center p-2">
+                            <Button color='danger' onClick={()=>{}} className="bg-danger rounded-md w-full lg:w-auto px-8 text-white text-center items-center flex hover:cursor-pointer justify-center p-2">
                                 Hapus
                             </Button>
                         ) : (
@@ -176,10 +133,10 @@ const UserTable = ({ setTotalUser, totalUser, user , onEdit , onAdd}) => {
                                 <TableRow key={item.id}>
                                     <TableCell >{item.firstName}</TableCell>
                                     <TableCell >{item.lastName}</TableCell>
-                                    <TableCell >{`+${item.phone}`}</TableCell>
+                                    <TableCell >{ item.phone == null ? '-' :  `+${item.phone}`}</TableCell>
                                     <TableCell >{item.email}</TableCell>
                                     <TableCell>
-                                        <Switch size='sm' isSelected={item.Subscription.length == 0 ? false : true} onClick={() => handleToggleBroadcast(item.id, item.Subscription.length == 0 ? false : true)} />
+                                        <Switch size='sm' isSelected={item.Subscription.length == 0 ? false : true} onClick={() => {}} />
                                     </TableCell>
                                     <TableCell>
                                         <p className={`text-[10px] text-center text-white w-auto px-[12px] py-[4px] ${ item.Subscription.length == 0 ? 'bg-primary' :  item.Subscription[0].subscriptionPlan.name == 'pro' ? 'bg-black ' : 'bg-primary'} rounded-[30px]`} >

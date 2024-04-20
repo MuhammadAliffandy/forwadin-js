@@ -32,8 +32,11 @@ const DashboardSuperAdminUser = () => {
     const [isLoaded, setisLoaded] = useState(false)
     const [isChecked, setisChecked] = useState(false)
     const [userCount, setUserCount] = useState(0)
+    const [statusAction, setStatusAction] = useState([])
+    const [user, setUser] = useState([])
     const [addModal  , setAddModal] = useState(false)
     const [editModal  , setEditModal] = useState(false)
+    
     // 
 
     const [userProfile, setuserProfile] = useState({
@@ -114,16 +117,6 @@ const DashboardSuperAdminUser = () => {
         }
     }
 
-    const fetchLatestMessage = async () => {
-
-        const result = await getIncomeMessagesByQuery(session.superAdmin.token,currentDevice.sessionId,`?pageSize=3`)
-
-        if (result.status === 200) {
-            const resultData = result.data
-            setlatestMessage(resultData.data)
-            console.log(resultData)
-        }
-    }
     useEffect(() => {
         if (session?.user?.token) {
             fetchProfile()
@@ -144,11 +137,13 @@ const DashboardSuperAdminUser = () => {
                 </div>
             </div>
             <UserTable
+                statusAction = {statusAction}
                 setTotalUser={setUserCount}
                 totalUser={userCount}
                 user={session?.superAdmin}
                 onEdit = {(value)=>{
                     setEditModal(!editModal)
+                    setUser(value)
                 }}
                 onAdd = {()=>{
                     setAddModal(!addModal)
@@ -156,11 +151,20 @@ const DashboardSuperAdminUser = () => {
             />
             <AddModalUser
                 open = {addModal}
+                onload = {(value)=>{
+                    setAddModal(value)
+                    setStatusAction(value)
+                }}
                 onCloseButton = {()=>{setAddModal(false)}}
-            />
+                />
             
             <EditModalUser
                 open = {editModal}
+                user = {user}
+                onload = {(value)=>{
+                    setEditModal(value)
+                    setStatusAction(value)
+                }}
                 onCloseButton = {()=>{setEditModal(false)}}
             />
         </>

@@ -7,3 +7,21 @@ export const getAllSubscriptionPlans = async (token ) => {
     const response = await PROVIDER_GET(`subscription-plans`,token)
     return response;
 }
+
+export const createSubscriptionPlans = async (token ,data ) => {
+    await delay()
+    const response = await PROVIDER_POST(`subscription-plans`,data, token)
+    return response;
+}
+
+export const editSubscriptionPlans = async (token , subscriptionId ,data ) => {
+    await delay()
+    const response = await PROVIDER_PUT(`subscription-plans/${subscriptionId}`,data, token)
+    return response;
+}
+
+export const deleteSubscriptionPlans = async (token ,subscriptionId , data) => {
+    await delay()
+    const response = await PROVIDER_DELETE(`subscription-plans/${subscriptionId}`,data ,token)
+    return response;
+}
