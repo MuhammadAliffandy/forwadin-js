@@ -22,7 +22,7 @@ export const editUserAsSuperAdmin = async (token ,userId , data) => {
 
 export const updateStatusTransaction = async (token ,transactionId, data) => {
     await delay()
-    const response = await PROVIDER_PUT(`transaction/${transactionId}/status`,data ,token)
+    const response = await PROVIDER_PUT(`super-admin/transaction/${transactionId}/status`,data ,token)
     return response;
 }
 
