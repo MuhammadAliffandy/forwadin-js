@@ -6,7 +6,7 @@ import { Button, Link, Skeleton, Switch, Table, TableBody, TableCell, TableColum
 import { fetchClient } from '@/app/utils/helper/fetchClient';
 import { toast } from 'react-toastify';
 import { formatDate } from '@/app/utils/helper';
-import { getAllUser } from '@/app/api/repository/superadminRepository'
+import { getAllUser, updateStatusTransaction } from '@/app/api/repository/superadminRepository'
 
 
 const UserTable = ({ statusAction ,setTotalUser, totalUser, user , onEdit , onAdd}) => {
@@ -16,6 +16,7 @@ const UserTable = ({ statusAction ,setTotalUser, totalUser, user , onEdit , onAd
     const [broadcastData, setbroadcastData] = useState([])
     const [userData, setUserData] = useState([])
     const [searchText, setsearchText] = useState('')
+    const [ listTransaction , setListTransaction ] = useState([])
     const [searchedGetBroadcast, setsearchedGetBroadcast] = useState([])
     const [selectedBroadcast, setselectedBroadcast] = useState(new Set([]))
     const handleOpenDetailModal = (params) => {
@@ -32,11 +33,29 @@ const UserTable = ({ statusAction ,setTotalUser, totalUser, user , onEdit , onAd
         setsearchText(e.target.value)
     }
 
+    const handleTransactionPay = async (transactionId , status ) => {
+        const result = await updateStatusTransaction(user?.token , transactionId , {status : status ? 'paid' : 'unpaid'})
+
+        if (result.status === 200) {
+            toast.success('Update Payment Berhasil')
+            fetchAllUser()
+        } else {
+            toast.error(result?.statusText)
+        }
+    }
+
     const fetchAllUser = async () => {
         const result = await getAllUser(user?.token)
 
         if (result.status === 200) {
             const resultData = result.data
+
+            setListTransaction(resultData.map((data)=>{
+                return {
+                    status : data.transactions.length == 0 ? false : data.transactions[0].status == 'paid' ?true : false
+                }
+            }))
+
             console.log(resultData)
             setUserData(resultData)
             setTotalUser(resultData.length)
@@ -128,18 +147,23 @@ const UserTable = ({ statusAction ,setTotalUser, totalUser, user , onEdit , onAd
                         </div>}
                             items={userData}
                         >
-                            {(item) => (
+                            {(item , index) => (
                                 <TableRow key={item.id}>
                                     <TableCell >{item.firstName}</TableCell>
                                     <TableCell >{item.lastName}</TableCell>
                                     <TableCell >{ item.phone == null ? '-' :  `+${item.phone}`}</TableCell>
                                     <TableCell >{item.email}</TableCell>
                                     <TableCell>
-                                        <Switch size='sm' isSelected={item.Subscription.length == 0 ? false : true} onClick={() => {}} />
+                                        <Switch size='sm' isSelected={ listTransaction[index] } onClick={() => {
+
+                                            item.transactions.length == 0 ? toast.error('User belum melakukan transaksi') :
+
+                                            handleTransactionPay( item.transactions[0].id, !listTransaction[index])
+                                        }} />
                                     </TableCell>
                                     <TableCell>
-                                        <p className={`text-[10px] text-center text-white w-auto px-[12px] py-[4px] ${ item.Subscription.length == 0 ? 'bg-primary' :  item.Subscription[0].subscriptionPlan.name == 'pro' ? 'bg-black ' : 'bg-primary'} rounded-[30px]`} >
-                                            {item.Subscription.length == 0 ?  '-' : item.Subscription[0].subscriptionPlan.name}
+                                        <p className={`text-[10px] text-center text-white w-auto px-[12px] py-[4px] ${ item.transactions.length == 0 ? 'bg-primary' :  item.transactions[0].subscriptionPlan.name == 'pro' ? 'bg-black ' : 'bg-primary'} rounded-[30px]`} >
+                                            {item.transactions.length == 0 ?  '-' : item.transactions[0].subscriptionPlan.name}
                                         </p> 
                                     </TableCell>
                                     <TableCell>

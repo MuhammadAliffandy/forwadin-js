@@ -20,6 +20,12 @@ export const editUserAsSuperAdmin = async (token ,userId , data) => {
     return response;
 }
 
+export const updateStatusTransaction = async (token ,transactionId, data) => {
+    await delay()
+    const response = await PROVIDER_PUT(`transaction/${transactionId}/status`,data ,token)
+    return response;
+}
+
 export const deleteUserAsSuperAdmin = async (token ,userId , data) => {
     await delay()
     const response = await PROVIDER_DELETE(`super-admin/users/${userId}`,data ,token)
