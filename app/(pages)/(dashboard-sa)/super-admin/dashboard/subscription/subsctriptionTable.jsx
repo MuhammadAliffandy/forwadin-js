@@ -18,7 +18,7 @@ const SubscriptionTable = ({statusAction ,setTotalSubscription, totalSubscriptio
     const [searchText, setsearchText] = useState('')
     const [searchedGetBroadcast, setsearchedGetBroadcast] = useState([])
     const [selectedBroadcast, setselectedBroadcast] = useState(new Set([]))
-    const sessionSuperAdmin = sessionStorage.getItem('tokenSuperAdmin')
+   
     const handleOpenDetailModal = (params) => {
         push('/dashboard/contact/' + params)
     }
@@ -35,7 +35,7 @@ const SubscriptionTable = ({statusAction ,setTotalSubscription, totalSubscriptio
     
 
     const fetchSubscriptionPlan = async () => {
-        const result = await getAllSubscriptionPlans(sessionSuperAdmin)
+        const result = await getAllSubscriptionPlans(user?.token)
 
         if (result.status === 200) {
             const resultData = result.data
@@ -65,7 +65,7 @@ const SubscriptionTable = ({statusAction ,setTotalSubscription, totalSubscriptio
 
     }, [selectedBroadcast])
     useEffect(()=>{
-        if(statusAction){
+        if(statusAction == true){
             fetchSubscriptionPlan()
         }
     },[statusAction])

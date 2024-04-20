@@ -17,7 +17,7 @@ const AddModalUser = (props) => {
     const [ username , setUsername ] = useState('')
     const [ phone , setPhone ] = useState('')
     const [ email , setEmail ] = useState('')
-    const sessionSuperAdmin = sessionStorage.getItem('tokenSuperAdmin')
+    const sessionSuperAdmin = props.token
 
     const fetchSubscriptionPlan = async () => {
         const result = await getAllSubscriptionPlans(sessionSuperAdmin)
@@ -68,8 +68,10 @@ const AddModalUser = (props) => {
     }
 
     useEffect(()=>{
-        fetchSubscriptionPlan()
-    },[])
+        if(props.token){
+            fetchSubscriptionPlan()
+        }
+    },[props.token])
 
     return (
         <AppModal

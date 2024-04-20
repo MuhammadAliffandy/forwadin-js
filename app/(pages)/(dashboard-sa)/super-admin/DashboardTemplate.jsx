@@ -37,7 +37,6 @@ const DashboardTemplate = ({ currentPage, children }) => {
     }
 
     useEffect(() => {
-        sessionStorage.setItem('tokenSuperAdmin' , session?.superAdmin?.token)
         if (session?.superAdmin?.token) {
             fetchUserProfile()
             console.log(session.superAdmin)

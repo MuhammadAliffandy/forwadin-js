@@ -11,7 +11,7 @@ const EditModalUser = (props) => {
     const [ username , setUsername ] = useState('')
     const [ phone , setPhone ] = useState('')
     const [ email , setEmail ] = useState('')
-    const sessionSuperAdmin = sessionStorage.getItem('tokenSuperAdmin')
+    const sessionSuperAdmin = props.token
 
     const onDelete = async () => {
         props.onload(true)

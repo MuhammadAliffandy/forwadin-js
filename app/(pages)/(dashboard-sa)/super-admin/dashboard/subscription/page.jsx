@@ -17,18 +17,6 @@ import {getUserProfile} from '@/app/api/repository/userRepository'
 
 const DynamicAnalytic = dynamic(() => import('@/app/components/dashboard/Analytic'), { ssr: false })
 
-function createData(id, name , monthlyPrice , yearlyDiscount ,yearlyPrice, available , createdAt ) {
-    return { id , name , monthlyPrice , yearlyDiscount ,yearlyPrice, available , createdAt };
-}
-
-const rows = [
-    createData('1', 'Starter', '0', '0%','0',true, '11.9.23, 2:43 PM'),
-    createData('2', 'Starter', '0', '0%','0',true, '11.9.23, 2:43 PM'),
-    createData('3', 'Starter', '0', '0%','0',true, '11.9.23, 2:43 PM'),
-    createData('4', 'Starter', '0', '0%','0',true, '11.9.23, 2:43 PM'),
-    createData('5', 'Starter', '0', '0%','0',true, '11.9.23, 2:43 PM'),
-];
-
 
 const DashboardSuperAdminSubscription = () => {
     const { data: session } = useSession()
@@ -62,7 +50,7 @@ const DashboardSuperAdminSubscription = () => {
     })
     const fetchProfile = async () => {
         
-        const result = await getUserProfile(session.superAdmin.token,session.superAdmin.id)
+        const result = await getUserProfile(session?.superAdmin?.token,session.superAdmin.id)
 
         if (result) {
             const data = result.data
@@ -76,7 +64,7 @@ const DashboardSuperAdminSubscription = () => {
     }
     const fetchSubscription = async () => {
     
-        const result = await getUserSubscriptionById(session.superAdmin.token,session.superAdmin.id)
+        const result = await getUserSubscriptionById(session?.superAdmin?.token,session.superAdmin.id)
 
         if (result && result.status === 200) {
             const resultData = result.data
@@ -120,7 +108,7 @@ const DashboardSuperAdminSubscription = () => {
 
     const fetchLatestMessage = async () => {
 
-        const result = await getIncomeMessagesByQuery(session.superAdmin.token,currentDevice.sessionId,`?pageSize=3`)
+        const result = await getIncomeMessagesByQuery(session?.superAdmin?.token,currentDevice.sessionId,`?pageSize=3`)
 
         if (result.status === 200) {
             const resultData = result.data
@@ -170,6 +158,7 @@ const DashboardSuperAdminSubscription = () => {
                 </div>
             </div>
             <AddModalSubscription
+                token={session?.superAdmin?.token}
                 open = {addModal}
                 onload = {(value)=>{
                     setAddModal(value)
@@ -178,6 +167,7 @@ const DashboardSuperAdminSubscription = () => {
                 onCloseButton = {()=>{setAddModal(false)}}
             />
             <EditModalSubscription
+                token={session?.superAdmin?.token}
                 open = {editModal}
                 subscription = {subscription}
                 onload = {(value)=>{

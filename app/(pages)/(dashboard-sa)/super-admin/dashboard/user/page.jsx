@@ -14,18 +14,6 @@ import UserTable from './userTable'
 import AddModalUser from '@/app/components/super-admin/user/addModal'
 import EditModalUser from '@/app/components/super-admin/user/editModal'
 
-function createData(id, firstName, lastName, phone,  email , googleId, subscription , createdAt) {
-    return { id, firstName, lastName, phone,  email , googleId, subscription , createdAt };
-}
-
-const rows = [
-    createData('1', 'Alif', 'Rizki', '+6283845678765', 'alifrizky@gmail.com','-', 'Unlimited', '11.9.23, 2:43 PM'),
-    createData('2', 'Alif', 'Rizki', '+6283845678765', 'alifrizky@gmail.com','-', 'Starter', '11.9.23, 2:43 PM'),
-    createData('3', 'Alif', 'Rizki', '+6283845678765', 'alifrizky@gmail.com','-',  'Pro', '11.9.23, 2:43 PM'),
-    createData('4', 'Alif', 'Rizki', '+6283845678765', 'alifrizky@gmail.com','-',  'Unlimited', '11.9.23, 2:43 PM'),
-    createData('5', 'Alif', 'Rizki', '+6283845678765', 'alifrizky@gmail.com','-', 'Pro', '11.9.23, 2:43 PM'),
-];
-
 
 const DashboardSuperAdminUser = () => {
     const { data: session } = useSession()
@@ -60,7 +48,7 @@ const DashboardSuperAdminUser = () => {
     })
     const fetchProfile = async () => {
         
-        const result = await getUserProfile(session.superAdmin.token,session.superAdmin.id)
+        const result = await getUserProfile(session?.superAdmin?.token,session.superAdmin.id)
 
         if (result) {
             const data = result.data
@@ -75,7 +63,7 @@ const DashboardSuperAdminUser = () => {
 
     const fetchSubscription = async () => {
     
-        const result = await getUserSubscriptionById(session.superAdmin.token,session.superAdmin.id)
+        const result = await getUserSubscriptionById(session?.superAdmin?.token,session.superAdmin.id)
 
         if (result && result.status === 200) {
             const resultData = result.data
@@ -150,6 +138,7 @@ const DashboardSuperAdminUser = () => {
                 }}
             />
             <AddModalUser
+                token={session?.superAdmin?.token}
                 open = {addModal}
                 onload = {(value)=>{
                     setAddModal(value)
@@ -159,6 +148,8 @@ const DashboardSuperAdminUser = () => {
                 />
             
             <EditModalUser
+                token={session?.superAdmin?.token}
+                
                 open = {editModal}
                 user = {user}
                 onload = {(value)=>{

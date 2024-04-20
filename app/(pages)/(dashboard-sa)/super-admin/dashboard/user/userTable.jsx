@@ -18,7 +18,6 @@ const UserTable = ({ statusAction ,setTotalUser, totalUser, user , onEdit , onAd
     const [searchText, setsearchText] = useState('')
     const [searchedGetBroadcast, setsearchedGetBroadcast] = useState([])
     const [selectedBroadcast, setselectedBroadcast] = useState(new Set([]))
-    const sessionSuperAdmin = sessionStorage.getItem('tokenSuperAdmin')
     const handleOpenDetailModal = (params) => {
         push('/dashboard/contact/' + params)
     }
@@ -34,7 +33,7 @@ const UserTable = ({ statusAction ,setTotalUser, totalUser, user , onEdit , onAd
     }
 
     const fetchAllUser = async () => {
-        const result = await getAllUser(sessionSuperAdmin)
+        const result = await getAllUser(user?.token)
 
         if (result.status === 200) {
             const resultData = result.data
@@ -52,10 +51,10 @@ const UserTable = ({ statusAction ,setTotalUser, totalUser, user , onEdit , onAd
         setsearchedGetBroadcast(searchResult)
     }, [searchText])
     useEffect(() => {
-        if (sessionSuperAdmin) {
+        if (user?.token) {
             fetchAllUser()
         }
-    }, [sessionSuperAdmin])
+    }, [user?.token])
     useEffect(() => {
         if ((selectedBroadcast ).size > 0 || selectedBroadcast === 'all')
             setisChecked(true)

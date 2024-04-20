@@ -17,7 +17,7 @@ const EditModalSubscription = (props) => {
     const [available , setAvailable] = useState(false)
     const [contactSync , setContactSync ] = useState(false)
     const [whatsappSync , setWhatsappSync ] = useState(false)
-    const sessionSuperAdmin = sessionStorage.getItem('tokenSuperAdmin')
+    const sessionSuperAdmin = props.token
 
     const onDelete = async () => {
         props.onload(true)
