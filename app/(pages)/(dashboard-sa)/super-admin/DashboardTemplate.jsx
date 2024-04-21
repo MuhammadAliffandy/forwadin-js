@@ -114,7 +114,7 @@ const DashboardTemplate = ({ currentPage, children }) => {
                                 </DropdownItem>
                             </DropdownSection>
 
-                            <DropdownItem key='sign out' className="text-danger" onClick={() => signOut({ callbackUrl: '/signin' })}>Sign Out</DropdownItem>
+                            <DropdownItem key='sign out' className="text-danger" onClick={() => signOut({ callbackUrl: '/super-admin/signin' })}>Sign Out</DropdownItem>
                         </DropdownMenu>
                     </Dropdown>
                 </div>
@@ -185,7 +185,7 @@ const DashboardTemplate = ({ currentPage, children }) => {
                                     </DropdownItem>
                                 </DropdownSection>
 
-                                <DropdownItem key='sign out' className="text-danger" onClick={() => signOut({ callbackUrl: '/signin' })}>Sign Out</DropdownItem>
+                                <DropdownItem key='sign out' className="text-danger" onClick={() => signOut({ callbackUrl: '/super-admin/signin' })}>Sign Out</DropdownItem>
                             </DropdownMenu>
                         </Dropdown>
                         <div className='flex-none bg-white rounded-full p-2 hover:cursor-pointer' onClick={() => router.push('/dashboard/settings?section=system')}>
