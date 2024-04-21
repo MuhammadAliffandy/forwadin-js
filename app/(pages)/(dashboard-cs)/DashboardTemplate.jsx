@@ -8,6 +8,7 @@ import { Dropdown, DropdownItem, DropdownMenu, DropdownSection, DropdownTrigger 
 import { CustomerService, UserProfile } from "@/app/utils/types";
 import { fetchClient } from "@/app/utils/helper/fetchClient";
 import { useRouter } from "next/navigation";
+import { BarLoader } from "react-spinners";
 const DashboardTemplate = ({ currentPage, children }) => {
     const { data: session } = useSession()
     const router = useRouter()
@@ -108,7 +109,10 @@ const DashboardTemplate = ({ currentPage, children }) => {
                             <DropdownTrigger>
                                 <div className='flex-none bg-white rounded-full hover:cursor-pointer flex w-[180px]'>
                                     <div className='flex-1 flex justify-center items-center'>
-                                        <p>{session?.customerService?.username}</p>
+                                        {
+                                            session != null ? <p>{session?.customerService?.username}</p> : <BarLoader/>
+                                        }
+                                        
                                     </div>
                                     <div className='flex-none bg-primary rounded-full p-2 hover:cursor-pointer flex items-center justify-center'>
                                         <img src="/assets/icons/dashboard/user.svg" alt="" />
