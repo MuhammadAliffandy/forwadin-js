@@ -146,7 +146,7 @@ const CampaignMessages = ({ campaignId }) => {
                         <TableBody emptyContent={<div className='w-full bg-white p-12'>
                             <div className='w-full max-w-md mx-auto flex flex-col gap-4'>
                                 <p className='text-[16px] font-bold'>Campaign message masih kosong</p>
-                                <p className='text-xs text-[#777C88]'>Lorem Ipsum</p>
+                                <p className='text-xs text-[#777C88]'>-</p>
                             </div>
                         </div>}
                             items={campaignMessages}
