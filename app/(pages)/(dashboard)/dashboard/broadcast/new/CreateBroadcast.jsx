@@ -75,7 +75,7 @@ const CreateBroadcast = () => {
             formData.append('schedule', formatDatetoISO8601(broadcastFormData.schedule))
 
 
-            const result = await createBroadcast(session?.user.token , formData)
+            const result = await createBroadcast(session?.user?.token , formData)
             if (result.status === 201) {
                 toast.success('Berhasil buat broadcast')
                 push('/dashboard/broadcast')

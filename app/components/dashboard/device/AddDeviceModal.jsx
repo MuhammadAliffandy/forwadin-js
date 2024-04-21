@@ -33,7 +33,7 @@ const AddDeviceModal = (
             })
             setisLoading(false)
             const body = await result?.json()
-            if (result && result.status === 200) {
+            if (result && result.ok) {
                 toast.success('Device berhasil ditambahkan')
                 setopenModal(false)
                 fetchData()

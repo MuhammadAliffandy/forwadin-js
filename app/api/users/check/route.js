@@ -4,7 +4,7 @@ export const POST = async (request) => {
     const body = await request.json()
     let isError = false
     const checkIdentifier = async (type, identifier) => {
-        const result = await fetch(process.env.BACKEND_URL + '/auth/check-identifier-availability', {
+        const result = await fetch(process.env.BASE_URL_DEV + '/auth/check-identifier-availability', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

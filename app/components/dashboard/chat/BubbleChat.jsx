@@ -31,7 +31,7 @@ const BubbleChat = ({ text, received, status, isOutgoing = false, currentDate, m
                         <>
                             <div className="max-w-xs max-h-[250px] overflow-scroll">
                                 {isFileImage(mediaPath) ? (
-                                    <img src={process.env.NEXT_PUBLIC_BACKEND_URL + '/' + mediaPath} alt="photos" className="object-cover w-full h-full hover:bg-neutral-75" onClick={() => { }} />
+                                    <img src={process.env.BASE_URL_DEV + '/' + mediaPath} alt="photos" className="object-cover w-full h-full hover:bg-neutral-75" onClick={() => { }} />
                                 ) : (
                                     <DisplayFile fileUrl={mediaPath} />
                                 )}
@@ -68,7 +68,7 @@ const BubbleChat = ({ text, received, status, isOutgoing = false, currentDate, m
                 {mediaPath && (
                     <div className="max-w-xs max-h-[250px] overflow-scroll">
                         {isFileImage(mediaPath) ? (
-                            <img src={process.env.NEXT_PUBLIC_BACKEND_URL + '/' + mediaPath} alt="photos" className="object-cover w-full h-full hover:bg-neutral-75" onClick={() => { }} />
+                            <img src={process.env.BASE_URL_DEV + '/' + mediaPath} alt="photos" className="object-cover w-full h-full hover:bg-neutral-75" onClick={() => { }} />
                         ) : (
                             <DisplayFile fileUrl={mediaPath} />
                         )}

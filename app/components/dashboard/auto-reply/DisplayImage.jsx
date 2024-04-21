@@ -3,7 +3,7 @@ import { Dispatch, SetStateAction, useEffect, useState } from "react"
 
 const DisplayImage = ({ imageUrl }) => {
     const [fileName, setfileName] = useState('')
-    const finalUrl = process.env.NEXT_PUBLIC_BACKEND_URL + '/' + imageUrl
+    const finalUrl = process.env.BASE_URL_DEV + '/' + imageUrl
     useEffect(() => {
         const parts = imageUrl.split('/')
         setfileName(parts[parts.length - 1])

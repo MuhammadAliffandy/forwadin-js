@@ -30,7 +30,7 @@ const DashboardTemplate = ({ currentPage, children }) => {
     }
     const fetchUserProfile = async () => {
 
-        const result = await getUserProfile(session.user.token,session.user.id)
+        const result = await getUserProfile(session?.user?.token,session?.user?.id)
         console.log(result)
         if (result && result.status == 200) {
             const body = await result.data
@@ -39,7 +39,6 @@ const DashboardTemplate = ({ currentPage, children }) => {
     }
 
     useEffect(() => {
-        console.log( 'test' + session.user)
         if (session?.user?.token) {
             fetchUserProfile()
             console.log(session.user)

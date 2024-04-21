@@ -24,7 +24,7 @@ const fetchServer = async (request, response, { url, body, method }) => {
         },
         body: JSON.stringify(body)
     }
-    const result = await fetch(process.env.BACKEND_URL + url, fetchConfig)
+    const result = await fetch(process.env.BASE_URL_DEV + url, fetchConfig)
     return result
 
 }

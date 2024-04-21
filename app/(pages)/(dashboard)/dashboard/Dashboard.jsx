@@ -52,45 +52,51 @@ const Dashboard = () => {
     }
     const fetchSubscription = async () => {
     
-        const result = await getUserSubscriptionById(session.user.token,session.user.id)
+        try {
+            const result = await getUserSubscriptionById(session?.user?.token,session?.user?.id)
 
-        if (result && result.status == 200) {
-            const resultData = result.data
-            setuserSubscription(resultData)
-            const deviceProgress = (resultData.deviceUsed / resultData.deviceMax) * 100
-            const contactProgress = (resultData.contactUsed / resultData.contactMax) * 100
-            if (deviceProgress <= 33) {
-                setprogressDevice({
-                    value: deviceProgress,
-                    color: 'primary'
-                })
-            } else if (deviceProgress <= 66) {
-                setprogressDevice({
-                    value: deviceProgress,
-                    color: 'warning'
-                })
-            } else {
-                setprogressDevice({
-                    value: deviceProgress,
-                    color: 'danger'
-                })
+            if (result && result.status == 200) {
+                const resultData = result.data
+                setuserSubscription(resultData)
+                const deviceProgress = (resultData.deviceUsed / resultData.deviceMax) * 100
+                const contactProgress = (resultData.contactUsed / resultData.contactMax) * 100
+                if (deviceProgress <= 33) {
+                    setprogressDevice({
+                        value: deviceProgress,
+                        color: 'primary'
+                    })
+                } else if (deviceProgress <= 66) {
+                    setprogressDevice({
+                        value: deviceProgress,
+                        color: 'warning'
+                    })
+                } else {
+                    setprogressDevice({
+                        value: deviceProgress,
+                        color: 'danger'
+                    })
+                }
+                if (contactProgress <= 33) {
+                    setprogressContact({
+                        value: contactProgress,
+                        color: 'success'
+                    })
+                } else if (contactProgress <= 66) {
+                    setprogressContact({
+                        value: contactProgress,
+                        color: 'warning'
+                    })
+                } else {
+                    setprogressContact({
+                        value: contactProgress,
+                        color: 'danger'
+                    })
+                }
+            }else{
+                return null;
             }
-            if (contactProgress <= 33) {
-                setprogressContact({
-                    value: contactProgress,
-                    color: 'success'
-                })
-            } else if (contactProgress <= 66) {
-                setprogressContact({
-                    value: contactProgress,
-                    color: 'warning'
-                })
-            } else {
-                setprogressContact({
-                    value: contactProgress,
-                    color: 'danger'
-                })
-            }
+        } catch (error) {
+            toast.warning('Silahkan Aktifkan Paket Dulu')
         }
     }
 

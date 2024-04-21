@@ -1,4 +1,5 @@
 
+import { createGroup } from '@/app/api/repository/groupRepository'
 import ButtonSubmit from '@/app/components/form/ButtonSubmit'
 import InputForm from '@/app/components/form/InputForm'
 import ModalTemplate from '@/app/components/template/ModalTemplate'
@@ -17,12 +18,8 @@ const AddGroupModal = (
     const onSubmit = async (formData) => {
         setisLoading(true)
 
-        const result = await fetchClient({
-            method: 'POST',
-            url: '/groups/create',
-            body: JSON.stringify({ name: formData.name }),
-            user: session?.user
-        })
+        const result = await createGroup(session?.user?.token, {name : formData.name})
+
         if (result && result.status === 200) {
             toast.success('Group berhasil ditambahkan')
             fetchData()

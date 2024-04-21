@@ -14,7 +14,7 @@ export const SocketProvider = ({ children }) => {
     const [isConnected, setisConnected] = useState(false)
     useEffect(() => {
         // console.log(process.env.NEXT_PUBLIC_BASE_URL)
-        const socketInstance = new (ClientIO)(process.env.NEXT_PUBLIC_BACKEND_URL, {
+        const socketInstance = new (ClientIO)(process.env.BASE_URL_DEV, {
             // path: '/',
             // addTrasockerilingSlash: false,
             reconnection: true,

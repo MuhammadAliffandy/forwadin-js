@@ -6,7 +6,7 @@ const getDeviceSession = async (data, token) => {
 
     const newArray = await Promise.all(
         data.map(async (ses) => {
-            const fetchDeviceDetails = await fetch(process.env.BACKEND_URL + '/devices/' + ses.device.id, {
+            const fetchDeviceDetails = await fetch(process.env.BASE_URL_DEV + '/devices/' + ses.device.id, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -62,7 +62,7 @@ export const authConfig = {
                 console.log('refresh session 2')
                 console.log(userData.refreshToken)
                 // todo
-                const result = await fetch(process.env.BACKEND_URL + '/auth/refresh-token', {
+                const result = await fetch(process.env.BASE_URL_DEV + '/auth/refresh-token', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -77,7 +77,7 @@ export const authConfig = {
                     if (userData.role === 3) {
                         console.log('refresh CS')
                         console.log(resultData)
-                        const fetchSessionCS = await fetch(process.env.BACKEND_URL + "/customer-services/" + (userData).id, {
+                        const fetchSessionCS = await fetch(process.env.BASE_URL_DEV + "/customer-services/" + (userData).id, {
                             method: 'GET',
                             headers: {
                                 'Content-Type': 'application/json',
@@ -98,7 +98,7 @@ export const authConfig = {
                         console.log(csData)
                         return csData 
                     }
-                    const userSubscription = await fetch(process.env.BACKEND_URL + '/users/' + userData.id + '/subscription/', {
+                    const userSubscription = await fetch(process.env.BASE_URL_DEV + '/users/' + userData.id + '/subscription/', {
                         method: 'GET',
                         headers: {
                             'Content-Type': 'application/json',
@@ -111,7 +111,7 @@ export const authConfig = {
                             status: 1,
                             name: userSubscriptionResult.subscriptionPlan.name
                         }
-                        const fetchSession = await fetch(process.env.BACKEND_URL + '/sessions', {
+                        const fetchSession = await fetch(process.env.BASE_URL_DEV + '/sessions', {
                             method: 'GET',
                             headers: {
                                 'Content-Type': 'application/json',
@@ -149,7 +149,7 @@ export const authConfig = {
                 password: {}
             },
             authorize: async (credentials) => {
-                const result = await fetch(process.env.BACKEND_URL + '/auth/login', {
+                const result = await fetch(process.env.BASE_URL_DEV + '/auth/login', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -168,7 +168,7 @@ export const authConfig = {
                         subscription: {},
                         device: []
                     }
-                    const userSubscription = await fetch(process.env.BACKEND_URL + '/users/' + user.id + '/subscription/', {
+                    const userSubscription = await fetch(process.env.BASE_URL_DEV + '/users/' + user.id + '/subscription/', {
                         method: 'GET',
                         headers: {
                             'Content-Type': 'application/json',
@@ -181,7 +181,7 @@ export const authConfig = {
                             status: 1,
                             name: userSubscriptionResult.subscriptionPlan.name
                         }
-                        const fetchSession = await fetch(process.env.BACKEND_URL + '/sessions', {
+                        const fetchSession = await fetch(process.env.BASE_URL_DEV + '/sessions', {
                             method: 'GET',
                             headers: {
                                 'Content-Type': 'application/json',
@@ -217,7 +217,7 @@ export const authConfig = {
                 password: {}
             },
             authorize: async (credentials) => {
-                const result = await fetch(process.env.BACKEND_URL + '/super-admin/login', {
+                const result = await fetch(process.env.BASE_URL_DEV + '/super-admin/login', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -236,7 +236,7 @@ export const authConfig = {
                         subscription: {},
                         device: []
                     }
-                    const userSubscription = await fetch(process.env.BACKEND_URL + '/users/' + user.id + '/subscription/', {
+                    const userSubscription = await fetch(process.env.BASE_URL_DEV + '/users/' + user.id + '/subscription/', {
                         method: 'GET',
                         headers: {
                             'Content-Type': 'application/json',
@@ -249,7 +249,7 @@ export const authConfig = {
                             status: 1,
                             name: userSubscriptionResult.subscriptionPlan.name
                         }
-                        const fetchSession = await fetch(process.env.BACKEND_URL + '/sessions', {
+                        const fetchSession = await fetch(process.env.BASE_URL_DEV + '/sessions', {
                             method: 'GET',
                             headers: {
                                 'Content-Type': 'application/json',
@@ -288,7 +288,7 @@ export const authConfig = {
                 try {
 
                     console.log('masuk cs 1')
-                    const result = await fetch(process.env.BACKEND_URL + '/customer-services/login', {
+                    const result = await fetch(process.env.BASE_URL_DEV + '/customer-services/login', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -299,7 +299,7 @@ export const authConfig = {
                     if (!result.ok) return null
                     const resultData = await result.json()
                     console.log('masuk cs 3')
-                    const csProfile = await fetch(process.env.BACKEND_URL + '/customer-services/' + resultData.id, {
+                    const csProfile = await fetch(process.env.BASE_URL_DEV + '/customer-services/' + resultData.id, {
                         method: 'GET',
                         headers: {
                             'Content-Type': 'application/json', 'Authorization': 'Bearer ' + resultData.accessToken
@@ -366,7 +366,7 @@ export const authConfig = {
         // async signIn({ user, account }) {
         //     if (account?.provider === 'google') {
         //         // return null
-        //         const result = await fetch(process.env.BACKEND_URL + '/auth/google', {
+        //         const result = await fetch(process.env.BASE_URL_DEV + '/auth/google', {
         //             method: 'POST',
         //             headers: {
         //                 'Content-Type': 'application/json'
@@ -382,7 +382,7 @@ export const authConfig = {
         //             user.id = resultData.id
         //             user.token = resultData.accessToken
         //             user.refreshToken = resultData.refreshToken
-        //             const userSubscription = await fetch(process.env.BACKEND_URL + '/users/' + user.id + '/subscription/', {
+        //             const userSubscription = await fetch(process.env.BASE_URL_DEV + '/users/' + user.id + '/subscription/', {
         //                 method: 'GET',
         //                 headers: {
         //                     'Content-Type': 'application/json',
@@ -395,7 +395,7 @@ export const authConfig = {
         //                     status: 1,
         //                     name: userSubscriptionResult.subscriptionPlan.name
         //                 }
-        //                 const fetchSession = await fetch(process.env.BACKEND_URL + '/sessions', {
+        //                 const fetchSession = await fetch(process.env.BASE_URL_DEV + '/sessions', {
         //                     method: 'GET',
         //                     headers: {
         //                         'Content-Type': 'application/json',

@@ -16,7 +16,7 @@ const fetchClient = async ({ method, body = null, url, user, isFormData = false 
                     'Authorization': 'Bearer ' + user.token,
                 }
             }
-            const result = await fetch(process.env.NEXT_PUBLIC_BACKEND_URL + url, {
+            const result = await fetch(process.env.BASE_URL_DEV + url, {
                 method: method,
                 headers: headers,
                 body: body,

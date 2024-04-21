@@ -8,7 +8,7 @@ const imageExt = [
 ]
 export const getFileFromUrl = async (url, setfiles) => {
     console.log(url)
-    const image = await fetch(process.env.NEXT_PUBLIC_BACKEND_URL + '/' + url)
+    const image = await fetch(process.env.BASE_URL_DEV + '/' + url)
     console.log(image.status)
     if (image.ok) {
         const fileName = url.substring(

@@ -35,7 +35,7 @@ const ApiDetail = ({ apiDetail }) => {
                         pre: 'flex gap-2 items-center'
                     }} fullWidth symbol={
                         <img src='/assets/icons/link.svg' width={24} />
-                    }>{process.env.NEXT_PUBLIC_BACKEND_URL + apiDetail.url}</Snippet>
+                    }>{process.env.BASE_URL_DEV + apiDetail.url}</Snippet>
                 </AccordionItem>
             </Accordion>
             <Card className='rounded-md mt-4'>

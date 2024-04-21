@@ -63,7 +63,7 @@ const GroupTable = ({ setcountGroup }) => {
     }
     const fetchData = async () => {
 
-        const result = await getAllGroups(session?.user.token)
+        const result = await getAllGroups(session?.user?.token)
 
         if (result.status === 200) {
             const resultData = result.data
@@ -74,8 +74,10 @@ const GroupTable = ({ setcountGroup }) => {
         }
     }
     useEffect(() => {
-        fetchData()
-    }, [session?.user])
+        if(session?.user?.token){
+            fetchData()
+        }
+    }, [session?.user?.token])
 
     useEffect(() => {
         const searchResult = filterDevice(searchText)

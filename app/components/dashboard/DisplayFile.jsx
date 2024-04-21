@@ -6,7 +6,7 @@ import React, { useEffect, useState } from 'react'
 const DisplayFile = ({ fileUrl }) => {
     const router = useRouter()
     const [fileName, setfileName] = useState('')
-    const finalUrl = process.env.NEXT_PUBLIC_BACKEND_URL + '/' + fileUrl
+    const finalUrl = process.env.BASE_URL_DEV + '/' + fileUrl
     useEffect(() => {
         const parts = fileUrl.split('/')
         setfileName(parts[parts.length - 1])
