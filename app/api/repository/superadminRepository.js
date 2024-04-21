@@ -26,6 +26,14 @@ export const updateStatusTransaction = async (token ,transactionId, data) => {
     return response;
 }
 
+export const updateUserSubscription = async (token ,userId , data) => {
+
+    await delay()
+    const response = await PROVIDER_PUT(`super-admin/users/${userId}/subscriptions`,data ,token)
+    return response;
+}
+
+
 export const deleteUserAsSuperAdmin = async (token ,userId , data) => {
     await delay()
     const response = await PROVIDER_DELETE(`super-admin/users/${userId}`,data ,token)
