@@ -144,7 +144,7 @@ const CustomerServiceTable = () => {
                             <div className='w-full bg-white p-12'>
                                 <div className='w-full max-w-md mx-auto flex flex-col gap-4'>
                                     <p className='text-[16px] font-bold'>CS Masih Kosong</p>
-                                    <p className='text-xs text-[#777C88]'>Lorem</p>
+                                    <p className='text-xs text-[#777C88]'>Harap menambahkan customer service</p>
                                     <div className='flex'>
                                         <div onClick={() => setcreateCSModal(true)} className="bg-primary rounded-md px-6 text-white text-center items-center flex hover:cursor-pointer justify-center p-2">
                                             Tambah Customer Service

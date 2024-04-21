@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import Notification from "./dashboard/Notification";
 import { useSocket } from "../../SocketProvider";
 import { getUserProfile } from "@/app/api/repository/userRepository";
+import { BarLoader } from "react-spinners";
 const DashboardTemplate = ({ currentPage, children }) => {
     const { data: session } = useSession()
     const { socket, isConnected } = useSocket()
@@ -18,7 +19,7 @@ const DashboardTemplate = ({ currentPage, children }) => {
 
     const [sideNavDropdown, setsideNavDropdown] = useState(false)
     const [isDisabled, setisDisabled] = useState(true)
-    const [user, setuser] = useState()
+    const [user, setuser] = useState(null)
     const handleClick = (event) => {
         setsideNavDropdown(true)
     }
@@ -207,7 +208,11 @@ const DashboardTemplate = ({ currentPage, children }) => {
                             <DropdownTrigger>
                                 <div className='flex-none bg-white rounded-full hover:cursor-pointer flex w-[180px]'>
                                     <div className='flex-1 flex justify-center items-center'>
-                                        <p>{user?.username}</p>
+                                        {/* <p>{user?.username}</p> */}
+                                        {
+                                            user != null ? <p>{user?.username}</p> : <BarLoader/> 
+                                        }
+                                        
                                     </div>
                                     {session?.user?.image ? (
                                         <img src={session.user.image} alt="" className="rounded-full" width={33} />
