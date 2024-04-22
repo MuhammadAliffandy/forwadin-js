@@ -25,12 +25,10 @@ export const PROVIDER_GET = async (pathUrl, token) => {
     }
 }
 
-export const PROVIDER_POST = async (pathUrl, data , token) => {
-
-    console.log("tipe data => " + typeof data)
+export const PROVIDER_POST = async (pathUrl, data , token ,type = 'object') => {
     
     const headers = {
-        'Content-Type': type == 'object' ? 'application/json' : 'multipart/form-data',
+        'Content-Type':  type == 'object' ? 'application/json' : 'multipart/form-data',
         "Authorization": `Bearer ${token || ''}`,
     }
 
