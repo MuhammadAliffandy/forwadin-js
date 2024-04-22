@@ -10,12 +10,14 @@ import { toast } from "react-toastify"
 import BasicPlan from "./Plans"
 import { formatCurrencyIDR } from "@/app/utils/helper"
 import { createPayment, getPaymentSubscription } from "@/app/api/repository/paymentRepository"
+import { getUserProfile } from "@/app/api/repository/userRepository"
 
 
 const Payment = () => {
 	const { data: session } = useSession()
 	const { push } = useRouter()
 	const [isLoaded, setisLoaded] = useState(false)
+	const [user, setuser] = useState(false)
 	const [isLoading, setisLoading] = useState(false)
 	const [durationPlan, setdurationPlan] = useState('Monthly')
 	const [plans, setplans] = useState([])
@@ -97,30 +99,51 @@ const Payment = () => {
 		}
 
 	}
+
+	const fetchUserProfile = async () => {
+		const result = await getUserProfile(session?.user?.token,session?.user?.id)
+        console.log(result)
+        if (result && result.status == 200) {
+            const body = await result.data
+            setuser(body)
+        }
+	}
+
 	const handleClick = async () => {
 		setisLoading(true)
 
-		const result = await createPayment(session?.user?.token, {
-			subscriptionPlanId: currentPlan?.id,
-			subscriptionPlanType: durationPlan.toLowerCase()
-		})
+		if(user.Subscription[0].subscriptionPlan.name != 'pro'){
+			const result = await createPayment(session?.user?.token, {
+				subscriptionPlanId: currentPlan?.id,
+				subscriptionPlanType: durationPlan.toLowerCase()
+			})
+	
+			if (result) {
+				const resultData = result.data
+				if (result.status === 200) {
+					console.log(resultData)
+					const validaton = confirm('Transaksi Anda berhasil. Hubungi CP : 08112138113 untuk selanjutnya')
 
-		if (result) {
-			const resultData = result.data
-			if (result.status === 200) {
-				console.log(resultData)
-				// window.location.assign(resultData.redirect_url)
-				push('/dashboard')
+					if(validaton){
+						push('/dashboard')
+					}else{
+						toast.success('Transaksi Success')
+					}
 
-			} else {
-				toast.error('failed to pay')
-				console.log(resultData)
-				setisLoading(false)
+	
+				} else {
+					toast.error('Transaksi Gagal')
+					console.log(resultData)
+					setisLoading(false)
+				}
 			}
+		}else{
+			toast.error('Paket Anda Sudah Pro tunggu sampai habis')
 		}
 	}
 	useEffect(() => {
 		if (session?.user?.token){
+			fetchUserProfile()
 			fetchSubscriptionPlans()
 		}
 	}, [session?.user?.token])

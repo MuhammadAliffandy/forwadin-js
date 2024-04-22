@@ -205,7 +205,7 @@ const EditContactModal = ({ openModal, setopenModal, fetchData, contactData }) =
                 </div>
                 <div>
                     <p className="font-bold mb-2">Gender</p>
-                    <select {...register('gender')} value={contactData?.gender} className="px-4 py-3 focus:outline-none text-sm rounded-md focus:ring-0 w-full border-[#B0B4C5] focus:border-primary">
+                    <select {...register('gender')} className="px-4 py-3 focus:outline-none text-sm rounded-md focus:ring-0 w-full border-[#B0B4C5] focus:border-primary">
                         <option value="male" className="">Laki-laki</option>
                         <option value="female">Perempuan</option>
                     </select>

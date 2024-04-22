@@ -40,7 +40,7 @@ export const getOutgoingReplies = async ( token , broadcastId ) => {
 
 export const updateBroadcast = async ( token , broadcastId , data ) => {
     await delay()
-    const response = await PROVIDER_PUT(`broadcasts/${broadcastId}` , token , data )
+    const response = await PROVIDER_PUT(`broadcasts/${broadcastId}` , data , token )
     return response;
 }
 

@@ -9,14 +9,14 @@ import { formatDate } from '@/app/utils/helper';
 import { getAllUser, updateStatusTransaction } from '@/app/api/repository/superadminRepository'
 
 
-const UserTable = ({ statusAction ,setTotalUser, totalUser, user , onEdit , onAdd}) => {
+const UserTable = ({ statusAction ,setTotalUser, totalUser, user , onEdit , onAdd , onSubscription}) => {
     const { push } = useRouter()
     const [isChecked, setisChecked] = useState(false)
     const [isLoaded, setisLoaded] = useState(false)
     const [broadcastData, setbroadcastData] = useState([])
     const [userData, setUserData] = useState([])
     const [searchText, setsearchText] = useState('')
-    const [ listTransaction , setListTransaction ] = useState([])
+    const [ listTransaction , setListTransaction ] = useState()
     const [searchedGetBroadcast, setsearchedGetBroadcast] = useState([])
     const [selectedBroadcast, setselectedBroadcast] = useState(new Set([]))
     const handleOpenDetailModal = (params) => {
@@ -50,13 +50,12 @@ const UserTable = ({ statusAction ,setTotalUser, totalUser, user , onEdit , onAd
         if (result.status === 200) {
             const resultData = result.data
 
-            setListTransaction(resultData.map((data)=>{
-                return {
-                    status : data.transactions.length == 0 ? false : data.transactions[0].status == 'paid' ?true : false
-                }
-            }))
+            const dataTransaction = resultData.map((data)=>{
+                return {status : data.transactions.length == 0 ? false : data.transactions[0].status == 'paid' ?true : false}
+            })
 
-            console.log(resultData)
+            setListTransaction(dataTransaction)
+
             setUserData(resultData)
             setTotalUser(resultData.length)
             setisLoaded(true)
@@ -138,32 +137,36 @@ const UserTable = ({ statusAction ,setTotalUser, totalUser, user , onEdit , onAd
                             <TableColumn>Subscription</TableColumn>
                             <TableColumn>Dibuat Pada</TableColumn>
                             <TableColumn>Edit</TableColumn>
+                            <TableColumn>Edit Subscription</TableColumn>
                         </TableHeader>
                         <TableBody emptyContent={<div className='w-full bg-white p-12'>
                             <div className='w-full max-w-md mx-auto flex flex-col gap-4'>
-                                <p className='text-[16px] font-bold'>Broadcast masih kosong</p>
-                                <p className='text-xs text-[#777C88]'>-</p>
+                                <p className='text-[16px] font-bold'>User Data masih kosong</p>
+                                <p className='text-xs text-[#777C88]'>Lorem Ipsum</p>
                             </div>
                         </div>}
-                            items={userData}
+
+                        items={userData}
                         >
-                            {(item , index) => (
-                                <TableRow key={item.id}>
+                            {
+                            userData.map((item , index) => {
+                                return (
+                                    <TableRow key={item.id}>
                                     <TableCell >{item.firstName}</TableCell>
                                     <TableCell >{item.lastName}</TableCell>
                                     <TableCell >{ item.phone == null ? '-' :  `+${item.phone}`}</TableCell>
                                     <TableCell >{item.email}</TableCell>
                                     <TableCell>
-                                        <Switch size='sm' isSelected={ listTransaction[index] } onClick={() => {
-
+                                        <Switch size='sm' isSelected={ item.transactions[index]?.status} onClick={() => {
+                
                                             item.transactions.length == 0 ? toast.error('User belum melakukan transaksi') :
 
-                                            handleTransactionPay( item.transactions[0].id, !listTransaction[index])
+                                            handleTransactionPay( item.transactions[0].id, item.transactions[index]?.status)
                                         }} />
                                     </TableCell>
                                     <TableCell>
-                                        <p className={`text-[10px] text-center text-white w-auto px-[12px] py-[4px] ${ item.transactions.length == 0 ? 'bg-primary' :  item.transactions[0].subscriptionPlan.name == 'pro' ? 'bg-black ' : 'bg-primary'} rounded-[30px]`} >
-                                            {item.transactions.length == 0 ?  '-' : item.transactions[0].subscriptionPlan.name}
+                                        <p className={`text-[10px] text-center text-white w-auto px-[12px] py-[4px] ${ item.transactions.length == 0 ? 'bg-primary' :  item.Subscription[0].subscriptionPlan.name == 'pro' ? 'bg-black ' : 'bg-primary'} rounded-[30px]`} >
+                                            {item.transactions.length == 0 ?  '-' : item.Subscription[0].subscriptionPlan.name}
                                         </p> 
                                     </TableCell>
                                     <TableCell>
@@ -176,8 +179,17 @@ const UserTable = ({ statusAction ,setTotalUser, totalUser, user , onEdit , onAd
                                             Edit
                                         </Button>
                                     </TableCell>
+                                    <TableCell>
+                                        <Button variant='bordered' onClick={() => {
+                                            onSubscription(item)
+                                        }}>
+                                            Edit Subscription
+                                        </Button>
+                                    </TableCell>
                                 </TableRow>
-                            )}
+                                )
+                        })
+                        }
                         </TableBody>
                     </Table>
 

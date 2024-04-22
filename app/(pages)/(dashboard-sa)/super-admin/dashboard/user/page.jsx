@@ -13,6 +13,7 @@ import 'chart.js/auto';
 import UserTable from './userTable'
 import AddModalUser from '@/app/components/super-admin/user/addModal'
 import EditModalUser from '@/app/components/super-admin/user/editModal'
+import SubscriptionModalUser from '@/app/components/super-admin/user/subscriptionModal'
 
 
 const DashboardSuperAdminUser = () => {
@@ -24,6 +25,7 @@ const DashboardSuperAdminUser = () => {
     const [user, setUser] = useState([])
     const [addModal  , setAddModal] = useState(false)
     const [editModal  , setEditModal] = useState(false)
+    const [editSubscriptionModal  , setEditSubscriptionModal] = useState(false)
     
     // 
 
@@ -136,7 +138,12 @@ const DashboardSuperAdminUser = () => {
                 onAdd = {()=>{
                     setAddModal(!addModal)
                 }}
+                onSubscription = {(value)=>{
+                    setEditSubscriptionModal(!editModal)
+                    setUser(value)
+                }}
             />
+
             <AddModalUser
                 token={session?.superAdmin?.token}
                 open = {addModal}
@@ -157,6 +164,16 @@ const DashboardSuperAdminUser = () => {
                     setStatusAction(value)
                 }}
                 onCloseButton = {()=>{setEditModal(false)}}
+            />
+            <SubscriptionModalUser
+                token={session?.superAdmin?.token}
+                open = {editSubscriptionModal}
+                user = {user}
+                onload = {(value)=>{
+                    setEditSubscriptionModal(value)
+                    setStatusAction(value)
+                }}
+                onCloseButton = {()=>{setEditSubscriptionModal(false)}}
             />
         </>
     )
