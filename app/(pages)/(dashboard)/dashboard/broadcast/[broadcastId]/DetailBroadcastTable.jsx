@@ -61,6 +61,7 @@ const DetailBroadcastTable = ({ selectedKeys, setSelectedKeys, data, type }) => 
 
                 } items={data}>
                     {(item) => (
+                        item.contact != null ? 
                         <TableRow key={item.id}>
                             <TableCell className='flex gap-2 items-center'>
                                 <p>{item.contact.firstName} {item.contact.lastName}</p>
@@ -121,7 +122,7 @@ const DetailBroadcastTable = ({ selectedKeys, setSelectedKeys, data, type }) => 
                                     </PopoverContent>
                                 </Popover>
                             </TableCell>
-                        </TableRow>
+                        </TableRow> : null
                     )}
                 </TableBody>
             </Table>
