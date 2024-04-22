@@ -2,44 +2,44 @@ import { PROVIDER_DELETE, PROVIDER_GET, PROVIDER_POST, PROVIDER_PUT } from "../p
 
 const delay = () => new Promise(res => setTimeout(() => res(), 800))
 
-export const getAllDevice = async ( token) => {
+export const getAllDevice = async (token) => {
     await delay()
-    const response = await PROVIDER_GET(`devices`,token )
+    const response = await PROVIDER_GET(`devices`, token)
     return response;
 }
 
-export const getDevice = async ( token , deviceId) => {
+export const getDevice = async (token, deviceId) => {
     await delay()
-    const response = await PROVIDER_GET(`devices/${deviceId}`,token )
+    const response = await PROVIDER_GET(`devices/${deviceId}`, token)
     return response;
 }
 
 export const getLabelsDevice = async (token) => {
     await delay()
-    const response = await PROVIDER_GET(`devices/labels`,token)
+    const response = await PROVIDER_GET(`devices/labels`, token)
     return response;
 }
 
-export const createDevice = async ( token,  data) => {
+export const createDevice = async (token, data) => {
     await delay()
-    const response = await PROVIDER_POST(`devices/create`,data , token )
+    const response = await PROVIDER_POST(`devices/create`, data, token)
     return response;
 }
 
 export const generateAPIKEYDevice = async (token, deviceId) => {
     await delay()
-    const response = await PROVIDER_GET(`devices/api-key/${deviceId}`,token)
+    const response = await PROVIDER_GET(`devices/api-key/${deviceId}`, token)
     return response;
 }
 
-export const updateDevice = async (token, deviceId , data) => {
+export const updateDevice = async (token, deviceId, data) => {
     await delay()
-    const response = await PROVIDER_PUT(`devices/${deviceId}`,data,token)
+    const response = await PROVIDER_PUT(`devices/${deviceId}`, data, token)
     return response;
 }
 
 export const deleteDevice = async (token, data) => {
     await delay()
-    const response = await PROVIDER_GET(`devices/`,data , token)
+    const response = await PROVIDER_DELETE(`devices`, data, token)
     return response;
 }

@@ -26,8 +26,6 @@ export const PROVIDER_GET = async (pathUrl, token) => {
 }
 
 export const PROVIDER_POST = async (pathUrl, data , token) => {
-
-    console.log("tipe data => " + typeof data)
     
     const headers = {
         'Content-Type': typeof data == 'object' ? 'application/json' : 'multipart/form-data',
@@ -71,13 +69,13 @@ export const PROVIDER_POST = async (pathUrl, data , token) => {
 
 export const PROVIDER_DELETE = async (pathUrl , data , token ) => {
     const headers = {
-        'Content-Type': 'application/json' ,
+        'Content-Type': 'application/json',
         "Authorization": `Bearer ${token || ''}`,
     }
 
     try {
 
-        const response = await axios.delete(`${BASE_URL}/${pathUrl}`, { headers });
+        const response = await axios.delete(`${BASE_URL}/${pathUrl}`, {headers, data});
 
         switch (response.status) {
             case 200:
