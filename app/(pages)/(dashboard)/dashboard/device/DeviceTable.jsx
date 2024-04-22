@@ -54,7 +54,6 @@ const DeviceTable = ({ setcountDevice }) => {
 
         const fetchDeviceData = await getAllDevice(session?.user?.token)
         
-
         if (fetchDeviceData) {
             const data = await fetchDeviceData.data
 

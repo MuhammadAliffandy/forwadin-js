@@ -6,8 +6,9 @@ import { useEffect, useState } from "react";
 import { Button, Skeleton } from "@nextui-org/react"
 import { toast } from "react-toastify"
 import { signIn, useSession } from "next-auth/react"
-import { deleteDevice, generateAPIKEYDevice, getDevice , updateDevice} from "@/app/api/repository/deviceRepository";
+import { deleteDevice, generateAPIKEYDevice, getDevice, updateDevice } from "@/app/api/repository/deviceRepository";
 import { formatDate } from "@/app/utils/helper";
+import { fetchClient } from "@/app/utils/helper/fetchClient";
 const DetailDevice = ({ device }) => {
     const router = useRouter()
     const { data: session } = useSession()
@@ -17,9 +18,10 @@ const DetailDevice = ({ device }) => {
     const [deviceLog, setDeviceLog] = useState([])
     const [deviceData, setdeviceData] = useState()
     const [labelList, setlabelList] = useState([])
+
     const fetchDetailDevice = async () => {
 
-        const result = await getDevice(session?.user?.token,device)
+        const result = await getDevice(session?.user?.token, device)
 
         if (result) {
             const data = result.data
@@ -47,7 +49,7 @@ const DetailDevice = ({ device }) => {
     const generateAPIKey = async () => {
         if (!deviceData) return
 
-        const result = await generateAPIKEYDevice(session?.user?.token , deviceData?.id)
+        const result = await generateAPIKEYDevice(session?.user?.token, deviceData?.id)
 
         if (result.status === 200) {
             toast.success('Berhasil generate API Key baru')
@@ -57,13 +59,9 @@ const DetailDevice = ({ device }) => {
         }
     }
     const handleDeleteDevice = async () => {
-        const result = await fetchClient({
-            url: '/devices/',
-            body: JSON.stringify({ deviceIds: [deviceData?.id] }),
-            method: 'DELETE',
-            user: session?.user
-        })
-        if (result?.ok) {
+
+        try {
+            const response = await deleteDevice(session?.user?.token, { deviceIds: [deviceData?.id] },)
             toast.success('Berhasil hapus device')
             const refresh = await signIn('refresh', {
                 redirect: false,
@@ -73,18 +71,38 @@ const DetailDevice = ({ device }) => {
                 toast.error('Gagal update session')
             }
             router.push('/dashboard/device')
-        } else {
+        } catch (error) {
             toast.error('Gagal hapus device')
         }
+
+        // const result = await fetchClient({
+        //     url: '/devices/',
+        //     body: JSON.stringify({ deviceIds: [deviceData?.id] }),
+        //     method: 'DELETE',
+        //     user: session?.user
+        // })
+        // if (result?.ok) {
+        //     toast.success('Berhasil hapus device')
+        //     const refresh = await signIn('refresh', {
+        //         redirect: false,
+        //         user: JSON.stringify(session?.user)
+        //     })
+        //     if (refresh?.error) {
+        //         toast.error('Gagal update session')
+        //     }
+        //     router.push('/dashboard/device')
+        // } else {
+        //     toast.error('Gagal hapus device')
+        // }
     }
     const handleUpdateDevice = async () => {
         setisLoading(true)
         const newLabel = labelList.filter(obj => obj.label.active).map(obj => obj.label.name)
 
-        const result = await updateDevice(session.user.token , deviceData.id,{
+        const result = await updateDevice(session.user.token, deviceData.id, {
             name: deviceName,
             label: newLabel
-        } )
+        })
 
         if (result) {
             if (result.status === 200) {
@@ -96,11 +114,13 @@ const DetailDevice = ({ device }) => {
         }
         setisLoading(false)
     }
+    
     useEffect(() => {
-        if(session?.user?.token){
+        if (session?.user?.token) {
             fetchDetailDevice()
         }
-    }, [])
+    }, [session?.user?.token])
+
     return (
         <>
             <div className='mt-8 flex flex-col lg:flex-row justify-center lg:justify-between gap-4'>
@@ -161,7 +181,7 @@ const DetailDevice = ({ device }) => {
                                             )
                                         })
                                     }
-                                   
+
                                 </ul>
                             </div>
                         </>)
