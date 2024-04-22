@@ -4,7 +4,7 @@ const delay = () => new Promise(res => setTimeout(() => res(), 800))
 
 export const createBroadcast = async ( token , data ) => {
     await delay()
-    const response = await PROVIDER_POST(`broadcasts`, data , token )
+    const response = await PROVIDER_POST(`broadcasts`, data , token , 'form' )
     return response;
 }
 
@@ -40,7 +40,7 @@ export const getOutgoingReplies = async ( token , broadcastId ) => {
 
 export const updateBroadcast = async ( token , broadcastId , data ) => {
     await delay()
-    const response = await PROVIDER_PUT(`broadcasts/${broadcastId}` , data , token )
+    const response = await PROVIDER_PUT(`broadcasts/${broadcastId}` , data , token , 'form')
     return response;
 }
 

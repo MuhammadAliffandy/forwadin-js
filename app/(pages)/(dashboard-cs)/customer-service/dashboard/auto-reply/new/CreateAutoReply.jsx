@@ -62,7 +62,7 @@ const CreateAutoReply = () => {
             const formData = new FormData()
             if (files.length > 0) {
                 // @ts-ignore
-                formData.set('media', files[0].file, files[0].name)
+                formData.set('media', files[0].file, files[0].file.name)
             }
             formData.append('name', ARData.name)
             formData.append('deviceId', session?.customerService?.deviceId)
