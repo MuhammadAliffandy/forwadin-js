@@ -22,19 +22,18 @@ const AddDeviceModal = (
             setinputError({ error: true, message: 'tidak boleh kosong' })
         } else {
             setisLoading(true)
-
             try {
-                const response = await createDevice(session?.user?.token, JSON.stringify({
+                setisLoading(false)
+                const response = await createDevice(session?.user?.token, {
                     name: deviceName,
                     labels: (labelList ? labelList.filter(item => item.label.active).map(item => item.label.name) : null)
-                }),)
-                setisLoading(false)
+                },)
                 toast.success('Device berhasil ditambahkan')
                 setopenModal(false)
                 fetchData()
             } catch (error) {
                 setisLoading(false)
-                toast.error('Device gagal ditambahkan \n' + body.message)
+                toast.error('Device gagal ditambahkan ')
                 setinputError({ error: true, message: 'Gagal menambahkan device' })
             }
 
