@@ -45,6 +45,8 @@ const DashboardTemplate = ({ currentPage, children }) => {
             console.log(session.user)
         }
 
+        console.log("ISI SESSION => ", session?.user)
+
     }, [session?.user?.token])
     useEffect(() => {
         const channels = {
