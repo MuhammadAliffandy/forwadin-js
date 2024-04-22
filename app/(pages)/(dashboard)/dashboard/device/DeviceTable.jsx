@@ -52,11 +52,13 @@ const DeviceTable = ({ setcountDevice }) => {
 
     const fetchData = async () => {
 
-        const fetchDeviceData = await getAllDevice(session.user.token)
-
+        const fetchDeviceData = await getAllDevice(session?.user?.token)
+        
         if (fetchDeviceData) {
             const data = await fetchDeviceData.data
-            if (fetchDeviceData.status === 200) {
+
+            if (fetchDeviceData.status == 200) {
+                console.log( 'ISI DEVICE => ' +  data.length )
                 setcountDevice(data.length)
                 setdeviceData(data)
                 setisLoaded(true)
@@ -95,7 +97,7 @@ const DeviceTable = ({ setcountDevice }) => {
         console.log(session?.user)
         if (session?.user?.token)
             fetchData()
-    }, [session?.user?.token])
+    }, [session?.user])
 
     useEffect(() => {
         const searchResult = filterDevice(searchText)
@@ -190,7 +192,7 @@ const DeviceTable = ({ setcountDevice }) => {
                                     {
                                     item.DeviceLabel?.length > 0 ?
                                     item.DeviceLabel?.map((item, idx) => (
-                                        <div key={idx} className='border-2 border-primary bg-primary px-2 py-1 rounded-full text-white'>
+                                        <div key={idx} className='border-2 border-primary px-2 py-1 rounded-full text-primary'>
                                             {item.label.name}
                                         </div>
                                     )) : "-"}</TableCell>
