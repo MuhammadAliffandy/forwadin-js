@@ -26,6 +26,9 @@ export const PROVIDER_GET = async (pathUrl, token) => {
 }
 
 export const PROVIDER_POST = async (pathUrl, data , token) => {
+
+    console.log("tipe data => " + typeof data)
+    
     const headers = {
         'Content-Type': typeof data == 'object' ? 'application/json' : 'multipart/form-data',
         "Authorization": `Bearer ${token || ''}`,
@@ -42,7 +45,7 @@ export const PROVIDER_POST = async (pathUrl, data , token) => {
             case 201:
                 return response;
             default:
-                throw new Error("error");
+                throw new Error("error 2");
         }
     } catch (err) {
         if (axios.isAxiosError(err)) {
@@ -54,6 +57,8 @@ export const PROVIDER_POST = async (pathUrl, data , token) => {
                     case 403:
                         throw new Error("forbidden");
                     case 404:
+                        throw errorResponse;
+                    case 500:
                         throw errorResponse;
                     default:
                         throw new Error("error");

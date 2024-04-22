@@ -7,6 +7,7 @@ import ModalTemplate from '../../template/ModalTemplate'
 import { useSession } from 'next-auth/react'
 import { fetchClient } from '../../../utils/helper/fetchClient'
 import { Label } from '@/app/utils/types'
+import { createDevice } from '@/app/api/repository/deviceRepository'
 
 const AddDeviceModal = (
     { openModal, setopenModal, fetchData }
@@ -21,26 +22,40 @@ const AddDeviceModal = (
             setinputError({ error: true, message: 'tidak boleh kosong' })
         } else {
             setisLoading(true)
-
-            const result = await fetchClient({
-                method: 'POST',
-                body: JSON.stringify({
+            try {
+                setisLoading(false)
+                const response = await createDevice(session?.user?.token, {
                     name: deviceName,
                     labels: (labelList ? labelList.filter(item => item.label.active).map(item => item.label.name) : null)
-                }),
-                url: '/devices/create',
-                user: session?.user
-            })
-            setisLoading(false)
-            const body = await result?.json()
-            if (result && result.ok) {
+                },)
                 toast.success('Device berhasil ditambahkan')
                 setopenModal(false)
                 fetchData()
-            } else {
-                toast.error('Device gagal ditambahkan \n' + body.message)
+            } catch (error) {
+                setisLoading(false)
+                toast.error('Device gagal ditambahkan ')
                 setinputError({ error: true, message: 'Gagal menambahkan device' })
             }
+
+            // const result = await fetchClient({
+            //     method: 'POST',
+            //     body: JSON.stringify({
+            //         name: deviceName,
+            //         labels: (labelList ? labelList.filter(item => item.label.active).map(item => item.label.name) : null)
+            //     }),
+            //     url: '/devices/create',
+            //     user: session?.user
+            // })
+            // setisLoading(false)
+            // const body = await result?.json()
+            // if (result && result.ok) {
+            //     toast.success('Device berhasil ditambahkan')
+            //     setopenModal(false)
+            //     fetchData()
+            // } else {
+            //     toast.error('Device gagal ditambahkan \n' + body.message)
+            //     setinputError({ error: true, message: 'Gagal menambahkan device' })
+            // }
         }
     }
     return (
