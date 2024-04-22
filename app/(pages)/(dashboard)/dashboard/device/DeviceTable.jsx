@@ -187,11 +187,14 @@ const DeviceTable = ({ setcountDevice }) => {
                                     <TableCell >{item.name}</TableCell>
                                     <TableCell >{item.apiKey}</TableCell>
                                     <TableCell >{item.phone ? item.phone : '-'}</TableCell>
-                                    <TableCell className='flex flex-wrap justify-center lg:justify-start items-center  gap-2' >  {item.DeviceLabel?.map((item, idx) => (
-                                        <div key={idx} className='border-2 border-primary px-2 py-1 rounded-full'>
+                                    <TableCell >  
+                                    {
+                                    item.DeviceLabel?.length > 0 ?
+                                    item.DeviceLabel?.map((item, idx) => (
+                                        <div key={idx} className='border-2 border-primary bg-primary px-2 py-1 rounded-full text-white'>
                                             {item.label.name}
                                         </div>
-                                    ))}</TableCell>
+                                    )) : "-"}</TableCell>
                                     <TableCell >{item.status === 'open' ? 'Terkoneksi' : 'Tidak Terkoneksi'}</TableCell>
                                     <TableCell >
                                         <div className="flex items-center">

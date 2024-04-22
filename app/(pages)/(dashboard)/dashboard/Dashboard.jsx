@@ -151,11 +151,11 @@ const Dashboard = () => {
                         <div className='flex-none'>
                             <img src="/assets/icons/dashboard/assignment_late.svg" alt="" />
                         </div>
-                        <p className='font-bold text-md'>Tambahkan device Anda terlebih dahulu dan mulai jelajahi fitur-fitur unggulan Forwardin</p>
+                        <p className='font-bold text-md'>Tambahkan atau koneksikan device Anda terlebih dahulu dan mulai jelajahi fitur-fitur unggulan Forwardin</p>
                     </div>
                     <div className='flex-none'>
                         <Button as={Link} href='/dashboard/device' color='primary' className='rounded-md'>
-                            Tambah Device
+                           Menu Device
                         </Button>
                     </div>
                 </div>
