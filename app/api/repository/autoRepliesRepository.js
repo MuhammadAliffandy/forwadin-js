@@ -22,7 +22,7 @@ export const getAutoReplyRecipients = async ( token , autoReplyId ) => {
 
 export const createAutoReply = async ( token , data ) => {
     await delay()
-    const response = await PROVIDER_POST(`auto-replies`, data , token ,'form' )
+    const response = await PROVIDER_POST(`auto-replies`, data , token , 'form' )
     return response;
 }
 
