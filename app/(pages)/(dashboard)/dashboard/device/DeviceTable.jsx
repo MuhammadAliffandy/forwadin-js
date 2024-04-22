@@ -52,7 +52,7 @@ const DeviceTable = ({ setcountDevice }) => {
 
     const fetchData = async () => {
 
-        const fetchDeviceData = await getAllDevice(session.user.token)
+        const fetchDeviceData = await getAllDevice(session?.user?.token)
         
 
         if (fetchDeviceData) {
