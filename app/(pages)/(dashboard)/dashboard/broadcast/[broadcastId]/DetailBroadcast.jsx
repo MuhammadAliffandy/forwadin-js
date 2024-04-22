@@ -53,10 +53,13 @@ const DetailBroadcast = ({ broadcastId }) => {
 	const handleDeleteBroadcast = async () => {
 		const isConfirm = window.confirm('Anda yakin ingin menghapus broadcast ' + broadcastData?.name + '?')
 		if (isConfirm) {
-
-			const result = await deleteBroadcast(session.user.token ,{ broadcastIds: [broadcastData.id] } )
-
-			if (result.status === 200) {
+			const result = await fetchClient({
+				url: '/broadcasts/',
+				body: JSON.stringify({ broadcastIds: [broadcastData?.id] }),
+				method: 'DELETE',
+				user: session?.user
+			})
+			if (result?.ok) {
 				toast.success('Berhasil hapus broadcast')
 				router.push('/dashboard/broadcast')
 			} else {

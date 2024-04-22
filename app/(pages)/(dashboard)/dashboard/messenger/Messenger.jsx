@@ -146,8 +146,8 @@ const Messenger = () => {
                         }
                     }
                     // console.log(result.body)
-                    if (result.status === 200) {
-                        const resultData = result.data
+                    if (result?.ok) {
+                        const resultData = await result.json()
                         console.log(resultData)
                         setinputFile([])
                         settextInput('')

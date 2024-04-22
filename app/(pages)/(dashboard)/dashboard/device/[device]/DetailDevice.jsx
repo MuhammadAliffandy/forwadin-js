@@ -7,12 +7,14 @@ import { Button, Skeleton } from "@nextui-org/react"
 import { toast } from "react-toastify"
 import { signIn, useSession } from "next-auth/react"
 import { deleteDevice, generateAPIKEYDevice, getDevice , updateDevice} from "@/app/api/repository/deviceRepository";
+import { formatDate } from "@/app/utils/helper";
 const DetailDevice = ({ device }) => {
     const router = useRouter()
     const { data: session } = useSession()
     const [isLoading, setisLoading] = useState(false)
     const [isLoaded, setisLoaded] = useState(false)
     const [deviceName, setdeviceName] = useState('')
+    const [deviceLog, setDeviceLog] = useState([])
     const [deviceData, setdeviceData] = useState()
     const [labelList, setlabelList] = useState([])
     const fetchDetailDevice = async () => {
@@ -34,6 +36,7 @@ const DetailDevice = ({ device }) => {
                 })
                 setlabelList(newLabelList)
                 setdeviceName(data.name)
+                setDeviceLog(data.DeviceLog)
                 setisLoaded(true)
             } else {
                 toast.error('device not found')
@@ -149,10 +152,16 @@ const DetailDevice = ({ device }) => {
                             <p className='font-lexend text-2xl font-bold '>Logging</p>
                             <div className='bg-neutral-75 rounded-md h-full text-[#777C88] p-4'>
                                 <ul className='list-inside list-disc'>
-                                    <li >Device berhasil terkoneksi [15 Jun 2023 22:36:29]</li>
-                                    <li className='mt-2'>Device berhasil terkoneksi [15 Jun 2023 22:36:29]</li>
-                                    <li className='mt-2'>Device berhasil terkoneksi [15 Jun 2023 22:36:29]</li>
-                                    <li className='mt-2'>Device berhasil terkoneksi [15 Jun 2023 22:36:29]</li>
+                                    {
+                                        deviceLog.map(data => {
+                                            return (
+                                                <>
+                                                    <li className='mt-2'>Device berhasil terkoneksi [{formatDate(data.updatedAt)}]</li>
+                                                </>
+                                            )
+                                        })
+                                    }
+                                   
                                 </ul>
                             </div>
                         </>)
