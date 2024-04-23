@@ -15,15 +15,15 @@ const Device = () => {
                 </div>
             </div>
 
-            {countDevice > 0 ? null : 
-                <div className='border-2 border-danger rounded-md px-4 py-3 flex justify-between mt-4'>
+            {countDevice > 0 ? <div className='border-2 border-danger rounded-md px-4 py-3 flex justify-between mt-4'>
                     <div className='flex gap-4 items-center'>
                         <div className='flex-none'>
                             <img src="/assets/icons/dashboard/assignment_late.svg" alt="" />
                         </div>
                         <p className='font-bold text-md'>Tekan tombol Scan QR untuk mengkoneksikan device Anda dan membuka fitur-fitur yang ada</p>
                     </div>
-                </div>}
+                </div> :  null
+                }
 
             <DeviceTable setcountDevice={setcountDevice} />
         </>
