@@ -63,7 +63,7 @@ const EditBroadcast = ({ broadcastData }) => {
             const delay = 4000
             if (files.length > 0) {
                 // @ts-ignore
-                formData.set('media', files[0].file, files[0].name)
+                formData.set('media', files[0].file, files[0].file.name)
             }
             formData.append('name', broadcastFormData.name)
             formData.append('deviceId', broadcastFormData.deviceId)

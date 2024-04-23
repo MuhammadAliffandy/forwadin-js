@@ -22,13 +22,13 @@ export const getAutoReplyRecipients = async ( token , autoReplyId ) => {
 
 export const createAutoReply = async ( token , data ) => {
     await delay()
-    const response = await PROVIDER_POST(`auto-replies`, data , token )
+    const response = await PROVIDER_POST(`auto-replies`, data , token , 'form' )
     return response;
 }
 
 export const updateAutoReply = async ( token , autoReplyId  , data ) => {
     await delay()
-    const response = await PROVIDER_PUT(`auto-replies/${autoReplyId}`, data , token )
+    const response = await PROVIDER_PUT(`auto-replies/${autoReplyId}`, data , token , 'form')
     return response;
 }
 

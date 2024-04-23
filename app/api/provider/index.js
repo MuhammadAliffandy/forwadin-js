@@ -25,10 +25,10 @@ export const PROVIDER_GET = async (pathUrl, token) => {
     }
 }
 
-export const PROVIDER_POST = async (pathUrl, data , token) => {
+export const PROVIDER_POST = async (pathUrl, data , token ,type = 'object' ) => {
     
     const headers = {
-        'Content-Type': typeof data == 'object' ? 'application/json' : 'multipart/form-data',
+        'Content-Type':  type == 'object' ? 'application/json' : 'multipart/form-data',
         "Authorization": `Bearer ${token || ''}`,
     }
 
@@ -105,9 +105,9 @@ export const PROVIDER_DELETE = async (pathUrl , data , token ) => {
     }
 }
 
-export const PROVIDER_PUT = async (pathUrl, data , token) => {
+export const PROVIDER_PUT = async (pathUrl, data , token , type = 'object') => {
     const headers = {
-        'Content-Type': typeof data == 'object' ? 'application/json' : 'multipart/form-data',
+        'Content-Type':  type == 'object' ? 'application/json' : 'multipart/form-data',
         "Authorization": `Bearer ${token || ''}`,
     }
 

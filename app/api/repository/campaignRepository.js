@@ -34,7 +34,7 @@ export const getCampaignReplies = async ( token , campaignId ) => {
 
 export const updateCampaign = async ( token , campaignId , data ) => {
     await delay()
-    const response = await PROVIDER_PUT(`campaigns/${campaignId}` , data ,token )
+    const response = await PROVIDER_PUT(`campaigns/${campaignId}` , data ,token ,'form')
     return response;
 }
 
@@ -46,13 +46,13 @@ export const deleteCampaign = async ( token, data ) => {
 
 export const updateCampaignStatus = async ( token , campaignId , data ) => {
     await delay()
-    const response = await PROVIDER_PATCH(`campaigns/${campaignId}/status` , data ,token )
+    const response = await PROVIDER_PATCH(`campaigns/${campaignId}/status` , data ,token , 'form')
     return response;
 }
 
 export const createCampaignMessages = async ( token, data ) => {
     await delay()
-    const response = await PROVIDER_POST(`campaigns/messages` , data ,token )
+    const response = await PROVIDER_POST(`campaigns/messages` , data ,token , 'form')
     return response;
 }
 

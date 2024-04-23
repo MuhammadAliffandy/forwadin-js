@@ -62,7 +62,7 @@ const CreateBroadcast = () => {
             const delay = 4000
             if (files.length > 0) {
                 // @ts-ignore
-                formData.set('media', files[0].file, files[0].name)
+                formData.set('media', files[0].file , files[0].file.name)
             }
             formData.append('name', broadcastFormData.name)
             formData.append('deviceId', broadcastFormData.deviceId)
@@ -74,6 +74,13 @@ const CreateBroadcast = () => {
             formData.append('delay', delay.toString())
             formData.append('schedule', formatDatetoISO8601(broadcastFormData.schedule))
 
+
+            // const entries = formData.entries();
+
+            // // Iterasi melalui entri FormData dan mencetaknya
+            // for (const entry of entries) {
+            // console.log(entry);
+            //     }
 
             const result = await createBroadcast(session?.user?.token , formData)
             if (result.status === 201) {

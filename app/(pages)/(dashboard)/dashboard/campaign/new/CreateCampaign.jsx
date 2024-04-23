@@ -97,7 +97,7 @@ const CreateCampaign = () => {
             //
             if (files.length > 0)
                 // @ts-ignore
-                formData.set('media', files[0].file, files[0].name)
+                formData.set('media', files[0].file, files[0].file.name)
             formData.append('name', campaignFormData.name)
             formData.append('deviceId', campaignFormData.deviceId)
             receiverList.forEach((element, idx) => {
