@@ -57,11 +57,11 @@ export const sendMessagesMedia = async ( token ,data ) => {
 
 export const sendImageMessages = async ( token , sessionId , data ) => {
     await delay()
-    const response = await PROVIDER_POST(`messages/${sessionId}/send/image`, data , token)
+    const response = await PROVIDER_POST(`messages/${sessionId}/send/image`, data , token , 'form')
     return response;
 }
 export const sendDocumentMessages = async ( token , sessionId , data ) => {
     await delay()
-    const response = await PROVIDER_POST(`messages/${sessionId}/send/doc`, data , token)
+    const response = await PROVIDER_POST(`messages/${sessionId}/send/doc`, data , token , 'form')
     return response;
 }

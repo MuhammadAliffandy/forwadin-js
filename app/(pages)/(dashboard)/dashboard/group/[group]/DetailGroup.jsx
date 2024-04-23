@@ -56,16 +56,16 @@ const DetailGroup = ({ groupId, groupName, setcountContact, setgroupName }) => {
     }
 
     const handleDeleteGroup = async () => {
+
         const result = await fetchClient({
             url: '/groups/',
-            body: JSON.stringify([{ groupIds: groupId }]),
+            body: JSON.stringify({ groupIds: [groupId] }),
             method: 'DELETE',
             user: session?.user
         })
         if (result?.ok) {
             toast.success('Berhasil hapus grup')
             push('/dashboard/group')
-            setselectedGroup(new Set([]))
         } else {
             toast.error('Gagal hapus grup')
         }
@@ -159,7 +159,7 @@ const DetailGroup = ({ groupId, groupName, setcountContact, setgroupName }) => {
             {isLoaded &&
                 <AddContactModal openModal={addContactModal} setopenModal={setaddContactModal} fetchGroupData={fetchGroupData} groupId={groupId} activeContactData={contactData} />
             }
-            <DeleteGroupModal openModal={deleteGroupModal} setopenModal={setDeleteGroupModal} deleteFunction={handleDeleteGroup} group={groupName} />
+            <DeleteGroupModal openModal={deleteGroupModal} setopenModal={setDeleteGroupModal} group={groupName}  deleteFunction={handleDeleteGroup}  />
             {selectedMember && (
                 <DeleteContactModal
                     openModal={deleteContactModal}

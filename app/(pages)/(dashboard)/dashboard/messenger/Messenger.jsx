@@ -13,8 +13,8 @@ import DropdownDevice from "@/app/components/dashboard/DropdownDevice"
 import UploadFile from "@/app/components/dashboard/UploadFile"
 import { useSearchParams } from 'next/navigation'
 import { PAGINATION_BATCH } from "@/app/utils/constant"
-import { getConversationMessages, getListMessenger2 } from "../../../../api/repository/messageRepository"
-import { getContactsByDeviceId } from "../../../../api/repository/contactRepository"
+import { getConversationMessages, getListMessenger2, sendImageMessages , sendDocumentMessages } from "@/app/api/repository/messageRepository"
+import { getContactsByDeviceId } from "@/app/api/repository/contactRepository"
 const Messenger = () => {
     const searchParams = useSearchParams()
     const { data: session } = useSession()
@@ -122,43 +122,41 @@ const Messenger = () => {
         setsendMessageLoading(true)
         if (inputFile.length > 0) {
             if (currentDevice && currentMessenger && inputFile) {
-                const formdata = new FormData()
-                formdata.append("caption", textInput)
-                // @ts-ignore
-                formdata.set('document', inputFile[0].file, inputFile[0].name)
-                formdata.append("recipients[0]", currentMessenger.phone)
-                formdata.append("sessionId", currentDevice.sessionId)
                 try {
-                    const result = await fetch('/api/message/media', {
-                        method: 'POST',
-                        body: formdata
-                    })
-                    if (result.status === 401) {
-                        const refresh = await signIn('refresh', {
-                            redirect: false,
-                            user: JSON.stringify(session?.user)
-                        })
-                        if (refresh?.error) {
-                            signOut()
-                            window.location.replace('/signin')
-                        } else {
-                            window.location = window.location
+                    const formdata = new FormData()
+                    formdata.append("caption", textInput)
+                    formdata.append("recipients[0]", currentMessenger.phone)
+    
+                    
+    
+                    if(inputFile[0].file.type.search('image') > -1){
+                        formdata.set('image', inputFile[0].file, inputFile[0].file.name)
+    
+                        const result = await sendImageMessages(session.user.token , currentDevice.sessionId , formdata )
+    
+                        if(result.status == 200){
+                            toast.success('File Berhasil Terkirim')
+                            setinputFile([])
+                        }else{
+                            toast.error('File Gagal Terkirim')
+                            
                         }
+                        
+                    }else{
+                        formdata.set('document', inputFile[0].file, inputFile[0].file.name)
+                        
+                        const result = await sendDocumentMessages(session.user.token , currentDevice.sessionId , formdata )
+                        
+                        if(result.status == 200){
+                            toast.success('File Berhasil Terkirim')
+                            setinputFile([])
+                        }else{
+                            toast.error('File Gagal Terkirim')
+                            
+                        }
+    
                     }
-                    // console.log(result.body)
-                    if (result?.ok) {
-                        const resultData = await result.json()
-                        console.log(resultData)
-                        setinputFile([])
-                        settextInput('')
-                        fetchChatMessage(1)
-                        toast.success('Berhasil kirim file')
 
-                    } else {
-                        const resultData = await result.text()
-                        console.log(resultData)
-                        toast.error('gagal kirim file')
-                    }
                 } catch (error) {
                     console.log(error)
                 }

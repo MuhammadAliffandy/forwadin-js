@@ -14,7 +14,7 @@ import TextAreaInput from '@/app/components/dashboard/chat/TextAreaInput'
 import UploadFile from '@/app/components/dashboard/UploadFile'
 import { useRouter } from 'next/navigation'
 import { getContacts } from '../../../../../api/repository/contactRepository'
-import { getIncomeMessagesByQuery, sendMessagesMedia } from '../../../../../api/repository/messageRepository'
+import { getIncomeMessagesByQuery, sendImageMessages , sendDocumentMessages  } from '@/app/api/repository/messageRepository'
 
 const DetailContact = ({ contactId }) => {
     const router = useRouter()
@@ -79,32 +79,44 @@ const DetailContact = ({ contactId }) => {
         if (!contactData) return
         if (inputFile.length > 0) {
             if (currentDevice && inputFile) {
-                const formdata = new FormData()
-                formdata.append("caption", textInput)
-                // @ts-ignore
-                formdata.set('image', inputFile[0].file, inputFile[0].name)
-                formdata.append("recipients[0]", contactData.phone)
-                formdata.append("sessionId", currentDevice.sessionId)
                 try {
-
-                    const result = await sendMessagesMedia(session.user.token, formdata )
-
-                    if (result.status === 200) {
-                        const resultData = result.data
-                        console.log(resultData)
-                        setinputFile([])
-                        settextInput('')
-                        toast.success('Berhasil kirim image')
-                        router.push('/dashboard/messenger?phone=' + contactData.phone)
-                    } else {
-                        const resultData = await result.text()
-                        console.log(resultData)
-                        toast.error('gagal kirim media')
+                    const formdata = new FormData()
+                    formdata.append("caption", textInput)
+                    formdata.append("recipients[0]", contactData.phone)
+    
+                    
+    
+                    if(inputFile[0].file.type.search('image') > -1){
+                        formdata.set('image', inputFile[0].file, inputFile[0].file.name)
+    
+                        const result = await sendImageMessages(session.user.token , currentDevice.sessionId , formdata )
+    
+                        if(result.status == 200){
+                            toast.success('File Berhasil Terkirim')
+                            setinputFile([])
+                        }else{
+                            toast.error('File Gagal Terkirim')
+                            
+                        }
+                        
+                    }else{
+                        formdata.set('document', inputFile[0].file, inputFile[0].file.name)
+                        
+                        const result = await sendDocumentMessages(session.user.token , currentDevice.sessionId , formdata )
+                        
+                        if(result.status == 200){
+                            toast.success('File Berhasil Terkirim')
+                            setinputFile([])
+                        }else{
+                            toast.error('File Gagal Terkirim')
+                            
+                        }
+    
                     }
+
                 } catch (error) {
                     console.log(error)
                 }
-
             }
 
         }

@@ -30,7 +30,8 @@ const NewPasswordForm = ({ setCurrentStep, token }) => {
 
         const data = {
                 resetToken: token,
-                password: formData.password
+                password: formData.password,
+                confirmPassword : formData.confirmPassword
         }
 
         try {

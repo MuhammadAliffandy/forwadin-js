@@ -112,7 +112,6 @@ const Dashboard = () => {
     }
 
     useEffect(() => {
-    
 
         if (session?.user?.token) {
             fetchProfile()
@@ -212,14 +211,20 @@ const Dashboard = () => {
                                 </div>
                             </div>
                         </div>
-                        <div className='flex flex-col gap-4 items-center '>
-                            <div className='text-right hidden lg:block'>
-                                <p className='font-nunito font-bold text-[12px]'>Upgrade paket untuk meningkatkan<br /> batasan fitur yang ada</p>
+                        {
+
+                            session?.user?.subscription?.name !=  'pro' ? null :
+                            <div className='flex flex-col gap-4 items-center '>
+                                <div className='text-right hidden lg:block'>
+                                    <p className='font-nunito font-bold text-[12px]'>Upgrade paket untuk meningkatkan<br /> batasan fitur yang ada</p>
+                                </div>
+                                <Button href='/subscription' color='primary' variant='bordered' radius='full' as={UILink} fullWidth>
+                                    Upgrade Paket
+                                </Button>
                             </div>
-                            <Button href='/subscription' color='primary' variant='bordered' radius='full' as={UILink} fullWidth>
-                                Upgrade Paket
-                            </Button>
-                        </div>
+
+
+                        }
                     </div>
                 </div>
                 <div className={'bg-white rounded-md px-4 pt-4 pb-2 grow-0 w-full xl:max-w-sm flex flex-col justify-between ' + (session?.user?.device?.length === 0 && "opacity-50 pointer-events-none")}>

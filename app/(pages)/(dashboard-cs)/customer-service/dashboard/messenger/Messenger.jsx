@@ -13,9 +13,10 @@ import ListChats from './ListChats'
 import Chat from "@/app/(pages)/(dashboard)/dashboard/messenger/Chat"
 import ProfileDetail from "@/app/(pages)/(dashboard)/dashboard/messenger/ProfileDetail"
 import CreateOrderModal from "@/app/components/customer-service/dashboard/CreateOrderModal"
-import { getConversationMessages, getListMessenger2, sendMessages } from '@/app/api/repository/messageRepository'
+import { getConversationMessages, getListMessenger2, sendMessages , sendImageMessages , sendDocumentMessages } from '@/app/api/repository/messageRepository'
 import { getContactsByDeviceId } from "@/app/api/repository/contactRepository";
 import { getOrderMessages } from "@/app/api/repository/orderRepository";
+
 const Messenger = () => {
     const searchParams = useSearchParams()
     const { data: session } = useSession()
@@ -150,42 +151,43 @@ const Messenger = () => {
         setsendMessageLoading(true)
         if (inputFile.length > 0) {
             if (session?.customerService?.sessionId && currentMessenger && inputFile) {
-                const formdata = new FormData()
-                formdata.append("caption", textInput)
-                // @ts-ignore
-                formdata.set('document', inputFile[0].file, inputFile[0].name)
-                formdata.append("recipients[0]", currentMessenger.phone)
-                formdata.append("sessionId", session?.customerService?.sessionId)
-                try {
-                    const result = await fetch('/api/message/media/customer-service', {
-                        method: 'POST',
-                        body: formdata
-                    })
-                    if (result.status === 401) {
-                        const refresh = await signIn('refresh', {
-                            redirect: false,
-                            user: JSON.stringify(session?.customerService)
-                        })
-                        if (refresh?.error) {
-                            signOut()
-                            window.location.replace('/signin')
-                        } else {
-                            window.location = window.location
-                        }
-                    }
-                    if (result?.ok) {
-                        const resultData = result.data
-                        // console.log(resultData)
-                        setinputFile([])
-                        settextInput('')
-                        fetchChatMessage(1)
-                        toast.success('Berhasil kirim document')
 
-                    } else {
-                        const resultData = await result.text()
-                        console.log(resultData)
-                        toast.error('gagal kirim media')
+    
+
+                try {
+                    const formdata = new FormData()
+                    formdata.append("caption", textInput)
+                    formdata.append("recipients[0]", currentMessenger.phone)
+    
+    
+                    if(inputFile[0].file.type.search('image') > -1){
+                        formdata.set('image', inputFile[0].file, inputFile[0].file.name)
+    
+                        const result = await sendImageMessages(session.customerService.token , session.customerService.user.devices[0].sessions[0].sessionId, formdata )
+    
+                        if(result.status == 200){
+                            toast.success('File Berhasil Terkirim')
+                            setinputFile([])
+                        }else{
+                            toast.error('File Gagal Terkirim')
+                            
+                        }
+                        
+                    }else{
+                        formdata.set('document', inputFile[0].file, inputFile[0].file.name)
+                        
+                        const result = await sendDocumentMessages(session.customerService.token , session.customerService.user.devices[0].sessions[0].sessionId , formdata )
+                        
+                        if(result.status == 200){
+                            toast.success('File Berhasil Terkirim')
+                            setinputFile([])
+                        }else{
+                            toast.error('File Gagal Terkirim')
+                            
+                        }
+    
                     }
+
                 } catch (error) {
                     console.log(error)
                 }
@@ -195,6 +197,7 @@ const Messenger = () => {
         }
 
         else {
+            console.log('TESTT MESSAGE CUSTOMER')
             if (session?.customerService?.sessionId && currentMessenger && textInput.length > 0) {
                 const result = await sendMessages(session.customerService.token ,
                     session.customerService.sessionId , 
