@@ -18,7 +18,7 @@ const CampaignTable = ({ settotalCampaign, totalCampaign, user }) => {
     const handleSearch = (e) => {
         setsearchText(e.target.value)
         const filterCampaign = campaignData.filter(data => {
-            return data.name.toLowerCase().indexOf(e.target.value) > -1 
+            return data.name.toLowerCase().indexOf(e.target.value.toLowerCase()) > -1 
         })
 
         setsearchedcampaignData(filterCampaign)

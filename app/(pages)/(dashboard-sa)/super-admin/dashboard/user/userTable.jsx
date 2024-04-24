@@ -38,7 +38,7 @@ const UserTable = ({ statusAction ,setTotalUser, totalUser, user , onEdit , onAd
         }else{
             const filterUser = userData.filter(data => {
                 const dataText = `${data.firstName} ${data.lastName} ${data.email}`
-                return dataText.toLowerCase().indexOf(e.target.value ) > -1
+                return dataText.toLowerCase().indexOf(e.target.value.toLowerCase().toLowerCase() ) > -1
             })
             setsearchedGetUser(filterUser)
         }

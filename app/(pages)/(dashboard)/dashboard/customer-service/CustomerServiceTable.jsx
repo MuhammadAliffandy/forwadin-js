@@ -33,7 +33,7 @@ const CustomerServiceTable = () => {
     const handleSearch = (e) => {
         setsearchText(e.target.value)
         const filterCS = CSData.filter(data => {
-            return data.username.toLowerCase().indexOf(e.target.value ) > -1
+            return data.username.toLowerCase().indexOf(e.target.value.toLowerCase() ) > -1
         })
 
         setsearchedCSData(filterCS)

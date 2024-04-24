@@ -30,7 +30,7 @@ const BroadcastTable = ({ settotalBroadcast, totalBroadcast, user }) => {
     const handleSearch = (e) => {
         setsearchText(e.target.value)
         const filterBroadcast = broadcastData.filter(data => {
-            return data.name.toLowerCase().indexOf(e.target.value ) > -1
+            return data.name.toLowerCase().indexOf(e.target.value.toLowerCase() ) > -1
         })
 
         setsearchedGetBroadcast(filterBroadcast)

@@ -21,7 +21,7 @@ const AutoReplyTable = ({ settotalAutoReply, customerService }) => {
     const handleSearch = (e) => {
         setsearchText(e.target.value)
         const filterAutoReply = autoReplyData.filter(data => {
-            return data.name.toLowerCase().indexOf(e.target.value ) > -1
+            return data.name.toLowerCase().indexOf(e.target.value.toLowerCase() ) > -1
         })
 
         setsearchedAutoReplyData(filterAutoReply)

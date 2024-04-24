@@ -34,7 +34,7 @@ const GroupTable = ({ setcountGroup }) => {
         setsearchText(e.target.value)
 
         const filterGroup = groupData.filter(data => {
-            return data.name.toLowerCase().indexOf(e.target.value ) > -1
+            return data.name.toLowerCase().indexOf(e.target.value.toLowerCase() ) > -1
         })
 
         setsearchedGroup(filterGroup)

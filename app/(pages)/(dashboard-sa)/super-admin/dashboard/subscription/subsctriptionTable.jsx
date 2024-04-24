@@ -33,7 +33,7 @@ const SubscriptionTable = ({statusAction ,setTotalSubscription, totalSubscriptio
     const handleSearch = (e) => {
         setsearchText(e.target.value)
         const filterSubscription = subscriptionData.filter(data => {
-            return data.name.toLowerCase().indexOf(e.target.value ) > -1
+            return data.name.toLowerCase().indexOf(e.target.value.toLowerCase() ) > -1
         })
 
         setsearchedGetSubscription(filterSubscription)
