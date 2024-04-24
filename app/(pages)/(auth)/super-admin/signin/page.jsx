@@ -94,10 +94,10 @@ const SignIn = () => {
                         }
                     }} />
                 </div>
-                <div>
+                {/* <div>
                     <Link href={'/auth/forgot-password'} className='text-primary'>
                         Lupa Password?</Link>
-                </div>
+                </div> */}
                 <div className='flex flex-col gap-4'>
                     <div>
                         <ButtonSubmit isLoading={isLoading} text='Sign In' />
@@ -120,6 +120,7 @@ const SignIn = () => {
                 </div>
                 <div className='text-center text-sm'>
                     <p className='mt-2'>Login sebagai Customer Service? <Link href={'/customer-service/signin'} className='text-primary'>Klik di sini</Link> </p>
+                    <p className='mt-2'>Login sebagai Admin? <Link href={'/signin'} className='text-primary'>Klik di sini</Link> </p>
                 </div>
             </form >
         </animated.div>
