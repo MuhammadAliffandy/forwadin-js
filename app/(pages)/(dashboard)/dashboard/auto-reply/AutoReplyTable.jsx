@@ -23,6 +23,16 @@ const AutoReplyTable = ({ settotalAutoReply, user }) => {
     const [searchedAutoReplyData, setsearchedAutoReplyData] = useState([])
     const [selectedAutoReply, setselectedAutoReply] = useState(new Set([]))
 
+
+    const handleSearch = (e) => {
+        setsearchText(e.target.value)
+        const filterAutoReply = autoReplyData.filter(data => {
+            return data.name.toLowerCase().indexOf(e.target.value ) > -1
+        })
+
+        setsearchedAutoReplyData(filterAutoReply)
+    }
+
     const fetchAutoReply = async () => {
 
         const result = await getAutoReplies(user.token)
@@ -104,7 +114,7 @@ const AutoReplyTable = ({ settotalAutoReply, user }) => {
                     <div className="basis-1/2">
                         <input type="text" className="text-xs rounded-md w-full max-w-md border border-customGray" placeholder="Cari nama auto reply"
                             value={searchText}
-                            onChange={(e) => setsearchText(e.target.value)}
+                            onChange={handleSearch}
                         />
                     </div>
                     <div className='flex lg:justify-end justify-between gap-2 w-full max-w-xs'>
@@ -154,7 +164,7 @@ const AutoReplyTable = ({ settotalAutoReply, user }) => {
                                 <p className='text-xs text-[#777C88]'>Harap menambahkan auto reply</p>
                             </div>
                         </div>}
-                            items={autoReplyData}
+                            items={ searchText ? searchedAutoReplyData : autoReplyData}
                         >
                             {(item) => (
                                 <TableRow key={item.id}>

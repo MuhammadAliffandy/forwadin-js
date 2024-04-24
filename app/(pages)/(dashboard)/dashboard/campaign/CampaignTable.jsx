@@ -14,6 +14,16 @@ const CampaignTable = ({ settotalCampaign, totalCampaign, user }) => {
     const [searchText, setsearchText] = useState('')
     const [searchedCampaignData, setsearchedcampaignData] = useState([])
     const [selectedCampaign, setselectedCampaign] = useState(new Set([]))
+
+    const handleSearch = (e) => {
+        setsearchText(e.target.value)
+        const filterCampaign = campaignData.filter(data => {
+            return data.name.toLowerCase().indexOf(e.target.value) > -1 
+        })
+
+        setsearchedcampaignData(filterCampaign)
+    }
+
     const fetchCampaign = async () => {
         const result = await fetchClient({
             url: '/campaigns',
@@ -86,7 +96,7 @@ const CampaignTable = ({ settotalCampaign, totalCampaign, user }) => {
                     <div className="basis-1/2">
                         <input type="text" className="text-xs rounded-md w-full max-w-md border border-customGray" placeholder="Cari nama / nomor / label"
                             value={searchText}
-                            onChange={(e) => setsearchText(e.target.value)}
+                            onChange={handleSearch}
                         />
                     </div>
                     <div className='flex lg:justify-end justify-between gap-2 w-full max-w-xs'>
@@ -146,7 +156,7 @@ const CampaignTable = ({ settotalCampaign, totalCampaign, user }) => {
                                 <p className='text-xs text-[#777C88]'>Harap menambahkan campaign</p>
                             </div>
                         </div>}
-                            items={campaignData}
+                            items={ searchText ?  searchedCampaignData  : campaignData}
                         // className='font-nunito'
                         >
                             {(item) => (

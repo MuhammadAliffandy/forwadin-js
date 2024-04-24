@@ -29,6 +29,11 @@ const BroadcastTable = ({ settotalBroadcast, totalBroadcast, user }) => {
     }
     const handleSearch = (e) => {
         setsearchText(e.target.value)
+        const filterBroadcast = broadcastData.filter(data => {
+            return data.name.toLowerCase().indexOf(e.target.value ) > -1
+        })
+
+        setsearchedGetBroadcast(filterBroadcast)
     }
     const handleDeleteBroadcast = async () => {
         // tambah konfirmasi delete
@@ -153,7 +158,7 @@ const BroadcastTable = ({ settotalBroadcast, totalBroadcast, user }) => {
                                 <p className='text-xs text-[#777C88]'>Harap menambahkan broadcast</p>
                             </div>
                         </div>}
-                            items={broadcastData}
+                            items={ searchText ? searchedGetBroadcast : broadcastData}
                         >
                             {(item) => (
                                 <TableRow key={item.id}>

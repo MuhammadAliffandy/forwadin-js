@@ -1,9 +1,11 @@
 'use client'
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import DeviceTable from "./DeviceTable"
 
 const Device = () => {
     const [countDevice, setcountDevice] = useState(0)
+    const [checkConnection , setCheckConnection] = useState([])
+
     return (
         <>
             <div className="flex gap-2 lg:justify-start justify-center items-center mt-2 lg:mt-0 w-full">
@@ -15,17 +17,17 @@ const Device = () => {
                 </div>
             </div>
 
-            {countDevice > 0 ? <div className='border-2 border-danger rounded-md px-4 py-3 flex justify-between mt-4'>
+            {checkConnection.indexOf(true) > -1 ?   null :  <div className='border-2 border-danger rounded-md px-4 py-3 flex justify-between mt-4'>
                     <div className='flex gap-4 items-center'>
                         <div className='flex-none'>
                             <img src="/assets/icons/dashboard/assignment_late.svg" alt="" />
                         </div>
                         <p className='font-bold text-md'>Tekan tombol Scan QR untuk mengkoneksikan device Anda dan membuka fitur-fitur yang ada</p>
                     </div>
-                </div> :  null
+                </div>
                 }
 
-            <DeviceTable setcountDevice={setcountDevice} />
+            <DeviceTable setcountDevice={setcountDevice} setCheckConnection={setCheckConnection} />
         </>
     )
 }

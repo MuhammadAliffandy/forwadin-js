@@ -32,6 +32,11 @@ const CustomerServiceTable = () => {
     }
     const handleSearch = (e) => {
         setsearchText(e.target.value)
+        const filterCS = CSData.filter(data => {
+            return data.username.toLowerCase().indexOf(e.target.value ) > -1
+        })
+
+        setsearchedCSData(filterCS)
     }
     const deleteCS = async () => {
         const deletedCS = getArrayFromSet(selectedCS, CSData)

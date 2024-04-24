@@ -32,6 +32,12 @@ const GroupTable = ({ setcountGroup }) => {
     }
     const handleSearch = (e) => {
         setsearchText(e.target.value)
+
+        const filterGroup = groupData.filter(data => {
+            return data.name.toLowerCase().indexOf(e.target.value ) > -1
+        })
+
+        setsearchedGroup(filterGroup)
     }
     const handleDeleteGroup = async () => {
         // tambah konfirmasi delete

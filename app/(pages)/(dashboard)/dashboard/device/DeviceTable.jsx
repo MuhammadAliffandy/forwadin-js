@@ -12,7 +12,7 @@ import { useSocket } from '@/app/SocketProvider';
 import { getArrayFromSet } from '@/app/utils/helper';
 import { getAllDevice } from "../../../../api/repository/deviceRepository"
 
-const DeviceTable = ({ setcountDevice }) => {
+const DeviceTable = ({ setcountDevice , setCheckConnection }) => {
     const { data: session } = useSession()
     const { isConnected, socket } = useSocket()
     const [isLoaded, setisLoaded] = useState(false)
@@ -48,6 +48,11 @@ const DeviceTable = ({ setcountDevice }) => {
     }
     const handleSearch = (e) => {
         setsearchText(e.target.value)
+        const filterDevice = deviceData.filter(data => {
+            return data.name.toLowerCase().indexOf(e.target.value ) > -1
+        })
+
+        setsearchedDevice(filterDevice)
     }
 
     const fetchData = async () => {
@@ -55,10 +60,16 @@ const DeviceTable = ({ setcountDevice }) => {
         const fetchDeviceData = await getAllDevice(session?.user?.token)
         
         if (fetchDeviceData) {
-            const data = await fetchDeviceData.data
+            const data = fetchDeviceData.data
 
             if (fetchDeviceData.status == 200) {
                 console.log( 'ISI DEVICE => ' +  data.length )
+
+                const cekStatus = data.map( item => {
+                    return item.status == 'open' ? true : false
+                } )
+
+                setCheckConnection(cekStatus)
                 setcountDevice(data.length)
                 setdeviceData(data)
                 setisLoaded(true)

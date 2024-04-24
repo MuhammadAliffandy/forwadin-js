@@ -17,6 +17,7 @@ const SubscriptionTable = ({statusAction ,setTotalSubscription, totalSubscriptio
     const [subscriptionData, setSubscriptionData] = useState([])
     const [searchText, setsearchText] = useState('')
     const [searchedGetBroadcast, setsearchedGetBroadcast] = useState([])
+    const [searchedGetSubscription, setsearchedGetSubscription] = useState([])
     const [selectedBroadcast, setselectedBroadcast] = useState(new Set([]))
    
     const handleOpenDetailModal = (params) => {
@@ -31,6 +32,11 @@ const SubscriptionTable = ({statusAction ,setTotalSubscription, totalSubscriptio
     }
     const handleSearch = (e) => {
         setsearchText(e.target.value)
+        const filterSubscription = subscriptionData.filter(data => {
+            return data.name.toLowerCase().indexOf(e.target.value ) > -1
+        })
+
+        setsearchedGetSubscription(filterSubscription)
     }
     
 
@@ -128,7 +134,7 @@ const SubscriptionTable = ({statusAction ,setTotalSubscription, totalSubscriptio
                                 <p className='text-xs text-[#777C88]'>Lorem Ipsum</p>
                             </div>
                         </div>}
-                            items={subscriptionData}
+                            items={ searchText ? searchedGetSubscription : subscriptionData}
                         >
                             {(item) => (
                                 <TableRow key={item.id}>

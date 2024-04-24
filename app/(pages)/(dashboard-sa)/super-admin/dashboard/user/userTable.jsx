@@ -18,6 +18,7 @@ const UserTable = ({ statusAction ,setTotalUser, totalUser, user , onEdit , onAd
     const [searchText, setsearchText] = useState('')
     const [ listTransaction , setListTransaction ] = useState()
     const [searchedGetBroadcast, setsearchedGetBroadcast] = useState([])
+    const [searchedGetUser, setsearchedGetUser] = useState([])
     const [selectedBroadcast, setselectedBroadcast] = useState(new Set([]))
     const handleOpenDetailModal = (params) => {
         push('/dashboard/contact/' + params)
@@ -31,6 +32,16 @@ const UserTable = ({ statusAction ,setTotalUser, totalUser, user , onEdit , onAd
     }
     const handleSearch = (e) => {
         setsearchText(e.target.value)
+        if(e.target.value == ''){
+            setsearchedGetUser(userData)
+
+        }else{
+            const filterUser = userData.filter(data => {
+                const dataText = `${data.firstName} ${data.lastName} ${data.email}`
+                return dataText.toLowerCase().indexOf(e.target.value ) > -1
+            })
+            setsearchedGetUser(filterUser)
+        }
     }
 
     const handleTransactionPay = async (transactionId , status ) => {
@@ -55,7 +66,7 @@ const UserTable = ({ statusAction ,setTotalUser, totalUser, user , onEdit , onAd
             })
 
             setListTransaction(dataTransaction)
-
+            setsearchedGetUser(resultData)
             setUserData(resultData)
             setTotalUser(resultData.length)
             setisLoaded(true)
@@ -146,10 +157,10 @@ const UserTable = ({ statusAction ,setTotalUser, totalUser, user , onEdit , onAd
                             </div>
                         </div>}
 
-                        items={userData}
+                        items={ searchedGetUser}
                         >
                             {
-                            userData.map((item , index) => {
+                            searchedGetUser.map((item , index) => {
                                 return (
                                     <TableRow key={item.id}>
                                     <TableCell >{item.firstName}</TableCell>
