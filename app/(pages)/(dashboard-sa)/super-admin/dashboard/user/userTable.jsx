@@ -114,7 +114,7 @@ const UserTable = ({ statusAction ,setTotalUser, totalUser, user , onEdit , onAd
         if (user?.token) {
             fetchAllUser()
         }
-    }, [user?.token])
+    }, [user?.token,])
     useEffect(() => {
         if ((selectedUser ).size > 0 || selectedUser === 'all')
             setisChecked(true)
@@ -207,8 +207,8 @@ const UserTable = ({ statusAction ,setTotalUser, totalUser, user , onEdit , onAd
                                         }} />
                                     </TableCell>
                                     <TableCell>
-                                        <p className={`text-[10px] text-center text-white w-auto px-[12px] py-[4px] ${ item.transactions.length == 0 ? 'bg-primary' :  item.Subscription[0].subscriptionPlan.name == 'pro' ? 'bg-black ' : 'bg-primary'} rounded-[30px]`} >
-                                            {item.transactions.length == 0 ?  '-' : item.Subscription[0].subscriptionPlan.name}
+                                        <p className={`text-[10px] text-center text-white w-auto px-[12px] py-[4px] ${ item.Subscription.length == 0 ? 'bg-primary' :  item.Subscription[0].subscriptionPlan.name == 'pro' ? 'bg-black ' : 'bg-primary'} rounded-[30px]`} >
+                                            {item.Subscription.length == 0 ?  '-' : item.Subscription[0].subscriptionPlan.name}
                                         </p> 
                                     </TableCell>
                                     <TableCell>

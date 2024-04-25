@@ -22,6 +22,9 @@ const Navbar = () => {
             router.push('/dashboard')
         if (session.customerService)
             router.push('/customer-service/dashboard')
+        if(session.superAdmin){
+            router.push('/super-admin/dashboard')
+        }
     }
     const featureTransition = useTransition(featureDropdown, {
         from: {

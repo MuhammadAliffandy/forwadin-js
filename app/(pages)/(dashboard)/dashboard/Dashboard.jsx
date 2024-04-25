@@ -213,7 +213,7 @@ const Dashboard = () => {
                         </div>
                         {
 
-                            session?.user?.subscription?.name !=  'pro' ? null :
+                            session?.user?.subscription?.name ==  'pro' ? null :
                             <div className='flex flex-col gap-4 items-center '>
                                 <div className='text-right hidden lg:block'>
                                     <p className='font-nunito font-bold text-[12px]'>Upgrade paket untuk meningkatkan<br /> batasan fitur yang ada</p>
