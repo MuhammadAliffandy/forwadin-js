@@ -105,17 +105,19 @@ const Account = ({ user, userProfile }) => {
 
     const onSubmitEmail = async (data) => {
         setemailIsLoading(true)
-        if (data.email === userProfile.email) return
+        if (data.email === userProfile.email){
+            const result = await changeEmailUser(user.token,user.id,{ email: data.email })
 
-        const result = await changeEmailUser(user.token,user.id,{ email: data.email })
-
-        if (result.status === 200) {
-            toast.success('Berhasil ubah email')
-            await signOut()
-            router.push('/signin')
-        } else {
-            toast.error('Gagal ubah email')
+            if (result.status === 200) {
+                toast.success('Berhasil ubah email')
+                await signOut()
+                router.push('/signin')
+            } else {
+                toast.error('Gagal ubah email')
+            }
         }
+
+ 
         setemailIsLoading(false)
     }
 
@@ -351,13 +353,13 @@ const Account = ({ user, userProfile }) => {
                         <Link href={'/auth/forgot-password'} className="text-primary">I forgot my password</Link>
                     </div>
                 </form>
-                <p className="font-lexend font-bold text-2xl">Delete Account</p>
+                {/* <p className="font-lexend font-bold text-2xl">Delete Account</p>
                 <p className="text-customNeutral text-sm w-3/5">Ini akan menghapus semua data dan pengaturan Anda. Tindakan ini tidak dapat dibatalkan.</p>
                 <div>
                     <Button onClick={() => setdeleteAccountModal(true)} color="danger" className="rounded-md">
                         Delete This Account
                     </Button>
-                </div>
+                </div> */}
             </div>
         </>
     )
