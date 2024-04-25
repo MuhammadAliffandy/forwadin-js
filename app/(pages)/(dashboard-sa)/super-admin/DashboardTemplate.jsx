@@ -131,9 +131,9 @@ const DashboardTemplate = ({ currentPage, children }) => {
                                         isInvisible={notification.length === 0} size="sm" shape="circle"
 
                                     >
-                                        <div className='flex-none bg-white rounded-full p-2 hover:cursor-pointer'>
+                                        {/* <div className='flex-none bg-white rounded-full p-2 hover:cursor-pointer'>
                                             <img src="/assets/icons/dashboard/bell.svg" alt="" />
-                                        </div>
+                                        </div> */}
                                     </Badge>
 
                                 </div>
@@ -191,9 +191,9 @@ const DashboardTemplate = ({ currentPage, children }) => {
                                 <DropdownItem key='sign out' className="text-danger" onClick={() => signOut({ callbackUrl: '/super-admin/signin' })}>Sign Out</DropdownItem>
                             </DropdownMenu>
                         </Dropdown>
-                        <div className='flex-none bg-white rounded-full p-2 hover:cursor-pointer' onClick={() => router.push('/dashboard/settings?section=system')}>
+                        {/* <div className='flex-none bg-white rounded-full p-2 hover:cursor-pointer' onClick={() => router.push('/dashboard/settings?section=system')}>
                             <img src="/assets/icons/dashboard/gear.svg" alt="" />
-                        </div>
+                        </div> */}
                     </div>
                     <main className='lg:mt-4'>
                         {children}
