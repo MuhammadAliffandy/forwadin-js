@@ -1,11 +1,14 @@
 import { useState } from "react";
 import AppModal from "../modal";
 import DropDown from '../dropdown'
+import { fetchClient } from '@/app/utils/helper/fetchClient'
 import { deleteUserAsSuperAdmin, editUserAsSuperAdmin } from "../../../api/repository/superadminRepository";
 import { toast } from "react-toastify"
+import { useRouter } from "next/navigation";
 
 const EditModalUser = (props) => {
 
+    const { push } = useRouter()
     const [ firstName , setFirstName ] = useState('')
     const [ lastName , setLastName ] = useState('')
     const [ username , setUsername ] = useState('')
@@ -17,15 +20,17 @@ const EditModalUser = (props) => {
         props.onload(true)
 
         try {
-            const result = await deleteUserAsSuperAdmin(sessionSuperAdmin,props.user.id,'')
-
-            if(result.status === 200){
-                toast.success('Hapus User Berhasil')
-                props.onload(false)
-            }else{
-                toast.error('Hapus User Gagal')
-                props.onload(true)
-                
+            const result = await fetchClient({
+                url: '/super-admin/users/',
+                body: JSON.stringify({ userIds: [props.user.id] }),
+                method: 'DELETE',
+                user: props
+            })
+            if (result?.ok) {
+                toast.success('Berhasil hapus User')
+                push('/super-admin/dashboard/user')
+            } else {
+                toast.error('Gagal hapus User')
             }
         } catch (error) {
             toast.error('Server Error')
@@ -49,6 +54,7 @@ const EditModalUser = (props) => {
             const result = await editUserAsSuperAdmin(sessionSuperAdmin, props.user.id ,data )
             if(result.status == 200){
                 toast.success('Edit User Berhasil')
+                push('/super-admin/dashboard/user')
                 props.onload(false)
             }else{
                 toast.error('Edit User Gagal')

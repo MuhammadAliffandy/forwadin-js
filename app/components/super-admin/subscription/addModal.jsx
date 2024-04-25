@@ -4,9 +4,11 @@ import DropDown from '../dropdown'
 import {  Switch,} from '@nextui-org/react';
 import { toast } from "react-toastify"
 import { createSubscriptionPlans } from "@/app/api/repository/subscriptionRepository";
+import { useRouter } from "next/navigation";
 
 const AddModalSubscription = (props) => {
 
+    const { push } = useRouter()
     const [name, setName] = useState("");
     const [monthlyPrice, setMonthlyPrice] = useState("");
     const [yearlyPrice, setYearlyPrice] = useState("");
@@ -43,6 +45,7 @@ const AddModalSubscription = (props) => {
             const result = await createSubscriptionPlans(sessionSuperAdmin,data )
             if(result.status === 201){
                 toast.success('Buat Subscription Berhasil')
+                push('/super-admin/dashboard/subscription')
                 props.onload(false)
             }else{
                 toast.error('Buat Subscription Gagal')

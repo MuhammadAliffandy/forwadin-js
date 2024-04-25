@@ -5,10 +5,12 @@ import DropDown from '../dropdown'
 import { getAllSubscriptionPlans } from "@/app/api/repository/subscriptionRepository";
 import { createUserAsSuperAdmin } from "@/app/api/repository/superadminRepository";
 import { toast } from "react-toastify"
+import { useRouter } from "next/navigation";
 
 const AddModalUser = (props) => {
 
     const { data: session  } = useSession()
+    const {push } = useRouter()
     const [subscription , setSubscription ] = useState('')
     const [subscriptionPlanId , setSubscriptionPlanId ] = useState('')
     const [subscriptionType , setSubscriptionType ] = useState('')
@@ -55,6 +57,7 @@ const AddModalUser = (props) => {
             const result = await createUserAsSuperAdmin(sessionSuperAdmin,data )
             if(result.status == 201){
                 toast.success('Buat User Berhasil')
+                push('/super-admin/dashboard/user')
                 props.onload(false)
             }else{
                 toast.error('Buat User Gagal')

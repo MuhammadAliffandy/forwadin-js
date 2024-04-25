@@ -3,9 +3,12 @@ import AppModal from "../modal";
 import {  Switch,} from '@nextui-org/react';
 import DropDown from '../dropdown'
 import { toast } from "react-toastify"
+import { fetchClient } from '@/app/utils/helper/fetchClient'
 import { deleteSubscriptionPlans, editSubscriptionPlans } from "@/app/api/repository/subscriptionRepository";
+import { useRouter } from "next/navigation";
 const EditModalSubscription = (props) => {
 
+    const { push  } = useRouter()
     const [name, setName] = useState("");
     const [monthlyPrice, setMonthlyPrice] = useState("");
     const [yearlyPrice, setYearlyPrice] = useState("");
@@ -23,14 +26,17 @@ const EditModalSubscription = (props) => {
         props.onload(true)
 
         try {
-            const result = await deleteSubscriptionPlans(sessionSuperAdmin,props.subscription.id,'')
-            if(result.status === 200){
-                toast.success('Hapus Subscription Berhasil')
-                props.onload(false)
-            }else{
-                toast.error('Hapus Subscription Gagal')
-                props.onload(true)
-                
+            const result = await fetchClient({
+                url: '/subscription-plans',
+                body: JSON.stringify({ subscriptionPlanIds: [props.subscription.id] }),
+                method: 'DELETE',
+                user: props
+            })
+            if (result?.ok) {
+                toast.success('Berhasil hapus Subscription')
+                push('/super-admin/dashboard/subscription')
+            } else {
+                toast.error('Gagal hapus Subscription')
             }
         } catch (error) {
             toast.error('Server Error')
@@ -60,6 +66,7 @@ const EditModalSubscription = (props) => {
             const result = await editSubscriptionPlans(sessionSuperAdmin, props.subscription.id ,data)
             if(result.status === 201){
                 toast.success('Edit Subscription Berhasil')
+                push('/super-admin/dashboard/subscription')
                 props.onload(false)
             }else{
                 toast.error('Edit Subscription Gagal')
@@ -151,7 +158,7 @@ const EditModalSubscription = (props) => {
                         <Switch size='sm' isSelected={available} onClick={() => {setAvailable(!available)}} />
                     </div>
                     <button onClick={onSubmit} className='w-[100%] text-[14px] bg-primary text-white rounded-[6px] px-[20px] py-[16px]'>Simpan</button>
-                    <button onClick={onDelete} className='w-[100%] text-[14px] bg-danger text-white rounded-[6px] px-[20px] py-[16px]'>Hapus</button>
+                    {/* <button onClick={onDelete} className='w-[100%] text-[14px] bg-danger text-white rounded-[6px] px-[20px] py-[16px]'>Hapus</button> */}
                 </div>
         </AppModal>
     )

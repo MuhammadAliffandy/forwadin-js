@@ -118,9 +118,7 @@ const SubscriptionTable = ({statusAction ,setTotalSubscription, totalSubscriptio
                     </div>
                     <div className='flex lg:justify-end justify-between gap-2 w-full max-w-xs'>
                         {isChecked ? (
-                            <Button color='danger' onClick={handleDeleteSubscription} className="bg-danger rounded-md w-full lg:w-auto px-8 text-white text-center items-center flex hover:cursor-pointer justify-center p-2">
-                                Hapus
-                            </Button>
+                            null
                         ) : (
                             <Button  onClick = {
                                 onAdd
