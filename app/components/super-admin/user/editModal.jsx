@@ -18,6 +18,7 @@ const EditModalUser = (props) => {
 
         try {
             const result = await deleteUserAsSuperAdmin(sessionSuperAdmin,props.user.id,'')
+
             if(result.status === 200){
                 toast.success('Hapus User Berhasil')
                 props.onload(false)

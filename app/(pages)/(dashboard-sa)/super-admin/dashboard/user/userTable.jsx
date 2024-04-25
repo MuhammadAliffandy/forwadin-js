@@ -19,7 +19,7 @@ const UserTable = ({ statusAction ,setTotalUser, totalUser, user , onEdit , onAd
     const [ listTransaction , setListTransaction ] = useState()
     const [searchedGetBroadcast, setsearchedGetBroadcast] = useState([])
     const [searchedGetUser, setsearchedGetUser] = useState([])
-    const [selectedBroadcast, setselectedBroadcast] = useState(new Set([]))
+    const [selectedUser, setselectedUser] = useState(new Set([]))
     const handleOpenDetailModal = (params) => {
         push('/dashboard/contact/' + params)
     }
@@ -43,6 +43,7 @@ const UserTable = ({ statusAction ,setTotalUser, totalUser, user , onEdit , onAd
             setsearchedGetUser(filterUser)
         }
     }
+
 
     const handleTransactionPay = async (transactionId , status ) => {
         const result = await updateStatusTransaction(user?.token , transactionId , {status : status ? 'paid' : 'unpaid'})
@@ -75,6 +76,36 @@ const UserTable = ({ statusAction ,setTotalUser, totalUser, user , onEdit , onAd
         }
     }
 
+    const handleDeleteUser = async () => {
+        // tambah konfirmasi delete
+
+        let deletedUser = null
+        if (selectedUser === 'all') {
+            deletedUser = userData.map(item => item.id)
+        }
+        else if ((selectedUser).size > 0) {
+            deletedUser = Array.from(selectedUser)
+        }
+        const isConfirm = window.confirm('Anda yakin ingin menghapus ' + deletedUser?.length + ' user?')
+        
+        if (deletedUser && isConfirm) {
+            const result = await fetchClient({
+                url: '/super-admin/users',
+                body: JSON.stringify({ userIds: deletedUser }),
+                method: 'DELETE',
+                user: user
+            })
+            if (result?.ok) {
+                toast.success('Berhasil hapus User')
+                fetchAllUser()
+                setselectedUser(new Set([]))
+            } else {
+                toast.error('Gagal hapus User')
+            }
+            deletedUser = null
+        }
+    }
+
     useEffect(() => {
         const searchResult = filterMessage(searchText)
         setsearchedGetBroadcast(searchResult)
@@ -85,12 +116,12 @@ const UserTable = ({ statusAction ,setTotalUser, totalUser, user , onEdit , onAd
         }
     }, [user?.token])
     useEffect(() => {
-        if ((selectedBroadcast ).size > 0 || selectedBroadcast === 'all')
+        if ((selectedUser ).size > 0 || selectedUser === 'all')
             setisChecked(true)
         else
             setisChecked(false)
 
-    }, [selectedBroadcast])
+    }, [selectedUser])
 
     useEffect(()=>{
         if(statusAction){
@@ -109,7 +140,7 @@ const UserTable = ({ statusAction ,setTotalUser, totalUser, user , onEdit , onAd
                     </div>
                     <div className='flex lg:justify-end justify-between gap-2 w-full max-w-xs'>
                         {isChecked ? (
-                            <Button color='danger' onClick={()=>{}} className="bg-danger rounded-md w-full lg:w-auto px-8 text-white text-center items-center flex hover:cursor-pointer justify-center p-2">
+                            <Button color='danger' onClick={handleDeleteUser} className="bg-danger rounded-md w-full lg:w-auto px-8 text-white text-center items-center flex hover:cursor-pointer justify-center p-2">
                                 Hapus
                             </Button>
                         ) : (
@@ -136,8 +167,8 @@ const UserTable = ({ statusAction ,setTotalUser, totalUser, user , onEdit , onAd
                             wrapper: 'rounded-md'
                         }}
                         radius='md'
-                        selectedKeys={selectedBroadcast}
-                        onSelectionChange={setselectedBroadcast}
+                        selectedKeys={selectedUser}
+                        onSelectionChange={setselectedUser}
                     >
                         <TableHeader>
                             <TableColumn>FirstName</TableColumn>

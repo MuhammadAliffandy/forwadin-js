@@ -18,7 +18,7 @@ const SubscriptionTable = ({statusAction ,setTotalSubscription, totalSubscriptio
     const [searchText, setsearchText] = useState('')
     const [searchedGetBroadcast, setsearchedGetBroadcast] = useState([])
     const [searchedGetSubscription, setsearchedGetSubscription] = useState([])
-    const [selectedBroadcast, setselectedBroadcast] = useState(new Set([]))
+    const [selectedSubscription, setselectedSubscription] = useState(new Set([]))
    
     const handleOpenDetailModal = (params) => {
         push('/dashboard/contact/' + params)
@@ -39,7 +39,7 @@ const SubscriptionTable = ({statusAction ,setTotalSubscription, totalSubscriptio
         setsearchedGetSubscription(filterSubscription)
     }
     
-
+   
     const fetchSubscriptionPlan = async () => {
         const result = await getAllSubscriptionPlans(user?.token)
 
@@ -54,6 +54,37 @@ const SubscriptionTable = ({statusAction ,setTotalSubscription, totalSubscriptio
         }
     }
 
+    const handleDeleteSubscription = async () => {
+        // tambah konfirmasi delete
+        let deletedSubscription = null
+        if (selectedSubscription === 'all') {
+            deletedSubscription = userData.map(item => item.id)
+        }
+        else if ((selectedSubscription).size > 0) {
+            deletedSubscription = Array.from(selectedSubscription)
+        }
+        const isConfirm = window.confirm('Anda yakin ingin menghapus ' + deletedSubscription?.length + ' subscription?')
+
+
+        if (deletedSubscription && isConfirm) {
+            const result = await fetchClient({
+                url: '/subscription-plans',
+                body: JSON.stringify({ subscriptionPlanIds: deletedSubscription }),
+                method: 'DELETE',
+                user: user
+            })
+            if (result?.ok) {
+                toast.success('Berhasil hapus Subscription')
+                fetchSubscriptionPlan()
+                setselectedSubscription(new Set([]))
+            } else {
+                toast.error('Gagal hapus Subscription')
+            }
+            deletedSubscription = null
+        }
+    }
+
+
     useEffect(() => {
         const searchResult = filterMessage(searchText)
         setsearchedGetBroadcast(searchResult)
@@ -64,12 +95,12 @@ const SubscriptionTable = ({statusAction ,setTotalSubscription, totalSubscriptio
         }
     }, [user?.token])
     useEffect(() => {
-        if ((selectedBroadcast ).size > 0 || selectedBroadcast === 'all')
+        if ((selectedSubscription ).size > 0 || selectedSubscription === 'all')
             setisChecked(true)
         else
             setisChecked(false)
 
-    }, [selectedBroadcast])
+    }, [selectedSubscription])
     useEffect(()=>{
         if(statusAction == true){
             fetchSubscriptionPlan()
@@ -87,7 +118,7 @@ const SubscriptionTable = ({statusAction ,setTotalSubscription, totalSubscriptio
                     </div>
                     <div className='flex lg:justify-end justify-between gap-2 w-full max-w-xs'>
                         {isChecked ? (
-                            <Button color='danger' onClick={()=>{}} className="bg-danger rounded-md w-full lg:w-auto px-8 text-white text-center items-center flex hover:cursor-pointer justify-center p-2">
+                            <Button color='danger' onClick={handleDeleteSubscription} className="bg-danger rounded-md w-full lg:w-auto px-8 text-white text-center items-center flex hover:cursor-pointer justify-center p-2">
                                 Hapus
                             </Button>
                         ) : (
@@ -116,8 +147,8 @@ const SubscriptionTable = ({statusAction ,setTotalSubscription, totalSubscriptio
                             wrapper: 'rounded-md'
                         }}
                         radius='md'
-                        selectedKeys={selectedBroadcast}
-                        onSelectionChange={setselectedBroadcast}
+                        selectedKeys={selectedSubscription}
+                        onSelectionChange={setselectedSubscription}
                     >
                         <TableHeader>
                             <TableColumn>Name</TableColumn>
