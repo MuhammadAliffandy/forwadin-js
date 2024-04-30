@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import Notification from "./dashboard/Notification";
 import { useSocket } from "../../SocketProvider";
 import { getUserProfile } from "@/app/api/repository/userRepository";
+import { getNotification } from "@/app/api/repository/notificationRepository";
 import { BarLoader } from "react-spinners";
 const DashboardTemplate = ({ currentPage, children }) => {
     const { data: session } = useSession()
@@ -16,6 +17,7 @@ const DashboardTemplate = ({ currentPage, children }) => {
     const router = useRouter()
     const [isPopover, setisPopover] = useState(false)
     const [notification, setnotification] = useState([])
+    const [notif, setnotif] = useState([])
 
     const [sideNavDropdown, setsideNavDropdown] = useState(false)
     const [isDisabled, setisDisabled] = useState(true)
@@ -34,70 +36,81 @@ const DashboardTemplate = ({ currentPage, children }) => {
         const result = await getUserProfile(session?.user?.token,session?.user?.id)
         console.log(result)
         if (result && result.status == 200) {
-            const body = await result.data
+            const body = result.data
             setuser(body)
         }
+    }
+
+    const fetchNotification = async ( ) => {
+        const result = await getNotification(session?.user?.token,session?.user?.id)
+
+        if(result.status == 200 ){
+            const data = result.data
+            setnotif(data)
+        }
+
     }
 
     useEffect(() => {
         if (session?.user?.token) {
             fetchUserProfile()
+            fetchNotification()
             console.log(session.user)
         }
 
         console.log("ISI SESSION => ", session?.user)
 
     }, [session?.user?.token])
-    useEffect(() => {
-        const channels = {
-            session: new Set(),
-            device: new Set()
-        }
-        if (session?.user?.device && session.user.device.length > 0)
-            setisDisabled(false)
-        else
-            setisDisabled(true)
+    // useEffect(() => {
+    //     const channels = {
+    //         session: new Set(),
+    //         device: new Set()
+    //     }
+    //     if (session?.user?.device && session.user.device.length > 0)
+    //         setisDisabled(false)
+    //     else
+    //         setisDisabled(true)
 
-        if (socket && session?.user?.device) {
-            session.user.device.forEach(device => {
-                channels.session.add(`message:${device.sessionId}`)
-                channels.device.add(`device:${device.id}:status`)
-            })
-            channels.session.forEach(session => {
-                socket.on(session, (message) => {
-                    console.log('ini message dari session ' + session)
-                    console.log(message)
-                    setnotification(prev => [...prev, message])
-                })
-            })
-            channels.device.forEach(device => {
-                socket.on(device, async (message) => {
-                    console.log('ini message dari session ' + device)
-                    console.log(message)
-                    if (message === 'closed') {
-                        const result = await signIn('refresh', {
-                            redirect: false,
-                            user: JSON.stringify(session.customerService)
-                        })
-                        if (result?.error) {
-                            signOut()
-                        } else {
-                            router.refresh()
-                        }
-                    }
-                })
-            })
-        }
+    //     if (socket && session?.user?.device) {
+    //         session.user.device.forEach(device => {
+    //             channels.session.add(`message:${device.sessionId}`)
+    //             channels.device.add(`device:${device.id}:status`)
+    //         })
+    //         channels.session.forEach(session => {
+    //             socket.on(session, (message) => {
+    //                 console.log('ini message dari session ' + session)
+    //                 console.log(message)
+    //                 setnotification(prev => [...prev, message])
+    //             })
+    //         })
+    //         channels.device.forEach(device => {
+    //             socket.on(device, async (message) => {
+    //                 console.log('ini message dari session ' + device)
+    //                 console.log(message)
+    //                 if (message === 'closed') {
+    //                     const result = await signIn('refresh', {
+    //                         redirect: false,
+    //                         user: JSON.stringify(session.customerService)
+    //                     })
+    //                     if (result?.error) {
+    //                         signOut()
+    //                     } else {
+    //                         router.refresh()
+    //                     }
+    //                 }
+    //             })
+    //         })
+    //     }
 
-        return () => {
-            channels.session.forEach(channel => {
-                socket.off(channel)
-            })
-            channels.device.forEach(channel => {
-                socket.off(channel)
-            })
-        }
-    }, [session?.user?.device])
+    //     return () => {
+    //         channels.session.forEach(channel => {
+    //             socket.off(channel)
+    //         })
+    //         channels.device.forEach(channel => {
+    //             socket.off(channel)
+    //         })
+    //     }
+    // }, [session?.user?.device])
     return (
         <>
             <div className={(sideNavDropdown ? 'block' : 'hidden') + " h-full w-[200px] lg:w-[250px] z-10 top-0 left-0 overflow-y-auto bg-white fixed lg:block pb-12"} id="side_nav">
@@ -202,7 +215,7 @@ const DashboardTemplate = ({ currentPage, children }) => {
                                 </div>
                             </PopoverTrigger>
                             <PopoverContent className="">
-                                <Notification notification={notification} />
+                                <Notification notification={notif} />
                             </PopoverContent>
                         </Popover>
 
