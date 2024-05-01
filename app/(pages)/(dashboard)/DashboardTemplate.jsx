@@ -203,8 +203,8 @@ const DashboardTemplate = ({ currentPage, children }) => {
                             <PopoverTrigger onClick={() => setisPopover(true)}>
                                 <div>
 
-                                    <Badge content={notification.length} color="primary"
-                                        isInvisible={notification.length === 0} size="sm" shape="circle"
+                                    <Badge content={notif.length} color="primary"
+                                        isInvisible={notif.length === 0} size="sm" shape="circle"
 
                                     >
                                         <div className='flex-none bg-white rounded-full p-2 hover:cursor-pointer'>
