@@ -102,9 +102,9 @@ const DashboardTemplate = ({ currentPage, children }) => {
                         {/* <div className='flex-none bg-white rounded-full p-2 hover:cursor-pointer'>
                             <img src="/assets/icons/dashboard/comments.svg" alt="" />
                         </div> */}
-                        <div className='flex-none bg-white rounded-full p-2 hover:cursor-pointer'>
+                        {/* <div className='flex-none bg-white rounded-full p-2 hover:cursor-pointer'>
                             <img src="/assets/icons/dashboard/bell.svg" alt="" />
-                        </div>
+                        </div> */}
                         <Dropdown>
                             <DropdownTrigger>
                                 <div className='flex-none bg-white rounded-full hover:cursor-pointer flex w-[180px]'>
