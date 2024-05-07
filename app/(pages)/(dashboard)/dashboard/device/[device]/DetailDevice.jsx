@@ -101,7 +101,7 @@ const DetailDevice = ({ device }) => {
 
         const result = await updateDevice(session.user.token, deviceData.id, {
             name: deviceName,
-            label: newLabel
+            labels: newLabel
         })
 
         if (result) {

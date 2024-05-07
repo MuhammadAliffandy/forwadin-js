@@ -61,56 +61,56 @@ const DashboardTemplate = ({ currentPage, children }) => {
         console.log("ISI SESSION => ", session?.user)
 
     }, [session?.user?.token])
-    // useEffect(() => {
-    //     const channels = {
-    //         session: new Set(),
-    //         device: new Set()
-    //     }
-    //     if (session?.user?.device && session.user.device.length > 0)
-    //         setisDisabled(false)
-    //     else
-    //         setisDisabled(true)
+    useEffect(() => {
+        const channels = {
+            session: new Set(),
+            device: new Set()
+        }
+        if (session?.user?.device && session.user.device.length > 0)
+            setisDisabled(false)
+        else
+            setisDisabled(true)
 
-    //     if (socket && session?.user?.device) {
-    //         session.user.device.forEach(device => {
-    //             channels.session.add(`message:${device.sessionId}`)
-    //             channels.device.add(`device:${device.id}:status`)
-    //         })
-    //         channels.session.forEach(session => {
-    //             socket.on(session, (message) => {
-    //                 console.log('ini message dari session ' + session)
-    //                 console.log(message)
-    //                 setnotification(prev => [...prev, message])
-    //             })
-    //         })
-    //         channels.device.forEach(device => {
-    //             socket.on(device, async (message) => {
-    //                 console.log('ini message dari session ' + device)
-    //                 console.log(message)
-    //                 if (message === 'closed') {
-    //                     const result = await signIn('refresh', {
-    //                         redirect: false,
-    //                         user: JSON.stringify(session.customerService)
-    //                     })
-    //                     if (result?.error) {
-    //                         signOut()
-    //                     } else {
-    //                         router.refresh()
-    //                     }
-    //                 }
-    //             })
-    //         })
-    //     }
+        if (socket && session?.user?.device) {
+            session.user.device.forEach(device => {
+                channels.session.add(`message:${device.sessionId}`)
+                channels.device.add(`device:${device.id}:status`)
+            })
+            channels.session.forEach(session => {
+                socket.on(session, (message) => {
+                    console.log('ini message dari session ' + session)
+                    console.log(message)
+                    setnotification(prev => [...prev, message])
+                })
+            })
+            channels.device.forEach(device => {
+                socket.on(device, async (message) => {
+                    console.log('ini message dari session ' + device)
+                    console.log(message)
+                    if (message === 'closed') {
+                        const result = await signIn('refresh', {
+                            redirect: false,
+                            user: JSON.stringify(session.customerService)
+                        })
+                        if (result?.error) {
+                            signOut()
+                        } else {
+                            router.refresh()
+                        }
+                    }
+                })
+            })
+        }
 
-    //     return () => {
-    //         channels.session.forEach(channel => {
-    //             socket.off(channel)
-    //         })
-    //         channels.device.forEach(channel => {
-    //             socket.off(channel)
-    //         })
-    //     }
-    // }, [session?.user?.device])
+        return () => {
+            channels.session.forEach(channel => {
+                socket.off(channel)
+            })
+            channels.device.forEach(channel => {
+                socket.off(channel)
+            })
+        }
+    }, [session?.user?.device])
     return (
         <>
             <div className={(sideNavDropdown ? 'block' : 'hidden') + " h-full w-[200px] lg:w-[250px] z-10 top-0 left-0 overflow-y-auto bg-white fixed lg:block pb-12"} id="side_nav">
