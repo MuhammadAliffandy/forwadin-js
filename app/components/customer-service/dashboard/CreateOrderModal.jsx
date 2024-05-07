@@ -26,8 +26,9 @@ const CreateOrderModal = ({ customerService, openModal, setopenModal, contact })
             orderData: text
         } )
 
-        const resultData = await result.data
-        if (result.status === 200) {
+        const resultData = result.data
+
+        if (result.status === 201) {
             toast.success('Berhasil buat order')
             setopenModal(false)
         } else {
