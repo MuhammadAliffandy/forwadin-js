@@ -37,7 +37,7 @@ const OrderModal = ({ data, openModal, session, setopenModal }) => {
         if (orderMessage) {
             // Update
             const result = await updateOrderMessages(session.customerService.token,orderMessage.id,body)
-            if (result.status === 200) {
+            if (result.status === 201) {
                 toast.success('Berhasil ubah template order')
                 setopenModal(false)
             } else {
@@ -47,12 +47,11 @@ const OrderModal = ({ data, openModal, session, setopenModal }) => {
         }
 
         const result = await createOrderMessages(session.customerService.token,body)
-        if (result.status === 200) {
+        if (result.status === 201) {
             toast.success('Berhasil buat template order')
             setopenModal(false)
         } else {
             toast.error('Gagal buat template order')
-            console.log(await result?.json())
         }
     }
     useEffect(() => {
