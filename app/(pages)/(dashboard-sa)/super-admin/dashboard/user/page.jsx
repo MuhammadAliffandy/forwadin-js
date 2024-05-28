@@ -108,12 +108,12 @@ const DashboardSuperAdminUser = () => {
     }
 
     useEffect(() => {
-        if (session?.user?.token) {
+        if (session?.superAdmin?.token) {
             fetchProfile()
             fetchSubscription()
             // testRefresh()
         }
-    }, [session?.user?.token])
+    }, [session?.superAdmin?.token])
 
     // useEffect(() => {
     //     if (currentDevice)

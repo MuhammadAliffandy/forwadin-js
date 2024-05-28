@@ -46,7 +46,8 @@ const UserTable = ({ statusAction ,setTotalUser, totalUser, user , onEdit , onAd
 
 
     const handleTransactionPay = async (transactionId , status ) => {
-        const result = await updateStatusTransaction(user?.token , transactionId , {status : status ? 'paid' : 'unpaid'})
+
+        const result = await updateStatusTransaction(user?.token , transactionId , {status : status === true ? 'paid' : 'unpaid'})
 
         if (result.status === 200) {
             toast.success('Update Payment Berhasil')
@@ -62,8 +63,10 @@ const UserTable = ({ statusAction ,setTotalUser, totalUser, user , onEdit , onAd
         if (result.status === 200) {
             const resultData = result.data
 
+            console.log(resultData)
+
             const dataTransaction = resultData.map((data)=>{
-                return {status : data.transactions.length == 0 ? false : data.transactions[0].status == 'paid' ?true : false}
+                return {status : data.transactions.length == 0 ? false : data.transactions[0].status == 'paid' ? true : false}
             })
 
             setListTransaction(dataTransaction)
@@ -111,10 +114,10 @@ const UserTable = ({ statusAction ,setTotalUser, totalUser, user , onEdit , onAd
         setsearchedGetBroadcast(searchResult)
     }, [searchText])
     useEffect(() => {
-        if (user?.token) {
+        if (user != undefined) {
             fetchAllUser()
         }
-    }, [user?.token,])
+    }, [user])
     useEffect(() => {
         if ((selectedUser ).size > 0 || selectedUser === 'all')
             setisChecked(true)
@@ -199,11 +202,11 @@ const UserTable = ({ statusAction ,setTotalUser, totalUser, user , onEdit , onAd
                                     <TableCell >{ item.phone == null ? '-' :  `+${item.phone}`}</TableCell>
                                     <TableCell >{item.email}</TableCell>
                                     <TableCell>
-                                        <Switch size='sm' isSelected={ item.transactions[index]?.status} onClick={() => {
-                
+                                        <Switch size='sm' isSelected={ listTransaction[index]?.status} onChange={(event) => {
+                                            const status = event.target.checked
                                             item.transactions.length == 0 ? toast.error('User belum melakukan transaksi') :
 
-                                            handleTransactionPay( item.transactions[0].id, item.transactions[index]?.status)
+                                            handleTransactionPay( item.transactions[0].id, status)
                                         }} />
                                     </TableCell>
                                     <TableCell>
