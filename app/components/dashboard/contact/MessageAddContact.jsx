@@ -37,7 +37,7 @@ const MessageAddContact = ({ fetchData, openModal, setopenModal, addContactData 
             user: session?.user
         })
 
-        if (result && result.status === 200) {
+        if (result.ok) {
             toast.success('Kontak berhasil ditambahkan')
             fetchData()
             setisLoading(false)
@@ -62,8 +62,8 @@ const MessageAddContact = ({ fetchData, openModal, setopenModal, addContactData 
             url: '/devices',
             user: session?.user
         })
-        if (result && result.status === 200) {
-            const body = result.data
+        if (result.ok) {
+            const body = await result.json()
             setdeviceList(body)
             setisLoaded(true)
         } else {
